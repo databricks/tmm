@@ -646,3 +646,7 @@ for i in range(0, int(dbutils.widgets.get('batch_count'))):
   time.sleep(int(dbutils.widgets.get('batch_wait')))
   write_batches_to_file(generate_loans("account", int(dbutils.widgets.get('num_recs'))), f'/dbfs{output_path}/landing/accounts{i}.json')
   print(f'Finished writing batch: {i}')
+
+# COMMAND ----------
+
+
