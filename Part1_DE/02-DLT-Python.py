@@ -61,7 +61,7 @@ from pyspark.sql import functions as F
 
 # COMMAND ----------
 
-@dlt.create_table(comment="New raw loan data incrementally ingested from cloud object storage landing zone")
+@dlt.table(comment="New raw loan data incrementally ingested from cloud object storage landing zone")
 def BZ_raw_txs():
   return (
     spark.readStream.format("cloudFiles")
@@ -71,13 +71,13 @@ def BZ_raw_txs():
 
 # COMMAND ----------
 
-@dlt.create_table(comment="Lookup mapping for accounting codes")
+@dlt.table(comment="Lookup mapping for accounting codes")
 def ref_accounting_treatment():
   return spark.read.format("delta").load("/demo/dlt_loan/ref_accounting_treatment/")
 
 # COMMAND ----------
 
-@dlt.create_table(comment="Raw historical transactions")
+@dlt.table(comment="Raw historical transactions")
 def BZ_reference_loan_stats():
   return (
     spark.readStream.format("cloudFiles")
@@ -104,7 +104,7 @@ def BZ_reference_loan_stats():
 
 # COMMAND ----------
 
-@dlt.create_table(comment="Livestream of new transactions, cleaned and compliant")
+@dlt.table(comment="Livestream of new transactions, cleaned and compliant")
 @dlt.expect("Payments should be this year", "(next_payment_date > date('2020-12-31'))")
 @dlt.expect_or_drop("Balance should be positive", "(balance > 0 AND arrears_balance > 0)")
 @dlt.expect_or_fail("Cost center must be specified", "(cost_center_code IS NOT NULL)")
@@ -117,7 +117,7 @@ def SV_cleaned_new_txs():
 
 # COMMAND ----------
 
-@dlt.create_table(comment="Historical loan transactions")
+@dlt.table(comment="Historical loan transactions")
 def SV_historical_txs():
   rls = dlt.read_stream("BZ_reference_loan_stats")
   rat = dlt.read("ref_accounting_treatment")
@@ -140,7 +140,7 @@ def SV_historical_txs():
 
 # COMMAND ----------
 
-@dlt.create_table(
+@dlt.table(
   comment="Combines historical and new loan data for unified rollup of loan balances",
   table_properties={"pipelines.autoOptimize.zOrderCols": "location_code"})
 def GL_total_loan_balances_1():
@@ -159,7 +159,7 @@ def GL_total_loan_balances_1():
 
 # COMMAND ----------
 
-@dlt.create_table(comment="Combines historical and new loan data for unified rollup of loan balances")
+@dlt.table(comment="Combines historical and new loan data for unified rollup of loan balances")
 def GL_total_loan_balances_2():
   return (
     dlt.read("SV_historical_txs")
@@ -176,7 +176,7 @@ def GL_total_loan_balances_2():
 
 # COMMAND ----------
 
-@dlt.create_table(
+@dlt.table(
   comment="Live view of new loan balances for consumption by different cost centers",
   table_properties={"pipelines.autoOptimize.zOrderCols": "cost_center_code"})
 def GL_new_loan_balances_by_cost_center():
@@ -188,7 +188,7 @@ def GL_new_loan_balances_by_cost_center():
 
 # COMMAND ----------
 
-@dlt.create_table(
+@dlt.table(
   comment="Live view of new loan balances per country",
   table_properties={"pipelines.autoOptimize.zOrderCols": "country_code"})
 def GL_new_loan_balances_by_country():
@@ -207,20 +207,3 @@ def GL_new_loan_balances_by_country():
 # MAGIC Open the DLT menu, create a pipeline and select this notebook to run it. To generate sample data, please run the [companion notebook]($./00-Loan-Data-Generator) (make sure the path where you read and write the data are the same!)
 # MAGIC 
 # MAGIC Datas Analyst can start using DBSQL to analyze data and track our Loan metrics.  Data Scientist can also access the data to start building models to predict payment default or other more advanced use-cases.
-
-# COMMAND ----------
-
-# MAGIC %md ## Tracking data quality
-# MAGIC 
-# MAGIC Expectations stats are automatically available as system table.
-# MAGIC 
-# MAGIC This information let you monitor your data ingestion quality. 
-# MAGIC 
-# MAGIC You can leverage DBSQL to request these table and build custom alerts based on the metrics your business is tracking.
-# MAGIC 
-# MAGIC 
-# MAGIC See [how to access your DLT metrics]($./02-Log-Analysis)
-# MAGIC 
-# MAGIC <img width="500" src="https://github.com/QuentinAmbard/databricks-demo/raw/main/retail/resources/images/retail-dlt-data-quality-dashboard.png">
-# MAGIC 
-# MAGIC <a href="https://e2-demo-field-eng.cloud.databricks.com/sql/dashboards/6f73dd1b-17b1-49d0-9a11-b3772a2c3357-dlt---retail-data-quality-stats?o=1444828305810485" target="_blank">Data Quality Dashboard example</a>
