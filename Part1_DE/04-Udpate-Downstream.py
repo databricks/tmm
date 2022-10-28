@@ -13,7 +13,11 @@ import os
 #
 
 def ingest_all_orders():
-  raise ConnectionError("connection refused / external API")
+  raise ConnectionError("connection refused: external API")
     
 ingest_all_orders()
     
+
+# COMMAND ----------
+
+

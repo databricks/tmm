@@ -4,10 +4,10 @@
 -- MAGIC 
 -- MAGIC Please Make sure you specify your own Database and Storage location. You'll find this information in the configuration menu of your Delta Live Table Pipeline.
 -- MAGIC 
--- MAGIC * Use target setting as DLT Database name
+-- MAGIC * The value for ```target``` is your DLT target setting / database name
 -- MAGIC * Use storage location from pipeline setting, e.g. 
--- MAGIC   * /demos/lendingclub (if defined)
--- MAGIC   * dbfs:/pipelines/235a0297-2dff-498d-b02a-4346666627d5 (generated value)
+-- MAGIC   * ```/demos/lendingclub``` (if defined)
+-- MAGIC   * ```dbfs:/pipelines/235a0297-2dff-498d-b02a-4346666627d5``` (generated value that uses pipeline ID [not your lab ID!])
 -- MAGIC  
 -- MAGIC * Please use Databricks Runtime 9.1 or above when running this notebook
 -- MAGIC 
@@ -23,7 +23,7 @@
 -- MAGIC 
 -- MAGIC %python
 -- MAGIC dbutils.widgets.text('storage_location', '/demos/dlt_loan_storage', 'Storage Location')
--- MAGIC dbutils.widgets.text('db', 'field_demos_dlt', 'DLT Database (target)')
+-- MAGIC dbutils.widgets.text('db', 'field_demos_dlt', 'target (DLT Database)')
 
 -- COMMAND ----------
 
@@ -36,6 +36,7 @@ USE $db;
 
 -- COMMAND ----------
 
+-- add pipeline logs as table to target DLT database 
 CREATE OR REPLACE VIEW pipeline_logs AS SELECT * FROM delta.`$storage_location/system/events`
 
 -- COMMAND ----------
@@ -63,6 +64,7 @@ SELECT * FROM pipeline_logs ORDER BY timestamp
 
 -- DBTITLE 1,Lineage Information
 -- MAGIC %sql
+-- MAGIC -- display lineage information from details
 -- MAGIC SELECT
 -- MAGIC   details:flow_definition.output_dataset,
 -- MAGIC   details:flow_definition.input_datasets,
@@ -76,6 +78,7 @@ SELECT * FROM pipeline_logs ORDER BY timestamp
 -- COMMAND ----------
 
 -- DBTITLE 1,Data Quality Results
+-- retrieve log data from expectations
 SELECT
   id,
   expectations.dataset,

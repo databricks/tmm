@@ -6,7 +6,7 @@
 # MAGIC **Make sure the storage path matches what you defined in your DLT pipeline as input.**
 # MAGIC 
 # MAGIC 1. Run Cmd 2 to show widgets
-# MAGIC 2. Specify Storage path in widget
+# MAGIC 2. Specify Storage path in widget: use /demo/yourID
 # MAGIC 3. "Run All" to generate your data
 # MAGIC 4. Cmd 5 output should show data being generated into storage path
 # MAGIC 5. When finished generating data, "Stop Execution"
@@ -22,7 +22,7 @@
 # COMMAND ----------
 
 # DBTITLE 1,Run First for Widgets
-dbutils.widgets.text('path', '/demo/dlt_loan', 'Storage Path')
+dbutils.widgets.text('path', '/demo/XX_f8acd3e2630b', 'Storage Path')
 dbutils.widgets.combobox('batch_wait', '30', ['15', '30', '45', '60'], 'Speed (secs between writes)')
 dbutils.widgets.combobox('num_recs', '10000', ['5000', '10000', '20000'], 'Volume (# records per writes)')
 dbutils.widgets.combobox('batch_count', '100', ['100', '200', '500'], 'Write count (for how long we append data)')
@@ -649,4 +649,9 @@ for i in range(0, int(dbutils.widgets.get('batch_count'))):
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC Reset 
 
+# COMMAND ----------
+
+dbutils.widgets.removeAll()
