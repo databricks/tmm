@@ -54,9 +54,16 @@
 
 -- COMMAND ----------
 
+-- MAGIC %md
+-- MAGIC ### Update the SQL below
+-- MAGIC make sure to update the location for Auto Loader (cloud_files) in the SQL statement below:
+-- MAGIC * replace `/demo/FM_455df451f64e/landing` using your ID from the LabGuide notebook instead of `FM_455df451f64e`
+
+-- COMMAND ----------
+
 CREATE STREAMING LIVE TABLE BZ_raw_txs
   COMMENT "New raw loan data incrementally ingested from cloud object storage landing zone"
-AS SELECT * FROM cloud_files('/demo/dlt_loan1/landing', 'json')
+AS SELECT * FROM cloud_files('/demo/FM_455df451f64e/landing', 'json')
 
 -- COMMAND ----------
 
@@ -66,9 +73,16 @@ AS SELECT * FROM cloud_files('/databricks-datasets/lending-club-loan-stats/LoanS
 
 -- COMMAND ----------
 
+-- MAGIC %md
+-- MAGIC ### Update the SQL below
+-- MAGIC make sure to update the the location for the Delta table in the SQL statement below:
+-- MAGIC * replace `/demo/FM_455df451f64e/ref_accounting_treatment/` using your ID from the LabGuide notebook instead of `FM_455df451f64e`
+
+-- COMMAND ----------
+
 CREATE LIVE TABLE ref_accounting_treatment
   COMMENT "Lookup mapping for accounting codes"
-AS SELECT * FROM delta.`/demo/dlt_loan1/ref_accounting_treatment/`
+AS SELECT * FROM delta.`/demo/FM_455df451f64e/ref_accounting_treatment/`
 
 -- COMMAND ----------
 

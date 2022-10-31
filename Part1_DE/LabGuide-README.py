@@ -55,12 +55,18 @@ FM_455df451f64e
 # MAGIC * Why do we use the medallion architecture?
 # MAGIC 
 # MAGIC 
+# MAGIC ### Update the DLT with your paths
+# MAGIC 
+# MAGIC In the [DLT SQL notebook]($./01-DLT-SQL) apply the following two changes:
+# MAGIC * Update the folder name for cloud_files in CMD-4
+# MAGIC * Update the location of the Delta table in CMD-7. 
 # MAGIC  
 # MAGIC ### Run your first Data Pipeline
 # MAGIC 1. Watch your instructor explaining how to create a DLT pipeline first, then follow the steps below. ([Detailed documentation is available here](https://docs.databricks.com/workflows/delta-live-tables/delta-live-tables-ui.html#create-a-pipeline))
 # MAGIC 2. On your workspace, under Workflows / DLT change to "Owned by me"
 # MAGIC 3. Create a new pipeline (leave all pipeline setting on default except the ones listed below)
-# MAGIC   * `name: [use your own ID from above as the name of the pipeline]`
+# MAGIC   * `pipeline name: [use your own ID from above as the name of the pipeline]`
+# MAGIC   * Under `Notebook libraries:` select the location of the [DLT SQL notebook]
 # MAGIC   * `target: [use your own ID from above]`
 # MAGIC   * `Cluster mode: fixed size`
 # MAGIC   * `Number nodes: 0`
@@ -149,7 +155,7 @@ FM_455df451f64e
 # MAGIC * On the left menue bar, select the SQL persona
 # MAGIC * Also from the left bar, open the SQL editor
 # MAGIC * Create a simple query: 
-# MAGIC   * `SELECT * FROM FM_455df451f64e.ref_accounting_treatment` (make sure to use your schema and table name)
+# MAGIC   * `SELECT * FROM FM_455df451f64e.ref_accounting_treatment` (make sure to use **your schema and table name**)
 # MAGIC   * run the query by clicking Shift-RETURN
 # MAGIC   * Save it as using your ID as a name for the query
 
@@ -165,11 +171,13 @@ FM_455df451f64e
 # MAGIC * Select "Workflows owned by me"
 # MAGIC * Click on "Create Job"
 # MAGIC * Name the new job same as **your ID from above**
+# MAGIC 
 # MAGIC ### Add a first task
 # MAGIC 
 # MAGIC * Task name: Ingest
 # MAGIC * Task type: DLT task
 # MAGIC * Pipeline: your DLT pipeline name for the DLT SQL notebook from above (the pipeline should be in triggered mode for this lab.)
+# MAGIC * Cluster: labcluster*
 # MAGIC ### Add a second task
 # MAGIC * Task name: Update Downstream
 # MAGIC * Task type: Notebook 
