@@ -37,6 +37,11 @@ FM_455df451f64e
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC *This course is designed in a way that I can be run with many participants on single Databricks Workspace. In your own environment you won't need the ID from above, just use your won naming schema for ressources.*
+
+# COMMAND ----------
+
 # MAGIC 
 # MAGIC %md
 # MAGIC ##2. Delta Live Tables
@@ -61,17 +66,6 @@ FM_455df451f64e
 # MAGIC * Update the folder name for cloud_files in CMD-4
 # MAGIC * Update the location of the Delta table in CMD-7. 
 # MAGIC  
-# MAGIC ### Run your first Data Pipeline
-# MAGIC 1. Watch your instructor explaining how to create a DLT pipeline first, then follow the steps below. ([Detailed documentation is available here](https://docs.databricks.com/workflows/delta-live-tables/delta-live-tables-ui.html#create-a-pipeline))
-# MAGIC 2. On your workspace, under Workflows / DLT change to "Owned by me"
-# MAGIC 3. Create a new pipeline (leave all pipeline setting on default except the ones listed below)
-# MAGIC   * `pipeline name: [use your own ID from above as the name of the pipeline]`
-# MAGIC   * Under `Notebook libraries:` select the location of the [DLT SQL notebook]
-# MAGIC   * `target: [use your own ID from above]`
-# MAGIC   * `Cluster mode: fixed size`
-# MAGIC   * `Number nodes: 0`
-# MAGIC 3. Run the pipeline. Note, when you start the pipeline for the first time it might take a few minutes until resources are provisioned.
-# MAGIC 4. Explore the the pipeline settings for the running pipeline by clicking on the "settings" button at the top, but keep all existing settings. 
 # MAGIC 
 # MAGIC  
 # MAGIC ### Run the Data Generator
@@ -88,7 +82,19 @@ FM_455df451f64e
 # MAGIC   * Once the config values are set, run all cells
 # MAGIC     * confirm that data is produced by looking at the output of CMD 5
 # MAGIC     * leave the data generator running. It will run for the length of this course
-# MAGIC   
+# MAGIC 
+# MAGIC ### Run your first Data Pipeline
+# MAGIC 1. Watch your instructor explaining how to create a DLT pipeline first, then follow the steps below. ([Detailed documentation is available here](https://docs.databricks.com/workflows/delta-live-tables/delta-live-tables-ui.html#create-a-pipeline))
+# MAGIC 2. On your workspace, under Workflows / DLT change to "Owned by me"
+# MAGIC 3. Create a new pipeline (leave all pipeline setting on default except the ones listed below)
+# MAGIC   * `pipeline name: [use your own ID from above as the name of the pipeline]`
+# MAGIC   * Under `Notebook libraries:` select the location of the [DLT SQL notebook]
+# MAGIC   * `target: [use your own ID from above]`
+# MAGIC   * `Cluster mode: fixed size`
+# MAGIC   * `Number nodes: 0`
+# MAGIC 3. Run the pipeline. Note, when you start the pipeline for the first time it might take a few minutes until resources are provisioned.
+# MAGIC 4. Explore the the pipeline settings for the running pipeline by clicking on the "settings" button at the top, but keep all existing settings. 
+# MAGIC 
 # MAGIC 
 # MAGIC ### Pipeline Graph
 # MAGIC You can always get to your running pipelines by clicking on "Workflows" on the left menue bar and then on "Delta Live Tables" / "Owned by me"
@@ -125,7 +131,7 @@ FM_455df451f64e
 # MAGIC   
 # MAGIC   
 # MAGIC 
-# MAGIC ### DLT Pipelines in Python
+# MAGIC ### DLT Pipelines in Python (Instructor only) 
 # MAGIC 
 # MAGIC Listen to your instructor explaining DLT pipelines written in Python. You won't need to run this pipeline.
 # MAGIC 
@@ -138,7 +144,7 @@ FM_455df451f64e
 # MAGIC [(some hints)](https://docs.databricks.com/workflows/delta-live-tables/delta-live-tables-incremental-data.html)
 # MAGIC 
 # MAGIC 
-# MAGIC ### Monitor DLT Events
+# MAGIC ### Monitor DLT Events (Optional) 
 # MAGIC 
 # MAGIC Watch your instructor explaining you how to retrieve DLT events, lineage and runtime data from expectations. 
 # MAGIC 
