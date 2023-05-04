@@ -16,7 +16,7 @@ def ingest_all_orders():
   msg="connection refused: external API"
   
   # comment out the command below that causes the error (by adding a #). make sure to keep the indentation same as this comment here. 
-  raise ConnectionError(msg)
+  #raise ConnectionError(msg)
     
     
     

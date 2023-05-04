@@ -2,16 +2,16 @@
 # MAGIC %md
 # MAGIC # Data generator for DLT pipeline
 # MAGIC This notebook will generate data in the given storage path to simulate a data flow. 
-# MAGIC 
+# MAGIC
 # MAGIC **Make sure the storage path matches what you defined in your DLT pipeline as input.**
-# MAGIC 
+# MAGIC
 # MAGIC 1. Run Cmd 2 to show widgets
 # MAGIC 2. Specify Storage path in widget: use /demo/yourID
 # MAGIC 3. "Run All" to generate your data
 # MAGIC 4. Cmd 5 output should show data being generated into storage path
 # MAGIC 5. When finished generating data, "Stop Execution"
 # MAGIC 6. To refresh landing zone, run Cmd 7
-# MAGIC 
+# MAGIC
 # MAGIC <!-- do not remove -->
 # MAGIC <img width="1px" src="https://www.google-analytics.com/collect?v=1&gtm=GTM-NKQ8TT7&tid=UA-163989034-1&cid=555&aip=1&t=event&ec=field_demos&ea=display&dp=%2F42_field_demos%2Ffeatures%2Fdlt%2Fnotebook_dlt_generator&dt=DLT">
 # MAGIC <!-- [metadata={"description":"Generate data for the DLT demo",
@@ -502,7 +502,7 @@ def generate_loans(fire_schema, n=100):
 
     end_time = timeit.default_timer() - start_time
     logging.warning(
-        "Generating FIRE batches and writing to files"
+        "writing to files"
         " took {} seconds".format(end_time)
     )
     return data
@@ -655,3 +655,11 @@ for i in range(0, int(dbutils.widgets.get('batch_count'))):
 # COMMAND ----------
 
 dbutils.widgets.removeAll()
+
+# COMMAND ----------
+
+# MAGIC %fs rm -r /demo/frank_uc
+
+# COMMAND ----------
+
+
