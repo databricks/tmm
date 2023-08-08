@@ -58,6 +58,7 @@
 -- MAGIC ### Update the SQL below
 -- MAGIC make sure to update the location for Auto Loader (cloud_files) in the SQL statement below:
 -- MAGIC * replace `/demo/FM_455df451f64e/landing` using your ID from the LabGuide notebook instead of `FM_455df451f64e`
+-- MAGIC
 
 -- COMMAND ----------
 
@@ -146,19 +147,6 @@ CREATE MATERIALIZED VIEW GL_total_loan_balances_2
   COMMENT "Combines historical and new loan data for unified rollup of loan balances"
 AS SELECT sum(revol_bal)  AS bal, addr_state   AS location_code FROM live.SV_historical_txs  GROUP BY addr_state
   UNION SELECT sum(balance) AS bal, country_code AS location_code FROM live.SV_cleaned_new_txs GROUP BY country_code
-
--- COMMAND ----------
-
-CREATE LIVE VIEW GL_new_loan_balances_by_cost_center
-  COMMENT "Live view of new loan balances for consumption by different cost centers"
-AS SELECT sum(balance), cost_center_code FROM live.SV_cleaned_new_txs
-  GROUP BY cost_center_code
-
--- COMMAND ----------
-
-CREATE LIVE VIEW GL_new_loan_balances_by_country
-  COMMENT "Live view of new loan balances per country"
-AS SELECT sum(count), country_code FROM live.SV_cleaned_new_txs GROUP BY country_code
 
 -- COMMAND ----------
 

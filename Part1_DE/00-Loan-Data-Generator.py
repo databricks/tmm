@@ -651,6 +651,7 @@ for i in range(0, int(dbutils.widgets.get('batch_count'))):
 
 # MAGIC %md
 # MAGIC Reset 
+# MAGIC
 
 # COMMAND ----------
 
@@ -659,7 +660,3 @@ dbutils.widgets.removeAll()
 # COMMAND ----------
 
 # MAGIC %fs rm -r /demo/frank_uc
-
-# COMMAND ----------
-
-

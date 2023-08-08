@@ -10,6 +10,7 @@
 # MAGIC
 # MAGIC * This is your main labguide. Please **keep it open in a separate tab** (or bookmark it). You will need it to follow the steps below and come back to them throughout the course. 
 # MAGIC * We will work with other notebooks, such as DLT notebooks, but this guide describes how things tie together, e.g. how to run DLT notebooks as a pipeline. 
+# MAGIC
 
 # COMMAND ----------
 
@@ -149,6 +150,9 @@ FM_455df451f64e
 # MAGIC Watch your instructor explaining you how to retrieve DLT events, lineage and runtime data from expectations. 
 # MAGIC
 # MAGIC [Notebook used]($./03-Log-Analysis)
+# MAGIC
+# MAGIC
+# MAGIC
 
 # COMMAND ----------
 
@@ -164,6 +168,7 @@ FM_455df451f64e
 # MAGIC   * `SELECT * FROM FM_455df451f64e.ref_accounting_treatment` (make sure to use **your schema and table name**)
 # MAGIC   * run the query by clicking Shift-RETURN
 # MAGIC   * Save it as using your ID as a name for the query
+# MAGIC
 
 # COMMAND ----------
 
@@ -204,6 +209,8 @@ FM_455df451f64e
 # MAGIC   * Use the "Repair and Rerun" Feature to rerun the workflow   
 # MAGIC     * It should successfully run now.
 # MAGIC   * You can delete the other failed run. 
+# MAGIC
+# MAGIC
 
 # COMMAND ----------
 
