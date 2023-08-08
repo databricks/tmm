@@ -1,1 +1,1 @@
-# tmm-3part-training
+# Training repo
