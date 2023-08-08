@@ -1,16 +1,16 @@
 -- Databricks notebook source
 -- MAGIC %md
 -- MAGIC # DLT pipeline log analysis
--- MAGIC 
+-- MAGIC
 -- MAGIC Please Make sure you specify your own Database and Storage location. You'll find this information in the configuration menu of your Delta Live Table Pipeline.
--- MAGIC 
+-- MAGIC
 -- MAGIC * The value for ```target``` is your DLT target setting / database name
 -- MAGIC * Use storage location from pipeline setting, e.g. 
 -- MAGIC   * ```/demos/lendingclub``` (if defined)
 -- MAGIC   * ```dbfs:/pipelines/235a0297-2dff-498d-b02a-4346666627d5``` (generated value that uses pipeline ID [not your lab ID!])
 -- MAGIC  
 -- MAGIC * Please use Databricks Runtime 9.1 or above when running this notebook
--- MAGIC 
+-- MAGIC
 -- MAGIC <!-- do not remove -->
 -- MAGIC <img width="1px" src="https://www.google-analytics.com/collect?v=1&gtm=GTM-NKQ8TT7&tid=UA-163989034-1&cid=555&aip=1&t=event&ec=field_demos&ea=display&dp=%2F42_field_demos%2Ffeatures%2Fdlt%2Fnotebook_dlt_log&dt=DLT">
 -- MAGIC <!-- [metadata={"description":"Analyse DLT logs to get expectations metrics",
@@ -20,7 +20,7 @@
 
 -- COMMAND ----------
 
--- MAGIC 
+-- MAGIC
 -- MAGIC %python
 -- MAGIC dbutils.widgets.text('storage_location', '/demos/dlt_loan_storage', 'Storage Location')
 -- MAGIC dbutils.widgets.text('db', 'field_demos_dlt', 'target (DLT Database)')
