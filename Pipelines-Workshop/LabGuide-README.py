@@ -21,25 +21,27 @@
 
 import uuid
 
+print('Generate an id. It will look like like XY_cfc23a84 ') 
 myuuid = uuid.uuid4()
-id=str(myuuid).split("-")[4]
-print('Your ID is XX_'+id+" where XX must be replaced with *your* initials, e.g. TJ for Tom Jones: TJ_"+id)
-
+xid=str(myuuid).split("-")[4][-8:]
+initials initials = input("Please enter your initials (for example TJ for Tom Jones): ")
+user_id=xid+"_"+initials
+print(f'Your ID is {initials}_{id}')
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC
-# MAGIC Keep this notebook with your ID open or copy it into an external editor: __________________________ (make sure to replace XX with your initials)
+# MAGIC Keep this notebook with your ID open. Also copy your ID into an external editor. 
 
 # COMMAND ----------
 
-FM_455df451f64e
+XY_cfc23a84
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC *This course is designed in a way that I can be run with many participants on single Databricks Workspace. In your own environment you won't need the ID from above, just use your won naming schema for ressources. The course uses a single node DLT cluster. We recommend to explore Enhanced Auto Scaling instead.*
+# MAGIC *This course is designed in a way that I can be run with many participants on single Databricks Workspace. In your own environment you won't need the ID from above, just use your own naming schema for ressources. The course uses a single node DLT cluster. We recommend to explore Enhanced Auto Scaling instead.*
 
 # COMMAND ----------
 
@@ -61,7 +63,7 @@ FM_455df451f64e
 # MAGIC * Why do we use the medallion architecture?
 # MAGIC
 # MAGIC
-# MAGIC ### Update the DLT with your paths
+# MAGIC ### Update the provided DLT pipeline for your environment
 # MAGIC
 # MAGIC In the [DLT SQL notebook]($./01-DLT-SQL) apply the following two changes:
 # MAGIC * Update the folder name for cloud_files in CMD-4
