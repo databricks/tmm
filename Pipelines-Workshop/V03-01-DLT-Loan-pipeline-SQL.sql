@@ -43,8 +43,16 @@
 
 -- COMMAND ----------
 
--- DBTITLE 1,Let's review the incoming data
--- MAGIC %fs ls /demos/dlt/loans/raw_transactions
+-- MAGIC %md
+-- MAGIC
+-- MAGIC ### Update the SQL below
+-- MAGIC
+-- MAGIC make sure to update the ingestion location for Auto Loaderin the three SQL statement below: 
+-- MAGIC
+-- MAGIC
+-- MAGIC 1. replace `/demos/dlt/loans/USER_ID/raw_transactions` using your USER_ID from the LabGuide notebook, e.g  `user_412602` (your value will be different!). Make sure to use to right user_id.
+-- MAGIC 2. same for `/demos/dlt/loans/USER_ID/ref_accounting_treatment`, again user your vulue for USER_ID 
+-- MAGIC 3. same for `/demos/dlt/loans/USER_ID/historical_loans`, again user your value for USER_ID  
 
 -- COMMAND ----------
 
@@ -67,17 +75,22 @@
 
 -- COMMAND ----------
 
+-- DBTITLE 1,Let's review the incoming data
+-- MAGIC %fs ls /demos/dlt/loans/USER_ID/raw_transactions
+
+-- COMMAND ----------
+
 -- DBTITLE 1,Capture new incoming transactions
 CREATE STREAMING LIVE TABLE raw_txs
   COMMENT "New raw loan data incrementally ingested from cloud object storage landing zone"
-AS SELECT * FROM cloud_files('/demos/dlt/loans/raw_transactions', 'json', map("cloudFiles.inferColumnTypes", "true"))
+AS SELECT * FROM cloud_files('/demos/dlt/loans/USER_ID/raw_transactions', 'json', map("cloudFiles.inferColumnTypes", "true"))
 
 -- COMMAND ----------
 
 -- DBTITLE 1,Reference table - metadata (small & almost static)
 CREATE LIVE TABLE ref_accounting_treatment
   COMMENT "Lookup mapping for accounting codes"
-AS SELECT * FROM delta.`/demos/dlt/loans/ref_accounting_treatment`
+AS SELECT * FROM delta.`/demos/dlt/loans/USER_ID/ref_accounting_treatment`
 
 -- COMMAND ----------
 
@@ -86,7 +99,7 @@ AS SELECT * FROM delta.`/demos/dlt/loans/ref_accounting_treatment`
 CREATE STREAMING LIVE TABLE raw_historical_loans
   TBLPROPERTIES ("pipelines.trigger.interval"="6 hour")
   COMMENT "Raw historical transactions"
-AS SELECT * FROM cloud_files('/demos/dlt/loans/historical_loans', 'csv', map("cloudFiles.inferColumnTypes", "true"))
+AS SELECT * FROM cloud_files('/demos/dlt/loans/USER_ID/historical_loans', 'csv', map("cloudFiles.inferColumnTypes", "true"))
 
 -- COMMAND ----------
 

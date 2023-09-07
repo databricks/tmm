@@ -43,7 +43,7 @@ dbutils.widgets.text('user_id', user_id)
 dbutils.widgets.dropdown('reset_all_data', 'false', ['true', 'false'], 'reset data?')
 dbutils.widgets.dropdown('batch_wait', '30', ['15', '30', '45', '60'], 'sec delay')
 dbutils.widgets.dropdown('num_recs', '500', ['500','1000','5000'], '#recs/write')
-dbutils.widgets.combobox('batch_count', '300', ['0', '100', '300', '500'], '#writes')
+dbutils.widgets.combobox('batch_count', '300', ['0', '3','100', '300', '500'], '#writes')
 
 # COMMAND ----------
 
