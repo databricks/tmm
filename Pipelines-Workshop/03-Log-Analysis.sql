@@ -1,47 +1,57 @@
 -- Databricks notebook source
--- MAGIC %md
+-- MAGIC %md 
+-- MAGIC ### A cluster has been created for this demo
+-- MAGIC To run this demo, just select the cluster `dbdemos-dlt-loans-demo_summit_demo_user1` from the dropdown menu ([open cluster configuration](https://data-ai-lakehouse.cloud.databricks.com/#setting/clusters/0904-134823-sgwnt37t/configuration)). <br />
+-- MAGIC *Note: If the cluster was deleted after 30 days, you can re-create it with `dbdemos.create_cluster('dlt-loans')` or re-install the demo: `dbdemos.install('dlt-loans')`*
+
+-- COMMAND ----------
+
+-- MAGIC %md-sandbox
+-- MAGIC
 -- MAGIC # DLT pipeline log analysis
 -- MAGIC
--- MAGIC Please Make sure you specify your own Database and Storage location. You'll find this information in the configuration menu of your Delta Live Table Pipeline.
+-- MAGIC <img style="float:right" width="500" src="https://github.com/QuentinAmbard/databricks-demo/raw/main/retail/resources/images/retail-dlt-data-quality-dashboard.png">
 -- MAGIC
--- MAGIC * The value for ```target``` is your DLT target setting / database name
--- MAGIC * Use storage location from pipeline setting, e.g. 
--- MAGIC   * ```/demos/lendingclub``` (if defined)
--- MAGIC   * ```dbfs:/pipelines/235a0297-2dff-498d-b02a-4346666627d5``` (generated value that uses pipeline ID [not your lab ID!])
--- MAGIC  
--- MAGIC * Please use Databricks Runtime 9.1 or above when running this notebook
+-- MAGIC Each DLT Pipeline saves events and expectations metrics in the Storage Location defined on the pipeline. From this table we can see what is happening and the quality of the data passing through it.
 -- MAGIC
--- MAGIC <!-- do not remove -->
--- MAGIC <img width="1px" src="https://www.google-analytics.com/collect?v=1&gtm=GTM-NKQ8TT7&tid=UA-163989034-1&cid=555&aip=1&t=event&ec=field_demos&ea=display&dp=%2F42_field_demos%2Ffeatures%2Fdlt%2Fnotebook_dlt_log&dt=DLT">
--- MAGIC <!-- [metadata={"description":"Analyse DLT logs to get expectations metrics",
--- MAGIC  "authors":["dillon.bostwick@databricks.com"],
--- MAGIC  "db_resources":{},
--- MAGIC   "search_tags":{"vertical": "retail", "step": "Data Engineering", "components": ["autoloader", "dlt"]}}] -->
+-- MAGIC You can leverage the expecations directly as a SQL table with Databricks SQL to track your expectation metrics and send alerts as required. 
+-- MAGIC
+-- MAGIC This notebook extracts and analyses expectation metrics to build such KPIS.
+-- MAGIC
+-- MAGIC You can find your metrics opening the Settings of your DLT pipeline, under `storage` :
+-- MAGIC
+-- MAGIC ```
+-- MAGIC {
+-- MAGIC     ...
+-- MAGIC     "name": "test_dlt_cdc",
+-- MAGIC     "storage": "/demos/dlt/loans",
+-- MAGIC     "target": "quentin_dlt_cdc"
+-- MAGIC }
+-- MAGIC ```
+-- MAGIC
+-- MAGIC <!-- Collect usage data (view). Remove it to disable collection. View README for more details.  -->
+-- MAGIC <img width="1px" src="https://www.google-analytics.com/collect?v=1&gtm=GTM-NKQ8TT7&tid=UA-163989034-1&aip=1&t=event&ec=dbdemos&ea=VIEW&dp=%2F_dbdemos%2Fdata-engineering%2Fdlt-loans%2F03-Log-Analysis&cid=local&uid=local">
 
 -- COMMAND ----------
 
--- MAGIC
+-- DBTITLE 1,Load DLT system table 
 -- MAGIC %python
--- MAGIC dbutils.widgets.text('storage_location', '/demos/dlt_loan_storage', 'Storage Location')
--- MAGIC dbutils.widgets.text('db', 'field_demos_dlt', 'target (DLT Database)')
+-- MAGIC import re
+-- MAGIC current_user = dbutils.notebook.entry_point.getDbutils().notebook().getContext().tags().apply('user')
+-- MAGIC storage_path = '/demos/dlt/loans/'+re.sub("[^A-Za-z0-9]", '_', current_user[:current_user.rfind('@')])
+-- MAGIC dbutils.widgets.text('storage_path', storage_path)
+-- MAGIC print(f"using storage path: {storage_path}")
 
 -- COMMAND ----------
 
--- MAGIC %python display(dbutils.fs.ls(dbutils.widgets.get('storage_location')))
+-- MAGIC %python display(dbutils.fs.ls(dbutils.widgets.get('storage_path')))
 
 -- COMMAND ----------
 
-CREATE DATABASE IF NOT EXISTS $db;
-USE $db;
-
--- COMMAND ----------
-
--- add pipeline logs as table to target DLT database 
-CREATE OR REPLACE VIEW pipeline_logs AS SELECT * FROM delta.`$storage_location/system/events`
-
--- COMMAND ----------
-
-SELECT * FROM pipeline_logs ORDER BY timestamp
+-- MAGIC %sql 
+-- MAGIC CREATE OR REPLACE TEMPORARY VIEW demo_dlt_loans_system_event_log_raw 
+-- MAGIC   as SELECT * FROM delta.`$storage_path/system/events`;
+-- MAGIC SELECT * FROM demo_dlt_loans_system_event_log_raw order by timestamp desc;
 
 -- COMMAND ----------
 
@@ -63,22 +73,19 @@ SELECT * FROM pipeline_logs ORDER BY timestamp
 -- COMMAND ----------
 
 -- DBTITLE 1,Lineage Information
--- MAGIC %sql
--- MAGIC -- display lineage information from details
--- MAGIC SELECT
--- MAGIC   details:flow_definition.output_dataset,
--- MAGIC   details:flow_definition.input_datasets,
--- MAGIC   details:flow_definition.flow_type,
--- MAGIC   details:flow_definition.schema,
--- MAGIC   details:flow_definition
--- MAGIC FROM pipeline_logs
--- MAGIC WHERE details:flow_definition IS NOT NULL
--- MAGIC ORDER BY timestamp
+SELECT
+  details:flow_definition.output_dataset,
+  details:flow_definition.input_datasets,
+  details:flow_definition.flow_type,
+  details:flow_definition.schema,
+  details:flow_definition
+FROM demo_dlt_loans_system_event_log_raw
+WHERE details:flow_definition IS NOT NULL
+ORDER BY timestamp
 
 -- COMMAND ----------
 
 -- DBTITLE 1,Data Quality Results
--- retrieve log data from expectations
 SELECT
   id,
   expectations.dataset,
@@ -93,5 +100,5 @@ FROM(
     details:flow_progress.data_quality.dropped_records,
     explode(from_json(details:flow_progress:data_quality:expectations
              ,schema_of_json("[{'name':'str', 'dataset':'str', 'passed_records':42, 'failed_records':42}]"))) expectations
-  FROM pipeline_logs
+  FROM demo_dlt_loans_system_event_log_raw
   WHERE details:flow_progress.metrics IS NOT NULL) data_quality

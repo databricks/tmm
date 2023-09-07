@@ -35,7 +35,7 @@
 -- MAGIC
 -- MAGIC Our datasets are coming from 3 different systems and saved under a cloud storage folder (S3/ADLS/GCS): 
 -- MAGIC
--- MAGIC * `loans/raw_transactions` (loans uploader here in every few minutes)
+-- MAGIC * `loans/raw_transactions` (loans constantly uploaded)
 -- MAGIC * `loans/ref_accounting_treatment` (reference table, mostly static)
 -- MAGIC * `loans/historical_loans` (loan from legacy system, new data added every week)
 -- MAGIC
@@ -45,7 +45,7 @@
 
 -- MAGIC %md
 -- MAGIC
--- MAGIC ### Update the SQL below
+-- MAGIC ### Adjust the Pipeline definiton for Ingestion
 -- MAGIC
 -- MAGIC make sure to update the ingestion location for Auto Loaderin the three SQL statement below: 
 -- MAGIC

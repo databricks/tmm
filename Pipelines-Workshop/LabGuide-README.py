@@ -1,7 +1,7 @@
 # Databricks notebook source
 # MAGIC %md
 # MAGIC
-# MAGIC # Lab Guide Data Engineering
+# MAGIC # Lab Guide Data Engineering (incl UC)
 
 # COMMAND ----------
 
@@ -47,6 +47,19 @@ XY_cfc23a84
 
 # MAGIC
 # MAGIC %md
+# MAGIC ##1. Add a GitHub Repo
+# MAGIC
+# MAGIC ### Add a working repo
+# MAGIC
+# MAGIC * Under Workspace / Username select to add a new repo
+# MAGIC * For repo name use  `https://github.com/databricks/tmm`, click on create repo
+# MAGIC
+# MAGIC
+
+# COMMAND ----------
+
+# MAGIC
+# MAGIC %md
 # MAGIC ##2. Delta Live Tables
 # MAGIC
 # MAGIC
@@ -58,9 +71,9 @@ XY_cfc23a84
 # MAGIC
 # MAGIC After this module, you should be able to answer the following questions:
 # MAGIC
-# MAGIC * What is the difference between streaming Delta Live Tables and a non-streaming DLT?
+# MAGIC * What is the difference between Streaming Table (ST) and a Materialized View (MV)
 # MAGIC * What is the CTAS pattern?
-# MAGIC * Why do we use the medallion architecture?
+# MAGIC * What do we use the medallion architecture for?
 # MAGIC
 # MAGIC
 # MAGIC ### Update the provided DLT pipeline for your environment
@@ -119,7 +132,15 @@ XY_cfc23a84
 # MAGIC
 # MAGIC
 # MAGIC
-# MAGIC ### Delta Tables
+# MAGIC ### UC and Lineage
+# MAGIC
+# MAGIC Watch your instructor explaining UC lineage and Delta Tables
+# MAGIC
+# MAGIC #### Delta Tables
+# MAGIC
+# MAGIC (Instructor Demo which is part of Lineage now)
+# MAGIC
+# MAGIC
 # MAGIC Delta Live Tables use the Delta table format, these tables work for DWH, data engineering, streaming and DS/ML. 
 # MAGIC * Check out Delta table details
 # MAGIC   * When viewing the Pipeline Graph select the table "bz_raw_txs"
