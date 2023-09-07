@@ -35,9 +35,9 @@
 -- MAGIC
 -- MAGIC Our datasets are coming from 3 different systems and saved under a cloud storage folder (S3/ADLS/GCS): 
 -- MAGIC
--- MAGIC * `loans/raw_transactions` (loans constantly uploaded)
--- MAGIC * `loans/ref_accounting_treatment` (reference table, mostly static)
--- MAGIC * `loans/historical_loans` (loan from legacy system, new data added every week)
+-- MAGIC * `/demos/dlt/loans/raw_transactions` (loans constantly uploaded)
+-- MAGIC * `/demos/dlt/loans/ref_accounting_treatment` (reference table, mostly static)
+-- MAGIC * `/demos/dlt/loans/historical_loans` (loan from legacy system, new data added every week)
 -- MAGIC
 -- MAGIC Let's ingest this data incrementally, and then compute a couple of aggregates that we'll need for our final Dashboard to report our KPI.
 
@@ -81,14 +81,14 @@
 -- COMMAND ----------
 
 -- DBTITLE 1,Capture new incoming transactions
-CREATE STREAMING LIVE TABLE raw_txs
+CREATE STREAMING TABLE raw_txs
   COMMENT "New raw loan data incrementally ingested from cloud object storage landing zone"
 AS SELECT * FROM cloud_files('/demos/dlt/loans/USER_ID/raw_transactions', 'json', map("cloudFiles.inferColumnTypes", "true"))
 
 -- COMMAND ----------
 
 -- DBTITLE 1,Reference table - metadata (small & almost static)
-CREATE LIVE TABLE ref_accounting_treatment
+CREATE MATERIALIZED VIEW ref_accounting_treatment
   COMMENT "Lookup mapping for accounting codes"
 AS SELECT * FROM delta.`/demos/dlt/loans/USER_ID/ref_accounting_treatment`
 
@@ -96,7 +96,7 @@ AS SELECT * FROM delta.`/demos/dlt/loans/USER_ID/ref_accounting_treatment`
 
 -- DBTITLE 1,Historical transaction from legacy system
 -- as this is only refreshed at a weekly basis, we can lower the interval
-CREATE STREAMING LIVE TABLE raw_historical_loans
+CREATE STREAMING TABLE raw_historical_loans
   TBLPROPERTIES ("pipelines.trigger.interval"="6 hour")
   COMMENT "Raw historical transactions"
 AS SELECT * FROM cloud_files('/demos/dlt/loans/USER_ID/historical_loans', 'csv', map("cloudFiles.inferColumnTypes", "true"))
@@ -121,7 +121,7 @@ AS SELECT * FROM cloud_files('/demos/dlt/loans/USER_ID/historical_loans', 'csv',
 -- COMMAND ----------
 
 -- DBTITLE 1,enrich transactions with metadata
-CREATE STREAMING LIVE VIEW new_txs 
+CREATE STREAMING VIEW new_txs 
   COMMENT "Livestream of new transactions"
 AS SELECT txs.*, ref.accounting_treatment as accounting_treatment FROM stream(LIVE.raw_txs) txs
   INNER JOIN live.ref_accounting_treatment ref ON txs.accounting_treatment_id = ref.id
@@ -129,7 +129,7 @@ AS SELECT txs.*, ref.accounting_treatment as accounting_treatment FROM stream(LI
 -- COMMAND ----------
 
 -- DBTITLE 1,Keep only the proper transactions. Fail if cost center isn't correct, discard the others.
-CREATE STREAMING LIVE TABLE cleaned_new_txs (
+CREATE STREAMING TABLE cleaned_new_txs (
   CONSTRAINT `Payments should be this year`  EXPECT (next_payment_date > date('2020-12-31')),
   CONSTRAINT `Balance should be positive`    EXPECT (balance > 0 AND arrears_balance > 0) ON VIOLATION DROP ROW,
   CONSTRAINT `Cost center must be specified` EXPECT (cost_center_code IS NOT NULL) ON VIOLATION FAIL UPDATE
@@ -141,7 +141,7 @@ AS SELECT * from STREAM(live.new_txs)
 
 -- DBTITLE 1,Let's quarantine the bad transaction for further analysis
 -- This is the inverse condition of the above statement to quarantine incorrect data for further analysis.
-CREATE STREAMING LIVE TABLE quarantine_bad_txs (
+CREATE STREAMING TABLE quarantine_bad_txs (
   CONSTRAINT `Payments should be this year`  EXPECT (next_payment_date <= date('2020-12-31')),
   CONSTRAINT `Balance should be positive`    EXPECT (balance <= 0 OR arrears_balance <= 0) ON VIOLATION DROP ROW
 )
@@ -151,7 +151,7 @@ AS SELECT * from STREAM(live.new_txs)
 -- COMMAND ----------
 
 -- DBTITLE 1,Enrich all historical transactions
-CREATE LIVE TABLE historical_txs
+CREATE MATERIALIZED VIEW historical_txs
   COMMENT "Historical loan transactions"
 AS SELECT l.*, ref.accounting_treatment as accounting_treatment FROM LIVE.raw_historical_loans l
   INNER JOIN LIVE.ref_accounting_treatment ref ON l.accounting_treatment_id = ref.id
@@ -171,7 +171,7 @@ AS SELECT l.*, ref.accounting_treatment as accounting_treatment FROM LIVE.raw_hi
 -- COMMAND ----------
 
 -- DBTITLE 1,Balance aggregate per cost location
-CREATE LIVE TABLE total_loan_balances
+CREATE MATERIALIZED VIEW total_loan_balances
   COMMENT "Combines historical and new loan data for unified rollup of loan balances"
   TBLPROPERTIES ("pipelines.autoOptimize.zOrderCols" = "location_code")
 AS SELECT sum(revol_bal)  AS bal, addr_state   AS location_code FROM live.historical_txs  GROUP BY addr_state
@@ -180,7 +180,7 @@ AS SELECT sum(revol_bal)  AS bal, addr_state   AS location_code FROM live.histor
 -- COMMAND ----------
 
 -- DBTITLE 1,Balance aggregate per cost center
-CREATE LIVE TABLE new_loan_balances_by_cost_center
+CREATE MATERIALIZED VIEW new_loan_balances_by_cost_center
   COMMENT "Live table of new loan balances for consumption by different cost centers"
 AS SELECT sum(balance) as sum_balance, cost_center_code FROM live.cleaned_new_txs
   GROUP BY cost_center_code
@@ -188,7 +188,7 @@ AS SELECT sum(balance) as sum_balance, cost_center_code FROM live.cleaned_new_tx
 -- COMMAND ----------
 
 -- DBTITLE 1,Balance aggregate per country
-CREATE LIVE TABLE new_loan_balances_by_country
+CREATE MATERIALIZED VIEW new_loan_balances_by_country
   COMMENT "Live table of new loan balances per country"
 AS SELECT sum(count) as sum_count, country_code FROM live.cleaned_new_txs GROUP BY country_code
 
@@ -210,7 +210,7 @@ AS SELECT sum(count) as sum_count, country_code FROM live.cleaned_new_txs GROUP 
 -- MAGIC
 -- MAGIC This information let you monitor your data ingestion quality. 
 -- MAGIC
--- MAGIC You can leverage DBSQL to request these table and build custom alerts based on the metrics your business is tracking.
+-- MAGIC You can leverage DBSQL to request these table and build custom alerts based on the metrics your business is tracking such as the one below. For more expanisve demos, check out the [Databricks Demo Center](https://databricks.com/demos?itm_data=demo_center) and select "Tutorials".
 -- MAGIC
 -- MAGIC
 -- MAGIC See [how to access your DLT metrics]($./03-Log-Analysis)
@@ -218,3 +218,7 @@ AS SELECT sum(count) as sum_count, country_code FROM live.cleaned_new_txs GROUP 
 -- MAGIC <img width="500" src="https://github.com/QuentinAmbard/databricks-demo/raw/main/retail/resources/images/retail-dlt-data-quality-dashboard.png">
 -- MAGIC
 -- MAGIC <a href="/sql/dashboards/245834f6-bd44-4e01-a0c3-3fd57fc456e7" target="_blank">Data Quality Dashboard example</a>
+
+-- COMMAND ----------
+
+
