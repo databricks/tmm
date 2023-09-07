@@ -1,4 +1,10 @@
 # Databricks notebook source
+# MAGIC %md
+# MAGIC
+# MAGIC To make this lab work, you have to adjust the path names for ingestion like in the SQL lab
+
+# COMMAND ----------
+
 # MAGIC %md-sandbox
 # MAGIC # Simplify ETL with Delta Live Table
 # MAGIC

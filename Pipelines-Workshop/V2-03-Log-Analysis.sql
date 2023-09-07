@@ -102,8 +102,3 @@ FROM(
              ,schema_of_json("[{'name':'str', 'dataset':'str', 'passed_records':42, 'failed_records':42}]"))) expectations
   FROM demo_dlt_loans_system_event_log_raw
   WHERE details:flow_progress.metrics IS NOT NULL) data_quality
-
--- COMMAND ----------
-
--- MAGIC %md
--- MAGIC Your expectations are ready to be queried in SQL! Open the <a href="/sql/dashboards/245834f6-bd44-4e01-a0c3-3fd57fc456e7" target="_blank">data Quality Dashboard example</a> for more details.
