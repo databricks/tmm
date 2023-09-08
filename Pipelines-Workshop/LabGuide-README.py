@@ -19,29 +19,8 @@
 
 # COMMAND ----------
 
-import uuid
-
-print('Generate an id. It will look like like XY_cfc23a84 ') 
-myuuid = uuid.uuid4()
-xid=str(myuuid).split("-")[4][-8:]
-initials initials = input("Please enter your initials (for example TJ for Tom Jones): ")
-user_id=xid+"_"+initials
-print(f'Your ID is {initials}_{id}')
-
-# COMMAND ----------
-
 # MAGIC %md
-# MAGIC
-# MAGIC Keep this notebook with your ID open. Also copy your ID into an external editor. 
-
-# COMMAND ----------
-
-XY_cfc23a84
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC *This course is designed in a way that I can be run with many participants on single Databricks Workspace. In your own environment you won't need the ID from above, just use your own naming schema for ressources. The course uses a single node DLT cluster. We recommend to explore Enhanced Auto Scaling instead.*
+# MAGIC *This course is designed in a way that it can be run with many participants on single Databricks Workspace we are therefore using USDER_ID to separate schemas and pipelines. In your own environment you won't need that, just use your own naming schema for resources. The course uses a single node DLT cluster. We recommend to explore Enhanced Auto Scaling instead.*
 
 # COMMAND ----------
 
@@ -51,8 +30,10 @@ XY_cfc23a84
 # MAGIC
 # MAGIC ### Add a working repo
 # MAGIC
-# MAGIC * Under Workspace / Username select to add a new repo
-# MAGIC * For repo name use  `https://github.com/databricks/tmm`, click on create repo
+# MAGIC * Under Workspace / Username select repos and click on "add repo" to add a new repo
+# MAGIC * For Git Repo URL use  `https://github.com/databricks/tmm`, click on create repo
+# MAGIC * Git provider and repo name will be filled automatically.
+# MAGIC * Click "create repo" and the resoures for this course will be cloned.
 # MAGIC
 # MAGIC
 
@@ -102,13 +83,18 @@ XY_cfc23a84
 # MAGIC ### Run your first Data Pipeline
 # MAGIC 1. Watch your instructor explaining how to create a DLT pipeline first, then follow the steps below. ([Detailed documentation is available here](https://docs.databricks.com/workflows/delta-live-tables/delta-live-tables-ui.html#create-a-pipeline))
 # MAGIC 2. On your workspace, under Workflows / DLT change to "Owned by me"
-# MAGIC 3. Create a new pipeline (leave all pipeline setting on default except the ones listed below)
-# MAGIC   * `pipeline name: [use your own ID from above as the name of the pipeline]`
-# MAGIC   * Under `Notebook libraries:` select the location of the [DLT SQL notebook]
-# MAGIC   * `target: [use your own ID from above]`
+# MAGIC 3. Create a new pipeline (leave all pipeline setting **on default except the ones listed below**)
+# MAGIC   * `pipeline name: [use your own user_id from above as the name of the pipeline]`
+# MAGIC   * Under `Source Code:` select the location of the [DLT SQL notebook]
+# MAGIC   * For `Destination` select Unity Catalog
+# MAGIC     - Catalog: demos
+# MAGIC     - Target Schema: your user_id 
+# MAGIC     
+# MAGIC   
 # MAGIC   * `Cluster mode: fixed size`
-# MAGIC   * `Number nodes: 0`
-# MAGIC 3. Run the pipeline. Note, when you start the pipeline for the first time it might take a few minutes until resources are provisioned.
+# MAGIC   * `Number Workers: 0`
+# MAGIC   *  Then click "create"
+# MAGIC 3. Click on "Start" (top right) to run the pipeline. Note, when you start the pipeline for the first time it might take a few minutes until resources are provisioned.
 # MAGIC 4. Explore the the pipeline settings for the running pipeline by clicking on the "settings" button at the top, but keep all existing settings. 
 # MAGIC
 # MAGIC
@@ -179,6 +165,7 @@ XY_cfc23a84
 
 # COMMAND ----------
 
+# DBTITLE 1,art
 # MAGIC %md
 # MAGIC ## 3. DWH View / SQL Persona
 # MAGIC
@@ -224,7 +211,7 @@ XY_cfc23a84
 # MAGIC   * The Workflow will fail with an error in the second task.
 # MAGIC   * Switch to the Matrix view.
 # MAGIC     * To explore the Matrix View, run the workflow again (it will fail again).  
-# MAGIC ### Repair and Rerun
+# MAGIC ### Repair and Rerun (OPTIONAL)
 # MAGIC   * In the Matrix View, click on the second task marked in red to find out what the error is
 # MAGIC     * Click on "Highlight Error"
 # MAGIC   * Debug the 04-Udpate-Downstream notebook (just comment out the line where the error is caused with `raise`) 
