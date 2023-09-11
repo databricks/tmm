@@ -171,4 +171,4 @@ for i in range(0, int(dbutils.widgets.get('batch_count'))):
   if batch_count > 1:
     time.sleep(int(dbutils.widgets.get('batch_wait')))
   generate_transactions(int(dbutils.widgets.get('num_recs')), output_path+'/raw_transactions', 1, "append")
-  print(f'inished writing batch: {i}')
+  print(f'finished writing batch: {i}')

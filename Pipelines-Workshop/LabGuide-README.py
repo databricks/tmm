@@ -20,7 +20,7 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC *This course is designed in a way that it can be run with many participants on single Databricks Workspace we are therefore using USDER_ID to separate schemas and pipelines. In your own environment you won't need that, just use your own naming schema for resources. The course uses a single node DLT cluster. We recommend to explore Enhanced Auto Scaling instead.*
+# MAGIC *This course is designed in a way that it can be run with many participants on a single Databricks Workspace we are therefore using USDER_ID (derived from the login user) to separate schemas and pipelines. In your own environment you won't need that, just use your company's naming schema for resources. The course uses a single node DLT cluster. In production, we recommend to explore Enhanced Auto Scaling instead.*
 
 # COMMAND ----------
 
@@ -46,8 +46,8 @@
 # MAGIC
 # MAGIC ### Understand DLT Pipelines in SQL
 # MAGIC
-# MAGIC * Watch your instructor explaining how to get started with DLT using the [DLT SQL notebook]($./01-DLT-SQL). 
-# MAGIC * If you like, check out the [documentation: core concepts](https://docs.databricks.com/workflows/delta-live-tables/delta-live-tables-concepts.html)
+# MAGIC * Watch your instructor explaining how to get started with DLT using the [DLT SQL notebook]($./01-DLT-Loan-pipeline-SQL). 
+# MAGIC * For more information, check out the [documentation: core concepts](https://docs.databricks.com/workflows/delta-live-tables/delta-live-tables-concepts.html)
 # MAGIC
 # MAGIC
 # MAGIC After this module, you should be able to answer the following questions:
@@ -59,7 +59,7 @@
 # MAGIC
 # MAGIC ### Update the provided DLT pipeline for your environment
 # MAGIC
-# MAGIC In the [DLT SQL notebook]($./01-DLT-SQL) apply the following two changes:
+# MAGIC In the [DLT SQL notebook]($./01-DLT-Loan-pipeline-SQL) apply the following two changes:
 # MAGIC * Update the folder name for cloud_files in CMD-4
 # MAGIC * Update the location of the Delta table in CMD-7. 
 # MAGIC  
@@ -88,11 +88,9 @@
 # MAGIC   * Under `Source Code:` select the location of the [DLT SQL notebook]
 # MAGIC   * For `Destination` select Unity Catalog
 # MAGIC     - Catalog: demos
-# MAGIC     - Target Schema: your user_id 
-# MAGIC     
-# MAGIC   
+# MAGIC     - Target Schema: `your user_id`
 # MAGIC   * `Cluster mode: fixed size`
-# MAGIC   * `Number Workers: 0`
+# MAGIC   * `Number Workers: 1`
 # MAGIC   *  Then click "create"
 # MAGIC 3. Click on "Start" (top right) to run the pipeline. Note, when you start the pipeline for the first time it might take a few minutes until resources are provisioned.
 # MAGIC 4. Explore the the pipeline settings for the running pipeline by clicking on the "settings" button at the top, but keep all existing settings. 
@@ -102,10 +100,15 @@
 # MAGIC You can always get to your running pipelines by clicking on "Workflows" on the left menue bar and then on "Delta Live Tables" / "Owned by me"
 # MAGIC * Check the pipeline graph 
 # MAGIC   * Identify bronze, silver and gold tables
-# MAGIC   * Identify all streaming live tables in the SQL code (use the link under "Paths" at the right to open the notebook)
-# MAGIC   * Identify DLT views vs tables (hint: views are grey, tables are green)
-# MAGIC   * Recap DLT development vs production mode
+# MAGIC   * Identify all streaming tables (ST) in the SQL code (use the link under "Paths" at the right to open the notebook) 
+# MAGIC   * Identify Materialized Views and Views
 # MAGIC
+# MAGIC
+# MAGIC ### Pipeline Settings
+# MAGIC
+# MAGIC   * Recap DLT development vs production mode
+# MAGIC   * Understand how to use Unity Catalog
+# MAGIC   * Understand serverless DLT
 # MAGIC
 # MAGIC
 # MAGIC ### Explore Streaming Delta Live Tables
@@ -129,14 +132,14 @@
 # MAGIC
 # MAGIC Delta Live Tables use the Delta table format, these tables work for DWH, data engineering, streaming and DS/ML. 
 # MAGIC * Check out Delta table details
-# MAGIC   * When viewing the Pipeline Graph select the table "bz_raw_txs"
+# MAGIC   * When viewing the Pipeline Graph select the table "raw_txs"
 # MAGIC     * on the right hand side, click on the link under "Metastore" for this table to see table details
 # MAGIC     * How many files does that table consist of?
 # MAGIC     * Check the [generator notebook]($./00-Loan-Data-Generator) to estimate the number of generated files
 # MAGIC * Repeat the same exercise, but start with the navigation bar on the left 
 # MAGIC   * Click on "Data"
-# MAGIC   * Select "hive_metastore", then select your database / schema. The name of your database is the **target** parameter of your pipeline setting.
-# MAGIC   * Drill down to the `bz_raw_tx` table, e.g. `hive_metastore.FM_455df451f64eb.bz_raw_tx`
+# MAGIC   * Select your catalog / schema. The name of your schema is the **user_id** parameter of your pipeline setting.
+# MAGIC   * Drill down to the `raw_tx` table
 # MAGIC   * Check the table's schema and sample data
 # MAGIC   
 # MAGIC   
@@ -191,7 +194,7 @@
 # MAGIC * In the menue bar on the left, select Workflows
 # MAGIC * Select "Workflows owned by me"
 # MAGIC * Click on "Create Job"
-# MAGIC * Name the new job same as **your ID from above**
+# MAGIC * Name the new job same as **your user_id** from above
 # MAGIC
 # MAGIC ### Add a first task
 # MAGIC
@@ -202,7 +205,7 @@
 # MAGIC ### Add a second task
 # MAGIC * Task name: Update Downstream
 # MAGIC * Task type: Notebook 
-# MAGIC * Select the 04-Udpate-Downstream notebook
+# MAGIC * Select the `04-Udpate-Downstream` notebook
 # MAGIC
 # MAGIC
 # MAGIC
@@ -227,4 +230,4 @@
 # MAGIC %md 
 # MAGIC
 # MAGIC ##Congratulations for completing this workshop!
-# MAGIC ```@frankmunz```
+# MAGIC
