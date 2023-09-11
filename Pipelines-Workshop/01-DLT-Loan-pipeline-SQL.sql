@@ -35,9 +35,9 @@
 -- MAGIC
 -- MAGIC Our datasets are coming from 3 different systems and saved under a cloud storage folder (S3/ADLS/GCS): 
 -- MAGIC
--- MAGIC * `/demos/dlt/loans/raw_transactions` (loans constantly uploaded)
--- MAGIC * `/demos/dlt/loans/ref_accounting_treatment` (reference table, mostly static)
--- MAGIC * `/demos/dlt/loans/historical_loans` (loan from legacy system, new data added every week)
+-- MAGIC * `/demos/dlt/loans/USER_ID/raw_transactions` (loans - streaming data)
+-- MAGIC * `/demos/dlt/loans/USER_ID/ref_accounting_treatment` (reference table, mostly static)
+-- MAGIC * `/demos/dlt/loans/USER_ID/historical_loans` (loan from legacy system, new data added every week)
 -- MAGIC
 -- MAGIC Let's ingest this data incrementally, and then compute a couple of aggregates that we'll need for our final Dashboard to report our KPI.
 
@@ -121,7 +121,7 @@ AS SELECT * FROM cloud_files('/demos/dlt/loans/USER_ID/historical_loans', 'csv',
 -- COMMAND ----------
 
 -- DBTITLE 1,enrich transactions with metadata
-CREATE STREAMING VIEW new_txs 
+CREATE STREAMING LIVE VIEW new_txs 
   COMMENT "Livestream of new transactions"
 AS SELECT txs.*, ref.accounting_treatment as accounting_treatment FROM stream(LIVE.raw_txs) txs
   INNER JOIN live.ref_accounting_treatment ref ON txs.accounting_treatment_id = ref.id

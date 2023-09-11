@@ -19,25 +19,26 @@
 
 # COMMAND ----------
 
+# DBTITLE 1,Run First for Widgets
 import random
 # point to your catalog here
 catalog = "demos"
 
 # getting the user ID for the workshop so everyone is split
-user_id = dbutils.notebook.entry_point.getDbutils().notebook().getContext().userName().get()
-user_id = ''.join(filter(str.isdigit, user_id))
+user = dbutils.notebook.entry_point.getDbutils().notebook().getContext().userName().get()
+user = ''.join(filter(str.isdigit, user))
 
 # make it work in non lab environments, create 6 digit ID then
-if len(user_id) < 3:
-  user_id=str(random.randint(100000, 999999))
+if len(user) < 3:
+  user=str(random.randint(100000, 999999))
 
-schema = 'user' + user_id
+user_id = f"user_{user}"
+
+
+
+schema = user_id
 path = '/demos/dlt/loans/'+user_id
-path
 
-# COMMAND ----------
-
-# DBTITLE 1,Run First for Widgets
 dbutils.widgets.text("cat/schema", catalog+"/"+schema)
 dbutils.widgets.text('user_id', user_id)
 dbutils.widgets.dropdown('reset_all_data', 'false', ['true', 'false'], 'reset data?')
@@ -45,9 +46,7 @@ dbutils.widgets.dropdown('batch_wait', '30', ['15', '30', '45', '60'], 'sec dela
 dbutils.widgets.dropdown('num_recs', '500', ['500','1000','5000'], '#recs/write')
 dbutils.widgets.combobox('batch_count', '300', ['0', '3','100', '300', '500'], '#writes')
 
-# COMMAND ----------
-
-path
+user_id
 
 # COMMAND ----------
 

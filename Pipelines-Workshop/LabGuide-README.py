@@ -60,8 +60,7 @@
 # MAGIC ### Update the provided DLT pipeline for your environment
 # MAGIC
 # MAGIC In the [DLT SQL notebook]($./01-DLT-Loan-pipeline-SQL) apply the following two changes:
-# MAGIC * Update the folder name for cloud_files in CMD-4
-# MAGIC * Update the location of the Delta table in CMD-7. 
+# MAGIC * Update the folder name names and locations as described in the notebook.
 # MAGIC  
 # MAGIC
 # MAGIC  
@@ -178,9 +177,9 @@
 # MAGIC * On the left menue bar, select the SQL persona
 # MAGIC * Also from the left bar, open the SQL editor
 # MAGIC * Create a simple query: 
-# MAGIC   * `SELECT * FROM FM_455df451f64e.ref_accounting_treatment` (make sure to use **your schema and table name**)
+# MAGIC   * `SELECT * FROM demos.user_455444.ref_accounting_treatment` (make sure to use **your schema and table name**)
 # MAGIC   * run the query by clicking Shift-RETURN
-# MAGIC   * Save it as using your ID as a name for the query
+# MAGIC   * Save the query using your ID as a query name
 # MAGIC
 
 # COMMAND ----------
