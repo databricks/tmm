@@ -35,7 +35,7 @@ user_id = f"user_{user}"
 schema = user_id
 path = '/demos/dlt/loans/'+user_id
 
-dbutils.widgets.text("cat/schema", catalog+"/"+schema)
+dbutils.widgets.text("catalog/schema", catalog+"/"+schema)
 dbutils.widgets.text('user_id', user_id)
 dbutils.widgets.dropdown('reset_all_data', 'false', ['true', 'false'], 'reset data?')
 dbutils.widgets.dropdown('batch_wait', '30', ['15', '30', '45', '60'], 'sec delay')
