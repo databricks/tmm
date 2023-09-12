@@ -1,7 +1,7 @@
 -- Databricks notebook source
 -- MAGIC %md 
 -- MAGIC ### A cluster has been created for this demo
--- MAGIC To run this demo on the DWH that is already configured (but might be shut down)
+-- MAGIC Run this demo on the serverless DWH that is already configured. 
 
 -- COMMAND ----------
 

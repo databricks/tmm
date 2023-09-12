@@ -1,8 +1,4 @@
 # Databricks notebook source
-# MAGIC %pip install iso3166 Faker
-
-# COMMAND ----------
-
 # MAGIC %md
 # MAGIC # Data generator for DLT pipeline
 # MAGIC This notebook will generate data in the given storage path to simulate a data flow. 
@@ -46,7 +42,11 @@ dbutils.widgets.dropdown('batch_wait', '30', ['15', '30', '45', '60'], 'sec dela
 dbutils.widgets.dropdown('num_recs', '500', ['500','1000','5000'], '#recs/write')
 dbutils.widgets.combobox('batch_count', '300', ['0', '3','100', '300', '500'], '#writes')
 
-user_id
+display(user_id)
+
+# COMMAND ----------
+
+# MAGIC %pip install iso3166 Faker
 
 # COMMAND ----------
 

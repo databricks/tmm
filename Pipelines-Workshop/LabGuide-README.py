@@ -8,14 +8,9 @@
 # MAGIC %md
 # MAGIC ##1. Important
 # MAGIC
-# MAGIC * This is your main labguide. Please **keep it open in a separate tab** (or bookmark it). You will need it to follow the steps below and come back to them throughout the course. 
+# MAGIC * This is your main labguide. Please **keep it open in a separate tab**. You will need it to follow the steps below and come back to them throughout the course. 
 # MAGIC * We will work with other notebooks, such as DLT notebooks, but this guide describes how things tie together, e.g. how to run DLT notebooks as a pipeline. 
 # MAGIC
-
-# COMMAND ----------
-
-# MAGIC %md 
-# MAGIC Please run the cell below to retrieve your ID, it is needed for various tasks throughout the course
 
 # COMMAND ----------
 
@@ -65,16 +60,16 @@
 # MAGIC
 # MAGIC  
 # MAGIC ### Run the Data Generator
-# MAGIC The pipeline will ingest three different sources of data, including a constantly produced data stream. To create the data stream you have to run the generator as described:
+# MAGIC The pipeline will ingest three different data sources, including a constantly produced data stream. To create the data stream you have to run the generator as described:
 # MAGIC
 # MAGIC 1. Watch your instructor explaining how to create the streaming updates for the lending club data.
 # MAGIC 2. Use the [generator notebook]($./00-Loan-Data-Generator) and run the following steps:
-# MAGIC   * Run the widget as explained in the notebook, this allows you to define the specifics of the data stream
+# MAGIC   * Run first cell with the widget, this allows you to define the specifics of the data stream
 # MAGIC   * Use the following settings in the widget:
 # MAGIC     * `Speed: 30`
 # MAGIC     * `Volume: 50`
 # MAGIC     * `Write Count: 180`
-# MAGIC     * `Storage path: /demo/yourID, e.g. /demo/FM_f8acd3e2630b   (use **your** ID from above)`
+# MAGIC     
 # MAGIC   * Once the config values are set, run all cells
 # MAGIC     * confirm that data is produced by looking at the output of CMD 5
 # MAGIC     * leave the data generator running. It will run for the length of this course
@@ -85,14 +80,15 @@
 # MAGIC 3. Create a new pipeline (leave all pipeline setting **on default except the ones listed below**)
 # MAGIC   * `pipeline name: [use your own user_id from above as the name of the pipeline]`
 # MAGIC   * Under `Source Code:` select the location of the [DLT SQL notebook]
-# MAGIC   * For `Destination` select Unity Catalog
-# MAGIC     - Catalog: demos
+# MAGIC   * For `Destination` select **Unity Catalog**
+# MAGIC     - Catalog: demos 
 # MAGIC     - Target Schema: `your user_id`
 # MAGIC   * `Cluster mode: fixed size`
 # MAGIC   * `Number Workers: 1`
 # MAGIC   *  Then click "create"
 # MAGIC 3. Click on "Start" (top right) to run the pipeline. Note, when you start the pipeline for the first time it might take a few minutes until resources are provisioned.
-# MAGIC 4. Explore the the pipeline settings for the running pipeline by clicking on the "settings" button at the top, but keep all existing settings. 
+# MAGIC
+# MAGIC Note that the lab environment is configured that you can access the folders for data ingestion via Unity Catalog. Make sure to use least privilege here in a production environment. (see the official [documentation for more details](https://docs.databricks.com/en/data-governance/unity-catalog/manage-external-locations-and-credentials.html))
 # MAGIC
 # MAGIC
 # MAGIC ### Pipeline Graph
@@ -116,20 +112,21 @@
 # MAGIC   * note, only the new data is ingested 
 # MAGIC * Select "Full Refresh all" from the "Start" button
 # MAGIC   * note that all tables will be recomputed and backfilled 
+# MAGIC * Could we convert the MV used for ingestion to a ST? 
 # MAGIC * Use the button "Select Table for Refresh" and select all silver tables to be refreshed only
 # MAGIC
 # MAGIC
 # MAGIC
 # MAGIC ### UC and Lineage
 # MAGIC
-# MAGIC Watch your instructor explaining UC lineage and Delta Tables
+# MAGIC Watch your instructor explaining UC lineage with DLT and the underlying Delta Tables
 # MAGIC
 # MAGIC #### Delta Tables
 # MAGIC
 # MAGIC (Instructor Demo which is part of Lineage now)
 # MAGIC
 # MAGIC
-# MAGIC Delta Live Tables use the Delta table format, these tables work for DWH, data engineering, streaming and DS/ML. 
+# MAGIC Delta Live Tables is an abstraction for Spark Structured Streaming and built on Delta tables. Delta tables unify DWH, data engineering, streaming and DS/ML. 
 # MAGIC * Check out Delta table details
 # MAGIC   * When viewing the Pipeline Graph select the table "raw_txs"
 # MAGIC     * on the right hand side, click on the link under "Metastore" for this table to see table details
@@ -150,7 +147,7 @@
 # MAGIC
 # MAGIC ```
 # MAGIC Following the explanations, make sure you can answer the following questions: 
-# MAGIC * Why would you use DLT in Python? (messaging broker, meta programming, Python)
+# MAGIC * Why would you use DLT in Python? (messaging broker[can be done in SQL now!], meta programming, Python lovers)
 # MAGIC * How could you create a DLT in Python?
 # MAGIC ```
 # MAGIC [(some hints)](https://docs.databricks.com/workflows/delta-live-tables/delta-live-tables-incremental-data.html)
@@ -167,7 +164,6 @@
 
 # COMMAND ----------
 
-# DBTITLE 1,art
 # MAGIC %md
 # MAGIC ## 3. DWH View / SQL Persona
 # MAGIC
@@ -223,6 +219,14 @@
 # MAGIC   * You can delete the other failed run. 
 # MAGIC
 # MAGIC
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## 5. Outlook (optional topics in preview)
+# MAGIC
+# MAGIC ### Serverless Workflows and DLT
+# MAGIC ### Databricks Assistent
 
 # COMMAND ----------
 
