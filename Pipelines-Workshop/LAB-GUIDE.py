@@ -66,9 +66,9 @@
 # MAGIC 2. Use the [generator notebook]($./00-Loan-Data-Generator) and run the following steps:
 # MAGIC   * Run first cell with the widget, this allows you to define the specifics of the data stream
 # MAGIC   * Use the following settings in the widget:
-# MAGIC     * `Speed: 30`
-# MAGIC     * `Volume: 50`
-# MAGIC     * `Write Count: 180`
+# MAGIC     * `#recs/write (data volume): 50`
+# MAGIC     * `#writes (total number of writes): 180`
+# MAGIC     * `sec delay (pause between writes): 30`
 # MAGIC     
 # MAGIC   * Once the config values are set, run all cells
 # MAGIC     * confirm that data is produced by looking at the output of CMD 5
