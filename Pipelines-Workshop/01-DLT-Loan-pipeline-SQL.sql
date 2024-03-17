@@ -33,13 +33,13 @@
 
 -- MAGIC %md 
 -- MAGIC
--- MAGIC Our datasets are coming from 3 different systems and saved under a cloud storage folder (S3/ADLS/GCS): 
+-- MAGIC Our datasets are coming from 3 different systems and saved in UC governed volumes. You can see these volumes under `Catalog / demo / loan_io`:
 -- MAGIC
--- MAGIC * `/demos/dlt/loans/USER_ID/raw_transactions` (loans - streaming data)
--- MAGIC * `/demos/dlt/loans/USER_ID/ref_accounting_treatment` (reference table, mostly static)
--- MAGIC * `/demos/dlt/loans/USER_ID/historical_loans` (loan from legacy system, new data added every week)
+-- MAGIC * `raw_transactions` (loans - streaming data)
+-- MAGIC * `ref_accounting` (reference table, mostly static)
+-- MAGIC * `historical_loans` (loan from legacy system, new data added every week)
 -- MAGIC
--- MAGIC Let's ingest this data incrementally, and then compute a couple of aggregates that we'll need for our final Dashboard to report our KPI.
+-- MAGIC We will ingest this data incrementally, and then compute a couple of aggregates that we'll need for our final Dashboard to report our KPI.
 
 -- COMMAND ----------
 
@@ -47,12 +47,8 @@
 -- MAGIC
 -- MAGIC ### Adjust the Pipeline definiton for Ingestion
 -- MAGIC
--- MAGIC make sure to update the ingestion location for Auto Loaderin the three SQL statement below: 
+-- MAGIC make sure to update the ingestion location for Auto Loader in the first three SQL statement below: 
 -- MAGIC
--- MAGIC
--- MAGIC 1. replace `/demos/dlt/loans/USER_ID/raw_transactions` using your USER_ID from the LabGuide notebook, e.g  `user_412602` (your value will be different!). Make sure to use to right user_id.
--- MAGIC 2. same for `/demos/dlt/loans/USER_ID/ref_accounting_treatment`, again user your vulue for USER_ID 
--- MAGIC 3. same for `/demos/dlt/loans/USER_ID/historical_loans`, again user your value for USER_ID  
 
 -- COMMAND ----------
 
@@ -76,21 +72,21 @@
 -- COMMAND ----------
 
 -- DBTITLE 1,Let's review the incoming data
--- MAGIC %fs ls /demos/dlt/loans/USER_ID/raw_transactions
+-- %fs ls /demos/dlt/loans/central/raw_transactions
 
 -- COMMAND ----------
 
 -- DBTITLE 1,Capture new incoming transactions
 CREATE STREAMING TABLE raw_txs
   COMMENT "New raw loan data incrementally ingested from cloud object storage landing zone"
-AS SELECT * FROM cloud_files('/demos/dlt/loans/USER_ID/raw_transactions', 'json', map("cloudFiles.inferColumnTypes", "true"))
+AS SELECT * FROM cloud_files('/Volumes/demo/loan_io/raw_transactions', 'json', map("cloudFiles.inferColumnTypes", "true"))
 
 -- COMMAND ----------
 
 -- DBTITLE 1,Reference table - metadata (small & almost static)
 CREATE MATERIALIZED VIEW ref_accounting_treatment
   COMMENT "Lookup mapping for accounting codes"
-AS SELECT * FROM delta.`/demos/dlt/loans/USER_ID/ref_accounting_treatment`
+AS SELECT * FROM delta.`/Volumes/demo/loan_io/ref_accounting`
 
 -- COMMAND ----------
 
@@ -99,7 +95,7 @@ AS SELECT * FROM delta.`/demos/dlt/loans/USER_ID/ref_accounting_treatment`
 CREATE STREAMING TABLE raw_historical_loans
   TBLPROPERTIES ("pipelines.trigger.interval"="6 hour")
   COMMENT "Raw historical transactions"
-AS SELECT * FROM cloud_files('/demos/dlt/loans/USER_ID/historical_loans', 'csv', map("cloudFiles.inferColumnTypes", "true"))
+AS SELECT * FROM cloud_files('/Volumes/demo/loan_io/historical_loans', 'csv', map("cloudFiles.inferColumnTypes", "true"))
 
 -- COMMAND ----------
 
@@ -218,7 +214,3 @@ AS SELECT sum(count) as sum_count, country_code FROM live.cleaned_new_txs GROUP 
 -- MAGIC <img width="500" src="https://github.com/QuentinAmbard/databricks-demo/raw/main/retail/resources/images/retail-dlt-data-quality-dashboard.png">
 -- MAGIC
 -- MAGIC <a href="/sql/dashboards/245834f6-bd44-4e01-a0c3-3fd57fc456e7" target="_blank">Data Quality Dashboard example</a>
-
--- COMMAND ----------
-
-

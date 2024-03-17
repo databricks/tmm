@@ -39,4 +39,12 @@ SELECT * FROM event_log("f30e4ffb-32ab-4c87-b744-28ada175dbd6")
 
 -- MAGIC %md
 -- MAGIC
--- MAGIC For more information [check the documentation](https://docs.databricks.com/en/delta-live-tables/observability.html)
+-- MAGIC ## System Tables
+-- MAGIC
+-- MAGIC For system table information check out Catalog Explorer under System and the this [Databricks blog](https://www.databricks.com/blog/improve-lakehouse-security-monitoring-using-system-tables-databricks-unity-catalog). 
+-- MAGIC
+-- MAGIC For more information about DLT events [check the documentation](https://docs.databricks.com/en/delta-live-tables/observability.html)
+
+-- COMMAND ----------
+
+

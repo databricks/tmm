@@ -14,20 +14,22 @@ dbutils.library.restartPython()
 # MAGIC
 # MAGIC **Make sure the storage path matches what you defined in your DLT pipeline as input.**
 # MAGIC
-# MAGIC 1. Run Cmd 2 to show widgets
-# MAGIC 2. Specify Storage path in widget
-# MAGIC 3. "Run All" to generate your data
-# MAGIC 4. When finished generating data, "Stop Execution"
+# MAGIC As an Instructor use the instructor login (!)
 # MAGIC
-# MAGIC <!-- Collect usage data (view). Remove it to disable collection. View README for more details.  -->
-# MAGIC <img width="1px" src="https://www.google-analytics.com/collect?v=1&gtm=GTM-NKQ8TT7&tid=UA-163989034-1&aip=1&t=event&ec=dbdemos&ea=VIEW&dp=%2F_dbdemos%2Fdata-engineering%2Fdlt-loans%2F_resources%2F00-Loan-Data-Generator&cid=local&uid=local">
+# MAGIC * Create catalog demo
+# MAGIC * Create schema loan_io
+# MAGIC * Define 3 volumes historical_loans, raw_transactions, ref_accounting
+# MAGIC * catalog, schema and volumes are not seen by attendees, you need to set e.g. using the UI 
+# MAGIC   * Give `account users` the priv `data editor` 
+# MAGIC   * and then revoke `write to volume`
+# MAGIC
 
 # COMMAND ----------
 
 reset_all_data='true'
 batch_wait=30
 num_recs = 500
-batch_count= 300
+batch_count= 600
 
 # volumnes
 output_path =     '/Volumes/demo/loan_io/'

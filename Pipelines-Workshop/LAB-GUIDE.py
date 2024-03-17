@@ -6,7 +6,7 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ##1. Important
+# MAGIC ##0. Important
 # MAGIC
 # MAGIC * This is your main labguide. Please **keep it open in a separate tab**. You will need it to follow the steps below and come back to them throughout the course. 
 # MAGIC * We will work with other notebooks, such as DLT notebooks, but this guide describes how things tie together, e.g. how to run DLT notebooks as a pipeline. 
@@ -15,7 +15,12 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC *This course is designed in a way that it can be run with many participants on a single Databricks Workspace we are therefore using USDER_ID (derived from the login user) to separate schemas and pipelines. In your own environment you won't need that, just use your company's naming schema for resources. The course uses a single node DLT cluster. In production, we recommend to explore Enhanced Auto Scaling instead.*
+# MAGIC
+# MAGIC ##Super Important
+# MAGIC
+# MAGIC This course is designed in a way that it can be run with many participants on a single Databricks Workspace we are therefore using your **USER ID** (derived from the login user) to separate schemas and pipelines. In your own environment you won't need that, just use your company's naming schema for resources. 
+# MAGIC
+# MAGIC To get to your user id, check your login email at the to right of the workspace: odl_user_1257777@databrickslabs.com means your user id is: `user_1257777`
 
 # COMMAND ----------
 
@@ -25,12 +30,30 @@
 # MAGIC
 # MAGIC ### Add a working repo
 # MAGIC
-# MAGIC * Under Workspace / Username select repos and click on "add repo" to add a new repo
+# MAGIC * Under Workspace / Your Username select repos and click on "add repo" to add a new repo
 # MAGIC * For Git Repo URL use  `https://github.com/databricks/tmm`, click on create repo
-# MAGIC * Git provider and repo name will be filled automatically.
+# MAGIC * Git provider and repo name will be filled automatically (repo name is `tmm`).
+# MAGIC * Select Sparse Checkout Mode
+# MAGIC * under Cone Patter put `Pipelines-Workshop/` (DO NOT FORGET THE "/" at the of the pattern)
 # MAGIC * Click "create repo" and the resoures for this course will be cloned.
-# MAGIC
-# MAGIC
+# MAGIC * Click on `Pipelines Workshop` this is the folder we will be working with in this lab
+
+# COMMAND ----------
+
+# take a note of your user id (copying from top right)
+#
+#     USER_ID = 
+#
+# alternatively you can run this cell to compute your USER
+import random
+user = dbutils.notebook.entry_point.getDbutils().notebook().getContext().userName().get()
+user = ''.join(filter(str.isdigit, user))
+
+# make it work in non lab environments, create a 6 digit ID then
+if len(user) < 3:
+  user=str(random.randint(100000, 999999))
+
+print(f"user_{user}")
 
 # COMMAND ----------
 
@@ -54,25 +77,10 @@
 # MAGIC
 # MAGIC ### Update the provided DLT pipeline for your environment
 # MAGIC
-# MAGIC In the [DLT SQL notebook]($./01-DLT-Loan-pipeline-SQL) apply the following two changes:
-# MAGIC * Update the folder name names and locations as described in the notebook.
+# MAGIC In the [DLT SQL notebook]($./01-DLT-Loan-pipeline-SQL) check if the correct volumes are used for ingestion.
+# MAGIC * Update the folder names and locations as described in the notebook. 
+# MAGIC   * The locations used in Auto Loader must match the volumes paths as explained in the DLT SQL notebook
 # MAGIC  
-# MAGIC
-# MAGIC  
-# MAGIC ### Run the Data Generator
-# MAGIC The pipeline will ingest three different data sources, including a constantly produced data stream. To create the data stream you have to run the generator as described:
-# MAGIC
-# MAGIC 1. Watch your instructor explaining how to create the streaming updates for the lending club data.
-# MAGIC 2. Use the [generator notebook]($./00-Loan-Data-Generator) and run the following steps:
-# MAGIC   * Run first cell with the widget, this allows you to define the specifics of the data stream
-# MAGIC   * Use the following settings in the widget:
-# MAGIC     * `#recs/write (data volume): 50`
-# MAGIC     * `#writes (total number of writes): 180`
-# MAGIC     * `sec delay (pause between writes): 30`
-# MAGIC     
-# MAGIC   * Once the config values are set, run all cells
-# MAGIC     * confirm that data is produced by looking at the output of CMD 5
-# MAGIC     * leave the data generator running. It will run for the length of this course
 # MAGIC
 # MAGIC ### Run your first Data Pipeline
 # MAGIC 1. Watch your instructor explaining how to create a DLT pipeline first, then follow the steps below. ([Detailed documentation is available here](https://docs.databricks.com/workflows/delta-live-tables/delta-live-tables-ui.html#create-a-pipeline))
@@ -81,7 +89,7 @@
 # MAGIC   * `pipeline name: [use your own user_id from above as the name of the pipeline]`
 # MAGIC   * Under `Source Code:` select the location of the [DLT SQL notebook]
 # MAGIC   * For `Destination` select **Unity Catalog**
-# MAGIC     - Catalog: demos 
+# MAGIC     - Catalog: demo 
 # MAGIC     - Target Schema: `your user_id`
 # MAGIC   * `Cluster mode: fixed size`
 # MAGIC   * `Number Workers: 1`
@@ -173,7 +181,7 @@
 # MAGIC * On the left menue bar, select the SQL persona
 # MAGIC * Also from the left bar, open the SQL editor
 # MAGIC * Create a simple query: 
-# MAGIC   * `SELECT * FROM demos.user_455444.ref_accounting_treatment` (make sure to use **your schema and table name**)
+# MAGIC   * `SELECT * FROM demo.USER_ID.ref_accounting_treatment` (make sure to use **your schema and table name**)
 # MAGIC   * run the query by clicking Shift-RETURN
 # MAGIC   * Save the query using your ID as a query name
 # MAGIC
