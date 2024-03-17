@@ -30,7 +30,7 @@ num_recs = 500
 batch_count= 300
 
 # volumnes
-output_path =     '/Volumes/demo/loans/'
+output_path =     '/Volumes/demo/loan_io/'
 hist_loans =      output_path+'historical_loans'
 raw_tx =          output_path+'raw_transactions'
 ref_accounting =  output_path+'ref_accounting'
@@ -48,7 +48,7 @@ if reset_all_data:
   dbutils.fs.rm(raw_tx, True)
   dbutils.fs.rm(ref_accounting, True)
   
-dbutils.fs.mkdirs(output_path)
+#dbutils.fs.mkdirs(output_path)
 
 def cleanup_folder(path):
   #Cleanup to have something nicer
@@ -62,7 +62,7 @@ spark.read.csv('/databricks-datasets/lending-club-loan-stats', header=True) \
       .withColumn('id', F.monotonically_increasing_id()) \
       .withColumn('member_id', (F.rand()*1000000).cast('int')) \
       .withColumn('accounting_treatment_id', (F.rand()*6).cast('int')) \
-      .repartition(50).write.mode('overwrite').option('header', True).format('csv').save(hist_loans))
+      .repartition(50).write.mode('overwrite').option('header', True).format('csv').save(hist_loans)
 
 spark.createDataFrame([
   (0, 'held_to_maturity'),
