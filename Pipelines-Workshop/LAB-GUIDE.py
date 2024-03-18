@@ -36,7 +36,7 @@
 # MAGIC * For Git Repo URL use  [`https://github.com/databricks/tmm`](https://github.com/databricks/tmm)
 # MAGIC * Git provider and repo name will be filled automatically (repo name is `tmm`).
 # MAGIC * Select Sparse Checkout Mode (otherwise you will clone more content than necessary)
-# MAGIC   * under Cone Patter put `Pipelines-Workshop/` (DO NOT FORGET THE "/" at the of the pattern)
+# MAGIC   * under Cone Patter put `Pipelines-Workshop` 
 # MAGIC * Click "create repo" and the resoures for this course will be cloned.
 # MAGIC * Click on `Pipelines Workshop`. This is the folder we will be working with in this lab
 
