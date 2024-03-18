@@ -29,6 +29,22 @@ dbutils.library.restartPython()
 
 # COMMAND ----------
 
+# MAGIC
+# MAGIC %sql
+# MAGIC -- CREATE CATALOG IF NOT EXISTS demo ;
+# MAGIC -- CREATE SCHEMA IF NOT EXISTS loan_io ;
+# MAGIC -- USE demo.loan_io ;
+# MAGIC
+# MAGIC -- CREATE VOLUME IF NOT EXISTS historical_loans;
+# MAGIC -- CREATE VOLUME IF NOT EXISTS raw_transactions;
+# MAGIC -- CREATE VOLUME IF NOT EXISTS ref_accounting;
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
 # these settings are ported over from the removed widgets
 
 reset_all_data='true'
