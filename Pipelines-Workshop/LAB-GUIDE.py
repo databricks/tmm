@@ -1,7 +1,7 @@
 # Databricks notebook source
 # MAGIC %md
 # MAGIC
-# MAGIC # Lab Guide Data Engineering (incl UC)
+# MAGIC # Lab Guide Data Engineering in the Age of AI (03/2024)
 
 # COMMAND ----------
 
@@ -9,7 +9,7 @@
 # MAGIC ##0. Important
 # MAGIC
 # MAGIC * This is your main labguide. Please **keep it open in a separate tab**. You will need it to follow the steps below and come back to them throughout the course. 
-# MAGIC * We will work with other notebooks, such as DLT notebooks, but this guide describes how things tie together, e.g. how to run DLT notebooks as a pipeline. 
+# MAGIC * We will work with other notebooks, catalogs and workspace settings and this guide describes how things tie together, e.g. how to run DLT notebooks as a pipeline. 
 # MAGIC
 
 # COMMAND ----------
@@ -18,9 +18,9 @@
 # MAGIC
 # MAGIC ##Super Important
 # MAGIC
-# MAGIC This course is designed in a way that it can be run with many participants on a single Databricks Workspace we are therefore using your **USER ID** (derived from the login user) to separate schemas and pipelines. In your own environment you won't need that, just use your company's naming schema for resources. 
+# MAGIC This course is designed in a way it can be run with thousands of participants on a single Databricks account. We are therefore using the **USER ID** (derived from your login user email) to separate schemas and pipelines. In your own environment you won't need that. Just use your company's naming schema for resources. 
 # MAGIC
-# MAGIC To get to your user id, check your login email at the to right of the workspace: odl_user_1257777@databrickslabs.com means your user id is: `user_1257777`
+# MAGIC To get to your user id, check your login email at the to right of the workspace. Example: odl_user_1257777@databrickslabs.com means your user id is: `user_1257777`
 
 # COMMAND ----------
 
@@ -28,15 +28,17 @@
 # MAGIC %md
 # MAGIC ##1. Add a GitHub Repo
 # MAGIC
-# MAGIC ### Add a working repo
+# MAGIC To get access to the lab notebooks, create a repo in your workspace
 # MAGIC
-# MAGIC * Under Workspace / Your Username select repos and click on "add repo" to add a new repo
-# MAGIC * For Git Repo URL use  `https://github.com/databricks/tmm`, click on create repo
+# MAGIC ### Add a Repo
+# MAGIC
+# MAGIC * Under `Workspace / Your Username` select `Repos` and click on "add repo" to add a new repo
+# MAGIC * For Git Repo URL use  [`https://github.com/databricks/tmm`](https://github.com/databricks/tmm)
 # MAGIC * Git provider and repo name will be filled automatically (repo name is `tmm`).
-# MAGIC * Select Sparse Checkout Mode
-# MAGIC * under Cone Patter put `Pipelines-Workshop/` (DO NOT FORGET THE "/" at the of the pattern)
+# MAGIC * Select Sparse Checkout Mode (otherwise you will clone more content than necessary)
+# MAGIC   * under Cone Patter put `Pipelines-Workshop/` (DO NOT FORGET THE "/" at the of the pattern)
 # MAGIC * Click "create repo" and the resoures for this course will be cloned.
-# MAGIC * Click on `Pipelines Workshop` this is the folder we will be working with in this lab
+# MAGIC * Click on `Pipelines Workshop`. This is the folder we will be working with in this lab
 
 # COMMAND ----------
 
@@ -83,17 +85,17 @@ print(f"user_{user}")
 # MAGIC  
 # MAGIC
 # MAGIC ### Run your first Data Pipeline
-# MAGIC 1. Watch your instructor explaining how to create a DLT pipeline first, then follow the steps below. ([Detailed documentation is available here](https://docs.databricks.com/workflows/delta-live-tables/delta-live-tables-ui.html#create-a-pipeline))
+# MAGIC 1. **Watch your instructor explaining how to create a DLT pipeline first**, then follow the steps below. ([Detailed documentation is available here](https://docs.databricks.com/workflows/delta-live-tables/delta-live-tables-ui.html#create-a-pipeline))
 # MAGIC 2. On your workspace, under Workflows / DLT change to "Owned by me"
 # MAGIC 3. Create a new pipeline (leave all pipeline setting **on default except the ones listed below**)
 # MAGIC   * `pipeline name: [use your own user_id from above as the name of the pipeline]`
 # MAGIC   * Under `Source Code:` select the location of the [DLT SQL notebook]
 # MAGIC   * For `Destination` select **Unity Catalog**
 # MAGIC     - Catalog: demo 
-# MAGIC     - Target Schema: `your user_id`
+# MAGIC     - Target Schema: `your user_id` (you will work with your own **schema** to separate content from others)
 # MAGIC   * `Cluster mode: fixed size`
 # MAGIC   * `Number Workers: 1`
-# MAGIC   *  Then click "create"
+# MAGIC   *  Then click "Create"
 # MAGIC 3. Click on "Start" (top right) to run the pipeline. Note, when you start the pipeline for the first time it might take a few minutes until resources are provisioned.
 # MAGIC
 # MAGIC Note that the lab environment is configured that you can access the folders for data ingestion via Unity Catalog. Make sure to use least privilege here in a production environment. (see the official [documentation for more details](https://docs.databricks.com/en/data-governance/unity-catalog/manage-external-locations-and-credentials.html))
@@ -111,7 +113,7 @@ print(f"user_{user}")
 # MAGIC
 # MAGIC   * Recap DLT development vs production mode
 # MAGIC   * Understand how to use Unity Catalog
-# MAGIC   * Understand serverless DLT
+# MAGIC   * Understand DLT with serverless compute
 # MAGIC
 # MAGIC
 # MAGIC ### Explore Streaming Delta Live Tables
@@ -131,7 +133,7 @@ print(f"user_{user}")
 # MAGIC
 # MAGIC #### Delta Tables
 # MAGIC
-# MAGIC (Instructor Demo which is part of Lineage now)
+# MAGIC (Instructor Demo)
 # MAGIC
 # MAGIC
 # MAGIC Delta Live Tables is an abstraction for Spark Structured Streaming and built on Delta tables. Delta tables unify DWH, data engineering, streaming and DS/ML. 
@@ -204,7 +206,7 @@ print(f"user_{user}")
 # MAGIC * Task name: Ingest
 # MAGIC * Task type: DLT task
 # MAGIC * Pipeline: your DLT pipeline name for the DLT SQL notebook from above (the pipeline should be in triggered mode for this lab.)
-# MAGIC * Cluster: labcluster*
+# MAGIC * Cluster: labcluster
 # MAGIC ### Add a second task
 # MAGIC * Task name: Update Downstream
 # MAGIC * Task type: Notebook 
@@ -233,8 +235,12 @@ print(f"user_{user}")
 # MAGIC %md
 # MAGIC ## 5. Outlook (optional topics in preview)
 # MAGIC
+# MAGIC Follow your instructor for cababilities still in preview. Time permitting, he will demo them on another environment. 
+# MAGIC
 # MAGIC ### Serverless Workflows and DLT
 # MAGIC ### Databricks Assistent
+# MAGIC
+# MAGIC A full end to end demo of this section [**Data Engineering in the Age of AI** is available as a video in the Databricks Demo Center](https://www.databricks.com/resources/demos/videos/data-engineering/databricks-data-intelligence-platform?itm_data=demo_center)
 
 # COMMAND ----------
 
