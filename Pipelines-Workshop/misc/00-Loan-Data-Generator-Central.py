@@ -16,15 +16,20 @@ dbutils.library.restartPython()
 # MAGIC
 # MAGIC As an Instructor use the instructor login (!)
 # MAGIC
-# MAGIC * Create catalog demo
-# MAGIC * Create schema loan_io
-# MAGIC * Define 3 volumes historical_loans, raw_transactions, ref_accounting
-# MAGIC * catalog, schema and volumes are not seen by attendees, you need to set e.g. using the UI 
+# MAGIC * Create 
+# MAGIC   * catalog demo
+# MAGIC   * schema loan_io
+# MAGIC * In the schema define 3 volumes historical_loans, raw_transactions, ref_accounting 
+# MAGIC * catalog, schema and volumes are not yet seen by attendees, you need to set e.g. using the UI 
 # MAGIC   * Give `account users` the priv `data editor` 
 # MAGIC   * and then revoke `write to volume`
+# MAGIC * Run load gen before starting labs on a single user cluster (define one if it does not exist)
+# MAGIC * Use lab user (not intstructor) to demo labs
 # MAGIC
 
 # COMMAND ----------
+
+# these settings are ported over from the removed widgets
 
 reset_all_data='true'
 batch_wait=30
