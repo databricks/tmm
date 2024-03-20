@@ -71,11 +71,6 @@
 
 -- COMMAND ----------
 
--- DBTITLE 1,Let's review the incoming data
--- %fs ls /demos/dlt/loans/central/raw_transactions
-
--- COMMAND ----------
-
 -- DBTITLE 1,Capture new incoming transactions
 CREATE STREAMING TABLE raw_txs
   COMMENT "New raw loan data incrementally ingested from cloud object storage landing zone"
