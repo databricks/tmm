@@ -1,0 +1,2794 @@
+{
+  "datasets": [
+    {
+      "name": "02cdeb7f",
+      "displayName": "30_day_unique_agg",
+      "query": "with billing_logs_with_list_cost as (\n  SELECT\n    t1.*,\n    t1.usage_quantity * list_prices.pricing.default as list_cost\n  FROM system.billing.usage t1 \n  INNER JOIN system.billing.list_prices list_prices on\n      t1.cloud = list_prices.cloud and\n      t1.sku_name = list_prices.sku_name and\n      t1.usage_start_time >= list_prices.price_start_time and\n      (t1.usage_end_time <= list_prices.price_end_time or list_prices.price_end_time is null)\n  WHERE\n      t1.sku_name LIKE '%SERVERLESS%'\n      AND (t1.sku_name LIKE '%JOBS%' or t1.usage_metadata.notebook_id IS NOT NULL)\n)\nSELECT \n    COUNT(DISTINCT usage_metadata.job_id) as jobs,\n    COUNT(DISTINCT usage_metadata.notebook_id) as notebooks,\n    COUNT(DISTINCT identity_metadata.run_as) as users\nfrom billing_logs_with_list_cost\nWHERE usage_date >= CURRENT_DATE() - INTERVAL 30 DAY\nGROUP BY ALL "
+    },
+    {
+      "name": "06b3c193",
+      "displayName": "30_60_day_spend",
+      "query": "with billing_logs_with_list_cost as (\n  SELECT\n    t1.*,\n    t1.usage_quantity * list_prices.pricing.default as list_cost\n  FROM system.billing.usage t1 \n  INNER JOIN system.billing.list_prices list_prices on\n      t1.cloud = list_prices.cloud and\n      t1.sku_name = list_prices.sku_name and\n      t1.usage_start_time >= list_prices.price_start_time and\n      (t1.usage_end_time <= list_prices.price_end_time or list_prices.price_end_time is null)\n  WHERE\n      t1.sku_name LIKE '%SERVERLESS%'\n      AND (t1.sku_name LIKE '%JOBS%' or t1.usage_metadata.notebook_id IS NOT NULL)\n)\nSELECT\n    *\n    ,try_divide( (last30DaySpend - last30to60DaySpend) , last30to60DaySpend) * 100 AS Last30DayGrowth\nFROM\n  (\n    SELECT\n      SUM(list_cost) AS spend\n      ,SUM(CASE WHEN usage_end_time BETWEEN date_add(current_date(), -30) AND current_date() THEN list_cost ELSE 0 END) AS Last30DaySpend\n      ,SUM(CASE WHEN usage_end_time BETWEEN date_add(current_date(), -60) AND date_add(current_date(), -31) THEN list_cost ELSE 0 END) AS Last30to60DaySpend\n    FROM billing_logs_with_list_cost\n    GROUP BY ALL\n  )"
+    },
+    {
+      "name": "3641787b",
+      "displayName": "most_expensive_runs_30_days",
+      "query": "SELECT\n    t1.workspace_id,\n    t1.usage_metadata.job_id,\n    t1.usage_metadata.job_run_id as run_id,\n    SUM(t1.usage_quantity * list_prices.pricing.default) as `$list`,\n    first(identity_metadata.run_as, true) as run_as,\n    first(t1.custom_tags, true) as custom_tags,\n    MAX(t1.usage_end_time) as last_seen\nFROM system.billing.usage t1 \nINNER JOIN system.billing.list_prices list_prices on\n    t1.cloud = list_prices.cloud and\n    t1.sku_name = list_prices.sku_name and\n    t1.usage_start_time >= list_prices.price_start_time and\n    (t1.usage_end_time <= list_prices.price_end_time or list_prices.price_end_time is null)\nWHERE\n    t1.sku_name LIKE '%SERVERLESS%'\n    AND t1.usage_metadata.job_id IS NOT NULL\n    AND t1.usage_metadata.job_run_id IS NOT NULL\n    AND t1.usage_start_time >= CURRENT_DATE() - INTERVAL 30 DAY \nGROUP BY ALL\nORDER BY `$list` DESC\n"
+    },
+    {
+      "name": "543a666e",
+      "displayName": "outliers_job_runs",
+      "query": "-- SPENDING BROKEN DOWN BY JOB\nwith stats_per_job_run as (\n  SELECT\n    t1.workspace_id,\n    t1.usage_metadata.job_id,\n    t1.usage_metadata.job_run_id as run_id,\n    SUM(t1.usage_quantity * list_prices.pricing.default) as list_cost,\n    first(identity_metadata.run_as, true) as run_as,\n    first(t1.custom_tags, true) as custom_tags,\n    MAX(t1.usage_end_time) as last_seen,\n    MIN(t1.usage_start_time) as first_seen\n  FROM system.billing.usage t1 \n  INNER JOIN system.billing.list_prices list_prices on\n      t1.cloud = list_prices.cloud and\n      t1.sku_name = list_prices.sku_name and\n      t1.usage_start_time >= list_prices.price_start_time and\n      (t1.usage_end_time <= list_prices.price_end_time or list_prices.price_end_time is null)\n  WHERE\n      t1.sku_name LIKE '%SERVERLESS%'\n      AND t1.usage_metadata.job_id IS NOT NULL\n      AND t1.usage_metadata.job_run_id IS NOT NULL\n      AND t1.usage_start_time >= CURRENT_DATE() - INTERVAL 30 DAY \n  GROUP BY 1,2,3\n), \nstats_per_job AS (\n  SELECT\n    workspace_id,\n    job_id,\n    COUNT(run_id) AS runs,\n    SUM(list_cost) AS total_list_cost,\n    AVG(list_cost) AS avg_list_cost,\n    MAX(list_cost) AS max_list_cost,\n    percentile(list_cost, 0.9) AS p90\n  FROM\n    stats_per_job_run\n  WHERE\n    first_seen > CURRENT_TIMESTAMP() - INTERVAL 30 DAYS\n  GROUP BY ALL\n  ORDER BY\n    total_list_cost DESC\n)\nSELECT\n  *,\n  (max_list_cost - p90) AS dbus_deviation_from_p90\nFROM\n  stats_per_job\nORDER BY\n  dbus_deviation_from_p90 DESC"
+    },
+    {
+      "name": "6a78fc9a",
+      "displayName": "wow_growth",
+      "query": "with serverless_logs as (\n  SELECT\n    t1.*,\n    t1.usage_quantity * list_prices.pricing.default as list_cost\n  FROM system.billing.usage t1 \n  INNER JOIN system.billing.list_prices list_prices on\n    t1.cloud = list_prices.cloud and\n    t1.sku_name = list_prices.sku_name and\n    t1.usage_start_time >= list_prices.price_start_time and\n    (t1.usage_end_time <= list_prices.price_end_time or list_prices.price_end_time is null)\n  WHERE\n    t1.sku_name LIKE '%SERVERLESS%'\n    AND (t1.sku_name LIKE '%JOBS%' or t1.usage_metadata.notebook_id IS NOT NULL)\n),\njobs_dollars as (\n  select\n    date_sub(to_date(usage_date), dayofweek(to_date(usage_date))) as week_start,\n    SUM(list_cost) as list_cost,\n    COUNT(distinct to_date(usage_start_time)) as days\n  from\n    serverless_logs t1 \n  group by all\n  having days = 7\n  order by 1 asc, 2 asc\n),\ndbu_growth as (\n    select\n        week_start,\n        list_cost,\n        100 * (list_cost - lag(list_cost, 1) over (order by week_start)) / lag(list_cost, 1) over (order by week_start) as weekly_growth\n    from jobs_dollars\n    order by week_start asc\n)\nselect\n    week_start,\n    weekly_growth,\n    list_cost,\n    avg(weekly_growth) over (order by week_start ROWS BETWEEN 12 preceding AND CURRENT ROW) as 3_months_growth_moving_avg\nfrom dbu_growth"
+    },
+    {
+      "name": "6c66ce8a",
+      "displayName": "most_expensive_workspaces_30_days",
+      "query": "SELECT\n    t1.workspace_id,\n    SUM(t1.usage_quantity * list_prices.pricing.default) as list_cost,\n    COUNT(DISTINCT identity_metadata.run_as) as users, \n    COUNT(DISTINCT usage_metadata.job_id) as jobs,\n    COUNT(DISTINCT usage_metadata.job_run_id) as job_runs,\n    COUNT(DISTINCT usage_metadata.notebook_id) as notebooks\nFROM system.billing.usage t1 \nINNER JOIN system.billing.list_prices list_prices on\n    t1.cloud = list_prices.cloud and\n    t1.sku_name = list_prices.sku_name and\n    t1.usage_start_time >= list_prices.price_start_time and\n    (t1.usage_end_time <= list_prices.price_end_time or list_prices.price_end_time is null)\nWHERE\n    t1.sku_name LIKE '%SERVERLESS%'\n    AND t1.usage_start_time >= CURRENT_DATE() - INTERVAL 30 DAY \n    AND (t1.sku_name LIKE '%JOBS%' or t1.usage_metadata.notebook_id IS NOT NULL)\nGROUP BY ALL\nORDER BY list_cost DESC\n"
+    },
+    {
+      "name": "767fc649",
+      "displayName": "most_expensive_jobs_30_days",
+      "query": "SELECT\n    t1.workspace_id,\n    t1.usage_metadata.job_id,\n    COUNT(DISTINCT t1.usage_metadata.job_run_id) as runs,\n    SUM(t1.usage_quantity * list_prices.pricing.default) as `$list`,\n    first(identity_metadata.run_as, true) as run_as,\n    first(t1.custom_tags, true) as custom_tags,\n    MAX(t1.usage_end_time) as last_seen\nFROM system.billing.usage t1 \nINNER JOIN system.billing.list_prices list_prices on\n    t1.cloud = list_prices.cloud and\n    t1.sku_name = list_prices.sku_name and\n    t1.usage_start_time >= list_prices.price_start_time and\n    (t1.usage_end_time <= list_prices.price_end_time or list_prices.price_end_time is null)\nWHERE\n    t1.sku_name LIKE '%SERVERLESS%'\n    AND t1.sku_name LIKE '%JOBS%'\n    AND t1.usage_metadata.job_id IS NOT NULL\n    AND t1.usage_start_time >= CURRENT_DATE() - INTERVAL 30 DAY \nGROUP BY ALL\nORDER BY `$list` DESC\n"
+    },
+    {
+      "name": "8e89c445",
+      "displayName": "most_expensive_notebooks_30_days",
+      "query": "SELECT\n    t1.workspace_id,\n    t1.usage_metadata.notebook_id,\n    first(t1.identity_metadata.run_as, true) as run_as,\n    SUM(t1.usage_quantity * list_prices.pricing.default) as list_cost,\n    first(t1.custom_tags, true) as custom_tags\nFROM system.billing.usage t1 \nINNER JOIN system.billing.list_prices list_prices on\n    t1.cloud = list_prices.cloud and\n    t1.sku_name = list_prices.sku_name and\n    t1.usage_start_time >= list_prices.price_start_time and\n    (t1.usage_end_time <= list_prices.price_end_time or list_prices.price_end_time is null)\nWHERE\n    t1.sku_name LIKE '%SERVERLESS%'\n    AND t1.usage_metadata.notebook_id IS NOT NULL\n    AND t1.usage_start_time >= CURRENT_DATE() - INTERVAL 30 DAY \nGROUP BY ALL\nORDER BY list_cost DESC\n"
+    },
+    {
+      "name": "a61c5453",
+      "displayName": "most_expensive_users_30_days",
+      "query": "with list_logs as (\n    SELECT\n        t1.workspace_id,\n        identity_metadata.run_as,\n        CASE WHEN billing_origin_product = \"JOBS\" THEN SUM(t1.usage_quantity * list_prices.pricing.default) ELSE 0 END as `$list_jobs`,\n        CASE WHEN billing_origin_product = \"NOTEBOOKS\" THEN SUM(t1.usage_quantity * list_prices.pricing.default) ELSE 0 END as `$list_notebooks`\n    FROM system.billing.usage t1 \n    INNER JOIN system.billing.list_prices list_prices on\n        t1.cloud = list_prices.cloud and\n        t1.sku_name = list_prices.sku_name and\n        t1.usage_start_time >= list_prices.price_start_time and\n        (t1.usage_end_time <= list_prices.price_end_time or list_prices.price_end_time is null)\n    WHERE\n        t1.sku_name LIKE '%SERVERLESS%'\n        AND identity_metadata.run_as IS NOT NULL\n        AND t1.usage_start_time >= CURRENT_DATE() - INTERVAL 30 DAY \n        AND (t1.sku_name LIKE '%JOBS%' or t1.usage_metadata.notebook_id IS NOT NULL)\n    GROUP BY workspace_id, run_as, billing_origin_product\n)\nSELECT \n    *,\n    `$list_jobs` + `$list_notebooks` as `$list`\nfrom list_logs\nORDER BY `$list` DESC \n"
+    },
+    {
+      "name": "bc1343d1",
+      "displayName": "highest_change_users_7_14_days",
+      "query": "with billing_logs_with_list_cost as (\n  SELECT\n    t1.*, \n    t1.usage_quantity * list_prices.pricing.default as list_cost\n  FROM system.billing.usage t1 \n  INNER JOIN system.billing.list_prices list_prices on\n    t1.cloud = list_prices.cloud and\n    t1.sku_name = list_prices.sku_name and\n    t1.usage_start_time >= list_prices.price_start_time and\n    (t1.usage_end_time <= list_prices.price_end_time or list_prices.price_end_time is null)\n  WHERE \n    (t1.sku_name LIKE '%JOBS%' or t1.usage_metadata.notebook_id IS NOT NULL)\n    AND t1.sku_name LIKE '%SERVERLESS%'\n    AND identity_metadata.run_as IS NOT NULL \n    AND usage_date >= CURRENT_DATE() - INTERVAL 15 DAY\n)\nSELECT\n    t1.workspace_id\n    ,t1.run_as\n    ,Last7DaySpend as `Last7Day$list`\n    ,Last14DaySpend as `Last14Day$list`\n    ,last7DaySpend - last14DaySpend as Last7DayGrowth\n    ,try_divide( (last7DaySpend - last14DaySpend) , last14DaySpend) * 100 AS Last7DayGrowthPct\nFROM\n  (\n    SELECT\n      workspace_id,\n      identity_metadata.run_as,\n      SUM(list_cost) AS spend\n      ,SUM(CASE WHEN usage_date BETWEEN date_add(current_date(), -8) AND date_add(current_date(), -1) THEN list_cost ELSE 0 END) AS Last7DaySpend\n      ,SUM(CASE WHEN usage_date BETWEEN date_add(current_date(), -15) AND date_add(current_date(), -8) THEN list_cost ELSE 0 END) AS Last14DaySpend\n    FROM billing_logs_with_list_cost\n    GROUP BY ALL\n  ) t1 \nORDER BY \n  Last7DayGrowth DESC \nLIMIT 100"
+    },
+    {
+      "name": "cd4702b5",
+      "displayName": "highest_change_notebooks_7_14_days",
+      "query": "with billing_logs_with_list_cost as (\n  SELECT\n    t1.*, \n    t1.usage_quantity * list_prices.pricing.default as list_cost\n  FROM system.billing.usage t1 \n  INNER JOIN system.billing.list_prices list_prices on\n    t1.cloud = list_prices.cloud and\n    t1.sku_name = list_prices.sku_name and\n    t1.usage_start_time >= list_prices.price_start_time and\n    (t1.usage_end_time <= list_prices.price_end_time or list_prices.price_end_time is null)\n  WHERE \n    t1.usage_metadata.notebook_id IS NOT NULL\n    AND t1.sku_name LIKE '%SERVERLESS%'\n    AND usage_metadata.notebook_id IS NOT NULL \n    AND usage_date >= CURRENT_DATE() - INTERVAL 15 DAY\n)\nSELECT\n    t1.workspace_id\n    ,t1.notebook_id\n    ,Last7DaySpend as `Last7Day$list`\n    ,Last14DaySpend as `Last14Day$list`\n    ,last7DaySpend - last14DaySpend as Last7DayGrowth\n    ,try_divide( (last7DaySpend - last14DaySpend) , last14DaySpend) * 100 AS Last7DayGrowthPct\nFROM\n  (\n    SELECT\n      workspace_id,\n      usage_metadata.notebook_id,\n      SUM(list_cost) AS spend\n      ,SUM(CASE WHEN usage_date BETWEEN date_add(current_date(), -8) AND date_add(current_date(), -1) THEN list_cost ELSE 0 END) AS Last7DaySpend\n      ,SUM(CASE WHEN usage_date BETWEEN date_add(current_date(), -15) AND date_add(current_date(), -8) THEN list_cost ELSE 0 END) AS Last14DaySpend\n    FROM billing_logs_with_list_cost\n    GROUP BY ALL\n  ) t1 \nORDER BY \n  Last7DayGrowth DESC \nLIMIT 100"
+    },
+    {
+      "name": "d935620a",
+      "displayName": "highest_change_jobs_7_14_days",
+      "query": "with billing_logs_with_list_cost as (\n  SELECT\n    t1.*, \n    t1.usage_quantity * list_prices.pricing.default as list_cost\n  FROM system.billing.usage t1 \n  INNER JOIN system.billing.list_prices list_prices on\n    t1.cloud = list_prices.cloud and\n    t1.sku_name = list_prices.sku_name and\n    t1.usage_start_time >= list_prices.price_start_time and\n    (t1.usage_end_time <= list_prices.price_end_time or list_prices.price_end_time is null)\n  WHERE \n    t1.sku_name LIKE '%SERVERLESS%'\n    AND usage_metadata.job_id IS NOT NULL \n    AND usage_date >= CURRENT_DATE() - INTERVAL 15 DAY\n)\nSELECT\n    t1.workspace_id\n    ,t1.job_id\n    ,Last7DaySpend as `Last7Day$list`\n    ,Last14DaySpend as `Last14Day$list`\n    ,last7DaySpend - last14DaySpend as Last7DayGrowth\n    ,try_divide( (last7DaySpend - last14DaySpend) , last14DaySpend) * 100 AS Last7DayGrowthPct\nFROM\n  (\n    SELECT\n      workspace_id,\n      usage_metadata.job_id,\n      SUM(list_cost) AS spend\n      ,SUM(CASE WHEN usage_date BETWEEN date_add(current_date(), -8) AND date_add(current_date(), -1) THEN list_cost ELSE 0 END) AS Last7DaySpend\n      ,SUM(CASE WHEN usage_date BETWEEN date_add(current_date(), -15) AND date_add(current_date(), -8) THEN list_cost ELSE 0 END) AS Last14DaySpend\n    FROM billing_logs_with_list_cost\n    GROUP BY ALL\n  ) t1 \nORDER BY \n  Last7DayGrowth DESC \nLIMIT 100"
+    },
+    {
+      "name": "f7a05820",
+      "displayName": "billing_logs_daily",
+      "query": "SELECT\n    t1.*,\n    list_prices.pricing,\n    list_prices.pricing.default as default_pricing,\n    t1.usage_quantity * list_prices.pricing.default as list_cost,\n    CASE\n        WHEN t1.sku_name LIKE '%JOBS%' THEN 'JOBS'\n        WHEN t1.usage_metadata.notebook_id IS NOT NULL THEN 'NOTEBOOKS'\n    END as origin\nFROM system.billing.usage t1 \nINNER JOIN system.billing.list_prices on\n    t1.cloud = list_prices.cloud and\n    t1.sku_name = list_prices.sku_name and\n    t1.usage_start_time >= list_prices.price_start_time and\n    (t1.usage_end_time <= list_prices.price_end_time or list_prices.price_end_time is null)\nWHERE\n    t1.sku_name LIKE '%SERVERLESS%'\n    AND (t1.sku_name LIKE '%JOBS%' or t1.usage_metadata.notebook_id IS NOT NULL)\n"
+    }
+  ],
+  "pages": [
+    {
+      "name": "fe2df1a6",
+      "displayName": "New Page",
+      "layout": [
+        {
+          "widget": {
+            "name": "0c3c8f99",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "06b3c193",
+                  "fields": [
+                    {
+                      "name": "sum(Last30DayGrowth)",
+                      "expression": "SUM(`Last30DayGrowth`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(Last30DayGrowth)",
+                  "displayName": "Sum of Last30DayGrowth"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "30 Day Growth %"
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 7,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "16bc0470",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "02cdeb7f",
+                  "fields": [
+                    {
+                      "name": "sum(users)",
+                      "expression": "SUM(`users`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(users)",
+                  "displayName": "Sum of users"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "30 Day Serverless Users"
+              }
+            }
+          },
+          "position": {
+            "x": 5,
+            "y": 7,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "16de66f9",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "3641787b",
+                  "fields": [
+                    {
+                      "name": "$list",
+                      "expression": "`$list`"
+                    },
+                    {
+                      "name": "custom_tags",
+                      "expression": "`custom_tags`"
+                    },
+                    {
+                      "name": "job_id",
+                      "expression": "`job_id`"
+                    },
+                    {
+                      "name": "last_seen",
+                      "expression": "`last_seen`"
+                    },
+                    {
+                      "name": "run_as",
+                      "expression": "`run_as`"
+                    },
+                    {
+                      "name": "run_id",
+                      "expression": "`run_id`"
+                    },
+                    {
+                      "name": "workspace_id",
+                      "expression": "`workspace_id`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "workspace_id",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 0,
+                    "title": "workspace_id",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "workspace_id"
+                  },
+                  {
+                    "fieldName": "job_id",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 1,
+                    "title": "job_id",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "job_id"
+                  },
+                  {
+                    "fieldName": "run_id",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 2,
+                    "title": "run_id",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "run_id"
+                  },
+                  {
+                    "fieldName": "run_as",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 3,
+                    "title": "run_as",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "run_as"
+                  },
+                  {
+                    "fieldName": "$list",
+                    "numberFormat": "$0,.00",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "decimal",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 4,
+                    "title": "$list",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "$list"
+                  },
+                  {
+                    "fieldName": "custom_tags",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "complex",
+                    "displayAs": "json",
+                    "visible": true,
+                    "order": 5,
+                    "title": "custom_tags",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "custom_tags"
+                  },
+                  {
+                    "fieldName": "last_seen",
+                    "dateTimeFormat": "YYYY-MM-DD",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "datetime",
+                    "displayAs": "datetime",
+                    "visible": true,
+                    "order": 6,
+                    "title": "last_seen",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "last_seen"
+                  }
+                ]
+              },
+              "invisibleColumns": [],
+              "allowHTMLByDefault": false,
+              "itemsPerPage": 25,
+              "paginationSize": "default",
+              "condensed": false,
+              "withRowNumber": false,
+              "frame": {
+                "showTitle": true,
+                "title": "Most Expensive Job Runs Last 30 Days"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 53,
+            "width": 6,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "1a47a170",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "6c66ce8a",
+                  "fields": [
+                    {
+                      "name": "jobs",
+                      "expression": "`jobs`"
+                    },
+                    {
+                      "name": "list_cost",
+                      "expression": "`list_cost`"
+                    },
+                    {
+                      "name": "notebooks",
+                      "expression": "`notebooks`"
+                    },
+                    {
+                      "name": "users",
+                      "expression": "`users`"
+                    },
+                    {
+                      "name": "workspace_id",
+                      "expression": "`workspace_id`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "workspace_id",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 100000,
+                    "title": "workspace_id",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "workspace_id"
+                  },
+                  {
+                    "fieldName": "list_cost",
+                    "numberFormat": "$0,.00",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "decimal",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100001,
+                    "title": "$list",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "list_cost"
+                  },
+                  {
+                    "fieldName": "users",
+                    "numberFormat": "0",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "integer",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100002,
+                    "title": "users",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "users"
+                  },
+                  {
+                    "fieldName": "jobs",
+                    "numberFormat": "0",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "integer",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100003,
+                    "title": "jobs",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "jobs"
+                  },
+                  {
+                    "fieldName": "notebooks",
+                    "numberFormat": "0",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "integer",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100005,
+                    "title": "notebooks",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "notebooks"
+                  }
+                ]
+              },
+              "invisibleColumns": [
+                {
+                  "numberFormat": "0",
+                  "booleanValues": [
+                    "false",
+                    "true"
+                  ],
+                  "imageUrlTemplate": "{{ @ }}",
+                  "imageTitleTemplate": "{{ @ }}",
+                  "imageWidth": "",
+                  "imageHeight": "",
+                  "linkUrlTemplate": "{{ @ }}",
+                  "linkTextTemplate": "{{ @ }}",
+                  "linkTitleTemplate": "{{ @ }}",
+                  "linkOpenInNewTab": true,
+                  "name": "job_runs",
+                  "type": "integer",
+                  "displayAs": "number",
+                  "order": 100004,
+                  "title": "job_runs",
+                  "allowSearch": false,
+                  "alignContent": "right",
+                  "allowHTML": false,
+                  "highlightLinks": false,
+                  "useMonospaceFont": false,
+                  "preserveWhitespace": false
+                }
+              ],
+              "allowHTMLByDefault": false,
+              "itemsPerPage": 25,
+              "paginationSize": "default",
+              "condensed": false,
+              "withRowNumber": false,
+              "frame": {
+                "showTitle": true,
+                "title": "Most Expensive Workspaces Last 30 Days"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 21,
+            "width": 3,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "1e6f2733",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "d935620a",
+                  "fields": [
+                    {
+                      "name": "Last14Day$list",
+                      "expression": "`Last14Day$list`"
+                    },
+                    {
+                      "name": "Last7Day$list",
+                      "expression": "`Last7Day$list`"
+                    },
+                    {
+                      "name": "Last7DayGrowth",
+                      "expression": "`Last7DayGrowth`"
+                    },
+                    {
+                      "name": "Last7DayGrowthPct",
+                      "expression": "`Last7DayGrowthPct`"
+                    },
+                    {
+                      "name": "job_id",
+                      "expression": "`job_id`"
+                    },
+                    {
+                      "name": "workspace_id",
+                      "expression": "`workspace_id`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "workspace_id",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 100000,
+                    "title": "workspace_id",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "workspace_id"
+                  },
+                  {
+                    "fieldName": "job_id",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 100001,
+                    "title": "job_id",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "job_id"
+                  },
+                  {
+                    "fieldName": "Last7Day$list",
+                    "numberFormat": "$0,.00",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "decimal",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100002,
+                    "title": "Last 7 Days $list",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "description": "",
+                    "displayName": "Last7Day$list"
+                  },
+                  {
+                    "fieldName": "Last14Day$list",
+                    "numberFormat": "$0,.00",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "decimal",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100003,
+                    "title": "Last 14 Day $list",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "Last14Day$list"
+                  },
+                  {
+                    "fieldName": "Last7DayGrowth",
+                    "numberFormat": "$0,.00",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "decimal",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100004,
+                    "title": "Last 7 Day Growth",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "Last7DayGrowth"
+                  },
+                  {
+                    "fieldName": "Last7DayGrowthPct",
+                    "numberFormat": "0.00%",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "decimal",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100005,
+                    "title": "Last 7 Day Growth Pct",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "cellFormat": {
+                      "default": {
+                        "foregroundColor": null
+                      },
+                      "rules": [
+                        {
+                          "if": {
+                            "column": "Last7DayGrowthPct",
+                            "fn": ">",
+                            "literal": "30"
+                          },
+                          "value": {
+                            "foregroundColor": "#E92828"
+                          }
+                        }
+                      ]
+                    },
+                    "displayName": "Last7DayGrowthPct"
+                  }
+                ]
+              },
+              "invisibleColumns": [],
+              "allowHTMLByDefault": false,
+              "itemsPerPage": 25,
+              "paginationSize": "default",
+              "condensed": false,
+              "withRowNumber": false,
+              "frame": {
+                "showTitle": true,
+                "title": "Highest Change Jobs in Weekly $list (past 14 Days)"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 37,
+            "width": 6,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "29365fd3",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f7a05820",
+                  "fields": [
+                    {
+                      "name": "daily(usage_date)",
+                      "expression": "DATE_TRUNC(\"DAY\", `usage_date`)"
+                    },
+                    {
+                      "name": "sum(list_cost)",
+                      "expression": "SUM(`list_cost`)"
+                    },
+                    {
+                      "name": "workspace_id",
+                      "expression": "`workspace_id`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "daily(usage_date)",
+                  "scale": {
+                    "type": "temporal"
+                  },
+                  "displayName": "usage_date"
+                },
+                "y": {
+                  "fieldName": "sum(list_cost)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "axis": {
+                    "title": "$list"
+                  },
+                  "displayName": "$list"
+                },
+                "color": {
+                  "fieldName": "workspace_id",
+                  "scale": {
+                    "type": "categorical"
+                  },
+                  "displayName": "workspace_id"
+                }
+              },
+              "frame": {
+                "showDescription": false,
+                "description": "",
+                "showTitle": true,
+                "title": "Daily $list by Workspace"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 9,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "48342206",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "02cdeb7f",
+                  "fields": [
+                    {
+                      "name": "sum(notebooks)",
+                      "expression": "SUM(`notebooks`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(notebooks)",
+                  "displayName": "Sum of notebooks"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "30 Day Serverless Notebooks"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 7,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "4aa0dbff",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "02cdeb7f",
+                  "fields": [
+                    {
+                      "name": "sum(jobs)",
+                      "expression": "SUM(`jobs`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(jobs)",
+                  "displayName": "Sum of jobs"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "30 Day Serverless Jobs"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 7,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "549b6b6d",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "543a666e",
+                  "fields": [
+                    {
+                      "name": "avg_list_cost",
+                      "expression": "`avg_list_cost`"
+                    },
+                    {
+                      "name": "dbus_deviation_from_p90",
+                      "expression": "`dbus_deviation_from_p90`"
+                    },
+                    {
+                      "name": "job_id",
+                      "expression": "`job_id`"
+                    },
+                    {
+                      "name": "max_list_cost",
+                      "expression": "`max_list_cost`"
+                    },
+                    {
+                      "name": "p90",
+                      "expression": "`p90`"
+                    },
+                    {
+                      "name": "runs",
+                      "expression": "`runs`"
+                    },
+                    {
+                      "name": "total_list_cost",
+                      "expression": "`total_list_cost`"
+                    },
+                    {
+                      "name": "workspace_id",
+                      "expression": "`workspace_id`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "workspace_id",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 100000,
+                    "title": "workspace_id",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "workspace_id"
+                  },
+                  {
+                    "fieldName": "job_id",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 100001,
+                    "title": "job_id",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "job_id"
+                  },
+                  {
+                    "fieldName": "runs",
+                    "numberFormat": "0",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "integer",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100002,
+                    "title": "runs",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "runs"
+                  },
+                  {
+                    "fieldName": "total_list_cost",
+                    "numberFormat": "$0,.00",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "integer",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100003,
+                    "title": "Total $list",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "total_list_cost"
+                  },
+                  {
+                    "fieldName": "avg_list_cost",
+                    "numberFormat": "$0,.00",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "integer",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100004,
+                    "title": "Avg $list",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "avg_list_cost"
+                  },
+                  {
+                    "fieldName": "max_list_cost",
+                    "numberFormat": "$0,.00",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "integer",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100005,
+                    "title": "Max $list",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "max_list_cost"
+                  },
+                  {
+                    "fieldName": "p90",
+                    "numberFormat": "$0,.00",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "integer",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100006,
+                    "title": "p90 $list",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "p90"
+                  },
+                  {
+                    "fieldName": "dbus_deviation_from_p90",
+                    "numberFormat": "$0,.00",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "integer",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100007,
+                    "title": "$list deviation from P90",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "dbus_deviation_from_p90"
+                  }
+                ]
+              },
+              "invisibleColumns": [],
+              "allowHTMLByDefault": false,
+              "itemsPerPage": 25,
+              "paginationSize": "default",
+              "condensed": true,
+              "withRowNumber": false,
+              "frame": {
+                "showTitle": true,
+                "title": "Jobs Outliers Last 30 Days",
+                "showDescription": true,
+                "description": "Analyse the job's $list deviation across multiple runs. "
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 61,
+            "width": 6,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "55005f3a",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f7a05820",
+                  "fields": [
+                    {
+                      "name": "daily(usage_date)",
+                      "expression": "DATE_TRUNC(\"DAY\", `usage_date`)"
+                    },
+                    {
+                      "name": "origin",
+                      "expression": "`origin`"
+                    },
+                    {
+                      "name": "sum(list_cost)",
+                      "expression": "SUM(`list_cost`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "daily(usage_date)",
+                  "scale": {
+                    "type": "temporal"
+                  },
+                  "displayName": "usage_date"
+                },
+                "y": {
+                  "fieldName": "sum(list_cost)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "axis": {
+                    "title": "$list"
+                  },
+                  "displayName": "$list"
+                },
+                "color": {
+                  "fieldName": "origin",
+                  "scale": {
+                    "type": "categorical"
+                  },
+                  "displayName": "origin"
+                }
+              },
+              "frame": {
+                "showDescription": false,
+                "description": "",
+                "showTitle": true,
+                "title": "Daily $list by Product"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 9,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "5538e9ca",
+            "textbox_spec": "## Serverless Notebooks"
+          },
+          "position": {
+            "x": 0,
+            "y": 69,
+            "width": 6,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "798ee300",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "a61c5453",
+                  "fields": [
+                    {
+                      "name": "$list",
+                      "expression": "`$list`"
+                    },
+                    {
+                      "name": "$list_jobs",
+                      "expression": "`$list_jobs`"
+                    },
+                    {
+                      "name": "$list_notebooks",
+                      "expression": "`$list_notebooks`"
+                    },
+                    {
+                      "name": "run_as",
+                      "expression": "`run_as`"
+                    },
+                    {
+                      "name": "workspace_id",
+                      "expression": "`workspace_id`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "workspace_id",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 0,
+                    "title": "workspace_id",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "workspace_id"
+                  },
+                  {
+                    "fieldName": "run_as",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 1,
+                    "title": "run_as",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "run_as"
+                  },
+                  {
+                    "fieldName": "$list",
+                    "numberFormat": "$0,.00",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "decimal",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 2,
+                    "title": "$list_total",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "$list"
+                  },
+                  {
+                    "fieldName": "$list_jobs",
+                    "numberFormat": "$0,.00",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "decimal",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 3,
+                    "title": "$list_jobs",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "$list_jobs"
+                  },
+                  {
+                    "fieldName": "$list_notebooks",
+                    "numberFormat": "$0,.00",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "decimal",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 4,
+                    "title": "$list_notebooks",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "$list_notebooks"
+                  }
+                ]
+              },
+              "invisibleColumns": [],
+              "allowHTMLByDefault": false,
+              "itemsPerPage": 25,
+              "paginationSize": "default",
+              "condensed": false,
+              "withRowNumber": false,
+              "frame": {
+                "showTitle": true,
+                "title": "Most Expensive Users Last 30 Days"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 21,
+            "width": 3,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "8308f48f",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "767fc649",
+                  "fields": [
+                    {
+                      "name": "$list",
+                      "expression": "`$list`"
+                    },
+                    {
+                      "name": "custom_tags",
+                      "expression": "`custom_tags`"
+                    },
+                    {
+                      "name": "job_id",
+                      "expression": "`job_id`"
+                    },
+                    {
+                      "name": "last_seen",
+                      "expression": "`last_seen`"
+                    },
+                    {
+                      "name": "run_as",
+                      "expression": "`run_as`"
+                    },
+                    {
+                      "name": "runs",
+                      "expression": "`runs`"
+                    },
+                    {
+                      "name": "workspace_id",
+                      "expression": "`workspace_id`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "workspace_id",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 0,
+                    "title": "workspace_id",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "workspace_id"
+                  },
+                  {
+                    "fieldName": "job_id",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 1,
+                    "title": "job_id",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "job_id"
+                  },
+                  {
+                    "fieldName": "runs",
+                    "numberFormat": "0",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "integer",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 2,
+                    "title": "runs",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "runs"
+                  },
+                  {
+                    "fieldName": "run_as",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 3,
+                    "title": "run_as",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "run_as"
+                  },
+                  {
+                    "fieldName": "$list",
+                    "numberFormat": "$0,.00",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "decimal",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 4,
+                    "title": "$list",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "$list"
+                  },
+                  {
+                    "fieldName": "custom_tags",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "complex",
+                    "displayAs": "json",
+                    "visible": true,
+                    "order": 5,
+                    "title": "custom_tags",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "custom_tags"
+                  },
+                  {
+                    "fieldName": "last_seen",
+                    "dateTimeFormat": "YYYY-MM-DD",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "datetime",
+                    "displayAs": "datetime",
+                    "visible": true,
+                    "order": 6,
+                    "title": "last_seen",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "last_seen"
+                  }
+                ]
+              },
+              "invisibleColumns": [],
+              "allowHTMLByDefault": false,
+              "itemsPerPage": 25,
+              "paginationSize": "default",
+              "condensed": false,
+              "withRowNumber": false,
+              "frame": {
+                "showTitle": true,
+                "title": "Most Expensive Jobs Last 30 Days"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 45,
+            "width": 6,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "84c84c0d",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "bc1343d1",
+                  "fields": [
+                    {
+                      "name": "Last14Day$list",
+                      "expression": "`Last14Day$list`"
+                    },
+                    {
+                      "name": "Last7Day$list",
+                      "expression": "`Last7Day$list`"
+                    },
+                    {
+                      "name": "Last7DayGrowth",
+                      "expression": "`Last7DayGrowth`"
+                    },
+                    {
+                      "name": "Last7DayGrowthPct",
+                      "expression": "`Last7DayGrowthPct`"
+                    },
+                    {
+                      "name": "run_as",
+                      "expression": "`run_as`"
+                    },
+                    {
+                      "name": "workspace_id",
+                      "expression": "`workspace_id`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "workspace_id",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 100000,
+                    "title": "workspace_id",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "workspace_id"
+                  },
+                  {
+                    "fieldName": "run_as",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 100001,
+                    "title": "run_as",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "run_as"
+                  },
+                  {
+                    "fieldName": "Last7Day$list",
+                    "numberFormat": "$0.00",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "decimal",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100002,
+                    "title": "Last 7 Days $list",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "description": "",
+                    "displayName": "Last7Day$list"
+                  },
+                  {
+                    "fieldName": "Last14Day$list",
+                    "numberFormat": "$0.00",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "decimal",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100003,
+                    "title": "Last 14 Day $list",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "Last14Day$list"
+                  },
+                  {
+                    "fieldName": "Last7DayGrowth",
+                    "numberFormat": "$0.00",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "decimal",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100004,
+                    "title": "Last 7 Day Growth",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "Last7DayGrowth"
+                  },
+                  {
+                    "fieldName": "Last7DayGrowthPct",
+                    "numberFormat": "0.00%",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "decimal",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100005,
+                    "title": "Last 7 Day Growth Pct",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "cellFormat": {
+                      "default": {
+                        "foregroundColor": null
+                      },
+                      "rules": [
+                        {
+                          "if": {
+                            "column": "Last7DayGrowthPct",
+                            "fn": ">",
+                            "literal": "30"
+                          },
+                          "value": {
+                            "foregroundColor": "#E92828"
+                          }
+                        }
+                      ]
+                    },
+                    "displayName": "Last7DayGrowthPct"
+                  }
+                ]
+              },
+              "invisibleColumns": [],
+              "allowHTMLByDefault": false,
+              "itemsPerPage": 25,
+              "paginationSize": "default",
+              "condensed": false,
+              "withRowNumber": false,
+              "frame": {
+                "showTitle": true,
+                "title": "Highest Change Users in Weekly $list (past 14 Days)"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 28,
+            "width": 6,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "86e15def",
+            "textbox_spec": "## Tutorial\n\n---\n\n### How to get a job by ID?\n1. Copy the job_id\n2. Navigate to the correct workspace\n3. Paste the job ID in a top search toolbar\n4. Press enter\n\n### How to get a notebook by ID?\n1. Copy the notebook_id\n2. Navigate to the correct workspace\n3. Paste the notebook ID in a top search toolbar\n4. Press enter\n\n### How to get a job run by ID?\n1. Follow the *How to get a job by ID?* section\n2. Copy run ID\n3. Open *any run* on the job runs page\n4. Replace the run ID in the url after `/runs/` part\n    1. *https://sample-workspace.databricks.com/jobs/123456789/runs/**111213141516***"
+          },
+          "position": {
+            "x": 0,
+            "y": 86,
+            "width": 6,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "9e84b4f1",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "6a78fc9a",
+                  "fields": [
+                    {
+                      "name": "daily(week_start)",
+                      "expression": "DATE_TRUNC(\"DAY\", `week_start`)"
+                    },
+                    {
+                      "name": "sum(3_months_growth_moving_avg)",
+                      "expression": "SUM(`3_months_growth_moving_avg`)"
+                    },
+                    {
+                      "name": "sum(weekly_growth)",
+                      "expression": "SUM(`weekly_growth`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "widgetType": "combo",
+              "encodings": {
+                "x": {
+                  "fieldName": "daily(week_start)",
+                  "scale": {
+                    "type": "temporal"
+                  },
+                  "displayName": "week_start"
+                },
+                "y": {
+                  "primary": {
+                    "fields": [
+                      {
+                        "fieldName": "sum(weekly_growth)",
+                        "displayName": "Weekly % change "
+                      }
+                    ]
+                  },
+                  "secondary": {
+                    "fields": [
+                      {
+                        "fieldName": "sum(3_months_growth_moving_avg)",
+                        "displayName": "quarterly_moving_avg_growth"
+                      }
+                    ]
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Weekly $list %change"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 15,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "b55d8d4d",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "06b3c193",
+                  "fields": [
+                    {
+                      "name": "sum(Last30to60DaySpend)",
+                      "expression": "SUM(`Last30to60DaySpend`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(Last30to60DaySpend)",
+                  "displayName": "Sum of Last30to60DaySpend"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "30-60 Day $list Spend"
+              }
+            }
+          },
+          "position": {
+            "x": 1,
+            "y": 7,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "c625d9c9",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "06b3c193",
+                  "fields": [
+                    {
+                      "name": "sum(Last30DaySpend)",
+                      "expression": "SUM(`Last30DaySpend`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(Last30DaySpend)",
+                  "displayName": "Sum of Last30DaySpend"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "30 Day $list Spend"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 7,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "de92a2e6",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "8e89c445",
+                  "fields": [
+                    {
+                      "name": "custom_tags",
+                      "expression": "`custom_tags`"
+                    },
+                    {
+                      "name": "list_cost",
+                      "expression": "`list_cost`"
+                    },
+                    {
+                      "name": "notebook_id",
+                      "expression": "`notebook_id`"
+                    },
+                    {
+                      "name": "run_as",
+                      "expression": "`run_as`"
+                    },
+                    {
+                      "name": "workspace_id",
+                      "expression": "`workspace_id`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "workspace_id",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 100000,
+                    "title": "workspace_id",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "workspace_id"
+                  },
+                  {
+                    "fieldName": "notebook_id",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 100001,
+                    "title": "notebook_id",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "notebook_id"
+                  },
+                  {
+                    "fieldName": "run_as",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 100002,
+                    "title": "run_as",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "run_as"
+                  },
+                  {
+                    "fieldName": "list_cost",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "decimal",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100003,
+                    "title": "list_cost",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "list_cost"
+                  },
+                  {
+                    "fieldName": "custom_tags",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "complex",
+                    "displayAs": "json",
+                    "visible": true,
+                    "order": 100004,
+                    "title": "custom_tags",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "custom_tags"
+                  }
+                ]
+              },
+              "invisibleColumns": [],
+              "allowHTMLByDefault": false,
+              "itemsPerPage": 25,
+              "paginationSize": "default",
+              "condensed": false,
+              "withRowNumber": false,
+              "frame": {
+                "showTitle": true,
+                "title": "Most Expensive Notebooks Last 30 Days",
+                "showDescription": true,
+                "description": ""
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 78,
+            "width": 6,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "e6c6bed7",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "cd4702b5",
+                  "fields": [
+                    {
+                      "name": "Last14Day$list",
+                      "expression": "`Last14Day$list`"
+                    },
+                    {
+                      "name": "Last7Day$list",
+                      "expression": "`Last7Day$list`"
+                    },
+                    {
+                      "name": "Last7DayGrowth",
+                      "expression": "`Last7DayGrowth`"
+                    },
+                    {
+                      "name": "Last7DayGrowthPct",
+                      "expression": "`Last7DayGrowthPct`"
+                    },
+                    {
+                      "name": "notebook_id",
+                      "expression": "`notebook_id`"
+                    },
+                    {
+                      "name": "workspace_id",
+                      "expression": "`workspace_id`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "workspace_id",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 100000,
+                    "title": "workspace_id",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "workspace_id"
+                  },
+                  {
+                    "fieldName": "notebook_id",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 100001,
+                    "title": "notebook_id",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "notebook_id"
+                  },
+                  {
+                    "fieldName": "Last7Day$list",
+                    "numberFormat": "$0.00",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "decimal",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100002,
+                    "title": "Last7Day$list",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "Last7Day$list"
+                  },
+                  {
+                    "fieldName": "Last14Day$list",
+                    "numberFormat": "$0.00",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "decimal",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100003,
+                    "title": "Last14Day$list",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "Last14Day$list"
+                  },
+                  {
+                    "fieldName": "Last7DayGrowth",
+                    "numberFormat": "$0.00",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "decimal",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100004,
+                    "title": "Last7DayGrowth",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "Last7DayGrowth"
+                  },
+                  {
+                    "fieldName": "Last7DayGrowthPct",
+                    "numberFormat": "0.00%",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "decimal",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100005,
+                    "title": "Last7DayGrowthPct",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "Last7DayGrowthPct"
+                  }
+                ]
+              },
+              "invisibleColumns": [],
+              "allowHTMLByDefault": false,
+              "itemsPerPage": 25,
+              "paginationSize": "default",
+              "condensed": false,
+              "withRowNumber": false,
+              "frame": {
+                "showTitle": true,
+                "title": "Highest Change Jobs in Weekly $list (past 14 Days)",
+                "showDescription": false
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 70,
+            "width": 6,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "e95beddd",
+            "textbox_spec": "## Serverless Jobs"
+          },
+          "position": {
+            "x": 0,
+            "y": 36,
+            "width": 6,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "fa89ed16",
+            "textbox_spec": "## Serverless Jobs and Notebooks Cost Observability  v0.1\n\n--- \n\nThis dashboard operates on a list cost (**$list**). The list cost is calculated as `number of DBUs * list price per DBU at that moment in time`. Account-specific rates and discounts are not included. We will be evolving it over time by adding more example queries and visualizations, helping you keep track of spending on Serverless Jobs and Notebooks. For the latest version checkout documentation and GitHub link below.\n\n#### Documentation \n- [Serverless Notebooks](https://learn.microsoft.com/azure/databricks/compute/serverless)\n- [Serverless Jobs](https://learn.microsoft.com/azure/databricks/workflows/jobs/run-serverless-jobs)\n- [Latest Dashboard version GitHub](https://github.com/databricks/tmm/tree/master/System-Tables-Demo/Serverless-Jobs-Notebooks-PuPr/aws-serverless-jobs-and-notebooks-cost-observability.lvdash.json)\n\n#### Requirements\n- This dashboard requires **system.usage** System Table\n    - [How to Enable System Table Schema](https://docs.databricks.com/en/administration-guide/system-tables/index.html#enable-system-table-schemas)\n    - [Grant access to system tables](https://docs.databricks.com/en/administration-guide/system-tables/index.html#grant-access-to-system-tables)\n\n#### Feedback\nPlease use the [following form](https://surveys.training.databricks.com/jfe/form/SV_6MeRdfngaqxqzum) to provide feedback on this dashboard & serverless jobs and notebooks cost observability.\n\n#### Debugging\nFor detailed debugging instructions (how to find job/notebook/run by ID) check out the guidance at the bottom of this dashboard."
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "fe36e31d",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "6a78fc9a",
+                  "fields": [
+                    {
+                      "name": "daily(week_start)",
+                      "expression": "DATE_TRUNC(\"DAY\", `week_start`)"
+                    },
+                    {
+                      "name": "sum(list_cost)",
+                      "expression": "SUM(`list_cost`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "daily(week_start)",
+                  "scale": {
+                    "type": "temporal"
+                  },
+                  "displayName": "week_start"
+                },
+                "y": {
+                  "fieldName": "sum(list_cost)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Sum of list_cost"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Weekly $list Spend"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 15,
+            "width": 3,
+            "height": 6
+          }
+        }
+      ]
+    }
+  ]
+}
