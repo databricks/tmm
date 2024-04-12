@@ -33,18 +33,25 @@
 
 # COMMAND ----------
 
+# MAGIC %pip install databricks-feature-engineering
+# MAGIC
+# MAGIC dbutils.library.restartPython()
+
+# COMMAND ----------
+
 #Lets set up the user specific prefixes
 
 #Ideally we'd be using a Unity Catalog here - but for workshop purposes we'll use the default catalog
 #If you run this notebook on UC, you can simply point to your catalog here
-catalog = "hive_metastore"
+catalog = "_demo_catalog"
 dbutils.widgets.text("catalog", catalog)
 
 #This is just getting the user ID for the workshop so everyone is split
 user_id = dbutils.notebook.entry_point.getDbutils().notebook().getContext().userName().get()
 user_id = ''.join(filter(str.isdigit, user_id))
 
-schema_name = 'user' + user_id
+#schema_name = 'user' + user_id
+schema_name = 'staging'
 dbutils.widgets.text("schema_name", schema_name)
 
 # COMMAND ----------
@@ -52,7 +59,7 @@ dbutils.widgets.text("schema_name", schema_name)
 # MAGIC %sql
 # MAGIC --To ensure everyone in the workshop has a good experience, we'll break everyone into their own schema
 # MAGIC --If this errors, please go to the above cell and change "schema_name" then rerun
-# MAGIC CREATE SCHEMA ${schema_name}
+# MAGIC CREATE SCHEMA ${catalog}.${schema_name}
 
 # COMMAND ----------
 
@@ -63,8 +70,14 @@ dbutils.widgets.text("schema_name", schema_name)
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC #### Uncomment this to load data into a new UC volume
+# MAGIC !cp -r /databricks-datasets/samples/lending_club/ /Volumes/_demo_catalog/staging/demo_volume/
+
+# COMMAND ----------
+
 #load in the loan data from the parquet dir 
-loan = spark.read.parquet('/databricks-datasets/samples/lending_club/parquet/')
+loan = spark.read.parquet('/Volumes/_demo_catalog/staging/demo_volume/lending_club/parquet')
 
 #then save it as a delta table for future use
 loan.write.format("delta").mode("overwrite").saveAsTable(f"{catalog}.{schema_name}.loan_data")
@@ -124,6 +137,56 @@ display(df_annual_income)
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC #### Let's use this data to populate our Feature Store
+# MAGIC
+# MAGIC For others, including our future selves, to be able to make use of these features and better track lineage, let's put our newly created features into the feature store.
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC Drop table if exists ${catalog}.${schema_name}.loan_features;
+# MAGIC Create table ${catalog}.${schema_name}.loan_features
+# MAGIC AS /*Copy data from existing_table and cast columns to original's data type*/
+# MAGIC SELECT 
+# MAGIC     MONOTONICALLY_INCREASING_ID() AS id, /*add new column with unique increasing id*/
+# MAGIC     CASE 
+# MAGIC         WHEN loan_status in ("Default", "Charged Off")
+# MAGIC         THEN 'true' 
+# MAGIC         WHEN loan_status in ("Fully Paid")
+# MAGIC         THEN 'false'
+# MAGIC         END AS bad_loan,
+# MAGIC     CAST(num_rev_accts as INT) as num_rev_accts, 
+# MAGIC     CAST(annual_inc as DOUBLE) as annual_inc, 
+# MAGIC     CAST(inq_last_12m as INT) as inq_last_12m, 
+# MAGIC     CAST(total_il_high_credit_limit as DOUBLE) as total_il_high_credit_limit, 
+# MAGIC     CAST(grade as STRING) as grade, 
+# MAGIC     CAST(last_pymnt_amnt as DOUBLE) as last_pymnt_amnt, 
+# MAGIC     CAST(total_rec_int as DOUBLE) as total_rec_int, 
+# MAGIC     CAST(recoveries as DOUBLE) as recoveries 
+# MAGIC from ${catalog}.${schema_name}.loan_data 
+# MAGIC where loan_status in ("Default", "Charged Off","Fully Paid")
+# MAGIC   and num_rev_accts IS NOT NULL 
+# MAGIC   AND annual_inc IS NOT NULL
+# MAGIC   AND inq_last_12m IS NOT NULL 
+# MAGIC   AND total_il_high_credit_limit IS NOT NULL 
+# MAGIC   AND grade IS NOT NULL 
+# MAGIC   AND last_pymnt_amnt IS NOT NULL 
+# MAGIC   AND total_rec_int IS NOT NULL 
+# MAGIC   AND recoveries IS NOT NULL;
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC ALTER TABLE ${catalog}.${schema_name}.loan_features ALTER COLUMN id SET NOT NULL
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC ALTER TABLE ${catalog}.${schema_name}.loan_features ADD CONSTRAINT pk_loan_features PRIMARY KEY(id)
+
+# COMMAND ----------
+
 #Re-load the full dataset from our delta table
 df = spark.table(f"{catalog}.{schema_name}.loan_data").limit(1000000)
 
@@ -141,35 +204,28 @@ display(loan_stats_df)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC #### Let's use this data to populate our Feature Store
-# MAGIC
-# MAGIC For others, including our future selves, to be able to make use of these features and better track lineage, let's put our newly created features into the feature store.
+from databricks.feature_engineering import FeatureEngineeringClient
 
-# COMMAND ----------
-
-from databricks.feature_store import FeatureStoreClient
-
-fs = FeatureStoreClient()
+fe = FeatureEngineeringClient()
 
 try:
   #drop table if exists
-  fs.drop_table(f"{catalog}.{schema_name}.loan_features")
+  fe.drop_table(f"{catalog}.{schema_name}.loan_features")
 except:
   pass
 
 #Need to make this a spark dataframe
-loan_stats_df = spark.createDataFrame(loan_stats_df)
+#loan_stats_df = spark.createDataFrame(loan_stats_df)
 
-loan_feature_table = fs.create_feature_table(
+loan_feature_table = fe.create_table(
   name=f"{catalog}.{schema_name}.loan_features",
-  keys="id",
+  primary_keys="id",
   schema=loan_stats_df.schema,
   description='Feature table for loan data related to lending club dataset'
 )
 
 #actually write the table to the feature store
-fs.write_table(df=loan_stats_df, name=f"{catalog}.{schema_name}.loan_features", mode='overwrite')
+fe.write_table(df=loan_stats_df, name=f"{catalog}.{schema_name}.loan_features", mode='merge')
 
 # COMMAND ----------
 
@@ -202,6 +258,9 @@ display(loan_ids)
 import mlflow
 from databricks.feature_store import FeatureLookup
 from mlflow.tracking import MlflowClient
+from databricks.feature_engineering import FeatureEngineeringClient, FeatureLookup
+
+fe = FeatureEngineeringClient()
 
 # Assigning our target column/features to make changing them easier in the long term
 
@@ -218,13 +277,11 @@ feature_lookups = [
     )
   ]
 
-fs = FeatureStoreClient()
-
 # Create a training set using training DataFrame and features from Feature Store
 # The training DataFrame must contain all lookup keys from the set of feature lookups,
 # in this case 'id'. It must also contain all labels used
 # for training, in this case 'bad_loan' which is our target_col.
-training_set = fs.create_training_set(
+training_set = fe.create_training_set(
   df=loan_ids,
   feature_lookups = feature_lookups,
   label = target_col
@@ -494,10 +551,29 @@ summary_plot(shap_values, example, class_names=model.classes_)
 
 # COMMAND ----------
 
-model_name = f"{schema_name}-loan_estimator"
+from mlflow import MlflowClient
+client = MlflowClient()
+
+mlflow.set_registry_uri("databricks-uc")
+
+model_name = f"{catalog}.{schema_name}.{schema_name}-loan_estimator"
 model_uri = f"runs:/{ mlflow_run.info.run_id }/model"
 
 registered_model_version = mlflow.register_model(model_uri, model_name)
+mlflow.set_registered_model_alias(model_name, "Champion", 1)
+
+# COMMAND ----------
+
+from mlflow import MlflowClient
+client = MlflowClient()
+
+mlflow.set_registry_uri("databricks-uc")
+
+model_name = f"{catalog}.{schema_name}.{schema_name}-loan_estimator"
+model_uri = f"runs:/{ mlflow_run.info.run_id }/model"
+
+registered_model_version = mlflow.register_model(model_uri, model_name)
+mlflow.set_registered_model_alias(model_name, "Champion", 1)
 
 # COMMAND ----------
 
