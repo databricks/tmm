@@ -4,7 +4,7 @@ c_dir = os.getcwd()
 print(c_dir)
 
 a_file = f'file:{c_dir}/endangered_species.xml'
-m_file = f'file:{c_dir}/planet_of_the_apes.xml'
+m_file = f'file:{c_dir}/apes.xml'
 
 spark.conf.set ('m_file', m_file)
 
