@@ -6,6 +6,7 @@ print(c_dir)
 a_file = f'file:{c_dir}/endangered_species.xml'
 m_file = f'file:{c_dir}/planet_of_the_apes.xml'
 
+spark.conf.set ('m_file', m_file)
 
 xsdPath = f'file:{c_dir}/endangered_species.xsd'
 
@@ -102,7 +103,7 @@ df = spark.read.format("xml") \
         .option("rowValidationXSDPath", xsdPath) \
         .load(a_file)
         
-#display(df)
+display(df)
 
 # COMMAND ----------
 
@@ -120,14 +121,6 @@ display(df)
 
 # COMMAND ----------
 
-# DBTITLE 1,##Auto Loader in Python and validation
-movie_df = spark.read.format("xml") \
-        .option("rowTag", "Ape") \
-        .option("rowValidationXSDPath", xsdPath) \
-        .load(m_file)
-
-# COMMAND ----------
-
 # MAGIC %md
 # MAGIC # Using SQL with XML  
 
@@ -139,7 +132,7 @@ movie_df = spark.read.format("xml") \
 # MAGIC DROP TABLE IF EXISTS e_species;
 # MAGIC CREATE TABLE e_species
 # MAGIC USING XML
-# MAGIC OPTIONS (path "file:/Workspace/Repos/frank.munz@databricks.com/XML-ingest-demo/endangered_species.xml", rowTag "species");
+# MAGIC OPTIONS (path "file:/Workspace/Repos/frank.munz@databricks.com/tmm/XML-ingest-demo/endangered_species.xml", rowTag "species");
 # MAGIC
 # MAGIC SELECT * FROM e_species;
 
