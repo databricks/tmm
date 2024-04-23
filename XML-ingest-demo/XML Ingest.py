@@ -20,7 +20,7 @@ xsdPath
 
 # COMMAND ----------
 
-# pandas using files with absolute path
+# pandas using files with relative path!
 import pandas as pd
 df = pd.read_xml("endangered_species.xml")
 df
@@ -40,35 +40,21 @@ df = (spark.read
     .option("rowTag", "species")
     .load(a_file)
     )
-
-
-# COMMAND ----------
-
 display(df.select("name","_id","info"))
 
 # COMMAND ----------
 
-# DBTITLE 1,Filter to only return name elements: set rowTag to "name"
+# DBTITLE 1,Filter to read name elements: set rowTag to "name"
 df_names = (spark.read
     .format("xml")
     .option("rowTag", "name")
     .load(a_file)
     )
-
-
-# COMMAND ----------
-
 display(df_names)
 
 # COMMAND ----------
 
-# DBTITLE 1,Load whole file as single row
-# 
-# display(spark.read.format("xml").option("rowTag", "endangeredSpeciesList").load(a_file))
-
-# COMMAND ----------
-
-# DBTITLE 1,Load another movie XML with more structure and null values
+# DBTITLE 1,Load different, movie XML with more structure and null values
 movie_df = (spark.read
     .format("xml")
     .option("rowTag", "Ape")
