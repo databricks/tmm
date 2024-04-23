@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XApes>
+  <Ape>
+    <Name>Caesar</Name>
+    <Species>Chimpanzee</Species>
+    <Leader>true</Leader>
+    <Intelligence>High</Intelligence>
+    <Personality>
+      <Trait>Compassionate</Trait>
+      <Trait>Determined</Trait>
+      <Trait>Wise</Trait>
+    </Personality>
+    <Name>Andy Serkis</Name>
+    <Role>Motion Capture and Voice Acting</Role>
+    <Films>
+      <Film>Rise of the Planet of the Apes</Film>
+      <Film>Dawn of the Planet of the Apes</Film>
+      <Film>War for the Planet of the Apes</Film>
+    </Films>
+  </Ape>
+  <Ape>
+    <Name>Koba</Name>
+    <Species>Bonobo</Species>
+    <Leader>false</Leader>
+    <Intelligence>High</Intelligence>
+    <Personality>
+      <Trait>Aggressive</Trait>
+      <Trait>Loyal</Trait>
+      <Trait>Vengeful</Trait>
+    </Personality>
+  </Ape>
+</XApes>

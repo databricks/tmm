@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<endangeredSpecies xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                       xsi:noNamespaceSchemaLocation="endangered_species.xsd">
+  <species>
+    <name>Amur Leopard</name>
+    <yearOfDiscovery>1869</yearOfDiscovery>
+    <continent>Asia</continent>
+    <info>The Amur leopard is a critically endangered subspecies of leopard native to the Russian Far East and northeastern China.</info>
+  </species>
+  <species>
+    <name>Javan Rhinoceros</name>
+    <yearOfDiscovery>1822</yearOfDiscovery>
+    <continent>Asia</continent>
+    <info>The Javan rhinoceros is a critically endangered species of rhinoceros endemic to the Indonesian island of Java.</info>
+  </species>
+  <species>
+    <name>Sumatran Tiger</name>
+    <yearOfDiscovery>1929</yearOfDiscovery>
+    <continent>Asia</continent>
+    <info>The Sumatran tiger is a critically endangered population of the Panthera tigris subspecies native to the Indonesian island of Sumatra.</info>
+  </species>
+  <species>
+    <name>Golden Poison Frog</name>
+    <yearOfDiscovery>1973</yearOfDiscovery>
+    <continent>South America</continent>
+    <info>The golden poison frog is a poison dart frog endemic to the Pacific coast of Colombia and is considered one of the most poisonous animals on Earth.</info>
+  </species>
+  <species>
+    <name>Panamanian Golden Frog</name>
+    <yearOfDiscovery>1966</yearOfDiscovery>
+    <continent>Central America</continent>
+    <info>The Panamanian golden frog is a critically endangered species of toad endemic to Panama, known for its unique appearance and waving behavior.</info>
+  </species>
+</endangeredSpecies>
