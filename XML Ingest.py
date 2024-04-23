@@ -11,10 +11,15 @@ xsdPath = f'file:{c_dir}/endangered_species.xsd'
 
 # COMMAND ----------
 
-# MAGIC %fs ls file:/Workspace/Repos/frank.munz@databricks.com/XML-ingest-demo/endangered_species.xml
+xsdPath
 
 # COMMAND ----------
 
+# %fs ls "/Workspace/Repos/frank.munz@databricks.com/XML-ingest-demo/"
+
+# COMMAND ----------
+
+# pandas using files with absolute path
 import pandas as pd
 df = pd.read_xml("endangered_species.xml")
 df
@@ -38,7 +43,7 @@ df = (spark.read
 
 # COMMAND ----------
 
-display(df.select("name","yearOfDiscovery","info"))
+display(df.select("name","_id","info"))
 
 # COMMAND ----------
 
@@ -56,18 +61,13 @@ display(df_names)
 
 # COMMAND ----------
 
-# DBTITLE 1,load whole file as single row
+# DBTITLE 1,Load whole file as single row
 # 
 # display(spark.read.format("xml").option("rowTag", "endangeredSpeciesList").load(a_file))
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## 
-
-# COMMAND ----------
-
-# DBTITLE 1,Load movie XML with null values
+# DBTITLE 1,Load another movie XML with more structure and null values
 movie_df = (spark.read
     .format("xml")
     .option("rowTag", "Ape")
@@ -85,8 +85,9 @@ try:
         .load(m_file)
 except Exception as e:
     print("Error: Failed to parse XML file. Reason: {}".format(str(e)))
-    
 
+    corrupt_records = movie_df.filter(movie_df['_corrupt_record'].isNotNull())
+    display(corrupt_records)
 
 # COMMAND ----------
 
@@ -100,7 +101,8 @@ df = spark.read.format("xml") \
         .option("rowTag", "species") \
         .option("rowValidationXSDPath", xsdPath) \
         .load(a_file)
-display(df)
+        
+#display(df)
 
 # COMMAND ----------
 
