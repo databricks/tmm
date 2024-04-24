@@ -1,4 +1,10 @@
 # Databricks notebook source
+# MAGIC %md
+# MAGIC #Ingest XML - Endangered Species Demo
+# MAGIC see [README](https://github.com/databricks/tmm/blob/main/XML-ingest-demo/README.md) for more details. Run this notebook on classic single user cluster.  
+
+# COMMAND ----------
+
 # Adding image from misc/x.png to cell
 from IPython.display import Image
 Image(filename='misc/xml.png')
