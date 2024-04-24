@@ -22,6 +22,7 @@ endangered_new_f = f'file:{os.getcwd()}/endangered_new.xml'
 apes_f = f'file:{os.getcwd()}/apes.xml'
 
 schema_loc = '/tmp/my-schema_loc'
+# let's be clean for the next run
 dbutils.fs.rm(schema_loc, True)
 
 spark.conf.set('apes_f', apes_f)  
@@ -31,14 +32,16 @@ print(f'current working dir:{os.getcwd()}')
 
 # MAGIC %md
 # MAGIC This cell sets up the files and directories needed for the XML processing demo.
-# MAGIC - `endangered_f` and `endangered_xsd_f` reference XML and XSD files for endangered species data.
+# MAGIC - `endangered_f` and `endangered_xsd_f` [reference XML]($./endangered_species.xml) and [XSD schema]($./endangered_species.xsd) files for endangered species data.
 # MAGIC - `endangered_new_f` introduces a new XML element to test schema evolution. 
 # MAGIC - `apes_f` is an XML file with a different structure that doesn't match the endangered species XSD schema.
 # MAGIC - `schema_loc` is a directory where Auto Loader will store inferred schemas to enable schema evolution.
 
 # COMMAND ----------
 
-# pandas using files with absolute path
+# DBTITLE 1,Pandas example
+# pandas can load XML (and use files with relative path)
+
 import pandas as pd
 df = pd.read_xml("endangered_species.xml")
 df
@@ -51,7 +54,7 @@ df
 
 # COMMAND ----------
 
-# DBTITLE 1,Read XML list of endangered species
+# DBTITLE 1,Read XML list of endangered species with Spark
 # `rowTag` option is required for reading files in XML format
 
 df = (spark.read  
@@ -154,7 +157,7 @@ display(df)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC To validate XML data against an XSD schema, use the `"rowValidationXSDPath"` option.
+# MAGIC To validate XML data against an [XSD schema]($./endangered_species.xsd), use the `"rowValidationXSDPath"` option.
 # MAGIC Specify the path to the XSD file (`endangered_xsd_f`).
 # MAGIC Spark will parse the XML and validate each row against the schema.
 # MAGIC Rows that don't conform to the schema will be rejected.
