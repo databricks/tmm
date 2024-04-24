@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<endangeredSpecies xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                       xsi:noNamespaceSchemaLocation="xxxendangered_species.xsd">
+  <species id="AMU123456">
+    <name>Amur Leopard</name>
+    <yearOfDiscovery>1869</yearOfDiscovery>
+    <continent>Asia</continent>
+    <info>The Amur leopard is a critically endangered subspecies of leopard native to the Russian Far East and northeastern China.</info>
+  </species>
+  <species id="JAV654321">
+    <name>Javan Rhinoceros</name>
+    <yearOfDiscovery>1822</yearOfDiscovery>
+    <continent>Asia</continent>
+    <info>The Javan rhinoceros is a critically endangered species of rhinoceros endemic to the Indonesian island of Java.</info>
+  </species>
+  <species id="SUM789012">
+    <name>Sumatran Tiger</name>
+    <yearOfDiscovery>1929</yearOfDiscovery>
+    <continent>Asia</continent>
+    <info>The Sumatran tiger is a critically endangered population of the Panthera tigris subspecies native to the Indonesian island of Sumatra.</info>
+  </species>
+  <species id="FRO345678">
+    <name>Golden Poison Frog</name>
+    <yearOfDiscovery>1973</yearOfDiscovery>
+    <continent>South America</continent>
+    <info>The golden poison frog is a poison dart frog endemic to the Pacific coast of Colombia and is considered one of the most poisonous animals on Earth.</info>
+  </species>
+  <species id="PAN901234">
+    <name>Panamanian Golden Frog</name>
+    <yearOfDiscovery>1966</yearOfDiscovery>
+    <continent>Central America</continent>
+    <info>The Panamanian golden frog is a critically endangered species of toad endemic to Panama, known for its unique appearance and waving behavior.</info>
+  </species>
+  <species id="VAQ123456">
+    <name>Vaquita</name>
+    <yearOfDiscovery>1958</yearOfDiscovery>
+    <continent>North America</continent>
+    <info>The vaquita is a critically endangered species of porpoise endemic to the northern Gulf of California in Mexico.</info>
+    <population>10</population>
+  </species>
+  <species id="YAN654321">
+    <name>Yangtze Finless Porpoise</name>
+    <yearOfDiscovery>1914</yearOfDiscovery>
+    <continent>Asia</continent>
+    <info>The Yangtze finless porpoise is a critically endangered freshwater porpoise found only in the Yangtze River in China.</info>
+    <population>1000</population>
+  </species>
+  <species id="SAO789012">
+    <name>Saola</name>
+    <yearOfDiscovery>1992</yearOfDiscovery>
+    <continent>Asia</continent>
+    <info>The saola, also known as the Asian unicorn, is a critically endangered antelope-like species found in the forests of Vietnam and Laos.</info>
+    <population>750</population>
+  </species>
+  <species id="HAR345678">
+    <name>Harlequin Frog</name>
+    <yearOfDiscovery>1988</yearOfDiscovery>
+    <continent>South America</continent>
+    <info>Harlequin frogs are a group of critically endangered frog species found in the Andes Mountains of South America, known for their bright colors and patterns.</info>
+    <population>500</population>
+  </species>
+  <species id="GOO901234">
+    <name>Gooty Tarantula</name>
+    <yearOfDiscovery>2001</yearOfDiscovery>
+    <continent>Asia</continent>
+    <info>The Gooty tarantula, also known as the peacock tarantula, is a critically endangered species of spider found only in a small area of India.</info>
+    <population>200</population>
+  </species>
+</endangeredSpecies>
