@@ -21,15 +21,17 @@ import os
 endangered_f = f'file:{os.getcwd()}/endangered_species.xml'
 endangered_xsd_f = f'file:{os.getcwd()}/endangered_species.xsd'
 
-# extended list, with a new <POPULATION> element introduced
+# extended XML file, with a new <POPULATION> element introduced
 endangered_new_f = f'file:{os.getcwd()}/endangered_new.xml'
 
 # apes, not matching the XSD  
 apes_f = f'file:{os.getcwd()}/apes.xml'
 
-schema_loc = '/tmp/my-schema_loc'
-# let's be clean for the next run
+
+schema_loc = '/tmp/schema_loc'
+bad_rec_loc = 'file:/tmp/badrec_loc'
 dbutils.fs.rm(schema_loc, True)
+dbutils.fs.rm(bad_rec_loc, True)
 
 spark.conf.set('apes_f', apes_f)  
 print(f'current working dir:{os.getcwd()}')
@@ -46,7 +48,7 @@ print(f'current working dir:{os.getcwd()}')
 # COMMAND ----------
 
 # DBTITLE 1,Pandas example
-# pandas can load XML (and use files with relative path)
+# pandas can load whole XML files, but it's limitted to a single node
 
 import pandas as pd
 df = pd.read_xml("endangered_species.xml")
@@ -125,17 +127,57 @@ display(movie_df)
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC # XML Ingest with row validation 
+
+# COMMAND ----------
+
 # DBTITLE 1,Rejected movie XML with species XSD schema enforcement
 from pyspark.sql.functions import col
 
-
+#spark.conf.set("spark.databricks.sql.rescuedDataColumn.filePath.enabled", "false")
 movie_df = spark.read.format("xml") \
 .option("rowTag", "Ape") \
+.option("rescuedDataColumn", "_my_rescued_data") \
 .option("rowValidationXSDPath", endangered_xsd_f) \
 .load(apes_f)
 
-# how to display corrupt records?  
-#display(movie_df)
+if "_corrupt_record" in movie_df.columns:
+    print("data ingestion failed")
+    
+
+
+# fail with FAILFAST
+# rescued data is empty with DROPMALFORMED
+# null values for two rows with PERMISSIVE (which is default)
+
+
+# COMMAND ----------
+
+display(movie_df.select("_my_rescued_data"))
+
+# COMMAND ----------
+
+bad_records_df = spark.read.format("xml") \
+    .option("rowTag", "Ape") \
+    .option("mode", "PERMISSIVE") \
+    .load(bad_rec_loc)
+
+bad_records_df.show()
+
+# COMMAND ----------
+
+# MAGIC %fs ls /tmp/badrec_loc
+
+# COMMAND ----------
+
+bad_records_df = spark.read.text(bad_rec_loc)
+bad_records_df.show(truncate=False)
+
+# COMMAND ----------
+
+bad_records_df = movie_df.filter("'_corrupt_record' is not null")
+bad_records_df.show()
 
 # COMMAND ----------
 
@@ -143,12 +185,7 @@ movie_df = spark.read.format("xml") \
 # MAGIC Spark allows validating XML data against an XSD schema using the `"rowValidationXSDPath"` option.
 # MAGIC This cell tries to load the apes XML file while enforcing the endangered species XSD schema.
 # MAGIC Since the apes data does not conform to the endangered species schema, Spark will reject it.
-# MAGIC You can check for corrupt records by uncommenting the `display(movie_df)` line.
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC # XML Ingest with row validation 
+# MAGIC tbd: check for corrupt records
 
 # COMMAND ----------
 
@@ -168,6 +205,11 @@ display(df)
 # MAGIC Spark will parse the XML and validate each row against the schema.
 # MAGIC Rows that don't conform to the schema will be rejected.
 # MAGIC The XSD does not impact the resulting DataFrame schema, it's only used for validation.
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC # XML Ingest with Auto Loader
 
 # COMMAND ----------
 
