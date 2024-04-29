@@ -25,7 +25,7 @@ endangered_xsd_f = f'file:{os.getcwd()}/endangered_species.xsd'
 endangered_new_f = f'file:{os.getcwd()}/endangered_new.xml'
 
 # apes, not matching the XSD  
-apes_f = f'file:{os.getcwd()}/apes.xml'
+apes_f = f'file:{os.getcwd()}/apes2.xml'
 
 
 schema_loc = '/tmp/schema_loc'
@@ -135,21 +135,36 @@ display(movie_df)
 # DBTITLE 1,Rejected movie XML with species XSD schema enforcement
 from pyspark.sql.functions import col
 
-#spark.conf.set("spark.databricks.sql.rescuedDataColumn.filePath.enabled", "false")
-movie_df = spark.read.format("xml") \
-.option("rowTag", "Ape") \
-.option("rescuedDataColumn", "_my_rescued_data") \
-.option("rowValidationXSDPath", endangered_xsd_f) \
+
+movie_df = spark.read.format("xml")                     \
+.option("rowTag", "species")                            \
+.option("rescuedDataColumn", "_my_rescued_data")        \
+.option("rowValidationXSDPath", endangered_xsd_f)       \
 .load(apes_f)
 
+
+
 if "_corrupt_record" in movie_df.columns:
-    print("data ingestion failed")
+    #print("data ingestion failed")
+    movie_df.cache()
+    
+    # see _corrupted_record for details on data not ingested
+    #movie_df.show()
+    movie_df.select("_corrupt_record").show()
+
     
 
 
-# fail with FAILFAST
-# rescued data is empty with DROPMALFORMED
-# null values for two rows with PERMISSIVE (which is default)
+# COMMAND ----------
+
+movie_df.printSchema()
+
+# COMMAND ----------
+
+# display(movie_df.select("_corrupt_record"))
+
+# COMMAND ----------
+
 
 
 # COMMAND ----------
