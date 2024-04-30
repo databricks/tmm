@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<XApes>
-  <Ape>
+<endangeredSpecies xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                       xsi:noNamespaceSchemaLocation="xxxendangered_species.xsd">
+  <species id="JAV654321">
     <Name>Caesar</Name>
-    <Species>Chimpanzee</Species>
+    <Type>Chimpanzee</Type>
     <Leader>true</Leader>
     <Intelligence>High</Intelligence>
     <Personality>
@@ -16,16 +17,32 @@
       <Film>Dawn of the Planet of the Apes</Film>
       <Film>War for the Planet of the Apes</Film>
     </Films>
-  </Ape>
-  <Ape>
-    <Name>Koba</Name>
-    <Species>Bonobo</Species>
+  </species>
+  <species id="JAV123456">
+    <Name>Maurice</Name>
+    <Type>Orangutan</Type>
     <Leader>false</Leader>
-    <Intelligence>High</Intelligence>
+    <Intelligence>Low</Intelligence>
     <Personality>
-      <Trait>Aggressive</Trait>
       <Trait>Loyal</Trait>
-      <Trait>Vengeful</Trait>
+      <Trait>Empathetic</Trait>
+      <Trait>Wise</Trait>
     </Personality>
-  </Ape>
-</XApes>
+    <Role>Motion Capture and Voice Acting</Role>
+    <Films>
+      <Film>Rise of the Planet of the Apes</Film>
+      <Film>Dawn of the Planet of the Apes</Film>
+      <Film>War for the Planet of the Apes</Film>
+    </Films>
+    <Abilities>
+      <Ability>Sign Language</Ability>
+      <Ability>Counseling</Ability>
+    </Abilities>
+    <Relationships>
+      <Relationship>
+        <Character>Caesar</Character>
+        <Type>Friend and Advisor</Type>
+      </Relationship>
+    </Relationships>
+</species>
+</endangeredSpecies>

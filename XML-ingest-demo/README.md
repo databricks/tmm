@@ -1,6 +1,6 @@
 ![image](misc/xml.png)
 
-# XML Processing with Databricks Spark on Databricks -
+# XML Processing with Spark on Databricks -
 # Endangered Species Demo
 
 This Databricks notebook demonstrates how to process XML data using Apache Spark on Databricks. It covers various aspects of XML processing, including reading XML files, validating against XSD schemas, handling schema evolution, and using SQL functions for XML manipulation.
@@ -14,7 +14,7 @@ Native XML is available with Databricks runtime 14.3 and above. Native XML file 
 
 ## Setup
 
-The notebook starts by setting up the necessary files and directories for the XML processing demo. It defines paths to XML files, XSD schemas, and a schema location for Auto Loader. The required libraries, such as pandas, are also imported.
+The notebook starts by setting up the necessary files and directories for the XML processing demo. It defines paths to XML files, XSD schemas, and a schema location for Auto Loader. 
 
 ## Reading XML Data
 

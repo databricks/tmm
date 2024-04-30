@@ -25,7 +25,7 @@ endangered_xsd_f = f'file:{os.getcwd()}/endangered_species.xsd'
 endangered_new_f = f'file:{os.getcwd()}/endangered_new.xml'
 
 # apes, not matching the XSD  
-apes_f = f'file:{os.getcwd()}/apes2.xml'
+endangered_apes_f = f'file:{os.getcwd()}/apes.xml'
 
 
 schema_loc = '/tmp/schema_loc'
@@ -33,8 +33,8 @@ bad_rec_loc = 'file:/tmp/badrec_loc'
 dbutils.fs.rm(schema_loc, True)
 dbutils.fs.rm(bad_rec_loc, True)
 
-spark.conf.set('apes_f', apes_f)  
-print(f'current working dir:{os.getcwd()}')
+
+# print(f'current working dir:{os.getcwd()}')
 
 # COMMAND ----------
 
@@ -42,13 +42,13 @@ print(f'current working dir:{os.getcwd()}')
 # MAGIC This cell sets up the files and directories needed for the XML processing demo.
 # MAGIC - `endangered_f` and `endangered_xsd_f` [reference XML]($./endangered_species.xml) and [XSD schema]($./endangered_species.xsd) files for endangered species data.
 # MAGIC - `endangered_new_f` introduces a new XML element to test schema evolution. 
-# MAGIC - `apes_f` is an XML file with a different structure that doesn't match the endangered species XSD schema.
+# MAGIC - `endangered_apes_f` is an XML file with a different structure that doesn't match the endangered species XSD schema.
 # MAGIC - `schema_loc` is a directory where Auto Loader will store inferred schemas to enable schema evolution.
 
 # COMMAND ----------
 
 # DBTITLE 1,Pandas example
-# pandas can load whole XML files, but it's limitted to a single node
+# pandas can load XML files too, but it's limitted to single node and not Spark
 
 import pandas as pd
 df = pd.read_xml("endangered_species.xml")
@@ -63,7 +63,7 @@ df
 # COMMAND ----------
 
 # DBTITLE 1,Read XML list of endangered species with Spark
-# `rowTag` option is required for reading files in XML format
+# `rowTag` option is required when reading files in XML format
 
 df = (spark.read  
     .format("xml")
@@ -113,22 +113,22 @@ display(df_names)
 # DBTITLE 1,Load the movie XML with different structure and null values  
 movie_df = (spark.read
     .format("xml")
-    .option("rowTag", "Ape")
-    .load(apes_f)  
+    .option("rowTag", "species")
+    .load(endangered_apes_f)  
     )
 display(movie_df)
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC This cell demonstrates reading an XML file (`apes_f`) with a different structure than the endangered species data.
+# MAGIC This cell demonstrates reading an XML file (`endangered_apes_f`) with a different structure than the endangered species data.
 # MAGIC The `"rowTag"` is set to `"Ape"` since those are the elements representing rows in this file.
 # MAGIC The resulting DataFrame shows how Spark handles missing or null values in the XML.
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC # XML Ingest with row validation 
+# MAGIC # XML Ingest with row validation (XML not matching)
 
 # COMMAND ----------
 
@@ -140,59 +140,16 @@ movie_df = spark.read.format("xml")                     \
 .option("rowTag", "species")                            \
 .option("rescuedDataColumn", "_my_rescued_data")        \
 .option("rowValidationXSDPath", endangered_xsd_f)       \
-.load(apes_f)
+.load(endangered_apes_f)
 
 
 
 if "_corrupt_record" in movie_df.columns:
-    #print("data ingestion failed")
     movie_df.cache()
-    
-    # see _corrupted_record for details on data not ingested
-    #movie_df.show()
     movie_df.select("_corrupt_record").show()
 
     
 
-
-# COMMAND ----------
-
-movie_df.printSchema()
-
-# COMMAND ----------
-
-# display(movie_df.select("_corrupt_record"))
-
-# COMMAND ----------
-
-
-
-# COMMAND ----------
-
-display(movie_df.select("_my_rescued_data"))
-
-# COMMAND ----------
-
-bad_records_df = spark.read.format("xml") \
-    .option("rowTag", "Ape") \
-    .option("mode", "PERMISSIVE") \
-    .load(bad_rec_loc)
-
-bad_records_df.show()
-
-# COMMAND ----------
-
-# MAGIC %fs ls /tmp/badrec_loc
-
-# COMMAND ----------
-
-bad_records_df = spark.read.text(bad_rec_loc)
-bad_records_df.show(truncate=False)
-
-# COMMAND ----------
-
-bad_records_df = movie_df.filter("'_corrupt_record' is not null")
-bad_records_df.show()
 
 # COMMAND ----------
 
@@ -201,6 +158,12 @@ bad_records_df.show()
 # MAGIC This cell tries to load the apes XML file while enforcing the endangered species XSD schema.
 # MAGIC Since the apes data does not conform to the endangered species schema, Spark will reject it.
 # MAGIC tbd: check for corrupt records
+
+# COMMAND ----------
+
+# MAGIC
+# MAGIC %md
+# MAGIC # XML Ingest with row validation (happy path)
 
 # COMMAND ----------
 
@@ -252,7 +215,7 @@ df = spark.readStream \
 
 # COMMAND ----------
 
-# DBTITLE 1,Auto Loader: old XSD, new XML with new ELEMENT - will FAIL
+# DBTITLE 1,Auto Loader: old XSD, XML with NEW Element - will FAIL
 # 
 
 df = spark.readStream \
@@ -283,6 +246,7 @@ display(df)
 
 # COMMAND ----------
 
+# DBTITLE 1,SchemaEvolution for new cols ON
 df = spark.readStream \
   .format("cloudFiles")  \
   .option("cloudFiles.format", "xml") \
@@ -292,12 +256,11 @@ df = spark.readStream \
   .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
   .load(endangered_new_f)
 
+
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC To handle schema evolution, set `"cloudFiles.schemaEvolutionMode"` to `"addNewColumns"`.
-# MAGIC This allows Auto Loader to update the schema when new columns are encountered.
-# MAGIC The inferred schema stored in `"cloudFiles.schemaLocation"` will be updated to include the new column.
+# MAGIC The default of `"cloudFiles.schemaEvolutionMode"` is `"addNewColumns"`. This allows Auto Loader to update the schema when new columns are encountered. For other settings see the [documentation for schemaEvolutionMode](https://docs.databricks.com/en/ingestion/auto-loader/schema.html#evolution). The inferred schema stored in `"cloudFiles.schemaLocation"` will be updated to include the new column.
 # MAGIC Now Auto Loader can process the XML with the new `<POPULATION>` element.
 
 # COMMAND ----------
