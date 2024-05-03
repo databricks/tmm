@@ -10,7 +10,7 @@ This Databricks notebook demonstrates how to process XML data using Apache Spark
 
 XML (eXtensible Markup Language) is a popular format for storing and exchanging structured data. Apache Spark provides built-in support for processing XML data, enabling users to read, validate, and manipulate XML files efficiently. This notebook explores various techniques for working with XML data in Spark using Databricks.
 
-Native XML is available with Databricks runtime 14.3 and above. Native XML file format support enables ingestion, querying, and parsing of XML data for batch processing or streaming. This won't replace the OSS version of spark-xml. That library will continue to be supported but doesn't have the same feature set for things like schema evolution, rescue data columns. Customers using DBR  don't need to add the package anymore and will get additional optimizations and features.
+Native XML is available now with Databricks runtime 14.3 and above. Native XML file format support enables ingestion, querying, and parsing of XML data for batch processing or streaming. This won't replace the OSS version of spark-xml. That library will continue to be supported but doesn't have the same feature set for things like schema evolution, rescue data columns. Customers using DBR  don't need to add the package anymore and will get additional optimizations and features.
 
 ## Setup
 
