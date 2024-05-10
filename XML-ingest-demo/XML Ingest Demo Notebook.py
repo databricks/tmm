@@ -297,7 +297,7 @@ df.printSchema()
 # MAGIC DROP TABLE IF EXISTS e_species;
 # MAGIC
 # MAGIC CREATE TABLE e_species USING XML  
-# MAGIC OPTIONS (path "file:/Workspace/Repos/frank.munz@databricks.com/tmm/XML-ingest-demo/endangered_species.xml", rowTag "species");
+# MAGIC OPTIONS (path "file:/PATH/endangered_species.xml", rowTag "species");
 # MAGIC
 # MAGIC SELECT * FROM e_species;
 
