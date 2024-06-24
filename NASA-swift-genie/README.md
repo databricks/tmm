@@ -62,6 +62,7 @@ This read me assumes that you have watched the original [From Supernovas to LLMs
    * The total number of events
    * The distribution of merit values
    * Plot the DEC and RA coordinates (in the DAIS session)
+![DLT](misc/genie_plot.png)
 
 9. Try asking questions in other languages (e.g., Spanish, German, or French) if you speak them
 
