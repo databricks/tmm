@@ -1,5 +1,3 @@
-Here's the revised README.md with typos and style issues fixed, and an added Acknowledgements section:
-
 # Streaming Data Pipelines: From Supernovas to LLMs
 
 ## Overview
