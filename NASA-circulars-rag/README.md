@@ -22,6 +22,28 @@ This hands-on, in-depth project demonstrates the use of 36,000 NASA circulars fo
 ![gcn](misc/vector_db.png)
 
 * Create a Langchain template with a question and RAG content. (for reference have a look at the provided RAG chain notebook) 
-* Examin the output and iterate over the prompt.
+* Examin the output and iterate over the prompt. Note that unlike without RAG, this version contains pricse data from 2024 and no hallucinations. 
 ![gcn](misc/grbs.png)
 
+
+## Additional Resources
+
+- Make sure to read the Databricks documentation about [DLT](https://docs.databricks.com/en/delta-live-tables/index.html) and [Vector DB](https://docs.databricks.com/en/generative-ai/vector-search.html).
+- [Slides](https://speakerdeck.com/fmunz/from-supernovas-to-llms-streaming-data-pipelines)
+- [Session](https://www.databricks.com/dataaisummit/session/streaming-data-pipelines-supernovas-llms)
+
+
+## License
+
+The code is provided "as is" without any warranty.
+
+## Contact
+
+For questions about Databricks products, use our forum at community.databricks.com.
+
+## Acknowledgements
+
+We would like to express our gratitude to the following individuals for their contributions and support:
+
+- Judith Rascusin (NASA)
+- Alex, Nicolas, Raghu, Praveen, Neil, Eric (Databricks)
