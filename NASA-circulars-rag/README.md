@@ -13,14 +13,17 @@ This hands-on, in-depth project demonstrates the use of 36,000 NASA circulars fo
 
 * Get the Circulars from [here](https://gcn.nasa.gov/circulars/archive.json.tar.gz)
 ![gcn](misc/get_circulars.png)
+
 * Upload them to a Databricks UC managed volume
 * extract the .tar.gz
 * Use the use the provided DLT pipeline to ingest the data
 * Chunk the data (for reference have a look at the provided data prep notebook) 
 * Create a Vector DB endpoint and index. 
 ![gcn](misc/vector_db.png)
+
 * Create a Langchain template with a question and RAG content. (for reference have a look at the provided RAG chain notebook) 
 ![gcn](misc/code.png)
+
 * Examin the output and iterate over the prompt.
 ![gcn](misc/grbs.png)
 
