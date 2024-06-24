@@ -22,8 +22,6 @@ This hands-on, in-depth project demonstrates the use of 36,000 NASA circulars fo
 ![gcn](misc/vector_db.png)
 
 * Create a Langchain template with a question and RAG content. (for reference have a look at the provided RAG chain notebook) 
-![gcn](misc/code.png)
-
 * Examin the output and iterate over the prompt.
 ![gcn](misc/grbs.png)
 
