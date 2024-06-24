@@ -81,4 +81,4 @@ The code is provided "as is" without any warranty.
 
 ## Contact
 
-For questions or further information, please contact [Your Name/Organization].
+For questions about Databricks producs use our forum at community.databricks.com
