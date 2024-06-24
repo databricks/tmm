@@ -29,9 +29,6 @@ Key aspects of the project include:
 
 This README assumes that you have watched the original [From Supernovas to LLMs](https://www.databricks.com/dataaisummit/session/streaming-data-pipelines-supernovas-llms) session at DAIS, which explains all the context and walks you through the steps required to make this run.
 
-## Project Structure
-
-![back of an envolope diagram](misc/swift_arch.png)
 
 ## Usage
 
