@@ -12,10 +12,10 @@ This hands-on, in-depth project demonstrates the use of live streaming data with
 
 Key aspects of the project include:
 
-1. Ingesting data from message buses
-2. Comparing Delta Live Tables, DBSQL, and Databricks Workflows for stream processing
-3. Coding ETL pipelines in SQL, including Kafka ingestion
-4. Demonstrating natural language analytics using Databricks Data Rooms
+1. Ingesting data in SQL from Kafka with read_kafka() and OIDC
+2. Comparing Delta Live Tables, DBSQL, and Databricks Workflows for stream processing (see recording)
+3. Coding ETL pipelines in SQL, including Streaming Tables and Materialized Views
+4. Demonstrating natural language analytics using Genie Data Rooms
 
 ## Prerequisites
 
