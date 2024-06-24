@@ -29,7 +29,7 @@ This read me assumes that you have watched the original [From Supernovas to LLMs
 
 ## Project Structure
 
-![back of an envolope diagram](misc/swift arch.png)
+![back of an envolope diagram](../misc/swift arch.png)
 
 ## Usage
 
@@ -45,7 +45,7 @@ This read me assumes that you have watched the original [From Supernovas to LLMs
 5. If the data ingestion works, use the provided code to configure a triggered DLT pipeline using serverless compute
    * Make sure to reference the correct secrets from the pipeline code
 
-![DLT]("misc/dlt kafka.png")
+![DLT](../misc/dlt kafka.png)
 
 6. Explore how streaming tables and materialized views are used in the pipeline
    * The pipeline uses streaming tables for ingestion with read_kafka()
