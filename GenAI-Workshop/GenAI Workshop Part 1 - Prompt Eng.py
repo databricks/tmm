@@ -71,7 +71,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 from langchain.chat_models import ChatDatabricks
 
 #call dbrx, hosted by Databricks Foundation Model API
-dbrx_model = ChatDatabricks(endpoint="databricks-dbrx-instruct", max_tokens = 275)
+dbrx_model = ChatDatabricks(endpoint="databricks-dbrx-instruct", max_tokens = 450)
 
 # COMMAND ----------
 
@@ -298,13 +298,9 @@ from mlflow.models import infer_signature
 input_str="How can I speed up my Spark joins?"
 prediction = dbrx_chain.run(input_str)
 input_columns = [
-    {"question": input_key} for input_key in dbrx_chain.input_keys
+    {"type": "string", "name": input_key} for input_key in dbrx_chain.input_keys
 ]
 signature = infer_signature(input_columns, prediction)
-
-# COMMAND ----------
-
-display(signature)
 
 # COMMAND ----------
 
@@ -326,6 +322,7 @@ with mlflow.start_run(experiment_id=experiment_id):
     mlflow.langchain.log_model(
         dbrx_chain,
         model_name,
+        signature=signature,
         input_example=input_str,
         pip_requirements=[
             "mlflow==" + mlflow.__version__,
