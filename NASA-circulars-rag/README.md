@@ -11,18 +11,17 @@ This project accompanies the Data + AI Summit 2024 presentation "Streaming Data 
 This hands-on, in-depth project demonstrates the use of 36,000 NASA circulars for a compoind AI application (RAG + LLL). 
 
 
-* Get the Circulars from [here](https://gcn.nasa.gov/circulars/archive.json.tar.gz)
+* Get the Circulars in packed JSON format from [here](https://gcn.nasa.gov/circulars/archive.json.tar.gz)
 ![gcn](misc/get_circulars.png)
 
-* Upload them to a Databricks UC managed volume
-* extract the .tar.gz
-* Use the use the provided DLT pipeline to ingest the data
-* Chunk the data (for reference have a look at the provided data prep notebook) 
-* Create a Vector DB endpoint and index. 
+* Upload them to a Databricks UC managed volume and extract them
+* Use the use the provided DLT pipeline to ingest the data, make sure to specify the right folder to read from
+* Chunk the data (as a reference, have a look at the provided data prep notebook) 
+* Create a Vector DB endpoint and index using the UI. 
 ![gcn](misc/vector_db.png)
 
-* Create a Langchain template with a question and RAG content. (for reference have a look at the provided RAG chain notebook) 
-* Examin the output and iterate over the prompt. Note that unlike without RAG, this version contains pricse data from 2024 and no hallucinations. 
+* Define a Langchain template with a question and RAG content. (as a reference have a look at the provided RAG chain notebook) 
+* Examine the output and iterate over the prompt. Note that unlike without RAG, this version contains precise data from 2024 and no hallucinations. 
 ![gcn](misc/grbs.png)
 
 
