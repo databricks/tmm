@@ -1,6 +1,6 @@
 # Streaming Data Pipelines: From Supernovas to LLMs (Circulars + RAG/LLMs)
 
-## Overview
+## Overview 
 
 This project accompanies the Data + AI Summit 2024 presentation "Streaming Data Pipelines: From Supernovas to LLMs", which is available [here](https://www.databricks.com/dataaisummit/session/streaming-data-pipelines-supernovas-llms).
 
