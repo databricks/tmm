@@ -4,7 +4,7 @@
 
 This project accompanies the Data + AI Summit 2024 presentation "Streaming Data Pipelines: From Supernovas to LLMs", which is available [here](https://www.databricks.com/dataaisummit/session/streaming-data-pipelines-supernovas-llms).
 
-**Note:** This is not a beginner tutorial, nor is it a step-by-step guide. For introductory tutorials, please visit [databricks.com/demos](https://databricks.com/demos).
+**Note:** This is not a beginner tutorial, nor is it a step-by-step guide. For easy to replicate tutorials, please visit [databricks.com/demos](https://databricks.com/demos).
 
 ## Project Description
 
