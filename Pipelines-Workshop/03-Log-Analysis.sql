@@ -1,7 +1,7 @@
 -- Databricks notebook source
 -- MAGIC %md 
 -- MAGIC ### A cluster has been created for this demo
--- MAGIC Run this demo on the serverless DWH that is already configured. 
+-- MAGIC Run this demo on the serverless DWH. 
 
 -- COMMAND ----------
 
@@ -15,16 +15,7 @@
 -- MAGIC
 -- MAGIC You can leverage the expecations directly as a SQL table with Databricks SQL to track your expectation metrics and send alerts as required. 
 -- MAGIC
--- MAGIC With HMS, you can find your metrics opening the Settings of your DLT pipeline, under `storage` :
 -- MAGIC
--- MAGIC ```
--- MAGIC {
--- MAGIC     ...
--- MAGIC     "name": "test_dlt_cdc",
--- MAGIC     "storage": "/demos/dlt/loans",
--- MAGIC     "target": "quentin_dlt_cdc"
--- MAGIC }
--- MAGIC ```
 -- MAGIC
 -- MAGIC <!-- Collect usage data (view). Remove it to disable collection. View README for more details.  -->
 -- MAGIC <img width="1px" src="https://www.google-analytics.com/collect?v=1&gtm=GTM-NKQ8TT7&tid=UA-163989034-1&aip=1&t=event&ec=dbdemos&ea=VIEW&dp=%2F_dbdemos%2Fdata-engineering%2Fdlt-loans%2F03-Log-Analysis&cid=local&uid=local">
@@ -33,7 +24,7 @@
 
 -- DBTITLE 1,Show DLT System Tables for a Pipeline
 -- replace the pipeline_id with your own pipeline id 
-SELECT * FROM event_log("f30e4ffb-32ab-4c87-b744-28ada175dbd6")
+SELECT * FROM event_log("a23cadf7-2aa3-43be-900f-c7bfa2a0a0fc")
 
 -- COMMAND ----------
 
