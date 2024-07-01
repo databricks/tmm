@@ -1,7 +1,7 @@
 # Databricks notebook source
 # MAGIC %md
 # MAGIC
-# MAGIC # Lab Guide Data Engineering in the Age of AI (03/2024)
+# MAGIC # Lab Guide: AI-Powered Data Engineering (July-2nd, 2024)
 
 # COMMAND ----------
 
@@ -37,6 +37,7 @@
 # MAGIC * Git provider and repo name will be filled automatically (repo name is `tmm`).
 # MAGIC * Select Sparse Checkout Mode (otherwise you will clone more content than necessary)
 # MAGIC   * under Cone Patter put `Pipelines-Workshop` 
+# MAGIC   * feel free to change the repo name to `Pipelines-Workshop` to make it more descriptive
 # MAGIC * Click "create repo" and the resoures for this course will be cloned.
 # MAGIC * Click on `Pipelines Workshop`. This is the folder we will be working with in this lab
 
@@ -72,7 +73,7 @@ print(f"user_{user}")
 # MAGIC
 # MAGIC After this module, you should be able to answer the following questions:
 # MAGIC
-# MAGIC * What is the difference between Streaming Table (ST) and a Materialized View (MV)
+# MAGIC * What is the difference between Streaming Tables (ST) and Materialized Views (MV)?
 # MAGIC * What is the CTAS pattern?
 # MAGIC * What do we use the medallion architecture for?
 # MAGIC
@@ -88,13 +89,13 @@ print(f"user_{user}")
 # MAGIC 1. **Watch your instructor explaining how to create a DLT pipeline first**, then follow the steps below. ([Detailed documentation is available here](https://docs.databricks.com/workflows/delta-live-tables/delta-live-tables-ui.html#create-a-pipeline))
 # MAGIC 2. On your workspace, under Workflows / DLT change to "Owned by me"
 # MAGIC 3. Create a new pipeline (leave all pipeline setting **on default except the ones listed below**)
-# MAGIC   * `pipeline name: [use your own user_id from above as the name of the pipeline]`
+# MAGIC   * `pipeline name:`** [use your own user_id from above as the name of the pipeline] **
+# MAGIC   * Select `Serverless` to run the pipeline with serverless compute
 # MAGIC   * Under `Source Code:` select the location of the [DLT SQL notebook]
 # MAGIC   * For `Destination` select **Unity Catalog**
 # MAGIC     - Catalog: demo 
-# MAGIC     - Target Schema: `your user_id` (you will work with your own **schema** to separate content from others)
-# MAGIC   * `Cluster mode: fixed size`
-# MAGIC   * `Number Workers: 1`
+# MAGIC     - Target Schema: `your user_id` (you will **work with your own schema** to separate your content from others)
+# MAGIC   * (In accounts without serverless enabled set `Cluster mode: fixed size` and `Number Workers: 1`) 
 # MAGIC   *  Then click "Create"
 # MAGIC 3. Click on "Start" (top right) to run the pipeline. Note, when you start the pipeline for the first time it might take a few minutes until resources are provisioned.
 # MAGIC
@@ -102,12 +103,16 @@ print(f"user_{user}")
 # MAGIC
 # MAGIC
 # MAGIC ### Pipeline Graph
-# MAGIC You can always get to your running pipelines by clicking on "Workflows" on the left menue bar and then on "Delta Live Tables" / "Owned by me"
+# MAGIC You can always get to your running pipelines by clicking on "Workflows" on the left menu bar and then on "Delta Live Tables" / "Owned by me"
 # MAGIC * Check the pipeline graph 
 # MAGIC   * Identify bronze, silver and gold tables
 # MAGIC   * Identify all streaming tables (ST) in the SQL code (use the link under "Paths" at the right to open the notebook) 
 # MAGIC   * Identify Materialized Views and Views
 # MAGIC
+# MAGIC
+# MAGIC ### New Developer Experience
+# MAGIC * Once you defined the pipeline settings the notebook is associated with the DLT code. 
+# MAGIC * On the notebook page, you will be asked if the you want to attach the notebook to the pipeline. If you do so, you can see the pipeline graph and the event log in the notebook. The notebook is then like a mini IDE for DLT. 
 # MAGIC
 # MAGIC ### Pipeline Settings
 # MAGIC
@@ -122,7 +127,7 @@ print(f"user_{user}")
 # MAGIC   * note, only the new data is ingested 
 # MAGIC * Select "Full Refresh all" from the "Start" button
 # MAGIC   * note that all tables will be recomputed and backfilled 
-# MAGIC * Could we convert the MV used for ingestion to a ST? 
+# MAGIC * Could we convert the Materialized View (MV) used for data ingestion to a Streaming Table (ST) 
 # MAGIC * Use the button "Select Table for Refresh" and select all silver tables to be refreshed only
 # MAGIC
 # MAGIC
@@ -175,6 +180,29 @@ print(f"user_{user}")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC ## 3. Notebooks and Spark with Serverless Compute
+# MAGIC
+# MAGIC You can now use Notebooks to run serverless Spark jobs
+# MAGIC
+# MAGIC * On the left menue bar, click on +New Notebook
+# MAGIC * Edit the name of the notebook
+# MAGIC * Make sure next to the notebook's name `Python` is displayed for the default cell type (or change it)
+# MAGIC * Make sure on the right hand side you see a green dot and `connected`. Click on that button to verify you are connected to serverless compute (if not, connect to serverless compute)
+# MAGIC * add the following command to a Python cell, then run it by clicking on the triangle (or using SHIFT-RETURN shortcut):
+# MAGIC
+# MAGIC `display(spark.range(10).toDF("serverless"))`
+# MAGIC * Click on the symbol for Databricks Assistant and document the the cell. Hint: use /doc in the command line for Assistant and accept the suggestion. 
+# MAGIC
+# MAGIC
+# MAGIC * Add another Python cell and copy the following command into that cell. The command contains a syntax error. 
+# MAGIC `display(spark.createDataFrame([("Python",), ("Spark",), ("Databricks",)], ["serverless"])`
+# MAGIC Click on the Assistant toggle (the blueish/redish star) and try to fix the problem with `/fix` and run the command. 
+# MAGIC
+# MAGIC Note that the Assistant is context aware and knows about table names and schemas from Unity Catalog. 
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ## 3. DWH View / SQL Persona
 # MAGIC
 # MAGIC The Lakehouse unifies classic data lakes and DWHs. This lab will teach you how to access Delta tables generated with a DLT data pipeline from the DWH.
@@ -211,7 +239,7 @@ print(f"user_{user}")
 # MAGIC * Task name: Update Downstream
 # MAGIC * Task type: Notebook 
 # MAGIC * Select the `04-Udpate-Downstream` notebook
-# MAGIC
+# MAGIC * Note that automtatically `Serverless` is selected for compute on the right hand side
 # MAGIC
 # MAGIC
 # MAGIC ### Run the workflow
@@ -235,12 +263,10 @@ print(f"user_{user}")
 # MAGIC %md
 # MAGIC ## 5. Outlook (optional topics in preview)
 # MAGIC
-# MAGIC Follow your instructor for cababilities still in preview. Time permitting, he will demo them on another environment. 
+# MAGIC Follow your instructor for cababilities such as Genie Data Rooms. Time permitting, he will demo them in another environment. 
 # MAGIC
-# MAGIC ### Serverless Workflows and DLT
-# MAGIC ### Databricks Assistent
 # MAGIC
-# MAGIC A full end to end demo of this section [**Data Engineering in the Age of AI** is available as a video in the Databricks Demo Center](https://www.databricks.com/resources/demos/videos/data-engineering/databricks-data-intelligence-platform?itm_data=demo_center)
+# MAGIC A full end to end demo of this section is available as a video in the [Databricks Demo Center](https://www.databricks.com/resources/demos/videos/data-engineering/databricks-data-intelligence-platform?itm_data=demo_center)
 
 # COMMAND ----------
 

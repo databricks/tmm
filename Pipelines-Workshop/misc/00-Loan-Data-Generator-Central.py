@@ -176,7 +176,7 @@ def generate_transactions(num, folder, file_count, mode):
 
 import time
 
-assert batch_count <= 500, "please don't go above 500 writes, the generator will run for a too long time"
+#assert batch_count <= 500, "please don't go above 500 writes, the generator will run for a too long time"
 for i in range(0, batch_count):
   if batch_count > 1:
     time.sleep(batch_wait)
