@@ -36,8 +36,7 @@
 # MAGIC * For Git Repo URL use  [`https://github.com/databricks/tmm`](https://github.com/databricks/tmm)
 # MAGIC * Git provider and repo name will be filled automatically (repo name is `tmm`).
 # MAGIC * Select Sparse Checkout Mode (otherwise you will clone more content than necessary)
-# MAGIC   * under Cone Patter put `Pipelines-Workshop` 
-# MAGIC   * feel free to change the repo name to `Pipelines-Workshop` to make it more descriptive
+# MAGIC   * under Clone Pattern put `Pipelines-Workshop` 
 # MAGIC * Click "create repo" and the resoures for this course will be cloned.
 # MAGIC * Click on `Pipelines Workshop`. This is the folder we will be working with in this lab
 
@@ -95,7 +94,7 @@ print(f"user_{user}")
 # MAGIC   * For `Destination` select **Unity Catalog**
 # MAGIC     - Catalog: demo 
 # MAGIC     - Target Schema: `your user_id` (you will **work with your own schema** to separate your content from others)
-# MAGIC   * (In accounts without serverless enabled set `Cluster mode: fixed size` and `Number Workers: 1`) 
+# MAGIC   * (In older accounts **without** serverless enabled set `Cluster mode: fixed size` and `Number Workers: 1`) 
 # MAGIC   *  Then click "Create"
 # MAGIC 3. Click on "Start" (top right) to run the pipeline. Note, when you start the pipeline for the first time it might take a few minutes until resources are provisioned.
 # MAGIC
@@ -234,12 +233,12 @@ print(f"user_{user}")
 # MAGIC * Task name: Ingest
 # MAGIC * Task type: DLT task
 # MAGIC * Pipeline: your DLT pipeline name for the DLT SQL notebook from above (the pipeline should be in triggered mode for this lab.)
-# MAGIC * Cluster: labcluster
+# MAGIC
 # MAGIC ### Add a second task
 # MAGIC * Task name: Update Downstream
 # MAGIC * Task type: Notebook 
 # MAGIC * Select the `04-Udpate-Downstream` notebook
-# MAGIC * Note that automtatically `Serverless` is selected for compute on the right hand side
+# MAGIC * Note that `Serverless` is automtatically selected for compute on the right hand side
 # MAGIC
 # MAGIC
 # MAGIC ### Run the workflow
