@@ -88,7 +88,7 @@ print(f"user_{user}")
 # MAGIC 1. **Watch your instructor explaining how to create a DLT pipeline first**, then follow the steps below. ([Detailed documentation is available here](https://docs.databricks.com/workflows/delta-live-tables/delta-live-tables-ui.html#create-a-pipeline))
 # MAGIC 2. On your workspace, under Workflows / DLT change to "Owned by me"
 # MAGIC 3. Create a new pipeline (leave all pipeline setting **on default except the ones listed below**)
-# MAGIC   * `pipeline name:`** [use your own user_id from above as the name of the pipeline] **
+# MAGIC   * `pipeline name:`**[use your own user_id from above as the name of the pipeline]**
 # MAGIC   * Select `Serverless` to run the pipeline with serverless compute
 # MAGIC   * Under `Source Code:` select the location of the [DLT SQL notebook]
 # MAGIC   * For `Destination` select **Unity Catalog**
