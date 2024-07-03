@@ -33,4 +33,5 @@ df = df.withColumn("value", col("value").cast("string"))
 
 result_df = df.select("topic", "offset", "timestamp", "value")
 
+
 display(result_df)
