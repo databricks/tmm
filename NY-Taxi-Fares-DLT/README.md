@@ -6,12 +6,12 @@ This Delta Live Tables (DLT) pipeline processes NYC taxi ride data, demonstratin
 ## Pipeline Structure
 
 ### Bronze Layer
-- **Table**: `taxi_raw_records`
+- **Streaming Table**: `taxi_raw_records`
 - **Source**: `samples.nyctaxi.trips`
 - **Key Feature**: Data quality check to ensure positive trip distances
 
 ### Silver Layer
-1. **Table**: `flagged_rides`
+1. **Streaming Table**: `flagged_rides`
    - Identifies potentially fraudulent or unusual rides
    - Filters for same zip code rides or short trips with high fares
 
@@ -40,5 +40,6 @@ This Delta Live Tables (DLT) pipeline processes NYC taxi ride data, demonstratin
 ## Requirements
 - Databricks workspace with Unity Catalog enabled
 - Access to the `samples.nyctaxi.trips` dataset
+
 
 This pipeline serves as a practical example of building data analytics workflows using Delta Live Tables, showcasing real-time data processing, data quality management, and business-ready data presentation.
