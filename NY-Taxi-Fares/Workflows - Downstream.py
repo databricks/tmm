@@ -4,6 +4,7 @@ display(spark.range(5).toDF("serverless"))
 
 # COMMAND ----------
 
+# Create a DataFrame with a single column named 'serverless' containing the values 'Python', 'Spark', and 'Databricks'
 display(spark.createDataFrame([("Python",), ("Spark",), ("Databricks",)], ["serverless"]))
 
 # COMMAND ----------

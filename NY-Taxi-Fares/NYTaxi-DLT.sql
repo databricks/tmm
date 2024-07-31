@@ -10,7 +10,7 @@ CREATE OR REFRESH STREAMING TABLE taxi_raw_records
 AS SELECT
   *
 FROM
-  STREAM(samples.nyctaxi.trips)
+  STREAM(samples.nyctaxi.trips);
 
 
 
@@ -27,7 +27,7 @@ AS SELECT
 FROM
   STREAM(LIVE.taxi_raw_records)
 WHERE   ((pickup_zip = dropoff_zip AND fare_amount > 50) OR
-        (trip_distance < 5 AND fare_amount > 50))
+        (trip_distance < 5 AND fare_amount > 50));
 
 
 -- calculate avg fares and trip distances for each week
@@ -41,7 +41,7 @@ FROM
  live.taxi_raw_records
 GROUP BY
   week
-ORDER by week ASC
+ORDER by week ASC;
 
 -- COMMAND ----------
 
@@ -61,3 +61,9 @@ LEFT JOIN live.weekly_stats ON weekly_stats.week = flagged_rides.week
 ORDER BY fare_amount DESC
 LIMIT 3;
 
+
+-- COMMAND ----------
+
+-- MAGIC %environment
+-- MAGIC "client": "1"
+-- MAGIC "base_environment": ""
