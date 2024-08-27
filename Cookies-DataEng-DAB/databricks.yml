@@ -1,0 +1,55 @@
+# Databricks asset bundle definition for cookies.
+
+bundle:
+  name: cookies
+
+
+include:
+  - resources/*.yml
+
+
+#permissions:
+#  - level: CAN_VIEW
+#    group_name: marketing
+#  - level: CAN_MANAGE
+#    user_name: frank.munz@databricks.com
+#  - level: CAN_RUN
+#    service_principal_name: 123456-abcdef
+
+targets:
+
+  
+
+  # The 'dev' target, for development purposes. This target is the default.
+  dev:
+    # We use 'mode: development' to indicate this is a personal development copy:
+    # - Deployed resources get prefixed with '[dev my_user_name]'
+    # - Any job schedules and triggers are paused by default
+    # - The 'development' mode is used for Delta Live Tables pipelines
+    mode: development
+    default: true
+    workspace:
+      host: https://e2-dogfood.staging.cloud.databricks.com
+
+
+  
+  prod:
+    
+    #variables:
+    #  prod_warehouse_id: a986f6d81a971b20
+
+
+    # We use 'mode: production' enables strict verification of the settings below.
+    mode: production
+
+    
+    workspace:
+      host: https://data-ai-lakehouse.cloud.databricks.com      
+      # We always use /Users/frank.munz@databricks.com for all resources to make sure we only have a single copy.
+      # If this path results in an error, please make sure you have a recent version of the CLI installed.
+      root_path: /Users/frank.munz@databricks.com/.bundle/${bundle.name}/${bundle.target}
+    run_as:
+      # This runs as frank.munz@databricks.com in production. 
+      # We could also use a service principal here,
+      # see https://docs.databricks.com/dev-tools/bundles/permissions.html.
+      user_name: frank.munz@databricks.com

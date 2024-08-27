@@ -1,0 +1,16 @@
+
+
+
+resources:
+  pipelines:
+    bakehouse_etl:
+      name: bakehouse_etl
+      libraries:
+        - notebook:
+            path: ../src/DLT Flagship SQL.sql
+      serverless: true
+      development: false
+      target: pipelines_dlt
+      photon: true
+      channel: PREVIEW
+      catalog: bakehouse
