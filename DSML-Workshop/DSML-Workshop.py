@@ -564,19 +564,6 @@ mlflow.set_registered_model_alias(model_name, "Champion", 1)
 
 # COMMAND ----------
 
-from mlflow import MlflowClient
-client = MlflowClient()
-
-mlflow.set_registry_uri("databricks-uc")
-
-model_name = f"{catalog}.{schema_name}.{schema_name}-loan_estimator"
-model_uri = f"runs:/{ mlflow_run.info.run_id }/model"
-
-registered_model_version = mlflow.register_model(model_uri, model_name)
-mlflow.set_registered_model_alias(model_name, "Champion", 1)
-
-# COMMAND ----------
-
 # MAGIC %md
 # MAGIC With the model now registered, lets see how we can reference it from within a notebook
 
