@@ -30,15 +30,15 @@
 # MAGIC
 # MAGIC To get access to the lab notebooks, create a repo in your workspace
 # MAGIC
-# MAGIC ### Add a Repo
+# MAGIC ### Add a Git Folder
 # MAGIC
-# MAGIC * Under `Workspace / Your Username` select `Repos` and click on "add repo" to add a new repo
-# MAGIC * For Git Repo URL use  [`https://github.com/databricks/tmm`](https://github.com/databricks/tmm)
-# MAGIC * Git provider and repo name will be filled automatically (repo name is `tmm`).
-# MAGIC * Select Sparse Checkout Mode (otherwise you will clone more content than necessary)
+# MAGIC * Under `Workspaces` click on `Home` and then use the button at the top right and click "Create / Git Folder" to add a new git folder
+# MAGIC   * For Git Repo URL use  [`https://github.com/databricks/tmm`](https://github.com/databricks/tmm)
+# MAGIC   * Git provider and repo name will be filled automatically (repo name is `tmm`).
+# MAGIC   * Select **Sparse Checkout Mode** (otherwise you will clone more content than necessary)
 # MAGIC   * under Clone Pattern put `Pipelines-Workshop` 
-# MAGIC * Click "create repo" and the resoures for this course will be cloned.
-# MAGIC * Click on `Pipelines Workshop`. This is the folder we will be working with in this lab
+# MAGIC   * Click "create repo" and the resoures for this course will be cloned.
+# MAGIC * Click on `Pipelines Workshop`. This is the folder we will be working with in this lab. 
 
 # COMMAND ----------
 
