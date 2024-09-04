@@ -18,7 +18,9 @@
 # MAGIC
 # MAGIC ##Super Important
 # MAGIC
-# MAGIC This course is designed in a way it can be run with thousands of participants on a single Databricks account. We are therefore using the **USER ID** (derived from your login user email) to separate schemas and pipelines. In your own environment you won't need that. Just use your company's naming schema for resources. 
+# MAGIC This course is designed in a way it can be run with thousands of participants on a single Databricks account sharing a number of workspaces. 
+# MAGIC
+# MAGIC We are therefore using the **USER ID** (derived from your login user email) to separate schemas and pipelines and avoid namespace clashes. Just as in your own environment, you would use your company's naming schema for resources.
 # MAGIC
 # MAGIC To get to your user id, check your login email at the to right of the workspace. Example: odl_user_1257777@databrickslabs.com means your user id is: `user_1257777`
 
@@ -32,7 +34,7 @@
 # MAGIC
 # MAGIC ### Add a Git Folder
 # MAGIC
-# MAGIC * Under `Workspaces` click on `Home` and then use the button at the top right and click "Create / Git Folder" to add a new git folder
+# MAGIC * On the left hand side, click on `Workspace` and `Home` and then use the button at the top right and click "Create / Git Folder" to add a new git folder
 # MAGIC   * For Git Repo URL use  [`https://github.com/databricks/tmm`](https://github.com/databricks/tmm)
 # MAGIC   * Git provider and repo name will be filled automatically (repo name is `tmm`).
 # MAGIC   * Select **Sparse Checkout Mode** (otherwise you will clone more content than necessary)
@@ -90,7 +92,8 @@ print(f"user_{user}")
 # MAGIC 3. Create a new pipeline (leave all pipeline setting **on default except the ones listed below**)
 # MAGIC   * `pipeline name:`**[use your own user_id from above as the name of the pipeline]**
 # MAGIC   * Select `Serverless` to run the pipeline with serverless compute
-# MAGIC   * Under `Source Code:` select the location of the [DLT SQL notebook]
+# MAGIC   * Under `Source Code:` select the location of the [DLT SQL notebook], that is  `YOUR_USERNAME@databrickslabs.com / tmm / Pipelines-Workshop/01-DLT-Loan-pipeline-SQL`
+# MAGIC    
 # MAGIC   * For `Destination` select **Unity Catalog**
 # MAGIC     - Catalog: demo 
 # MAGIC     - Target Schema: `your user_id` (you will **work with your own schema** to separate your content from others)
