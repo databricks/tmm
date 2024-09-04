@@ -182,20 +182,21 @@ print(f"user_{user}")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 3. Notebooks and Spark with Serverless Compute
+# MAGIC ## 3. Spark with Serverless Compute
 # MAGIC
 # MAGIC You can now use Notebooks to run serverless Spark jobs
 # MAGIC
 # MAGIC * On the left menue bar, click on +New Notebook
 # MAGIC * Edit the name of the notebook
 # MAGIC * Make sure next to the notebook's name `Python` is displayed for the default cell type (or change it)
-# MAGIC * Make sure on the right hand side you see a green dot and `connected`. Click on that button to verify you are connected to serverless compute (if not, connect to serverless compute)
+# MAGIC * Make sure on the right hand side you see a green dot and `connected`. Click on that button to verify you are connected to `serverless compute` (if not, connect to serverless compute)
+# MAGIC ### Use /explain and /doc
 # MAGIC * add the following command to a Python cell, then run it by clicking on the triangle (or using SHIFT-RETURN shortcut):
 # MAGIC
 # MAGIC `display(spark.range(10).toDF("serverless"))`
 # MAGIC * Click on the symbol for Databricks Assistant and document the the cell. Hint: use /doc in the command line for Assistant and accept the suggestion. 
 # MAGIC
-# MAGIC
+# MAGIC ### Use /fix
 # MAGIC * Add another Python cell and copy the following command into that cell. The command contains a syntax error. 
 # MAGIC `display(spark.createDataFrame([("Python",), ("Spark",), ("Databricks",)], ["serverless"])`
 # MAGIC Click on the Assistant toggle (the blueish/redish star) and try to fix the problem with `/fix` and run the command. 

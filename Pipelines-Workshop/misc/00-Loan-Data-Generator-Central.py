@@ -1,4 +1,26 @@
 # Databricks notebook source
+-- setup, double check running this load gen and attendees DLT and that this works for you
+
+
+CREATE CATALOG IF NOT EXISTS demo ;
+USE CATALOG demo ;
+CREATE SCHEMA IF NOT EXISTS loan_io ;
+USE demo.loan_io ;
+
+-- needed for keeping things tidy with DLT    
+GRANT CREATE SCHEMA on CATALOG demo TO `account users`; 
+
+
+CREATE VOLUME IF NOT EXISTS historical_loans;
+CREATE VOLUME IF NOT EXISTS raw_transactions;
+CREATE VOLUME IF NOT EXISTS ref_accounting;
+
+GRANT USAGE ON CATALOG demo TO `account users`;
+
+
+
+# COMMAND ----------
+
 # MAGIC %pip install iso3166 Faker
 
 # COMMAND ----------
@@ -26,22 +48,6 @@ dbutils.library.restartPython()
 # MAGIC * Run load gen before starting labs on a single user cluster (define one if it does not exist)
 # MAGIC * Use lab user (not intstructor) to demo labs
 # MAGIC
-
-# COMMAND ----------
-
-# MAGIC
-# MAGIC %sql
-# MAGIC -- CREATE CATALOG IF NOT EXISTS demo ;
-# MAGIC -- CREATE SCHEMA IF NOT EXISTS loan_io ;
-# MAGIC -- USE demo.loan_io ;
-# MAGIC
-# MAGIC -- CREATE VOLUME IF NOT EXISTS historical_loans;
-# MAGIC -- CREATE VOLUME IF NOT EXISTS raw_transactions;
-# MAGIC -- CREATE VOLUME IF NOT EXISTS ref_accounting;
-
-# COMMAND ----------
-
-
 
 # COMMAND ----------
 
