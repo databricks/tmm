@@ -40,8 +40,8 @@ resources:
           notification_settings: {}
           email_notifications: {}
           sql_task:
-            query:
-              query_id: c0c032f8-16dd-4038-bd66-25d0a4dde662
+            file:
+              path: ../src/ai_query.sql
             warehouse_id: ${var.prod_warehouse_id}
         - task_key: email-exit_without_AI
           depends_on:
