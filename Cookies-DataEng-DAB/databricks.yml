@@ -44,7 +44,8 @@ targets:
 
     
     workspace:
-      host: https://data-ai-lakehouse.cloud.databricks.com      
+      host: https://dbc-0f968c38-858c.cloud.databricks.com/      
+      #host: https://data-ai-lakehouse.cloud.databricks.com      
       # We always use /Users/frank.munz@databricks.com for all resources to make sure we only have a single copy.
       # If this path results in an error, please make sure you have a recent version of the CLI installed.
       root_path: /Users/frank.munz@databricks.com/.bundle/${bundle.name}/${bundle.target}

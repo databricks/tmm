@@ -6,7 +6,7 @@ TBLPROPERTIES ("quality" = "bronze")
 COMMENT "A materialized view for franchise data"
 AS SELECT
   *
-FROM STREAM(bakehouse.sales.franchises)
+FROM STREAM(bakehouse.data_eng.franchises)
 
 
 -- COMMAND ----------
@@ -16,13 +16,13 @@ TBLPROPERTIES ("quality" = "bronze")
 COMMENT "streaming table for sales tx"
 AS SELECT
   *
-FROM STREAM (bakehouse.sales.transactions)
+FROM STREAM (bakehouse.data_eng.transactions)
 
 -- COMMAND ----------
 
 CREATE STREAMING TABLE raw_suppliers
   COMMENT "New raw supplier data ingested from volumen"
-AS SELECT * FROM cloud_files('/Volumes/bakehouse/sales/suppliers_xml', 'xml', map("rowTag", "supplier"))
+AS SELECT * FROM cloud_files('/Volumes/bakehouse/pipelines_dlt/suppliers_xml', 'xml', map("rowTag", "supplier"))
 
 
 -- COMMAND ----------
