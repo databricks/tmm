@@ -14,7 +14,8 @@ This project is using the bakehouse dataset from DAIS which is available for fre
 1. Preparations 
 
 * Install the Databricks CLI from https://docs.databricks.com/dev-tools/cli/databricks-cli.html
-* Clone the Cookies dataset from [Databricks Marketplace](https://marketplace.databricks.com/details/). Make sure to save it with the catalog name ``bakehouse`` (otherwise you have to adjust the code in the DAB accordingly).
+* Get the Cookies dataset from [Databricks Marketplace](https://marketplace.databricks.com/details/). Make sure to save it with the catalog name ``bakehouse`` (otherwise you have to adjust the code in the DAB accordingly).
+* Since the the Cookie dataset in ``bakehouse`` is a read-only share, create another catalog with the name ``bakehouse-active`` for pipeline and result tables using either the workspace UI or SQL. 
 
 2. Authenticate to your Databricks workspace, if you have not done so already:
    
