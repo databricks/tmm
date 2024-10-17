@@ -1,5 +1,7 @@
 -- create flagship description for location 
 
+USE catalog bakehouse_active;
+USE SCHEMA pipelines;
 
 DROP FUNCTION IF EXISTS gen_flagship_description;
 CREATE FUNCTION gen_flagship_description(district STRING, city STRING, country STRING, ingredient STRING) RETURNS STRING
@@ -20,10 +22,9 @@ CREATE FUNCTION gen_flagship_description(district STRING, city STRING, country S
 
 -- create table for dashboard
 
-USE catalog bakehouse;
-USE SCHEMA data_eng;
+
 DROP TABLE IF EXISTS flagship_stores;
-CREATE TABLE flagship_stores AS SELECT * FROM bakehouse.pipelines_dlt.top_5;
+CREATE TABLE flagship_stores AS SELECT * FROM top_5;
 ALTER TABLE flagship_stores ADD COLUMNS (description string);
 
 UPDATE flagship_stores 
