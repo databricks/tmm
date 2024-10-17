@@ -56,3 +56,7 @@ This project is using the bakehouse dataset from DAIS which is available for fre
 7. For documentation on the Databricks asset bundles format used
    for this project, and for CI/CD configuration, see
    https://docs.databricks.com/dev-tools/bundles/index.html.
+
+
+
+![Screenshot from VSCode with Databricks Extension](misc/vscode_ext.png)
