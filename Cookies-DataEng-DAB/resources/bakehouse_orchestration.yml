@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../bundle_config_schema.json
+# yaml-language-server: $schema=../../cookies/bundle_config_schema.json
 
 variables:
   prod_warehouse_id:
@@ -26,22 +26,19 @@ resources:
           email_notifications: {}
           condition_task:
             op: NOT_EQUAL
-            right: FALSE
+            right: "FALSE"
             left: ai_enabled
           notification_settings: {}
           run_if: ALL_SUCCESS
           webhook_notifications: {}
-        - task_key: query_DBRX_with_SQL
+        - task_key: query_DBRX_in_SQL
           depends_on:
             - task_key: is_AI_enabled
               outcome: "true"
           run_if: ALL_SUCCESS
-          webhook_notifications: {}
-          notification_settings: {}
-          email_notifications: {}
           sql_task:
-            query:
-              query_id: c0c032f8-16dd-4038-bd66-25d0a4dde662
+            file:
+              path: ../src/ai_query.sql
             warehouse_id: ${var.prod_warehouse_id}
         - task_key: email-exit_without_AI
           depends_on:
@@ -51,12 +48,9 @@ resources:
             notebook_path: ../src/Exit_without_AI.py
             source: WORKSPACE
           run_if: ALL_SUCCESS
-          notification_settings: {}
-          webhook_notifications: {}
-          email_notifications: {}
         - task_key: update_downstream
           depends_on:
-            - task_key: query_DBRX_with_SQL
+            - task_key: query_DBRX_in_SQL
           notebook_task:
             source: WORKSPACE
             notebook_path: ../src/Update_Downstream.py
@@ -73,7 +67,7 @@ resources:
       notification_settings: {}
       max_concurrent_runs: 1
       parameters:
-        - default: TRUE
+        - default: "TRUE"
           name: ai_enabled
       trigger:
         file_arrival:
