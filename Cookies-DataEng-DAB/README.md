@@ -51,7 +51,8 @@ This project is using the bakehouse dataset from DAIS which is available for fre
    ```
 
 6. Install developer tools such as the Databricks extension for Visual Studio Code from
-   https://docs.databricks.com/dev-tools/vscode-ext.html.
+   https://docs.databricks.com/dev-tools/vscode-ext.html. 
+   ![Screenshot from VSCode with Databricks Extension](misc/vscode_ext.png)
 
 7. For documentation on the Databricks asset bundles format used
    for this project, and for CI/CD configuration, see
@@ -59,4 +60,3 @@ This project is using the bakehouse dataset from DAIS which is available for fre
 
 
 
-![Screenshot from VSCode with Databricks Extension](misc/vscode_ext.png)
