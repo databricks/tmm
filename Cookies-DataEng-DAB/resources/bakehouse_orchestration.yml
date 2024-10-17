@@ -1,9 +1,9 @@
-# yaml-language-server: $schema=../../cookies/bundle_config_schema.json
+# yaml-language-server: $schema=../bundle_config_schema.json
 
 variables:
   prod_warehouse_id:
     description: define prod warehouse id
-    default: 7aab69d20d980898
+    default: 6047d43abe82656a
 
 
 resources:
