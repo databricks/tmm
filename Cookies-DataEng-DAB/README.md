@@ -1,6 +1,6 @@
-# cookies
+# The Cookies Dataset and Data Engineering App
 
-![The Cookies Dataset and Data Engineering App](misc/bakehouse_jobs.png)
+![cookies](misc/bakehouse_jobs.png)
 
 
 
