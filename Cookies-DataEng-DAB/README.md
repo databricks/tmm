@@ -6,6 +6,7 @@
 
 This project is not intended as a beginner tutorial (for a beginner tutorial [see here](https://www.databricks.com/discover/pages/getting-started-with-delta-live-tables)). It assumes some familiarity with Databricks, related tools and concepts. 
 The project uses the bakehouse dataset from the Data+AI Summit 2024 which is available for free at the [Databricks Marketplace](https://marketplace.databricks.com/details/f8498740-31ea-49f8-9206-1bbf533f3993/Databricks_Cookies-Dataset-DAIS-2024-). 
+
 An introduction to Databricks Workflows and Delta Live tables is [available here](https://www.youtube.com/watch?v=KVCc1Dkz7tM). This product introduction also servers as a great overview of the bakehouse application that calculates the top locations for new flagship stores based on streaming data. This repo provides the same bakehouse application as a Databricks Asset Bundle. 
 
 
