@@ -51,7 +51,7 @@ This project is using the bakehouse dataset from DAIS which is available for fre
    $ databricks bundle run
    ```
 
-6. You can install the AI/BI dashboard by [importing it from here]() 
+6. The AI/BI dashboard is not part of the bundle, you can install it manually by [importing it from here](https://github.com/databricks/tmm/blob/main/Cookies-DataEng-DAB/src/Bakehouse%20Flagship%20Stores%20bundle.lvdash.json) 
 
 6. Install developer tools such as the Databricks extension for Visual Studio Code from [here](https://docs.databricks.com/dev-tools/vscode-ext.html). 
    ![Screenshot from VSCode with Databricks Extension](misc/vscode_ext.png)
