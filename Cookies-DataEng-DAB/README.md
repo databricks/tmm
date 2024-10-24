@@ -50,9 +50,9 @@ This deployment creates:
 
 Access these resources through your workspace's **Workflows** or **Delta Live Tables** section.
 
-
-![cookies](misc/bakehouse_etl.png)
 ![cookies](misc/bakehouse_jobs.png)
+![cookies](misc/bakehouse_etl.png)
+
 4. For reference, the bundle was created by importing existing resources. The following commands were used (do not run these as resources are already added): 
    ```
    databricks bundle generate pipeline --existing-pipeline-id pppp
