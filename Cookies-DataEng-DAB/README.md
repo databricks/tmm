@@ -1,6 +1,6 @@
 # Databricks Asset Bundles & Marketplace in Action: The Data Engineer's Guide 🍪 🍪 🍪
 
-![cookies](misc/arch.png)
+![cookies](misc/arch1.png)
 
 This project demonstrates advanced Databricks features using the bakehouse dataset from Data+AI Summit 2024. It assumes familiarity with Databricks, its tooling, and core concepts. The dataset is freely available in the [Databricks Marketplace](https://marketplace.databricks.com/details/f8498740-31ea-49f8-9206-1bbf533f3993/Databricks_Cookies-Dataset-DAIS-2024-).
 
