@@ -31,7 +31,9 @@ For those interested in the underlying technologies, there's an excellent [intro
    databricks bundle validate [-p profileName]
 ```
 
-Depending on the default profile of your CLI setup you might have to add the correct auth profile with [-p profileName].To deploy this project, you need to reference an existing DWH. If you don't have one create it now using the Workspace UI and note its ID (here wwwww). 
+Depending on the default profile of your CLI setup you might have to add the correct auth profile with [-p profileName].
+
+To deploy the project, you need to reference an existing DWH. If you don't have a DWH, create it now using the Workspace UI and note its ID (here wwwww). 
    
    
 Then deploy to your production environment (replace wwwww with your warehouse ID):
