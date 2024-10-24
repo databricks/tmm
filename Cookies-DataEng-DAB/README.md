@@ -1,4 +1,4 @@
-# Databricks Asset Bundles & Marketplace in Action: The Data Engineer's Guide
+# Databricks Asset Bundles & Marketplace in Action: The Data Engineer's Guide 🍪 🍪 🍪
 
 ![cookies](misc/bakehouse_jobs.png)
 
