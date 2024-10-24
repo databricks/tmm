@@ -4,11 +4,9 @@
 
 
 
-This project is not intended as a beginner tutorial (for a beginner tutorial [see here](https://www.databricks.com/discover/pages/getting-started-with-delta-live-tables)). It assumes some familiarity with Databricks, related tools and concepts. 
-The project uses the bakehouse dataset from the Data+AI Summit 2024 which is available for free at the [Databricks Marketplace](https://marketplace.databricks.com/details/f8498740-31ea-49f8-9206-1bbf533f3993/Databricks_Cookies-Dataset-DAIS-2024-). 
+This project demonstrates advanced Databricks features using the bakehouse dataset from Data+AI Summit 2024. It assumes familiarity with Databricks, its tooling, and core concepts. The dataset is freely available in the [Databricks Marketplace](https://marketplace.databricks.com/details/f8498740-31ea-49f8-9206-1bbf533f3993/Databricks_Cookies-Dataset-DAIS-2024-).
 
-An introduction to Databricks Workflows and Delta Live tables is [available here](https://www.youtube.com/watch?v=KVCc1Dkz7tM). This product introduction also servers as a great overview of the bakehouse application that calculates the top locations for new flagship stores based on streaming data. This repo provides the same bakehouse application as a Databricks Asset Bundle. 
-
+For those interested in the underlying technologies, there's an excellent [introduction to Databricks Workflows and Delta Live Tables](https://www.youtube.com/watch?v=KVCc1Dkz7tM). This video also provides an overview of the bakehouse application, which analyzes streaming data to identify optimal locations for new flagship stores. This repository implements the same application as a Databricks Asset Bundle.
 
 
 ![cookies](misc/bakehouse_data_eng.png)
@@ -29,24 +27,33 @@ An introduction to Databricks Workflows and Delta Live tables is [available here
     databricks auth login --host <workspace-url>
    ```
 
-3. Make sure the CLI is configured and the bundle is valid, run the following command from the current folder:         
-   ```
-    databricks bundle validate [-p profileName]
-   ```
-   Depending on the default profile of your CLI setup you might have to add the correct profile for that environment with [-p profileName].To deploy this project, you need to reference an existing DWH. If you don't have one create it now using the Workspace UI and note its ID (here wwwww). Then run the following command:
+3. Make sure the CLI is configured and the bundle is valid, run the following command from the current folder:       
 
+```
+   databricks bundle validate [-p profileName]
+```
+
+Depending on the default profile of your CLI setup you might have to add the correct auth profile with [-p profileName].To deploy this project, you need to reference an existing DWH. If you don't have one create it now using the Workspace UI and note its ID (here wwwww). 
+   
+   
+Then deploy to your production environment (replace wwwww with your warehouse ID):
    ```
     databricks bundle deploy -t prod --var="prod_warehouse_id=wwwww" [-p profileName]
    ```
 
-   This deploys everything defined for this DAB project to your prod workspace: That's a Databricks Workflow with a task for DLT data ingestion and transformation, a branch task, and SQL task with ai_query() callout and two notebooks. 
+This deployment creates:
 
-   You can find those resources by opening your workpace and clicking on **Workflows** or **Delta Live Tables**
+* A Databricks Workflow with DLT data ingestion and transformation
+* A branch task
+* A SQL task with ai_query() callout
+* Two notebooks
+
+Access these resources through your workspace's **Workflows** or **Delta Live Tables** section.
 
 
 ![cookies](misc/bakehouse_etl.png)
 
-4. Note, the bundle was created by importing existing resources. Don't run this now since all the resources are added already, but here are the commands: 
+4. For reference, the bundle was created by importing existing resources. The following commands were used (do not run these as resources are already added): 
    ```
    databricks bundle generate pipeline --existing-pipeline-id pppp
    databricks bundle generate job --existing-job-id jjjj 
@@ -57,10 +64,9 @@ An introduction to Databricks Workflows and Delta Live tables is [available here
    $ databricks bundle run
    ```
 
-6. The AI/BI dashboard is not part of the bundle, you can install it manually by [importing it from here](https://github.com/databricks/tmm/blob/main/Cookies-DataEng-DAB/src/Bakehouse%20Flagship%20Stores%20bundle.lvdash.json) 
+6. The AI/BI dashboard requires manual installation. [import it from here](https://github.com/databricks/tmm/blob/main/Cookies-DataEng-DAB/src/Bakehouse%20Flagship%20Stores%20bundle.lvdash.json) 
 
-7. For documentation on the Databricks asset bundles format used
-   for this project, and for CI/CD configuration, see
+7. For detailed documentation on Databricks Asset Bundles and CI/CD, visit the official documentation
    https://docs.databricks.com/dev-tools/bundles/index.html.
 
 
