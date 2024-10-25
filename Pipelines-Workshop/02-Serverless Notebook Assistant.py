@@ -10,8 +10,3 @@ display(spark.range(5).toDF("serverless"))
 # 2. run the code
 # 3. use /doc to document the code
 display(spark.createDataFrame([("Python",), ("Spark",), ("Databricks",)], ["serverless"])
-
-# COMMAND ----------
-
-#from pyspark.sql.functions import col
-#display(spark.range(7).toDF("serverless").withColumn("serverless", col("serverless") * 2))

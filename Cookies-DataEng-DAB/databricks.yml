@@ -1,8 +1,9 @@
+# yaml-language-server: $schema=./bundle_config_schema.json
+
 # Databricks asset bundle definition for cookies.
 
 bundle:
   name: cookies
-
 
 include:
   - resources/*.yml
@@ -17,8 +18,6 @@ include:
 #    service_principal_name: 123456-abcdef
 
 targets:
-
-  
 
   # The 'dev' target, for development purposes. This target is the default.
   dev:
@@ -35,21 +34,16 @@ targets:
   
   prod:
     
-    #variables:
-    #  prod_warehouse_id: a986f6d81a971b20
-
-
     # We use 'mode: production' enables strict verification of the settings below.
-    mode: production
-
+    # mode: production
+    # 'run_as' must be set for all jobs when using 'mode: production'
+    mode: development
     
     workspace:
-      host: https://data-ai-lakehouse.cloud.databricks.com      
-      # We always use /Users/frank.munz@databricks.com for all resources to make sure we only have a single copy.
-      # If this path results in an error, please make sure you have a recent version of the CLI installed.
+      host: https://dbc-0f968c38-858c.cloud.databricks.com/      
       root_path: /Users/frank.munz@databricks.com/.bundle/${bundle.name}/${bundle.target}
-    run_as:
-      # This runs as frank.munz@databricks.com in production. 
+      
+    #run_as:
       # We could also use a service principal here,
       # see https://docs.databricks.com/dev-tools/bundles/permissions.html.
-      user_name: frank.munz@databricks.com
+      #user_name: frank.munz@databricks.com
