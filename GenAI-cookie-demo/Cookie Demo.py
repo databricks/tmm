@@ -1,18 +1,22 @@
 # Databricks notebook source
-# MAGIC %md
+# MAGIC %md 
+# MAGIC # Recreating the Cookie Demo from DAIS 2024
 # MAGIC
-# MAGIC #Part 1: Function/Tool Creation in Unity Catalog
-# MAGIC V0 - First testing of GenAI Agent Demo
+# MAGIC Welcome to this demo, where you’ll build a powerful AI agent tailored for a cookie franchise business. This agent is designed to empower franchise owners to analyze customer data, create targeted marketing campaigns, and develop data-driven sales strategies that improve their operations.
 # MAGIC
-# MAGIC You'll create two functions:
-# MAGIC - A simple query to retrieve an ID based on a city name
-# MAGIC - An aggregate query that returns sales data for a given ID
+# MAGIC By using data intelligence rather than generic insights, franchises can understand top-selling products and create campaigns based on actual sales data.
 # MAGIC
-# MAGIC Then create an Agent that can execute this.
+# MAGIC This notebook will guide you through creating and registering simple functions in Unity Catalog, providing governed access to insights. You'll then build a chat-based AI using these functions, enabling franchises to develop smarter, data-driven campaigns.
+# MAGIC
+# MAGIC Here's what we'll cover:
+# MAGIC
+# MAGIC - Creating and registering SQL functions in Unity Catalog
+# MAGIC - Using Langchain to integrate these functions as tools
+# MAGIC - Building an AI agent to execute these tools and tackle complex questions
 
 # COMMAND ----------
 
-# MAGIC %pip install langchain-community==0.2.16 langchain-openai==0.1.19 mlflow==2.15.1 databricks-agents==0.5.0 langchain==0.2.16
+# MAGIC %pip install -q langchain-community==0.2.16 langchain-openai==0.1.19 mlflow==2.15.1 databricks-agents==0.5.0 langchain==0.2.16
 # MAGIC %restart_python
 
 # COMMAND ----------
@@ -24,25 +28,15 @@ import os
 
 # Use the workspace client to retrieve information about the current user
 w = WorkspaceClient()
-user_email = w.current_user.me().display_name
-username = user_email.split("@")[0]
+username = w.current_user.me().display_name
 
 # Catalog and schema have been automatically created thanks to lab environment
-catalog_name = f"{username}"
-schema_name = "ai"
+catalog_name = "workspace"
+schema_name = "default"
 
 # Allows us to reference these values directly in the SQL/Python function creation
 dbutils.widgets.text("catalog_name", defaultValue=catalog_name, label="Catalog Name")
 dbutils.widgets.text("schema_name", defaultValue=schema_name, label="Schema Name")
-
-# Save to config.yaml for use in following steps
-config_data = {
-    "catalog_name": catalog_name,
-    "schema_name": schema_name
-}
-
-with open("config.yaml", "w") as file:
-    yaml.dump(config_data, file)
 
 # COMMAND ----------
 
@@ -51,6 +45,16 @@ with open("config.yaml", "w") as file:
 # MAGIC --Sometimes this cell runs too fast - if it errors just try running it again
 # MAGIC USE CATALOG ${catalog_name};
 # MAGIC CREATE SCHEMA IF NOT EXISTS ${schema_name};
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC
+# MAGIC ## Step 1: Function/Tool Creation in Unity Catalog
+# MAGIC
+# MAGIC You'll create two functions:
+# MAGIC - A simple query to retrieve an ID based on a city name
+# MAGIC - An aggregate query that returns sales data for a given ID
 
 # COMMAND ----------
 
@@ -111,31 +115,42 @@ mlflow.langchain.autolog(disable=False)
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC ## Step 2: Create Agent
+# MAGIC
+# MAGIC In this step, we're going to define three cruicial parts of our agent:
+# MAGIC - Tools for the Agent to use
+# MAGIC - LLM to serve as the agent's "brains"
+# MAGIC - System prompt that defines guidelines for the agent's tasks
+
+# COMMAND ----------
+
 from langchain_community.tools.databricks import UCFunctionToolkit
 from databricks.sdk import WorkspaceClient
 import pandas as pd
+import time
 
 w = WorkspaceClient()
 
-# Ideally grab user warehouse but fallback to anything else available
-# The warehouse is going to be used in order to reference what functions are in UC
 def get_shared_warehouse():
     w = WorkspaceClient()
     warehouses = w.warehouses.list()
     for wh in warehouses:
-        if wh.num_clusters > 0:
-            return wh 
-    raise Exception("Couldn't find any Warehouse to use. Please create a wh first to run the demo and add the id here")
-
+        if wh.name == "Serverless Starter Warehouse":
+            if wh.num_clusters == 0:
+                w.warehouses.start(wh.id)
+                time.sleep(5)
+                return wh
+            else:
+                return wh 
+    raise Exception("Couldn't find any Warehouse to use. Please start the serverless SQL Warehouse for this code to run.")
+    
 wh_id = get_shared_warehouse().id
 
-# This function will use the defined warehouse to get the functions from the catalog and schema
 def get_tools():
     return (
         UCFunctionToolkit(warehouse_id=wh_id)
-        # Include functions as tools using their qualified names.
-        # You can use "{catalog_name}.{schema_name}.*" to get all functions in a schema.
-        .include(f"{catalog_name}.{schema_name}.*")
+        .include("workspace.default.*")
         .get_tools())
 
 # COMMAND ----------
@@ -160,9 +175,9 @@ def get_prompt(history = [], prompt = None):
 
             Use the franchise_by_city function to retrieve the franchiseID for a given city name.
 
-            Use the franchise_sales function to retrieve the cookie sales for a given franchiseID.
+            Use the franchise_sales function to retrieve the cookie sales for a given franchiseID. This should be run for each franchiseID. Do not ask the user if they want to see another store, just run it for ALL franchiseIDs.
 
-    Make sure to call the function for each step and provide a coherent response to the user. Don't mention tools to your users. Don't skip to the next step without ensuring the function was called and a result was retrieved. Only answer what the user is asking for."""
+    Make sure to call the function for each step and provide a coherent final response to the user. Don't mention tools to your users. Don't skip to the next step without ensuring the function was called and a result was retrieved. Only answer what the user is asking for."""
     return ChatPromptTemplate.from_messages([
             ("system", prompt),
             ("human", "{messages}"),
@@ -196,3 +211,11 @@ agent_str = ({ "messages": itemgetter("messages")} | agent_executor | itemgetter
 #     2. Use sales data to look up the best selling cookie at that store
 
 answer=agent_str.invoke({"messages": "What is the best selling cookie in our Seattle stores?"})
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Excited for more?
+# MAGIC
+# MAGIC - Catch the full demo in action [here](https://www.youtube.com/watch?v=UfbyzK488Hk&t=3501s). 
+# MAGIC - Take the next step and build a [RAG-based chatbot](https://www.databricks.com/resources/demos/tutorials/data-science-and-ai/lakehouse-ai-deploy-your-llm-chatbot?itm_data=demo_center) with added contextual depth!
