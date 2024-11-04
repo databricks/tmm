@@ -22,7 +22,7 @@ FROM STREAM (bakehouse.sales.transactions)
 
 CREATE STREAMING TABLE raw_suppliers
   COMMENT "New raw supplier data ingested from volume"
-AS SELECT * FROM cloud_files('/Volumes/bakehouse/pipelines_dlt/suppliers_xml', 'xml', map("rowTag", "supplier"))
+AS SELECT * FROM cloud_files('/Volumes/bakehouse/sales/suppliers_xml', 'xml', map("rowTag", "supplier"))
 
 -- COMMAND ----------
 
