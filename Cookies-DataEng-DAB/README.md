@@ -1,4 +1,4 @@
-# Databricks Asset Bundles & Marketplace: A Tutorial for Data Engineers 🍪🍪🍪
+# Databricks Asset Bundles & Marketplace: A Tutorial for Data Engineers 🍪 🍪 🍪
 
 ![cookies](misc/arch1.png)
 
