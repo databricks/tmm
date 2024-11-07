@@ -1,6 +1,10 @@
 # DLT Kafka Sink Pipeline
 A Delta Live Tables pipeline that reads cookie sales data and streams it to Confluent Kafka using DLT with Kafka sink capability.
 
+
+![img](misc/diag.png)
+
+
 ## Overview
 This pipeline demonstrates:
 - Reading from a Delta table source 
