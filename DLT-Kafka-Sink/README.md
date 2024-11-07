@@ -20,12 +20,15 @@ This pipeline demonstrates:
 
 ## Quick Start
 1. Set Up Secrets
+```
 databricks secrets create-scope fm-kafka-sink
 databricks secrets put-secret fm-kafka-sink confluentApiKey --string-value <your-api-key>
 databricks secrets put-secret fm-kafka-sink confluentSecret --string-value <your-secret>
+```
 
 2. Configure Pipeline
 Update these variables in dlt_kafka_sink.py:
+
 BOOTSTRAP = "your-bootstrap-server"  # From Confluent Cloud
 TOPIC = "your-topic-name"           # Your target Kafka topic
 
