@@ -5,19 +5,11 @@
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC # Set api keys in Databricks scopes
-# MAGIC
-# MAGIC
-# MAGIC DLT is reading the Confluent Kafka credential from a secret scope, see README. 
-# MAGIC
-
-# COMMAND ----------
-
-# DBTITLE 1,Kafka CX Details
+# DBTITLE 1,Kafka CX Details + API keys from secret scope
 # kafka properties
 BOOTSTRAP = "pkc-rgm37.us-west-2.aws.confluent.cloud:9092"
 TOPIC = "cookie_topic"
+
 # get api keys
 confluentApiKey = dbutils.secrets.get(scope="fm-kafka-sink", key="confluentApiKey")
 confluentSecret = dbutils.secrets.get(scope="fm-kafka-sink", key="confluentSecret")
@@ -52,15 +44,13 @@ dlt.create_sink(
 
 # COMMAND ----------
 
-# DBTITLE 1,Get Bakehouse Sales Transactions
-
-
-
+# DBTITLE 1,Get Bakehouse Sales Transaction Stream
 @dlt.table(
     name="cookie_sales",
     comment="Raw cookie sales stream",
     table_properties={"quality": "bronze"}
 )
+@dlt.expect_or_drop("totalPrice_non_null", "totalPrice IS NOT NULL")
 def get_cookie_sales():
     # Create a temp Delta table
     return (spark.readStream 
@@ -68,11 +58,14 @@ def get_cookie_sales():
         .option("maxBytesPerTrigger", 500) 
         .option("maxFilesPerTrigger", 1) 
         .table("bakehouse.sales.transactions")
+        .filter("totalPrice > 25")
     )
 
 # COMMAND ----------
 
-@dlt.append_flow(name = "cookie_sales_silver_appendflow", target = "my_kafka_sink", comment="Processed cookie sales with hourly aggregation")
+@dlt.append_flow(name = "cookie_sales_silver_appendflow", 
+                 target = "my_kafka_sink", 
+                 comment="Processed cookie sales with hourly aggregation")
 def process_cookie_sales():
     df = dlt.read_stream("cookie_sales")
     return df.select(to_json(struct("dateTime", "product", "quantity","totalPrice")).alias("value"))

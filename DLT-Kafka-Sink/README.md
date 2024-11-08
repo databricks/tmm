@@ -8,15 +8,16 @@ A Delta Live Tables pipeline that reads cookie sales data and streams it to Conf
 ## Overview
 This pipeline demonstrates:
 - Reading from a Delta table source 
-- Processing records in Delta Live Tables
+- Processing and filtering records in Delta Live Tables
 - Sinking transformed data to a Confluent Cloud Kafka topic
 - Using Databricks secrets for secure credential management
 
 ## Prerequisites
 - Databricks workspace
 - Confluent Cloud account and credentials
-- Access to bakehouse.sales.transactions Delta table
-- Databricks CLI installed
+- Databricks CLI installed to set up access for Confluent credentials as secrets in Databricks
+- Get the dataset from [Databricks Marketplace](https://marketplace.databricks.com/details/f8498740-31ea-49f8-9206-1bbf533f3993/Databricks_Cookies-Dataset-DAIS-2024-) and confirm you can access the bakehouse.sales.transactions Delta table.
+
 
 ## Quick Start
 1. Set Up Secrets
@@ -27,24 +28,16 @@ databricks secrets put-secret fm-kafka-sink confluentSecret --string-value <your
 ```
 
 2. Configure Pipeline
-Update these variables in dlt_kafka_sink.py:
 
+Update these variables in the pipeline source file dlt_kafka_sink.py (or extract them into pipeline configuration values):
+```
 BOOTSTRAP = "your-bootstrap-server"  # From Confluent Cloud
-TOPIC = "your-topic-name"           # Your target Kafka topic
+TOPIC = "your-topic-name"            # Your target Kafka topic
+```
+3. Create Pipeline Settings
 
-3. Create Pipeline
-- Upload dlt_kafka_sink.py to your Databricks workspace
-- Create and configure a new serverless DLT pipeline using this file
+- Create and configure a new serverless DLT pipeline in your workspace under "Pipelines" using the SQL source file
 
-## Data Flow
-1. Step1 (cookie_sales)
-- Reads from bakehouse.sales.transactions
-- Controlled streaming with trigger settings
-
-2. Step2
-- Transforms data to JSON format
-- Fields: dateTime, product, quantity, totalPrice
-- Streams to Confluent Kafka topic
 
 ## Security
 - Uses SASL/SSL for Kafka authentication
