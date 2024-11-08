@@ -55,9 +55,8 @@ def get_cookie_sales():
     # Create a temp Delta table
     return (spark.readStream 
         .format("delta") 
-        .option("maxBytesPerTrigger", 500) 
-        .option("maxFilesPerTrigger", 1) 
         .table("bakehouse.sales.transactions")
+        # we only look into high value purchases 
         .filter("totalPrice > 25")
     )
 
