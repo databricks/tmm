@@ -2,6 +2,12 @@
 
 # Databricks asset bundle definition for cookies.
 
+variables:
+  prod_warehouse_id:
+    description: define prod warehouse id
+    default: 6047d43abe82656a
+
+
 bundle:
   name: cookies
 

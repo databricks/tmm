@@ -6,7 +6,8 @@ This project demonstrates advanced Databricks features using the bakehouse datas
 
 For those interested in the underlying technologies, there's an excellent [introduction to Databricks Workflows and Delta Live Tables](https://www.youtube.com/watch?v=KVCc1Dkz7tM). This video also provides an overview of the bakehouse application, which analyzes streaming data to identify optimal locations for new flagship stores. This repository implements the same application as a Databricks Asset Bundle.
 
-*Just released: Unity Catalog creation and AI/BI dashboard imports via DABs are now available. Repository update is in progress.*
+*New Release: AI/BI Dashboard Creation with DABs:
+I've updated the repository to demonstrate how to build AI-powered business intelligence dashboards using DABs*
 
 ![cookies](misc/bakehouse_data_eng.png)
 

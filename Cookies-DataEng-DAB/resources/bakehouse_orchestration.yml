@@ -1,10 +1,5 @@
 # yaml-language-server: $schema=../bundle_config_schema.json
 
-variables:
-  prod_warehouse_id:
-    description: define prod warehouse id
-    default: 6047d43abe82656a
-
 
 resources:
   jobs:
