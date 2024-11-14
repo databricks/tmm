@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../bundle_config_schema.json
 
-resources:
+resources: 
   pipelines:
     bakehouse_etl:
       name: bakehouse_etl
@@ -9,7 +9,7 @@ resources:
             path: ../src/DLT Flagship SQL.sql
       serverless: true
       development: false
-      catalog: bakehouse_active
+      #catalog: bakehouse_active
       target: pipelines
       photon: true
       channel: PREVIEW

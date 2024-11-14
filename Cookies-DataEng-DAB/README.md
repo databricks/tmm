@@ -66,9 +66,7 @@ Access these resources through your workspace's **Workflows** or **Delta Live Ta
    $ databricks bundle run
    ```
 
-6. The AI/BI dashboard requires manual installation. [import it from here](https://github.com/databricks/tmm/blob/main/Cookies-DataEng-DAB/src/Bakehouse%20Flagship%20Stores%20bundle.lvdash.json) 
-
-7. For detailed documentation on Databricks Asset Bundles and CI/CD, visit the official documentation
+6. For detailed documentation on Databricks Asset Bundles and CI/CD, visit the official documentation
    https://docs.databricks.com/dev-tools/bundles/index.html.
 
 
