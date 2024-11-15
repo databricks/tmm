@@ -37,7 +37,7 @@ TOPIC = "your-topic-name"            # Your target Kafka topic
 3. Create Pipeline Settings
 
 - Create and configure a new **serverless DLT pipeline** in your workspace under "Pipelines" using the SQL source file
-- If you are running this while Kafka sinks are still in preview you also need to add the following parameter under Avanced / Configuration 
+- If you are running this while Kafka sinks are in preview you also need to select the PREVIEW channel under Setttings and add the following parameter under Settings / Avanced / Configuration 
 
 ```
 pipelines.externalSink.enabled true
