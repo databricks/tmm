@@ -53,7 +53,7 @@ dbutils.widgets.text("schema_name", defaultValue=schema_name, label="Schema Name
 # DBTITLE 1,Create Franchise by City Function
 # MAGIC %sql
 # MAGIC -- First lets make sure it doesnt already exist
-# MAGIC DROP FUNCTION IF EXISTS ${catalog_name}.${schema_name}.franchise_by_city;
+# MAGIC DROP FUNCTION IF EXISTS IDENTIFIER(:catalog_name || '.' || :schema_name || '.' || 'franchise_by_city');
 # MAGIC -- Now we create our first function. This takes in a city name and returns a table of any franchises that are in that city.
 # MAGIC -- Note that we've added a comment to the input parameter to help guide the agent later on.
 # MAGIC CREATE OR REPLACE FUNCTION
