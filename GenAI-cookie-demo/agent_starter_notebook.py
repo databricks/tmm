@@ -21,19 +21,6 @@
 
 # COMMAND ----------
 
-# DBTITLE 1,Define User Specific Parameters
-import os
-
-# Catalog and schema have been automatically created thanks to lab environment
-catalog_name = "workspace"
-schema_name = "default"
-
-# Allows us to reference these values directly in the SQL/Python function creation
-dbutils.widgets.text("catalog_name", defaultValue=catalog_name, label="Catalog Name")
-dbutils.widgets.text("schema_name", defaultValue=schema_name, label="Schema Name")
-
-# COMMAND ----------
-
 # MAGIC %md
 # MAGIC
 # MAGIC ## Step 1: Function/Tool Creation in Unity Catalog
@@ -47,11 +34,11 @@ dbutils.widgets.text("schema_name", defaultValue=schema_name, label="Schema Name
 # DBTITLE 1,Create Franchise by City Function
 # MAGIC %sql
 # MAGIC -- First lets make sure it doesnt already exist
-# MAGIC DROP FUNCTION IF EXISTS default.workspace.franchise_by_city;
+# MAGIC DROP FUNCTION IF EXISTS workspace.default.franchise_by_city;
 # MAGIC -- Now we create our first function. This takes in a city name and returns a table of any franchises that are in that city.
 # MAGIC -- Note that we've added a comment to the input parameter to help guide the agent later on.
 # MAGIC CREATE OR REPLACE FUNCTION
-# MAGIC default.workspace.franchise_by_city(
+# MAGIC workspace.default.franchise_by_city(
 # MAGIC   city_name STRING COMMENT 'City to be searched'
 # MAGIC )
 # MAGIC returns table(franchiseID BIGINT, name STRING, size STRING)
@@ -65,17 +52,17 @@ dbutils.widgets.text("schema_name", defaultValue=schema_name, label="Schema Name
 # DBTITLE 1,Test Franchise by City Function
 # MAGIC %sql
 # MAGIC -- Test the function we just created
-# MAGIC SELECT * from default.workspace.franchise_by_city('Seattle')
+# MAGIC SELECT * from workspace.default.franchise_by_city('Seattle')
 
 # COMMAND ----------
 
 # DBTITLE 1,Create Sales Function
 # MAGIC %sql
 # MAGIC -- Again check that it exists
-# MAGIC DROP FUNCTION IF EXISTS default.workspace.franchise_sales;
+# MAGIC DROP FUNCTION IF EXISTS workspace.default.franchise_sales;
 # MAGIC -- This function takes an ID as input, and this time does an aggregate to return the sales for that franchise_id.
 # MAGIC CREATE OR REPLACE FUNCTION
-# MAGIC default.workspace.franchise_sales (
+# MAGIC workspace.default.franchise_sales (
 # MAGIC   franchise_id BIGINT COMMENT 'ID of the franchise to be searched'
 # MAGIC )
 # MAGIC returns table(total_sales BIGINT, total_quantity BIGINT, product STRING)
@@ -89,7 +76,7 @@ dbutils.widgets.text("schema_name", defaultValue=schema_name, label="Schema Name
 # DBTITLE 1,Test Sales Function
 # MAGIC %sql
 # MAGIC -- Check the sales function works - we're going to use the franchise_id from the previous query
-# MAGIC Select * from default.workspace.franchise_sales(3000038)
+# MAGIC Select * from workspace.default.franchise_sales(3000038)
 
 # COMMAND ----------
 
