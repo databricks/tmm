@@ -40,14 +40,6 @@ dbutils.widgets.text("schema_name", defaultValue=schema_name, label="Schema Name
 
 # COMMAND ----------
 
-# DBTITLE 1,Ensure Catalog and Schema Exist
-# MAGIC %sql
-# MAGIC --Sometimes this cell runs too fast - if it errors just try running it again
-# MAGIC USE CATALOG ${catalog_name};
-# MAGIC CREATE SCHEMA IF NOT EXISTS ${schema_name};
-
-# COMMAND ----------
-
 # MAGIC %md
 # MAGIC
 # MAGIC ## Step 1: Function/Tool Creation in Unity Catalog
