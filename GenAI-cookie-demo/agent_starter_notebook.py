@@ -1,6 +1,6 @@
 # Databricks notebook source
 # MAGIC %md 
-# MAGIC # Recreating the Cookie Demo from DAIS 2024
+# MAGIC # AI-Driven Data Intelligence for Smarter Cookie Franchises
 # MAGIC
 # MAGIC Welcome to this demo, where you’ll build a powerful AI agent tailored for a cookie franchise business. This agent is designed to empower franchise owners to analyze customer data, create targeted marketing campaigns, and develop data-driven sales strategies that improve their operations.
 # MAGIC
