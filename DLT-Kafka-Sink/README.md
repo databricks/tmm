@@ -36,8 +36,12 @@ TOPIC = "your-topic-name"            # Your target Kafka topic
 ```
 3. Create Pipeline Settings
 
-- Create and configure a new serverless DLT pipeline in your workspace under "Pipelines" using the SQL source file
+- Create and configure a new **serverless DLT pipeline** in your workspace under "Pipelines" using the SQL source file
+- If you are running this while Kafka sinks are still in preview you also need to add the following parameter under Avanced / Configuration 
 
+```
+pipelines.externalSink.enabled true
+```
 
 ## Security
 - Uses SASL/SSL for Kafka authentication

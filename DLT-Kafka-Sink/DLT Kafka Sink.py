@@ -50,6 +50,7 @@ dlt.create_sink(
     comment="Raw cookie sales stream",
     table_properties={"quality": "bronze"}
 )
+# expectation for data quality
 @dlt.expect_or_drop("totalPrice_non_null", "totalPrice IS NOT NULL")
 def get_cookie_sales():
     # Create a temp Delta table
@@ -64,7 +65,7 @@ def get_cookie_sales():
 
 @dlt.append_flow(name = "cookie_sales_silver_appendflow", 
                  target = "my_kafka_sink", 
-                 comment="Processed cookie sales with hourly aggregation")
+                 comment="high value cookie purchases")
 def process_cookie_sales():
     df = dlt.read_stream("cookie_sales")
     return df.select(to_json(struct("dateTime", "product", "quantity","totalPrice")).alias("value"))
