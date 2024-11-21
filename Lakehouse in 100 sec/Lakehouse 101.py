@@ -79,11 +79,20 @@ analyzed_data = sales_insights(pdf)
 # COMMAND ----------
 
 # DBTITLE 1,DWH: SQL editor, UC catalog etc
-# MAGIC %sql
-# MAGIC
-# MAGIC SELECT count (*) FROM demo_frank.lakehouse.transactions;
-# MAGIC
-# MAGIC
-# MAGIC SELECT product,quantity, paymentMethod FROM demo_frank.lakehouse.transactions WHERE paymentMethod = "visa" LIMIT 15;
-# MAGIC
-# MAGIC
+'''
+
+SELECT 
+  product,
+  quantity,
+  paymentMethod 
+FROM 
+  demo_frank.lakehouse.transactions 
+  --  TIMESTAMP AS OF '2024-11-21T00:00:00Z'
+  VERSION AS OF 1
+WHERE 
+  paymentMethod = "visa" 
+LIMIT 
+  15;
+
+'''
+
