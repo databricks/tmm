@@ -1,7 +1,7 @@
 # Databricks notebook source
 # read bakehouse.sales.transactions and write it as parquet
-df = spark.read.table("bakehouse.sales.transactions")
-df.limit(250).write.mode("overwrite").parquet("/tmp/cookies_tx.parquet")
+# df = spark.read.table("bakehouse.sales.transactions")
+# df.limit(250).write.mode("overwrite").parquet("/tmp/cookies_tx.parquet")
 
 
 # COMMAND ----------
