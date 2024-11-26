@@ -49,6 +49,7 @@ This deployment creates:
 * A branch task
 * A SQL task with ai_query() callout
 * Two notebooks
+* AI/BI dashboard
 
 Access these resources through your workspace's **Workflows** or **Delta Live Tables** section.
 
