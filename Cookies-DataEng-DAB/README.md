@@ -16,7 +16,7 @@ I've updated the repository to demonstrate how to build AI-powered business inte
 1. Preparations 
 
 * Install the Databricks CLI from https://docs.databricks.com/dev-tools/cli/databricks-cli.html
-* Get the Cookies dataset from [Databricks Marketplace](https://marketplace.databricks.com/details/). Make sure to save it with the catalog name ``bakehouse`` (otherwise you have to adjust the code in the DAB accordingly).
+* Get the Cookies dataset from [Databricks Marketplace](https://marketplace.databricks.com/details/f8498740-31ea-49f8-9206-1bbf533f3993/Databricks_Cookies-Dataset-DAIS-2024-). Make sure to save it with the catalog name ``bakehouse`` (otherwise you have to adjust the code in the DAB accordingly).
 * Since the the Cookie dataset in ``bakehouse`` is a read-only share, create another catalog with the name ``bakehouse-active`` for pipeline and result tables using either the workspace UI or SQL. 
 * Install developer tools such as the Databricks extension for Visual Studio Code from [here](https://docs.databricks.com/dev-tools/vscode-ext.html). 
 ![Screenshot from VSCode with Databricks Extension](misc/vscode_ext.png)
