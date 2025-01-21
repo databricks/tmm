@@ -5,7 +5,7 @@
 variables:
   prod_warehouse_id:
     description: define prod warehouse id
-    default: 6047d43abe82656a
+    default: 4cc49c92ab107b7a
 
 
 bundle:
@@ -46,7 +46,9 @@ targets:
     mode: development
     
     workspace:
-      host: https://dbc-0f968c38-858c.cloud.databricks.com/      
+      host: https://dbc-34e8a5a4-09d1.cloud.databricks.com/      
+      #old host 
+      #host: https://dbc-0f968c38-858c.cloud.databricks.com/      
       root_path: /Users/frank.munz@databricks.com/.bundle/${bundle.name}/${bundle.target}
       
     #run_as:

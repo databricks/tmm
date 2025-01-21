@@ -29,6 +29,9 @@ AS SELECT * FROM cloud_files('/Volumes/bakehouse/sales/suppliers_xml', 'xml', ma
 
 
 CREATE MATERIALIZED VIEW flagship_locations
+(CONSTRAINT  supplierId_set EXPECT (f.supplierId IS NOT NULL) ON VIOLATION DROP ROW,
+CONSTRAINT correct_city EXPECT (f.city != "test") ON VIOLATION FAIL UPDATE
+)
 COMMENT "flagship locations"
 AS SELECT
   SUM(s.totalPrice) AS total_sales,
