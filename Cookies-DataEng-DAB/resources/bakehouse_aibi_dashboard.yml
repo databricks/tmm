@@ -2,7 +2,7 @@
 
 resources:
   dashboards:
-    nyc_taxi_trip_analysis:
+    bakehouse_dashboard:
       display_name: "Future Flagship Stores: Realtime Data + genAI Description"
       file_path: ../src/aibi_dashboard.json
       warehouse_id: ${var.prod_warehouse_id}
