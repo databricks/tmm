@@ -8,14 +8,13 @@ CREATE SCHEMA IF NOT EXISTS loan_io ;
 USE demo.loan_io ;
 
 -- needed for keeping things tidy with DLT    
-GRANT CREATE SCHEMA on CATALOG demo TO `account users`; 
+GRANT CREATE SCHEMA, USAGE on CATALOG demo TO `account users`; 
 
 
 CREATE VOLUME IF NOT EXISTS historical_loans;
 CREATE VOLUME IF NOT EXISTS raw_transactions;
 CREATE VOLUME IF NOT EXISTS ref_accounting;
 
-GRANT USAGE ON CATALOG demo TO `account users`;
 
 
 

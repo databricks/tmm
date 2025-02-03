@@ -1,6 +1,6 @@
 -- Databricks notebook source
 -- MAGIC %md-sandbox
--- MAGIC # Simplify ETL with Delta Live Table
+-- MAGIC # Simplify ETL with Delta Live Tables
 -- MAGIC
 -- MAGIC DLT makes Data Engineering accessible for all. Just declare your transformations in SQL or Python, and DLT will handle the Data Engineering complexity for you.
 -- MAGIC
@@ -24,8 +24,6 @@
 -- MAGIC
 -- MAGIC Our goal is to ingest this data in near real time and build table for our Analyst team while ensuring data quality.
 -- MAGIC
--- MAGIC **Your DLT Pipeline is ready!** Your pipeline was started using this notebook and is <a dbdemos-pipeline-id="dlt-loans" href="/#joblist/pipelines/8a602548-36f7-49a8-bf0f-a856d85f783a">available here</a>.
--- MAGIC
 -- MAGIC <!-- Collect usage data (view). Remove it to disable collection. View README for more details.  -->
 -- MAGIC <img width="1px" src="https://www.google-analytics.com/collect?v=1&gtm=GTM-NKQ8TT7&tid=UA-163989034-1&aip=1&t=event&ec=dbdemos&ea=VIEW&dp=%2F_dbdemos%2Fdata-engineering%2Fdlt-loans%2F01-DLT-Loan-pipeline-SQL&cid=local&uid=local">
 
@@ -47,26 +45,26 @@
 -- MAGIC
 -- MAGIC ### Adjust the Pipeline definiton for Ingestion
 -- MAGIC
--- MAGIC make sure to update the ingestion location for Auto Loader in the first three SQL statement below: 
+-- MAGIC make sure to verify the ingestion location for Auto Loader in the first three SQL statement below: 
 -- MAGIC
 
 -- COMMAND ----------
 
 -- MAGIC %md-sandbox 
 -- MAGIC
--- MAGIC ## Bronze layer: incrementally ingest data leveraging Databricks Autoloader
+-- MAGIC ## Bronze layer: incrementally ingest data leveraging Databricks Auto Loader
 -- MAGIC
 -- MAGIC <img style="float: right; padding-left: 10px" src="https://github.com/QuentinAmbard/databricks-demo/raw/main/product_demos/dlt-golden-demo-loan-2.png" width="600"/>
 -- MAGIC
 -- MAGIC Our raw data is being sent to a blob storage. 
 -- MAGIC
--- MAGIC Autoloader simplify this ingestion, including schema inference, schema evolution while being able to scale to millions of incoming files. 
+-- MAGIC Auto Loader simplify this ingestion, including schema inference, schema evolution while being able to scale to millions of incoming files. 
 -- MAGIC
--- MAGIC Autoloader is available in SQL using the `cloud_files` function and can be used with a variety of format (json, csv, avro...):
+-- MAGIC Auto Loader is available in SQL using the `cloud_files` function and can be used with a variety of format (json, csv, avro...):
 -- MAGIC
--- MAGIC For more detail on Autoloader, you can see `dbdemos.install('auto-loader')`
+-- MAGIC For more detail on Auto Loader, you can see `dbdemos.install('auto-loader')`
 -- MAGIC
--- MAGIC #### STREAMING LIVE TABLE 
+-- MAGIC #### STREAMING TABLE 
 -- MAGIC Defining tables as `STREAMING` will guarantee that you only consume new incoming data. Without `STREAMING`, you will scan and ingest all the data available at once. See the [documentation](https://docs.databricks.com/data-engineering/delta-live-tables/delta-live-tables-incremental-data.html) for more details
 
 -- COMMAND ----------
@@ -100,9 +98,11 @@ AS SELECT * FROM cloud_files('/Volumes/demo/loan_io/historical_loans', 'csv', ma
 -- MAGIC
 -- MAGIC <img style="float: right; padding-left: 10px" src="https://github.com/QuentinAmbard/databricks-demo/raw/main/product_demos/dlt-golden-demo-loan-3.png" width="600"/>
 -- MAGIC
--- MAGIC Once the bronze layer is defined, we'll create the sliver layers by Joining data. Note that bronze tables are referenced using the `LIVE` spacename. 
+-- MAGIC Once the bronze layer is defined, we'll create the silver layers by Joining data. 
 -- MAGIC
--- MAGIC To consume only increment from the Bronze layer like `BZ_raw_txs`, we'll be using the `stream` keyworkd: `stream(LIVE.BZ_raw_txs)`
+-- MAGIC With DLT using Direct Publishing Mode (DPM), it is no longer necessary to reference tables in the pipeline with the `LIVE` keyword. 
+-- MAGIC
+-- MAGIC To consume only increment from the Bronze layer like `BZ_raw_txs`, we'll be using the `stream` keyword: `stream(BZ_raw_txs)`
 -- MAGIC
 -- MAGIC Note that we don't have to worry about compactions, DLT handles that for us.
 -- MAGIC
@@ -112,10 +112,10 @@ AS SELECT * FROM cloud_files('/Volumes/demo/loan_io/historical_loans', 'csv', ma
 -- COMMAND ----------
 
 -- DBTITLE 1,enrich transactions with metadata
-CREATE STREAMING LIVE VIEW new_txs 
+CREATE TEMPORARY STREAMING LIVE VIEW new_txs 
   COMMENT "Livestream of new transactions"
-AS SELECT txs.*, ref.accounting_treatment as accounting_treatment FROM stream(LIVE.raw_txs) txs
-  INNER JOIN live.ref_accounting_treatment ref ON txs.accounting_treatment_id = ref.id
+AS SELECT txs.*, ref.accounting_treatment as accounting_treatment FROM stream(raw_txs) txs
+  INNER JOIN ref_accounting_treatment ref ON txs.accounting_treatment_id = ref.id
 
 -- COMMAND ----------
 
@@ -126,7 +126,7 @@ CREATE STREAMING TABLE cleaned_new_txs (
   CONSTRAINT `Cost center must be specified` EXPECT (cost_center_code IS NOT NULL) ON VIOLATION FAIL UPDATE
 )
   COMMENT "Livestream of new transactions, cleaned and compliant"
-AS SELECT * from STREAM(live.new_txs)
+AS SELECT * from STREAM(new_txs)
 
 -- COMMAND ----------
 
@@ -137,15 +137,15 @@ CREATE STREAMING TABLE quarantine_bad_txs (
   CONSTRAINT `Balance should be positive`    EXPECT (balance <= 0 OR arrears_balance <= 0) ON VIOLATION DROP ROW
 )
   COMMENT "Incorrect transactions requiring human analysis"
-AS SELECT * from STREAM(live.new_txs)
+AS SELECT * from STREAM(new_txs)
 
 -- COMMAND ----------
 
 -- DBTITLE 1,Enrich all historical transactions
 CREATE MATERIALIZED VIEW historical_txs
   COMMENT "Historical loan transactions"
-AS SELECT l.*, ref.accounting_treatment as accounting_treatment FROM LIVE.raw_historical_loans l
-  INNER JOIN LIVE.ref_accounting_treatment ref ON l.accounting_treatment_id = ref.id
+AS SELECT l.*, ref.accounting_treatment as accounting_treatment FROM raw_historical_loans l
+  INNER JOIN ref_accounting_treatment ref ON l.accounting_treatment_id = ref.id
 
 -- COMMAND ----------
 
@@ -165,23 +165,23 @@ AS SELECT l.*, ref.accounting_treatment as accounting_treatment FROM LIVE.raw_hi
 CREATE MATERIALIZED VIEW total_loan_balances
   COMMENT "Combines historical and new loan data for unified rollup of loan balances"
   TBLPROPERTIES ("pipelines.autoOptimize.zOrderCols" = "location_code")
-AS SELECT sum(revol_bal)  AS bal, addr_state   AS location_code FROM live.historical_txs  GROUP BY addr_state
-  UNION SELECT sum(balance) AS bal, country_code AS location_code FROM live.cleaned_new_txs GROUP BY country_code
+AS SELECT sum(revol_bal)  AS bal, addr_state   AS location_code FROM historical_txs  GROUP BY addr_state
+  UNION SELECT sum(balance) AS bal, country_code AS location_code FROM cleaned_new_txs GROUP BY country_code
 
 -- COMMAND ----------
 
 -- DBTITLE 1,Balance aggregate per cost center
 CREATE MATERIALIZED VIEW new_loan_balances_by_cost_center
-  COMMENT "Live table of new loan balances for consumption by different cost centers"
-AS SELECT sum(balance) as sum_balance, cost_center_code FROM live.cleaned_new_txs
+  COMMENT "loan balances for consumption by different cost centers"
+AS SELECT sum(balance) as sum_balance, cost_center_code FROM cleaned_new_txs
   GROUP BY cost_center_code
 
 -- COMMAND ----------
 
 -- DBTITLE 1,Balance aggregate per country
 CREATE MATERIALIZED VIEW new_loan_balances_by_country
-  COMMENT "Live table of new loan balances per country"
-AS SELECT sum(count) as sum_count, country_code FROM live.cleaned_new_txs GROUP BY country_code
+  COMMENT "new loan balances per country"
+AS SELECT sum(count) as sum_count, country_code FROM cleaned_new_txs GROUP BY country_code
 
 -- COMMAND ----------
 
