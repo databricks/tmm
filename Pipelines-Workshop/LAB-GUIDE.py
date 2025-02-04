@@ -1,7 +1,7 @@
 # Databricks notebook source
 # MAGIC %md
 # MAGIC
-# MAGIC # Lab Guide: AI-Powered Data Engineering (July-2nd, 2024)
+# MAGIC # Lab Guide: AI-Powered Data Engineering (Feb-4, 2025)
 
 # COMMAND ----------
 
