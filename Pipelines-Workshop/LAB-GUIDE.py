@@ -169,6 +169,11 @@ print(f"user_{user}")
 # MAGIC ```
 # MAGIC [(some hints)](https://docs.databricks.com/workflows/delta-live-tables/delta-live-tables-incremental-data.html)
 # MAGIC
+# MAGIC ### Direct Publishing Mode
+# MAGIC With direct publishing mode you can create pipeline tables under any schema name. Under "Pipeline Settings" the default schema name is set. This setting can be overwritten in the SQL code for every table.
+# MAGIC
+# MAGIC Try using this feature and put the three gold tables into the USER_ID_dashboard schema. 
+# MAGIC
 # MAGIC
 # MAGIC ### Monitor DLT Events (Optional) 
 # MAGIC
