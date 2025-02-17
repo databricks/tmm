@@ -9,7 +9,7 @@
 # MAGIC USE demo.loan_io ;
 # MAGIC
 # MAGIC -- needed for keeping things tidy with DLT    
-# MAGIC GRANT CREATE SCHEMA, USE SCHEMA, USAGE on CATALOG demo TO `account users`; 
+# MAGIC GRANT CREATE SCHEMA, USE SCHEMA, USE CATALOG on CATALOG demo TO `account users`; 
 # MAGIC
 # MAGIC CREATE VOLUME IF NOT EXISTS historical_loans;
 # MAGIC CREATE VOLUME IF NOT EXISTS raw_transactions;
