@@ -1,0 +1,5 @@
+command:
+  - gunicorn
+  - app:app
+  - -w
+  - 4
