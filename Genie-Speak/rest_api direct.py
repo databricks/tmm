@@ -8,7 +8,7 @@ import io
 import sys
 
 # Replace with your Google Cloud Speech-to-Text API key
-API_KEY = "AIzaSyCWedzaa8HNtH8pl-gpuYu04zkLEosqq2g"
+API_KEY = "xxx"
 
 def get_default_mic():
     p = pyaudio.PyAudio()
