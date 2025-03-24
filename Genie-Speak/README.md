@@ -17,4 +17,4 @@ Genie-Speak is a demo application that integrates multi-cloud services to enable
 Install dependencies using the provided `requirements.txt`:
 
 ```bash
-pip install -r [requirements.txt](http://_vscodecontentref_/0)
+pip install -r requirements.txt
