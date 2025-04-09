@@ -1,0 +1,5 @@
+agent_prompt: "Use tools to retrieve all information needed. Make sure to follow company policies extremely closely."
+llm_endpoint: "databricks-meta-llama-3-3-70b-instruct"
+warehouse_id: 862f1d757f0424f7
+uc_functions:
+  - "retail_prod.agents.*"
