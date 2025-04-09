@@ -1,7 +1,15 @@
 # Databricks notebook source
-# MAGIC %sql
-# MAGIC -- setup, double check running this load gen and attendees DLT and that this works for you
+# MAGIC %md
+# MAGIC # Data generator for DLT pipeline
+# MAGIC This notebook generates (streaming) data for the loan transaction system. 
 # MAGIC
+# MAGIC
+
+# COMMAND ----------
+
+# DBTITLE 1,Setup and Grant Permissions for Loan Data Catalog
+# MAGIC %sql
+# MAGIC -- the UC commands below set up the environment, they are idempotent, you can rerun the noteook anytime. 
 # MAGIC
 # MAGIC CREATE CATALOG IF NOT EXISTS demo ;
 # MAGIC USE CATALOG demo ;
@@ -11,9 +19,12 @@
 # MAGIC -- needed for keeping things tidy with DLT    
 # MAGIC GRANT CREATE SCHEMA, USE SCHEMA, USE CATALOG on CATALOG demo TO `account users`; 
 # MAGIC
-# MAGIC CREATE VOLUME IF NOT EXISTS historical_loans;
-# MAGIC CREATE VOLUME IF NOT EXISTS raw_transactions;
-# MAGIC CREATE VOLUME IF NOT EXISTS ref_accounting;
+# MAGIC DROP VOLUME IF EXISTS historical_loans;
+# MAGIC DROP VOLUME IF EXISTS raw_transactions;
+# MAGIC DROP VOLUME IF EXISTS ref_accounting;
+# MAGIC CREATE VOLUME historical_loans;
+# MAGIC CREATE VOLUME raw_transactions;
+# MAGIC CREATE VOLUME ref_accounting;
 # MAGIC
 # MAGIC
 # MAGIC USE CATALOG demo;
@@ -30,39 +41,19 @@
 # COMMAND ----------
 
 dbutils.library.restartPython() 
-# dbutils.widgets.removeAll()
+
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC # Data generator for DLT pipeline
-# MAGIC This notebook will generate data in the given storage path to simulate a data flow. 
-# MAGIC
-# MAGIC **Make sure the storage path matches what you defined in your DLT pipeline as input.**
-# MAGIC
-# MAGIC As an Instructor use the instructor login (!)
-# MAGIC
-# MAGIC * Create 
-# MAGIC   * catalog demo
-# MAGIC   * schema loan_io
-# MAGIC * In the schema define 3 volumes historical_loans, raw_transactions, ref_accounting 
-# MAGIC * catalog, schema and volumes are not yet seen by attendees, you need to set e.g. using the UI 
-# MAGIC   * Give `account users` the priv `data editor` 
-# MAGIC   * and then revoke `write to volume`
-# MAGIC * Run load gen before starting labs on a single user cluster (define one if it does not exist)
-# MAGIC * Use lab user (not intstructor) to demo labs
-# MAGIC
+# total runtime of the load generator = batch_wait * batch_count
+# make sure it coveres the length of the workshop
 
-# COMMAND ----------
+reset_all_data= False     # False, volumes are dropped now, rerun notebook for restart
+batch_wait= 20
+num_recs = 33
+batch_count= 180
 
-# these settings are ported over from the removed widgets
-
-reset_all_data='true'
-batch_wait=30
-num_recs = 500
-batch_count= 600
-
-# volumnes
+# volumes, must match the ingestion pipeline
 output_path =     '/Volumes/demo/loan_io/'
 hist_loans =      output_path+'historical_loans'
 raw_tx =          output_path+'raw_transactions'
@@ -106,8 +97,8 @@ spark.createDataFrame([
   (5, 'fv_designated')
 ], ['id', 'accounting_treatment']).write.format('delta').mode('overwrite').save(ref_accounting)
 
-cleanup_folder(hist_loans)
-cleanup_folder(ref_accounting)
+#cleanup_folder(hist_loans)
+#cleanup_folder(ref_accounting)
 
 # COMMAND ----------
 
@@ -178,7 +169,7 @@ def generate_transactions(num, folder, file_count, mode):
                     'redundancy_pymt','reference','reg_loss','regular_wages','release','rent','restructuring','retained_earnings','revaluation',
                     'revenue_reserve','share_plan','staff','system','tax','unsecured_loan_fee','write_off'])())
   ).repartition(file_count).write.format('json').mode(mode).save(folder)
-  cleanup_folder(raw_tx)
+  #cleanup_folder(raw_tx)
   
 # generate_transactions(10000, raw_tx, 10, "overwrite")
 
@@ -186,9 +177,8 @@ def generate_transactions(num, folder, file_count, mode):
 
 import time
 
-#assert batch_count <= 500, "please don't go above 500 writes, the generator will run for a too long time"
+# make sure you understand the total runtime of this notebook (see above)
 for i in range(0, batch_count):
-  if batch_count > 1:
-    time.sleep(batch_wait)
   generate_transactions(num_recs, raw_tx, 1, "append")
-  print(f'finished writing batch: {i}')
+  print(f'Finished writing batch: {i} with {num_recs} records. Waiting {batch_wait} seconds now.')
+  time.sleep(batch_wait)
