@@ -232,4 +232,4 @@ display(HTML(html_link))
 from databricks import agents
 
 # Deploy the model to the review app and a model serving endpoint
-# agents.deploy(UC_MODEL_NAME, uc_registered_model_info.version, tags = {"endpointSource": "playground"})
+agents.deploy(UC_MODEL_NAME, uc_registered_model_info.version, tags = {"endpointSource": "playground"})

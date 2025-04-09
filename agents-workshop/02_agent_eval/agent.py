@@ -99,8 +99,8 @@ from langchain_databricks.vectorstores import DatabricksVectorSearch
 
 # Connect to an existing Databricks Vector Search endpoint and index
 vector_store = DatabricksVectorSearch(
-  endpoint="one-env-shared-endpoint-16", 
-  index_name="retail_prod.agents.product_docs_index", 
+  endpoint="one-env-shared-endpoint-14", 
+  index_name="retail_prod.agents.product_docs_vs", 
   columns=[
     "product_category",
     "product_sub_category",
