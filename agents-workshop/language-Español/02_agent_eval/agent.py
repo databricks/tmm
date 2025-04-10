@@ -1,41 +1,41 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC # Hands-On Lab: Building Agent Systems with Databricks
+# MAGIC # Laboratorio Práctico: Construcción de Sistemas de Agentes con Databricks
 # MAGIC
-# MAGIC ## Part 2 - Agent Evaluation
-# MAGIC Now that we've created an agent, how do we evaluate its performance?
-# MAGIC For the second part, we're going to create a more basic agent so we can focus on evaluation.
-# MAGIC This agent will use a RAG approach to help answer questions about products using the product documentation.
+# MAGIC ## Parte 2 - Evaluación del Agente  
+# MAGIC Ahora que hemos creado un agente, ¿cómo evaluamos su rendimiento?  
+# MAGIC Para esta segunda parte, vamos a crear un agente más básico para poder enfocarnos en la evaluación.  
+# MAGIC Este agente utilizará un enfoque RAG para ayudar a responder preguntas sobre productos usando la documentación del producto.
 # MAGIC
-# MAGIC ### 2.1 Define our new Agent and retriever tool
-# MAGIC - **Vector Search**: We've created a Vector Search endpoint that can be queried to find related documentation about a specific product.
-# MAGIC - **Create Retriever Function**: Define some properties about our retriever and package it so it can be called by our LLM.
+# MAGIC ### 2.1 Definir nuestro nuevo Agente y herramienta de recuperación
+# MAGIC - **Búsqueda Vectorial**: Hemos creado un endpoint de Búsqueda Vectorial que puede ser consultado para encontrar documentación relacionada con un producto específico.
+# MAGIC - **Crear Función de Recuperación**: Define algunas propiedades sobre nuestro recuperador y empaquétalo para que pueda ser llamado por nuestro LLM.
 # MAGIC
-# MAGIC Note: You can also change the system prompt as we defined in the playground within the config.yml file
+# MAGIC Nota: También puedes cambiar el prompt del sistema tal como lo definimos en el playground dentro del archivo config.yml.
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #Agent notebook
+# MAGIC # Agent Notebook
 # MAGIC
-# MAGIC This is very similar to an auto-generated notebook created by an AI Playground export. There are three notebooks in the same folder:
-# MAGIC - [**agent**]($./agent): contains the code to build the agent.
-# MAGIC - [config.yml]($./config.yml): contains the configurations.
-# MAGIC - [driver]($./driver): logs, evaluate, registers, and deploys the agent.
+# MAGIC Este notebook es muy similar a uno autogenerado por una exportación desde AI Playground. Hay tres notebooks en la misma carpeta:
+# MAGIC - [**agent**]($./agent): contiene el código para construir el agente.
+# MAGIC - [config.yml]($./config.yml): contiene las configuraciones.
+# MAGIC - [driver]($./driver): registra, evalúa, registra en catálogo y despliega el agente.
 # MAGIC
-# MAGIC This notebook uses Mosaic AI Agent Framework ([AWS](https://docs.databricks.com/en/generative-ai/retrieval-augmented-generation.html) | [Azure](https://learn.microsoft.com/en-us/azure/databricks/generative-ai/retrieval-augmented-generation)) to create your agent. It defines a LangChain agent that has access to tools, which we define in this notebook as well.
+# MAGIC Este notebook utiliza el Marco de Trabajo Mosaic AI Agent ([AWS](https://docs.databricks.com/en/generative-ai/retrieval-augmented-generation.html) | [Azure](https://learn.microsoft.com/en-us/azure/databricks/generative-ai/retrieval-augmented-generation)) para crear tu agente. Define un agente de LangChain que tiene acceso a herramientas, las cuales también definimos en este notebook.
 # MAGIC
-# MAGIC Use this notebook to iterate on and modify the agent. For example, you could add more tools or change the system prompt.
+# MAGIC Usa este notebook para iterar y modificar el agente. Por ejemplo, podrías agregar más herramientas o cambiar el prompt del sistema.
 # MAGIC
-# MAGIC  **_NOTE:_**  This notebook uses LangChain, however AI Agent Framework is compatible with other agent frameworks like Pyfunc and LlamaIndex.
+# MAGIC **_NOTA:_** Este notebook utiliza LangChain, sin embargo, el Marco de Trabajo AI Agent también es compatible con otros frameworks de agentes como Pyfunc y LlamaIndex.
 # MAGIC
-# MAGIC ## Prerequisites
+# MAGIC ## Requisitos Previos
 # MAGIC
-# MAGIC - Review the contents of [config.yml]($./config.yml) as it defines the tools available to your agent, the LLM endpoint, and the agent prompt.
+# MAGIC - Revisa el contenido de [config.yml]($./config.yml), ya que define las herramientas disponibles para tu agente, el endpoint del LLM y el prompt del agente.
 # MAGIC
-# MAGIC ## Next steps
+# MAGIC ## Próximos Pasos
 # MAGIC
-# MAGIC After testing and iterating on your agent in this notebook, go to the auto-generated [driver]($./driver) notebook in this folder to log, register, evaluate, and deploy the agent.
+# MAGIC Después de probar e iterar sobre tu agente en este notebook, ve al notebook autogenerado [driver]($./driver) en esta carpeta para registrar, evaluar y desplegar el agente.
 
 # COMMAND ----------
 
@@ -45,9 +45,9 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Import and setup
+# MAGIC ## Importar y configurar
 # MAGIC
-# MAGIC Use `mlflow.langchain.autolog()` to set up [MLflow traces](https://docs.databricks.com/en/mlflow/mlflow-tracing.html).
+# MAGIC Usa `mlflow.langchain.autolog()` para configurar [trazas de MLflow](https://docs.databricks.com/en/mlflow/mlflow-tracing.html).
 
 # COMMAND ----------
 
@@ -60,12 +60,12 @@ config = ModelConfig(development_config="config.yml")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Define the chat model and tools
-# MAGIC Create a LangChain chat model that supports [LangGraph tool](https://langchain-ai.github.io/langgraph/how-tos/tool-calling/) calling.
+# MAGIC ## Definir el modelo de chat y las herramientas  
+# MAGIC Crea un modelo de chat de LangChain que sea compatible con llamadas a herramientas de [LangGraph](https://langchain-ai.github.io/langgraph/how-tos/tool-calling/).
 # MAGIC
-# MAGIC We'll be importing tools from UC as well as defining a retriever. See [LangChain - How to create tools](https://python.langchain.com/v0.2/docs/how_to/custom_tools/) and [LangChain - Using built-in tools](https://python.langchain.com/v0.2/docs/how_to/tools_builtin/).
+# MAGIC Importaremos herramientas desde UC, además de definir un recuperador. Consulta [LangChain - Cómo crear herramientas](https://python.langchain.com/v0.2/docs/how_to/custom_tools/) y [LangChain - Uso de herramientas integradas](https://python.langchain.com/v0.2/docs/how_to/tools_builtin/).
 # MAGIC
-# MAGIC  **_NOTE:_**  This notebook uses LangChain, however AI Agent Framework is compatible with other agent frameworks like Pyfunc and LlamaIndex.
+# MAGIC **_NOTA:_** Este notebook utiliza LangChain, sin embargo, el Marco de Trabajo AI Agent también es compatible con otros frameworks de agentes como Pyfunc y LlamaIndex.
 
 # COMMAND ----------
 
@@ -73,7 +73,7 @@ from langchain_community.chat_models import ChatDatabricks
 from langchain_community.tools.databricks import UCFunctionToolkit
 from databricks.sdk import WorkspaceClient
 
-# Create the llm
+# Crear el llm
 llm = ChatDatabricks(endpoint=config.get("llm_endpoint"))
 
 uc_functions = config.get("uc_functions")
@@ -87,17 +87,17 @@ tools = (
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Using Databricks Vector Search retrieval as a tool in your LangGraph Agent
+# MAGIC ## Usar la recuperación de Databricks Vector Search como herramienta en tu Agente LangGraph
 # MAGIC
-# MAGIC A common agent use case is Retrieval Augmented Generation (RAG). In RAG, the agent can use a vector search retriever to query a corpus of documents to provide additional context to the LLM. If you already have a Databricks vector search endpoint and index, you can easily create a tool that performs retrieval against the index and passes the results to your agent.
-# MAGIC
+# MAGIC Un caso de uso común para agentes es la Generación Aumentada por Recuperación (RAG). En RAG, el agente puede utilizar un recuperador basado en búsqueda vectorial para consultar un corpus de documentos y proporcionar contexto adicional al LLM.  
+# MAGIC Si ya tienes un endpoint e índice de búsqueda vectorial en Databricks, puedes crear fácilmente una herramienta que realice la recuperación contra el índice y pase los resultados a tu agente.
 
 # COMMAND ----------
 
 from langchain.tools.retriever import create_retriever_tool
 from langchain_databricks.vectorstores import DatabricksVectorSearch
 
-# Connect to an existing Databricks Vector Search endpoint and index
+# Conectar a un endpoint y un índice existentes de Databricks Vector Search
 vector_store = DatabricksVectorSearch(
   endpoint="one-env-shared-endpoint-14", 
   index_name="retail_prod.agents.product_docs_vs", 
@@ -110,17 +110,17 @@ vector_store = DatabricksVectorSearch(
     "indexed_doc"
   ]
 ).as_retriever(search_kwargs={"k": 5}) 
-#This parameter determines how many results are returned - important for retrieval tuning
+#Este parámetro determina cuántos resultados se devuelven - importante para la afinación de la recuperación
 
-# Create a tool object that performs retrieval against our vector search index
+# Crear un objeto herramienta que realice la recuperación contra nuestro índice de búsqueda vectorial
 retriever_tool = create_retriever_tool(
   vector_store,
   name="search_product_docs", 
   description="Use this tool to search for product documentation.", 
 )
 
-# Specify the return type schema of our retriever, so that evaluation and UIs can
-# automatically display retrieved chunks
+# Especificar el esquema del tipo de retorno de nuestro recuperador, para que la evaluación y las UIs puedan
+# mostrar automáticamente los fragmentos recuperados
 mlflow.models.set_retriever_schema(
     primary_key="product_id",
     text_column="indexed_doc",
@@ -133,10 +133,10 @@ tools.append(retriever_tool)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Output parsers
-# MAGIC Databricks interfaces, such as the AI Playground, can optionally display pretty-printed tool calls.
+# MAGIC ## Parsers de salida  
+# MAGIC Las interfaces de Databricks, como el AI Playground, pueden mostrar opcionalmente las llamadas a herramientas con un formato legible.
 # MAGIC
-# MAGIC Use the following helper functions to parse the LLM's output into the expected format.
+# MAGIC Usa las siguientes funciones auxiliares para analizar la salida del LLM en el formato esperado.
 
 # COMMAND ----------
 
@@ -223,14 +223,12 @@ def wrap_output(stream: Iterator[MessageLikeRepresentation]) -> Iterator[str]:
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Create the agent
-# MAGIC Here we provide a simple graph that uses the model and tools defined by [config.yml]($./config.yml). This graph is adapated from [this LangGraph guide](https://langchain-ai.github.io/langgraph/how-tos/react-agent-from-scratch/).
+# MAGIC ## Crear el agente  
+# MAGIC Aquí proporcionamos un grafo simple que utiliza el modelo y las herramientas definidas en [config.yml]($./config.yml). Este grafo está adaptado de [esta guía de LangGraph](https://langchain-ai.github.io/langgraph/how-tos/react-agent-from-scratch/).
 # MAGIC
-# MAGIC
-# MAGIC To further customize your LangGraph agent, you can refer to:
-# MAGIC * [LangGraph - Quick Start](https://langchain-ai.github.io/langgraph/tutorials/introduction/) for explanations of the concepts used in this LangGraph agent
-# MAGIC * [LangGraph - How-to Guides](https://langchain-ai.github.io/langgraph/how-tos/) to expand the functionality of your agent
-# MAGIC
+# MAGIC Para personalizar aún más tu agente de LangGraph, puedes consultar:
+# MAGIC * [LangGraph - Inicio Rápido](https://langchain-ai.github.io/langgraph/tutorials/introduction/) para explicaciones de los conceptos utilizados en este agente LangGraph  
+# MAGIC * [LangGraph - Guías Prácticas](https://langchain-ai.github.io/langgraph/how-tos/) para ampliar la funcionalidad de tu agente
 
 # COMMAND ----------
 
@@ -257,10 +255,10 @@ from langgraph.prebuilt.tool_executor import ToolExecutor
 from langgraph.prebuilt.tool_node import ToolNode
 
 
-# We create the AgentState that we will pass around
-# This simply involves a list of messages
+# Creamos el estado del agente que pasaremos
+# Esto simplemente implica una lista de mensajes
 class AgentState(TypedDict):
-    """The state of the agent."""
+    """El estado del agente."""
 
     messages: Annotated[Sequence[BaseMessage], add_messages]
 
@@ -272,11 +270,11 @@ def create_tool_calling_agent(
 ) -> CompiledGraph:
     model = model.bind_tools(tools)
 
-    # Define the function that determines which node to go to
+    # Definir la función que determina a qué nodo ir
     def should_continue(state: AgentState):
         messages = state["messages"]
         last_message = messages[-1]
-        # If there is no function call, then we finish
+        # Si no hay llamada a función, entonces terminamos
         if not last_message.tool_calls:
             return "end"
         else:
@@ -291,7 +289,7 @@ def create_tool_calling_agent(
         preprocessor = RunnableLambda(lambda state: state["messages"])
     model_runnable = preprocessor | model
 
-    # Define the function that calls the model
+    # Definir la función que llama al modelo
     def call_model(
         state: AgentState,
         config: RunnableConfig,
@@ -306,20 +304,20 @@ def create_tool_calling_agent(
 
     workflow.set_entry_point("agent")
     workflow.add_conditional_edges(
-        # First, we define the start node. We use agent.
-        # This means these are the edges taken after the agent node is called.
+        # Primero, definimos el nodo de inicio. Usamos agent.
+        # Esto significa que estos son los bordes tomados después de llamar al nodo agent.
         "agent",
-        # Next, we pass in the function that will determine which node is called next.
+        # A continuación, pasamos la función que determinará a qué nodo llamar a continuación.
         should_continue,
-        # The mapping below will be used to determine which node to go to
+        # El mapeo a continuación se utilizará para determinar a qué nodo ir
         {
-            # If tools, then we call the tool node.
+            # Si continue, entonces llamamos al nodo de herramientas.
             "continue": "tools",
-            # END is a special node marking that the graph should finish.
+            # END es un nodo especial que marca que el gráfico debe terminar.
             "end": END,
         },
     )
-    # We now add a unconditional edge from tools to agent.
+    # Ahora agregamos un borde incondicional de tools a agent.
     workflow.add_edge("tools", "agent")
 
     return workflow.compile()
@@ -329,7 +327,7 @@ def create_tool_calling_agent(
 from langchain_core.runnables import RunnableGenerator
 from mlflow.langchain.output_parsers import ChatCompletionsOutputParser
 
-# Create the agent with the system message if it exists
+# Crear el agente con el mensaje del sistema si existe
 try:
     agent_prompt = config.get("agent_prompt")
 
@@ -346,27 +344,27 @@ agent = agent_with_raw_output | RunnableGenerator(wrap_output) | ChatCompletions
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Test the agent
+# MAGIC ## Probar el agente
 # MAGIC
-# MAGIC Interact with the agent to test its output. Since this notebook called `mlflow.langchain.autolog()` you can view the trace for each step the agent takes.
+# MAGIC Interactúa con el agente para probar su salida.  
+# MAGIC Como este notebook llamó a `mlflow.langchain.autolog()`, puedes visualizar el rastro de cada paso que realiza el agente.
 
 # COMMAND ----------
 
-# TODO: replace this placeholder input example with an appropriate domain-specific example for your agent
 for event in agent.stream({"messages": [{"role": "user", "content": "Can you give me some troubleshooting steps for SoundWave X5 Pro Headphones that won't connect?"}]}):
     print(event, "---" * 20 + "\n")
 
 # COMMAND ----------
 
-# Log agent 
+# Registrar agente
 
 mlflow.models.set_model(agent)
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Next steps
+# MAGIC ## Próximos pasos
 # MAGIC
-# MAGIC You can rerun the cells above to iterate and test the agent.
+# MAGIC Puedes volver a ejecutar las celdas anteriores para iterar y probar el agente.
 # MAGIC
-# MAGIC Go to the auto-generated [driver]($./driver) notebook in this folder to log, register, and deploy the agent.
+# MAGIC Dirígete al notebook autogenerado [driver]($./driver) en esta carpeta para registrar, evaluar y desplegar el agente.

@@ -1,48 +1,48 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC # Hands-On Lab: Building Agent Systems with Databricks
+# MAGIC # Laboratorio Práctico: Construcción de Sistemas de Agentes con Databricks
 # MAGIC
-# MAGIC ## Part 2 - Agent Evaluation
-# MAGIC Now that we've created an agent, how do we evaluate its performance?
-# MAGIC For the second part, we're going to create a more basic agent so we can focus on evaluation.
-# MAGIC This agent will use a RAG approach to help answer questions about products using the product documentation.
+# MAGIC ## Parte 2 - Evaluación del Agente
+# MAGIC Ahora que hemos creado un agente, ¿cómo evaluamos su rendimiento?  
+# MAGIC Para esta segunda parte, vamos a crear un agente más básico para poder enfocarnos en la evaluación.  
+# MAGIC Este agente utilizará un enfoque RAG para ayudar a responder preguntas sobre productos usando la documentación del producto.
 # MAGIC
-# MAGIC ### 2.2 Create Evaluation Dataset
-# MAGIC - We've provided an example evaluation dataset - though you can also generate this [synthetically](https://www.databricks.com/blog/streamline-ai-agent-evaluation-with-new-synthetic-data-capabilities).
+# MAGIC ### 2.2 Crear Conjunto de Datos para Evaluación
+# MAGIC - Hemos proporcionado un conjunto de datos de evaluación de ejemplo, aunque también puedes generarlo [sintéticamente](https://www.databricks.com/blog/streamline-ai-agent-evaluation-with-new-synthetic-data-capabilities).
 # MAGIC
-# MAGIC ### 2.3 Run MLflow.evaluate() 
-# MAGIC - MLflow will take your evaluation dataset and test your agent's responses against it
-# MAGIC - LLM Judges will score the outputs and collect everything in a nice UI for review
+# MAGIC ### 2.3 Ejecutar MLflow.evaluate()
+# MAGIC - MLflow tomará tu conjunto de datos de evaluación y probará las respuestas de tu agente contra él.
+# MAGIC - Jueces LLM calificarán las respuestas y recopilarán todo en una interfaz agradable para su revisión.
 # MAGIC
-# MAGIC ### 2.4 Make Needed Improvements and re-run Evaluations
-# MAGIC - Take feedback from our evaluation run and change retrieval settings
-# MAGIC - Run evals again and see the improvement!
+# MAGIC ### 2.4 Realiza Mejoras Necesarias y Vuelve a Ejecutar Evaluaciones
+# MAGIC - Toma el feedback de la ejecución de evaluación y cambia la configuración de recuperación.
+# MAGIC - Ejecuta las evaluaciones nuevamente y ¡observa la mejora!
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC # Driver notebook
+# MAGIC # Driver Notebook 
 # MAGIC
-# MAGIC This was an auto-generated notebook created by an AI Playground export. We generated three notebooks in the same folder:
-# MAGIC - [agent]($./agent): contains the code to build the agent.
-# MAGIC - [config.yml]($./config.yml): contains the configurations.
-# MAGIC - [**driver**]($./driver): logs, evaluate, registers, and deploys the agent.
+# MAGIC Este es un notebook autogenerado creado por una exportación desde AI Playground. Generamos tres notebooks en la misma carpeta:
+# MAGIC - [agent]($./agent): contiene el código para construir el agente.
+# MAGIC - [config.yml]($./config.yml): contiene las configuraciones.
+# MAGIC - [**driver**]($./driver): registra, evalúa, registra en catálogo y despliega el agente.
 # MAGIC
-# MAGIC This notebook uses Mosaic AI Agent Framework ([AWS](https://docs.databricks.com/en/generative-ai/retrieval-augmented-generation.html) | [Azure](https://learn.microsoft.com/en-us/azure/databricks/generative-ai/retrieval-augmented-generation)) to deploy the agent defined in the [agent]($./agent) notebook. The notebook does the following:
-# MAGIC 1. Logs the agent to MLflow
-# MAGIC 2. Evaluate the agent with Agent Evaluation
-# MAGIC 3. Registers the agent to Unity Catalog
-# MAGIC 4. Deploys the agent to a Model Serving endpoint
+# MAGIC Este notebook utiliza el Marco de Trabajo Mosaic AI Agent ([AWS](https://docs.databricks.com/en/generative-ai/retrieval-augmented-generation.html) | [Azure](https://learn.microsoft.com/en-us/azure/databricks/generative-ai/retrieval-augmented-generation)) para desplegar el agente definido en el notebook [agent]($./agent). El notebook realiza lo siguiente:
+# MAGIC 1. Registra el agente en MLflow  
+# MAGIC 2. Evalúa el agente con Agent Evaluation  
+# MAGIC 3. Registra el agente en Unity Catalog  
+# MAGIC 4. Despliega el agente en un endpoint de Model Serving  
 # MAGIC
-# MAGIC ## Prerequisities
+# MAGIC ## Requisitos Previos
 # MAGIC
-# MAGIC - Address all `TODO`s in this notebook.
-# MAGIC - Review the contents of [config.yml]($./config.yml) as it defines the tools available to your agent, the LLM endpoint, and the agent prompt.
-# MAGIC - Review and run the [agent]($./agent) notebook in this folder to view the agent's code, iterate on the code, and test outputs.
+# MAGIC - Completa todos los `TODO`s en este notebook.  
+# MAGIC - Revisa el contenido de [config.yml]($./config.yml), ya que define las herramientas disponibles para tu agente, el endpoint del LLM y el prompt del agente.  
+# MAGIC - Revisa y ejecuta el notebook [agent]($./agent) en esta carpeta para ver el código del agente, iterar sobre él y probar sus salidas.  
 # MAGIC
-# MAGIC ## Next steps
+# MAGIC ## Próximos Pasos
 # MAGIC
-# MAGIC After your agent is deployed, you can chat with it in AI playground to perform additional checks, share it with SMEs in your organization for feedback, or embed it in a production application. See docs ([AWS](https://docs.databricks.com/en/generative-ai/deploy-agent.html) | [Azure](https://learn.microsoft.com/en-us/azure/databricks/generative-ai/deploy-agent)) for details
+# MAGIC Después de desplegar tu agente, puedes chatear con él en AI Playground para realizar verificaciones adicionales, compartirlo con expertos en tu organización para obtener retroalimentación, o integrarlo en una aplicación de producción. Consulta la documentación ([AWS](https://docs.databricks.com/en/generative-ai/deploy-agent.html) | [Azure](https://learn.microsoft.com/en-us/azure/databricks/generative-ai/deploy-agent)) para más detalles.
 
 # COMMAND ----------
 
@@ -52,12 +52,12 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ### Log the `agent` as an MLflow model
-# MAGIC Log the agent as code from the [agent]($./agent) notebook. See [MLflow - Models from Code](https://mlflow.org/docs/latest/models.html#models-from-code).
+# MAGIC ### Registra el `agent` como un modelo de MLflow  
+# MAGIC Registra el agente como código desde el notebook [agent]($./agent). Consulta [MLflow - Modelos desde Código](https://mlflow.org/docs/latest/models.html#models-from-code).
 
 # COMMAND ----------
 
-# Log the model to MLflow
+# Registrar el modelo en MLflow
 import os
 import mlflow
 
