@@ -2,20 +2,20 @@
 
 ## 0. Background
 
-This lab guide is part of the Databricks TMM Workshop "AI-Powered Data Engineering". The course is designed to give you hands-on experience with the latest features Databricks data engineering capabilities.
+This lab guide is part of the Databricks Foundational Workshop "AI-Powered Data Engineering". The course is designed to give you hands-on experience with the latest Databricks data engineering capabilities.
 
 ### What you will learn
 
-You will learn how to create a DLT pipeline for streaming data, run it, and use it in a workflow. You will also learn how to use the AI supported tool like Databricks Assistant and Genie.
+You will learn how to create a DLT pipeline for streaming data, run it, and use it in a workflow. You will also learn how to use the AI-supported tool like Databricks Assistant and Genie.
 
 
 ### Your task
 
-Imagine you just started a new job as a data engineer and you are asked to take over an DLT ingestion pipeline written in SQL. The pipeline ingests loan requests from an online transcation broker processing continuously. Don't worry about the transactions broker, your instructor set this up for your, but the code is provided for transparency.
+Imagine you just started a new job as a data engineer and you are asked to take over an DLT ingestion pipeline written in SQL. The pipeline ingests loan requests from an online transcation broker processing continuously. Don't worry about the transaction broker, your instructor set set this up for your (the code is provided in the repo for transparency).
 
 
 
-## 1. Important
+## Important
 
 * This is your main lab guide. Please **keep it open in a separate tab**. You will need it to follow the steps below and come back to them throughout the course.
 * We will work with other notebooks, catalogs, and workspace settings, and this guide describes how things tie together, e.g., how to configure and run DLT pipelines.
@@ -210,7 +210,7 @@ The Lakehouse unifies classic data lakes and DWHs. This lab will teach you how t
 
 * Task name: Update Downstream
 * Task type: Notebook
-* Select the `04-Udpate-Downstream` notebook
+* Select the `04-Update-Downstream` notebook
 * Note that `Serverless` is automatically selected for compute on the right-hand side
 
 ### Run the workflow
@@ -233,21 +233,32 @@ The Lakehouse unifies classic data lakes and DWHs. This lab will teach you how t
 
 ## 5. Instructor Demo: New DLT Pipeline Editor
 
-### To enable the ETL Pipeline Multi-File Editor, follow these steps:
-
-1. In the top-right corner, select your user icon
-2. Right-click on Settings and select Open in New Tab.
-3. Select Developer.
-4. Scroll to the bottom and enable ETL Pipeline Multi-File Editor.
 
 
 ### Follow the Instructor Demo
 
+The new DLT Pipeline Editor is available in beta. It is a new way to create and manage DLT pipelines. The new editor is designed to be more user-friendly and intuitive, making it easier to create and manage DLT pipelines. One core difference is that the new editor is based on files, not notebooks.
+
+### Setup Admin level
+
+1. As a workspace admin, go to Previews under your user badge.
+2. Enable **Pipelines multi-file developer Experience**
+
+
+### Setup User level
+If you want to enable the ETL Pipeline Multi-File Editor, follow these steps:
+
+1. In the top-right corner, select your user icon
+2. Right-click on Settings 
+3. Select Developer.
+4. Scroll to the bottom and enable **ETL Pipeline Multi-File Editor**.
+
 
 ## 6. Outlook (optional topics in preview)
 
-Follow your instructor for capabilities such as Genie Data Rooms. Time permitting, he will demo them in another environment.
+Follow your instructor for capabilities such as Genie Data Rooms. Time permitting.
+
 
 A full end-to-end demo of this section is available as a video in the [Databricks Demo Center](https://www.databricks.com/resources/demos/videos/data-engineering/databricks-data-intelligence-platform?itm_data=demo_center)
 
-## Congratulations for completing this workshop!
+# Congratulations for completing this workshop!
