@@ -1,0 +1,8 @@
+Copyright (2022) Databricks, Inc.
+## License
+This Software includes software developed at Databricks (https://www.databricks.com/) and its use is subject to the included LICENSE file.
+
+This Software contains code from the following open source projects, licensed under the Apache 2.0 license:
+
+psf/requests - https://github.com/psf/requests
+Copyright 2019 Kenneth Reitz⏎
