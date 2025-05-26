@@ -2,36 +2,25 @@
 -- MAGIC %md-sandbox
 -- MAGIC # AI-Powered Data Engineering with Lakeflow
 -- MAGIC
--- MAGIC Declerative Pipelines make Data Engineering accessible for all. 
+-- MAGIC Reliable data pipelines made easy. 
 -- MAGIC
--- MAGIC <img style="float:right" src="https://upload.wikimedia.org/wikipedia/commons/6/63/Databricks_Logo.png" width="700"/>
+-- MAGIC <img src="https://upload.wikimedia.org/wikipedia/commons/6/63/Databricks_Logo.png" width="400"/>
 -- MAGIC
--- MAGIC **Accelerate ETL development** <br/>
--- MAGIC Enable analysts and data engineers to innovate rapidly with simple pipeline development and maintenance 
+-- MAGIC **Agile pipeline development** <br/>
+-- MAGIC Engineers build and deploy with minimal coding, accelerating insights.
 -- MAGIC
--- MAGIC **Remove operational complexity** <br/>
--- MAGIC By automating complex administrative tasks and gaining broader visibility into pipeline operations
+-- MAGIC **Lower operational burden** <br/>
+-- MAGIC Automated scaling and recovery improve reliability and reduce maintenance.
 -- MAGIC
--- MAGIC **Trust your data** <br/>
--- MAGIC With built-in quality controls and quality monitoring to ensure accurate and useful BI, Data Science, and ML 
--- MAGIC
--- MAGIC **Simplify batch and streaming** <br/>
--- MAGIC With self-optimization and auto-scaling data pipelines for batch or streaming processing 
--- MAGIC
--- MAGIC ## Our declarative pipeline
--- MAGIC
--- MAGIC We'll be using as input a raw dataset containing information on our customers Loan and historical transactions. 
--- MAGIC
--- MAGIC Our goal is to ingest this data in near real time and build table for our Analyst team while ensuring data quality.
--- MAGIC
--- MAGIC <!-- Collect usage data (view). Remove it to disable collection. View README for more details.  -->
--- MAGIC <img width="1px" src="https://www.google-analytics.com/collect?v=1&gtm=GTM-NKQ8TT7&tid=UA-163989034-1&aip=1&t=event&ec=dbdemos&ea=VIEW&dp=%2F_dbdemos%2Fdata-engineering%2Fdlt-loans%2F01-DLT-Loan-pipeline-SQL&cid=local&uid=local">
+-- MAGIC **Flexible and cost-efficient** <br/>
+-- MAGIC Pipelines adapt to real-time and batch needs, optimizing performance and cost.
+-- MAGIC  
 
 -- COMMAND ----------
 
 -- MAGIC %md 
 -- MAGIC
--- MAGIC Our datasets are coming from 3 different systems and saved in UC governed volumes. You can see these volumes under `Catalog / demo / loan_io`:
+-- MAGIC Our datasets are coming from 3 different systems we need to integrate with. The data managed in UC governed volumes. You can see these volumes under `Catalog / demo / loan_io`:
 -- MAGIC
 -- MAGIC * `raw_transactions` (loans - streaming data)
 -- MAGIC * `ref_accounting` (reference table, mostly static)
@@ -45,7 +34,7 @@
 -- MAGIC
 -- MAGIC ### Adjust the Pipeline definiton for Ingestion
 -- MAGIC
--- MAGIC make sure to verify the ingestion location for Auto Loader in the first three SQL statement below: 
+-- MAGIC Make sure to verify the ingestion location for Auto Loader in the first three SQL statement below: 
 -- MAGIC
 
 -- COMMAND ----------
