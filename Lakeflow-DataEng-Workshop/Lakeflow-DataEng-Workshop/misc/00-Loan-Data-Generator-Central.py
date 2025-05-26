@@ -1,9 +1,7 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC # Data generator for DLT pipeline
+# MAGIC # Data generator for workshop
 # MAGIC This notebook generates (streaming) data for the loan transaction system. 
-# MAGIC
-# MAGIC
 
 # COMMAND ----------
 
@@ -16,7 +14,7 @@
 # MAGIC CREATE SCHEMA IF NOT EXISTS loan_io ;
 # MAGIC USE demo.loan_io ;
 # MAGIC
-# MAGIC -- needed for keeping things tidy with DLT    
+# MAGIC -- needed for keeping things tidy 
 # MAGIC GRANT CREATE SCHEMA, USE SCHEMA, USE CATALOG on CATALOG demo TO `account users`; 
 # MAGIC
 # MAGIC DROP VOLUME IF EXISTS historical_loans;
@@ -50,11 +48,11 @@ dbutils.library.restartPython()
 
 reset_all_data= False     # False, volumes are dropped now, rerun notebook for restart
 batch_wait= 20
-num_recs = 33
+num_recs = 100
 batch_count= 180
 
 # volumes, must match the ingestion pipeline
-output_path =     '/Volumes/demox/loan_io/'
+output_path =     '/Volumes/demo/loan_io/'
 hist_loans =      output_path+'historical_loans'
 raw_tx =          output_path+'raw_transactions'
 ref_accounting =  output_path+'ref_accounting'

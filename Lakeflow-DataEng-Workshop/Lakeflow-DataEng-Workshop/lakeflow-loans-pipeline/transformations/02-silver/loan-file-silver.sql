@@ -9,7 +9,7 @@ With DLT using Direct Publishing Mode (DPM), it is no longer necessary to refere
 
 */
 
-CREATE TEMPORARY STREAMING LIVE VIEW new_txs 
+CREATE TEMPORARY VIEW new_txs 
   COMMENT "Livestream of new transactions"
 AS 
 SELECT 

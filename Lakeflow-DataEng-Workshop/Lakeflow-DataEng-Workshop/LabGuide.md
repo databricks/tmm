@@ -7,22 +7,22 @@ This lab guide is part of the Databricks Foundational Workshop "AI-Powered Data 
 
 ### What you will learn
 
-You will learn how to create a DLT pipeline for streaming data, run it, and use it in a workflow. You will also learn how to use the AI-supported tool like Databricks Assistant and Genie.
+You will learn how to create a Lakeflow Declarative Pipeline for streaming data, run it, and use it in a workflow. You will also learn how to use the AI-supported tool like Databricks Assistant and Genie.
 
 
 ### Your task
 
-Imagine you just started a new job as a data engineer and you are asked to take over an DLT ingestion pipeline written in SQL. The pipeline ingests loan requests from an online transcation broker processing continuously. Don't worry about the transaction broker, your instructor set set this up for your (the code is provided in the repo for transparency).
+Imagine you just started a new job as a data engineer and you are asked to take over an ingestion pipeline written in SQL. The pipeline ingests loan requests from an online transcation broker processing continuously. Don't worry about the transaction broker, your instructor set set this up for your (the code is provided in the repo for transparency).
 
 
 
 ## Important
 
 * This is your main lab guide. Please **keep it open in a separate tab**. You will need it to follow the steps below and come back to them throughout the course.
-* We will work with other notebooks, catalogs, and workspace settings, and this guide describes how things tie together, e.g., how to configure and run DLT pipelines.
+* We will work with other notebooks, catalogs, and workspace settings, and this guide describes how things tie together, e.g., how to configure and run pipelines.
 * This lab guide is also part of the public GitHub repo, so you can easily recreate this course in your own account or share it with your colleagues.
 
-## Super Important
+## Very Important
 
 This course is designed in a way that it can be run with thousands of participants on a single Databricks account sharing a number of workspaces.
 
@@ -47,9 +47,9 @@ To get access to the lab notebooks, create a repo in your workspace
 
 ## 2. Delta Live Tables
 
-### Understand DLT Pipelines in SQL
+### Understand Declarative Pipelines in SQL
 
-* Watch your instructor explaining how to get started with DLT using the [DLT SQL notebook]($./01-DLT-Loan-pipeline-SQL).
+* Watch your instructor explaining how to get started with pipelines using the [DLT SQL notebook]($./01-DLT-Loan-pipeline-SQL).
 * For more information, check out the [documentation: core concepts](https://docs.databricks.com/workflows/delta-live-tables/delta-live-tables-concepts.html)
 
 After this module, you should be able to answer the following questions:
@@ -58,7 +58,7 @@ After this module, you should be able to answer the following questions:
 * What is the CTAS pattern?
 * What do we use the medallion architecture for?
 
-### Update the provided DLT pipeline for your environment
+### Update the provided pipeline for your environment
 
 In the [DLT SQL notebook]($./01-DLT-Loan-pipeline-SQL) check if the correct volumes are used for ingestion.
 
@@ -66,8 +66,8 @@ In the [DLT SQL notebook]($./01-DLT-Loan-pipeline-SQL) check if the correct volu
 
 ### Run your first Data Pipeline
 
-1. **Watch your instructor explaining how to create a DLT pipeline first**, then follow the steps below. ([Detailed documentation is available here](https://docs.databricks.com/workflows/delta-live-tables/delta-live-tables-ui.html#create-a-pipeline))
-2. On your workspace, under Workflows / DLT change to "Owned by me"
+1. **Watch your instructor explaining how to create a pipeline first**, then follow the steps below. ([Detailed documentation is available here](https://docs.databricks.com/workflows/delta-live-tables/delta-live-tables-ui.html#create-a-pipeline))
+2. On your workspace, under Workflows / Pipelines change to "Owned by me"
 3. Create a new pipeline (leave all pipeline settings **on default except the ones listed below**)
   * `pipeline name:`**[use your own user_id from above as the name of the pipeline]**
   * Select `Serverless` to run the pipeline with serverless compute
@@ -90,16 +90,12 @@ You can always get to your running pipelines by clicking on "Workflows" on the l
   * Identify all streaming tables (ST) in the SQL code (use the link under "Paths" at the right to open the notebook)
   * Identify Materialized Views and Views
 
-### New Developer Experience
-
-* Once you defined the pipeline settings, the notebook is associated with the DLT code.
-* On the notebook page, you will be asked if you want to attach the notebook to the pipeline. If you do so, you can see the pipeline graph and the event log in the notebook. The notebook is then like a mini IDE for DLT.
 
 ### Pipeline Settings
 
-  * Recap DLT development vs production mode
+  * Recap development vs production mode
   * Understand how to use Unity Catalog
-  * Understand DLT with serverless compute
+  * Understand serverless compute
 
 ### Explore Streaming Delta Live Tables
 
@@ -113,7 +109,7 @@ You can always get to your running pipelines by clicking on "Workflows" on the l
 
 ### UC and Lineage
 
-Watch your instructor explaining UC lineage with DLT and the underlying Delta Tables
+Watch your instructor explaining UC lineage
 
 #### Delta Tables
 
@@ -131,14 +127,14 @@ Delta Live Tables is an abstraction for Spark Structured Streaming and built on 
   * Drill down to the `raw_tx` table
   * Check the table's schema and sample data
 
-### DLT Pipelines in Python (Instructor only)
+### pipelines in Python (Instructor only)
 
-Listen to your instructor explaining DLT pipelines written in Python. You won't need to run this pipeline.
+Listen to your instructor explaining pipelines written in Python. You won't need to run this pipeline.
 
 ```
 Following the explanations, make sure you can answer the following questions:
-* Why would you use DLT in Python? (messaging broker[can be done in SQL now!], meta programming, Python lovers)
-* How could you create a DLT in Python?
+* Why would you code Declarative Pipelines in Python? (messaging broker[can be done in SQL now!], meta programming, Python lovers)
+* How could you create a pipeline in Python?
 ```
 
 [(some hints)](https://docs.databricks.com/workflows/delta-live-tables/delta-live-tables-incremental-data.html)
@@ -149,9 +145,9 @@ With direct publishing mode, you can create pipeline tables under any schema nam
 
 Try using this feature and put the three gold tables into the USER_ID_dashboard schema.
 
-### Monitor DLT Events (Optional)
+### Monitor Pipeline Events (Optional)
 
-Watch your instructor explaining how to retrieve DLT events, lineage, and runtime data from expectations.
+Watch your instructor explaining how to retrieve pipeline events, lineage, and runtime data from expectations.
 
 [Notebook used]($./03-Log-Analysis)
 
@@ -181,7 +177,7 @@ Note that the Assistant is context-aware and knows about table names and schemas
 
 ## 3. DWH View / SQL Persona
 
-The Lakehouse unifies classic data lakes and DWHs. This lab will teach you how to access Delta tables generated with a DLT data pipeline from the DWH.
+The Lakehouse unifies classic data lakes and DWHs. This lab will teach you how to access Delta tables generated with a data pipeline from the DWH.
 
 ### Use the SQL Editor
 
@@ -192,7 +188,7 @@ The Lakehouse unifies classic data lakes and DWHs. This lab will teach you how t
   * run the query by clicking Shift-RETURN
   * Save the query using your ID as a query name
 
-## 4. Databricks Workflows with DLT
+## 4. Databricks Workflows with Declarative Pipelines
 
 ### Create a Workflow
 
@@ -204,8 +200,8 @@ The Lakehouse unifies classic data lakes and DWHs. This lab will teach you how t
 ### Add a first task
 
 * Task name: Ingest
-* Task type: DLT task
-* Pipeline: your DLT pipeline name for the DLT SQL notebook from above (the pipeline should be in triggered mode for this lab.)
+* Task type: Pipeline task
+* Pipeline: your pipeline name for the DLT SQL notebook from above (the pipeline should be in triggered mode for this lab.)
 
 ### Add a second task
 
@@ -232,13 +228,13 @@ The Lakehouse unifies classic data lakes and DWHs. This lab will teach you how t
   * You can delete the other failed run.
 
 
-## 5. Instructor Demo: New DLT Pipeline Editor
+## 5. Instructor Demo: New pipeline Editor
 
 
 
 ### Follow the Instructor Demo
 
-The new DLT Pipeline Editor is available in beta. It is a new way to create and manage DLT pipelines. The new editor is designed to be more user-friendly and intuitive, making it easier to create and manage DLT pipelines. One core difference is that the new editor is based on files, not notebooks.
+The new pipeline Editor is available in beta. It is a new way to create and manage pipelines. The new editor is designed to be more user-friendly and intuitive, making it easier to create and manage pipelines. One core difference is that the new editor is based on files, not notebooks.
 
 ### Setup Admin level
 
