@@ -40,64 +40,98 @@ To get access to the lab notebooks, create a repo in your workspace
 * On the left-hand side, click on `Workspace` and `Home` and then use the button at the top right and click "Create / Git Folder" to add a new git folder
   * For Git Repo URL use  [`https://github.com/databricks/tmm`](https://github.com/databricks/tmm)
   * Git provider and repo name will be filled automatically (repo name is `tmm`).
-  * Select **Sparse Checkout Mode** (otherwise, you will clone more content than necessary)
-  * under Cone Pattern put `Pipelines-Workshop`
+  * Select **Sparse Checkout Mode** since we only need one folder (without spare checkout, you will clone more content than necessary)
+  * under Cone Pattern put `Lakeflow-DataEng-Workshop`
   * Click "create repo" and the resources for this course will be cloned.
-* Click on `Pipelines Workshop`. This is the folder we will be working with in this lab.
+* Click on `Lakeflow-DataEng-Workshop`. This is the folder we will be working with in this lab.
 
-## 2. Delta Live Tables
+## 2. Declarative Pipelines
 
 ### Understand Declarative Pipelines in SQL
 
-* Watch your instructor explaining how to get started with pipelines using the [DLT SQL notebook]($./01-DLT-Loan-pipeline-SQL).
-* For more information, check out the [documentation: core concepts](https://docs.databricks.com/workflows/delta-live-tables/delta-live-tables-concepts.html)
+* Watch your instructor explaining how to get started with pipelines.Also check out the [documentation: core concepts](https://docs.databricks.com/workflows/delta-live-tables/delta-live-tables-concepts.html)
 
 After this module, you should be able to answer the following questions:
 
 * What is the difference between Streaming Tables (ST) and Materialized Views (MV)?
 * What is the CTAS pattern?
-* What do we use the medallion architecture for?
 
-### Update the provided pipeline for your environment
 
-In the [DLT SQL notebook]($./01-DLT-Loan-pipeline-SQL) check if the correct volumes are used for ingestion.
+### Define your first pipeline
 
-* The locations used for Auto Loader must match the volumes paths as explained in the DLT SQL notebook
+Pipelines are more than just code. They write data to schemas, they run based on a trigger or continuously, and they run fully serverless or not. All this is defined when you create a new pipeline: 
 
-### Run your first Data Pipeline
+1. On your workspace, select **Data Engineering / Pipelines**. 
+2. Top right, select **Create / ETL Pipeline**
+3. First let's define the name of the pipeline. Make sure to use your own `user_id` from above as the name of the pipeline
+4. For the **Unity Catalog**, change the seetings for **catalog.schema** to  
+    - Catalog: `demo`
+    - Target Schema: `your user_id`. Note, you will **work with your own schema** to separate your data from others. Depending on the training environment, this your schema will already exists. Make sure to select the correct schema name then. 
 
-1. **Watch your instructor explaining how to create a pipeline first**, then follow the steps below. ([Detailed documentation is available here](https://docs.databricks.com/workflows/delta-live-tables/delta-live-tables-ui.html#create-a-pipeline))
-2. On your workspace, under Workflows / Pipelines change to "Owned by me"
-3. Create a new pipeline (leave all pipeline settings **on default except the ones listed below**)
-  * `pipeline name:`**[use your own user_id from above as the name of the pipeline]**
-  * Select `Serverless` to run the pipeline with serverless compute
-  * Under `Source Code:` select the location of the [DLT SQL notebook], that is  `YOUR_USERNAME@databrickslabs.com / tmm / Pipelines-Workshop/01-DLT-Loan-pipeline-SQL`
 
-  * For `Destination` select **Unity Catalog**
-    - Catalog: demo
-    - Target Schema: `your user_id` (note, you will **work with your own schema** to separate your content from others)
-  * (In older accounts **without** serverless enabled set `Cluster mode: fixed size` and `Number Workers: 1`)
-  *  Then click "Create"
-3. Click on "Start" (top right) to run the pipeline. Note, when you start the pipeline for the first time it might take a few minutes until resources are provisioned.
+### Add existing assets
 
-Note that the lab environment is configured so that you can access the folders for data ingestion via Unity Catalog. Make sure to use least privilege here in a production environment. (see the official [documentation for more details](https://docs.databricks.com/en/data-governance/unity-catalog/manage-external-locations-and-credentials.html))
+Remember that you already created a git folder which contains the code for the pipeline. In section we will add the existing code to the new pipeline definition. 
+
+1. Under **Get started with your pipeline**, click on **Add existing assets** 
+2. Select the following:
+  - **Pipeline root folder**: `tmm / Lakeflow-DataEng-Workshop / loans-pipeline` 
+  - For **Source code paths** use the same path, then select the `transformations` sub folder
+and click on **Add**. 
+
+
+
+
+## 3. Explore the new Pipeline Editor
+
+Note that the new editor is still in beta, so you the exact layout might be slightly different than on the screenshot below. 
+
+<img src="misc/pl_details.png" alt="run your first delcarative pipeline" width="75%">
+
+The new pipeline editor introduces several enhanced capabilities. Please familiarize yourself with these key features:
+
+1. A new file hierarchy that lets you define path inclusion and organize files into custom directories (e.g., bronze, silver, and gold).
+2. A dedicated location for pipeline configuration settings.
+3. Flexible source code options for data pipelines. You can use files or notebooks, with support for multiple data assets like streaming tables or materialized views in a single Python or SQL file. Feel free to combine Python and SQL files as needed.
+4. A pipeline graph with both vertical and horizontal layouts. Explore the available options by clicking on individual nodes.
+5. Easy access to sample data and table metrics for performance monitoring.
+6. Direct navigation to error locations in your source code.
+
+### Run your first pipeline
+
+1. Drill down to the notebook that defines the bronze layer. Explore the the SQL and make sure you can identify the declaration of streaming tables. 
+
+2. On the top row, click on the "Start" triangle to run the pipeline. When you start the pipeline for the first time it might take a minute until resources are provisioned.
+
+2. While waiting for the pipeline to start up and the pipeline graph being displayed explore the pipeline editor. 
+
+
+
 
 ### Pipeline Graph
 
-You can always get to your running pipelines by clicking on "Workflows" on the left menu bar and then on "Delta Live Tables" / "Owned by me"
-* Check the pipeline graph
+* Make sure you understand the pipeline graph. Click on a particular note to see which options can be displayed.
+* On the panel on the left hand side of the screen you can disable and enable the pipeline view. 
+* You can always get to your pipeline by clicking on "Data Engineering" on the left menu bar and then on "Pipelines" 
+* Explore the pipeline graph
   * Identify bronze, silver, and gold tables
-  * Identify all streaming tables (ST) in the SQL code (use the link under "Paths" at the right to open the notebook)
-  * Identify Materialized Views and Views
+  * Identify Streaming Tables and Materialized Views in the graph
 
 
 ### Pipeline Settings
+
+Go to pipeline settings.
 
   * Recap development vs production mode
   * Understand how to use Unity Catalog
   * Understand serverless compute
 
-### Explore Streaming Delta Live Tables
+
+
+### Explore sample data, table matrics and performance
+
+
+### Explore Streaming Declarative Pipelines
 
 * Take a note of the ingested records in the bronze tables
 * Run the pipeline again by clicking on "Start" (top right in the Pipeline view)
@@ -109,16 +143,16 @@ You can always get to your running pipelines by clicking on "Workflows" on the l
 
 ### UC and Lineage
 
-Watch your instructor explaining UC lineage
+Watch your instructor explaining UC lineage. 
 
 #### Delta Tables
 
 (Instructor Demo)
 
-Delta Live Tables is an abstraction for Spark Structured Streaming and built on Delta tables. Delta tables unify DWH, data engineering, streaming, and DS/ML.
+Declarative Pipelines is an abstraction for Spark Structured Streaming and built on Delta tables. Delta tables unify DWH, data engineering, streaming, and DS/ML.
 * Check out Delta table details
   * When viewing the Pipeline Graph select the table "raw_txs"
-    * on the right-hand side, click on the link under "Metastore" for this table to see table details
+    * Click on the link under "Metastore" for this table to see table details
     * How many files does that table consist of?
     * Check the [generator notebook]($./00-Loan-Data-Generator) to estimate the number of generated files
 * Repeat the same exercise, but start with the navigation bar on the left
@@ -127,17 +161,7 @@ Delta Live Tables is an abstraction for Spark Structured Streaming and built on 
   * Drill down to the `raw_tx` table
   * Check the table's schema and sample data
 
-### pipelines in Python (Instructor only)
 
-Listen to your instructor explaining pipelines written in Python. You won't need to run this pipeline.
-
-```
-Following the explanations, make sure you can answer the following questions:
-* Why would you code Declarative Pipelines in Python? (messaging broker[can be done in SQL now!], meta programming, Python lovers)
-* How could you create a pipeline in Python?
-```
-
-[(some hints)](https://docs.databricks.com/workflows/delta-live-tables/delta-live-tables-incremental-data.html)
 
 ### Direct Publishing Mode
 
@@ -201,7 +225,8 @@ The Lakehouse unifies classic data lakes and DWHs. This lab will teach you how t
 
 * Task name: Ingest
 * Task type: Pipeline task
-* Pipeline: your pipeline name for the DLT SQL notebook from above (the pipeline should be in triggered mode for this lab.)
+* Pipeline: your pipeline name for the Pipelines SQL notebook from above. 
+* Note,the pipeline should be in triggered mode for this lab.
 
 ### Add a second task
 
