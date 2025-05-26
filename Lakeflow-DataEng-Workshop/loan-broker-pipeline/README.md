@@ -1,4 +1,4 @@
-# lakeflow-loans
+# loan-broker-pipelines
 
 This folder defines all source code for the 'lakeflow-loans' pipeline:
 

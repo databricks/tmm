@@ -86,15 +86,15 @@ and click on **Add**.
 
 Note that the new editor is still in beta, so you the exact layout might be slightly different than on the screenshot below. 
 
-<img src="misc/pl_details.png" alt="run your first delcarative pipeline" width="75%">
+<img src="https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-DataEng-Workshop/media/pl_details.png" alt="run your first delcarative pipeline" width="75%">
 
 The new pipeline editor introduces several enhanced capabilities. Please familiarize yourself with these key features:
 
 1. A new file hierarchy that lets you define path inclusion and organize files into custom directories (e.g., bronze, silver, and gold).
-2. A dedicated location for pipeline configuration settings.
-3. Flexible source code options for data pipelines. You can use files or notebooks, with support for multiple data assets like streaming tables or materialized views in a single Python or SQL file. Feel free to combine Python and SQL files as needed.
+2. Dedicated location for pipeline configuration settings.
+3. Flexible source code options for data pipelines. You can use files or notebooks, with support for multiple data assets like streaming tables or materialized views in a single Python or SQL file. Feel free to simply use Python and SQL files as needed.
 4. A pipeline graph with both vertical and horizontal layouts. Explore the available options by clicking on individual nodes.
-5. Easy access to sample data and table metrics for performance monitoring.
+5. Easy access to sample data, table metrics and performance monitoring.
 6. Direct navigation to error locations in your source code.
 
 ### Run your first pipeline
@@ -106,30 +106,34 @@ The new pipeline editor introduces several enhanced capabilities. Please familia
 2. While waiting for the pipeline to start up and the pipeline graph being displayed explore the pipeline editor. 
 
 
+### Pipeline Settings
 
+Go to pipeline settings (it's the cogwheel symbol) and explore the options
+
+Main settings:
+  * Pipeline root folder and source code folder
+  * Default catalog and schema where tables are written to. This can be overwritten in the source code. 
+  * Serverless compute
+
+Also: 
+  * Recap development vs production mode
+  * Understand how to use Unity Catalog
+  * Understand serverless compute
 
 ### Pipeline Graph
 
 * Make sure you understand the pipeline graph. Click on a particular note to see which options can be displayed.
-* On the panel on the left hand side of the screen you can disable and enable the pipeline view. 
+* On the panel on the right hand side of the screen you can disable and enable the pipeline view entirely. 
 * You can always get to your pipeline by clicking on "Data Engineering" on the left menu bar and then on "Pipelines" 
 * Explore the pipeline graph
   * Identify bronze, silver, and gold tables
   * Identify Streaming Tables and Materialized Views in the graph
 
 
-### Pipeline Settings
-
-Go to pipeline settings.
-
-  * Recap development vs production mode
-  * Understand how to use Unity Catalog
-  * Understand serverless compute
-
-
 
 ### Explore sample data, table matrics and performance
 
+Click on a table in the pipeline graph and explore these metrics.
 
 ### Explore Streaming Declarative Pipelines
 
@@ -163,11 +167,11 @@ Declarative Pipelines is an abstraction for Spark Structured Streaming and built
 
 
 
-### Direct Publishing Mode
+### Publish to any catalog or schema
 
-With direct publishing mode, you can create pipeline tables under any schema name. Under "Pipeline Settings," the default schema name is set. This setting can be overwritten in the SQL code for every table.
+You can create pipeline tables under any catalog or schema name. Under "Pipeline Settings," only the default schema name is set. 
 
-Try using this feature and put the three gold tables into the USER_ID_dashboard schema.
+Go and try using this feature and put the three gold tables into the `USER_ID_dashboard` schema.
 
 ### Monitor Pipeline Events (Optional)
 
@@ -175,7 +179,7 @@ Watch your instructor explaining how to retrieve pipeline events, lineage, and r
 
 [Notebook used]($./03-Log-Analysis)
 
-## 3. Spark with Serverless Compute
+## 3. Notebooks and Spark with Serverless Compute
 
 You can now use Notebooks to run serverless Spark jobs
 
@@ -253,13 +257,7 @@ The Lakehouse unifies classic data lakes and DWHs. This lab will teach you how t
   * You can delete the other failed run.
 
 
-## 5. Instructor Demo: New pipeline Editor
 
-
-
-### Follow the Instructor Demo
-
-The new pipeline Editor is available in beta. It is a new way to create and manage pipelines. The new editor is designed to be more user-friendly and intuitive, making it easier to create and manage pipelines. One core difference is that the new editor is based on files, not notebooks.
 
 ### Setup Admin level
 
