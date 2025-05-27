@@ -3,28 +3,27 @@
 
 ## 0. Background
 
-This lab guide is part of the Databricks Foundational Workshop "AI-Powered Data Engineering". The course is designed to give you hands-on experience with the latest Databricks data engineering capabilities.
+This lab guide is part of the Databricks Foundational Workshop "AI-Powered Data Engineering". This instructor led, beginner/intermediate level workshop is designed to give you hands-on experience with the latest Databricks data engineering capabilities.
 
 ### What you will learn
 
-You will learn how to create a Lakeflow Declarative Pipeline for streaming data, run it, and use it in a workflow. You will also learn how to use the AI-supported tool like Databricks Assistant and Genie.
+You will learn how to create a Lakeflow Declarative Pipeline for streaming data, run it, and use it in a workflow with Lakeflow Jobs. You will also learn how to use the AI-supported tool like Databricks Assistant and Genie.
 
 
-### Your task
+### This is your task
 
-Imagine you just started a new job as a data engineer and you are asked to take over an ingestion pipeline written in SQL. The pipeline ingests loan requests from an online transcation broker processing continuously. Don't worry about the transaction broker, your instructor set set this up for your (the code is provided in the repo for transparency).
-
+You started a new job as a data engineer last week. Congratulations! Now you are asked to take over an ingestion pipeline written in SQL. The pipeline ingests and processes a constant stream of loan requests from an online transcation broker. Don't worry about the transaction broker, your instructor set set this up for you (the code is provided in the repo for transparency). So let's make sure you can work with data pipelines and task orchestration.
 
 
 ## Important
 
-* This is your main lab guide. Please **keep it open in a separate tab**. You will need it to follow the steps below and come back to them throughout the course.
+* This is your lab guide. Please **keep it open in a separate tab**. You will need it to follow the steps below throughout the course.
 * We will work with other notebooks, catalogs, and workspace settings, and this guide describes how things tie together, e.g., how to configure and run pipelines.
 * This lab guide is also part of the public GitHub repo, so you can easily recreate this course in your own account or share it with your colleagues.
 
 ## Very Important
 
-This course is designed in a way that it can be run with thousands of participants on a single Databricks account sharing a number of workspaces.
+This course is designed in a way that it can be run with thousands of participants in a single Databricks account sharing a number of workspaces.
 
 We are therefore using the **USER ID** (derived from your login user email) to separate schemas and pipelines and avoid namespace clashes. Just as in your own environment, you would use your company's naming schema for resources.
 
@@ -33,17 +32,17 @@ To get to your user id, check your login email by clicking on the "L" on the top
 ## 1. Add a GitHub Repo
 
 
-To get access to the lab notebooks, create a repo in your workspace
+To kick it off, let's create a git folder in your workspace and clone the repo you colleagues were working on. 
 
 ### Add a Git Folder
 
-* On the left-hand side, click on `Workspace` and `Home` and then use the button at the top right and click "Create / Git Folder" to add a new git folder
+* On the left-hand side, click on `Workspace` and `Home` and then use the button at the top right and click **Create / Git Folder** to add a new git folder
   * For Git Repo URL use  [`https://github.com/databricks/tmm`](https://github.com/databricks/tmm)
   * Git provider and repo name will be filled automatically (repo name is `tmm`).
   * Select **Sparse Checkout Mode** since we only need one folder (without spare checkout, you will clone more content than necessary)
-  * under Cone Pattern put `Lakeflow-DataEng-Workshop`
-  * Click "create repo" and the resources for this course will be cloned.
-* Click on `Lakeflow-DataEng-Workshop`. This is the folder we will be working with in this lab.
+  * under **Cone Pattern** put `Lakeflow-DataEng-Workshop`
+  * Click **Create Repo** and the resources for this course will be cloned.
+* In the file browser, click on **Lakeflow-DataEng-Workshop**. This is the folder we will be working with in this lab.
 
 ## 2. Declarative Pipelines
 
@@ -51,7 +50,7 @@ To get access to the lab notebooks, create a repo in your workspace
 
 * Watch your instructor explaining how to get started with pipelines.Also check out the [documentation: core concepts](https://docs.databricks.com/workflows/delta-live-tables/delta-live-tables-concepts.html)
 
-After this module, you should be able to answer the following questions:
+After this module, you should be able to work with the pipelines editor and answer the following questions:
 
 * What is the difference between Streaming Tables (ST) and Materialized Views (MV)?
 * What is the CTAS pattern?
@@ -59,24 +58,24 @@ After this module, you should be able to answer the following questions:
 
 ### Define your first pipeline
 
-Pipelines are more than just code. They write data to schemas, they run based on a trigger or continuously, and they run fully serverless or not. All this is defined when you create a new pipeline: 
+Pipelines are more than just code. Pipelines write data to schemas, they get triggered or run continuously, and they either run on serverless compute or not. All these settings can be defined when you create a new pipeline. Here we keep it short. Always leave the default values unless told otherwise.  
 
 1. On your workspace, select **Data Engineering / Pipelines**. 
 2. Top right, select **Create / ETL Pipeline**
-3. First let's define the name of the pipeline. Make sure to use your own `user_id` from above as the name of the pipeline
-4. For the **Unity Catalog**, change the seetings for **catalog.schema** to  
+3. Then define the name of the pipeline. Make sure to use your own `user_id` from above as the name of the pipeline
+4. For **Unity Catalog**, change the seetings for **catalog.schema** to  
     - Catalog: `demo`
-    - Target Schema: `your user_id`. Note, you will **work with your own schema** to separate your data from others. Depending on the training environment, this your schema will already exists. Make sure to select the correct schema name then. 
+    - Target Schema: Your `user_id`. Note, you will **work with your own schema** to separate your data from others. Depending on the training environment, the schema with your user_id is alredy created for you. Make sure to select the correct schema name. 
 
 
 ### Add existing assets
 
-Remember that you already created a git folder which contains the code for the pipeline. In section we will add the existing code to the new pipeline definition. 
+Remember that you created a git folder which contains the code for the pipeline? In section we will add the pipeline code from that folder to the new pipeline definition! 
 
 1. Under **Get started with your pipeline**, click on **Add existing assets** 
 2. Select the following:
   - **Pipeline root folder**: `tmm / Lakeflow-DataEng-Workshop / loans-pipeline` 
-  - For **Source code paths** use the same path, then select the `transformations` sub folder
+  - For **Source code paths** use the same path as for root folder, then select the `transformations` sub folder
 and click on **Add**. 
 
 
@@ -92,7 +91,11 @@ The new pipeline editor introduces several enhanced capabilities. Please familia
 
 1. A new file hierarchy that lets you define path inclusion and organize files into custom directories (e.g., bronze, silver, and gold).
 2. Dedicated location for pipeline configuration settings.
-3. Flexible source code options for data pipelines. You can use files or notebooks, with support for multiple data assets like streaming tables or materialized views in a single Python or SQL file. Feel free to simply use Python and SQL files as needed.
+3. Flexible source code options for data pipelines: 
+    - You can use files or keep existingt notebooks. 
+    - A file can contain a single or multiple data sets like streaming tables or materialized views 
+    - You can have any number of Python or SQL files.
+    - You can create subfolder, e.g. to model the medallion architecture.  
 4. A pipeline graph with both vertical and horizontal layouts. Explore the available options by clicking on individual nodes.
 5. Easy access to sample data, table metrics and performance monitoring.
 6. Direct navigation to error locations in your source code.
@@ -103,12 +106,12 @@ The new pipeline editor introduces several enhanced capabilities. Please familia
 
 2. On the top row, click on the "Start" triangle to run the pipeline. When you start the pipeline for the first time it might take a minute until resources are provisioned.
 
-2. While waiting for the pipeline to start up and the pipeline graph being displayed explore the pipeline editor. 
+2. Explore the pipeline editor while waiting for the pipeline to start up and the pipeline graph being displayed  
 
 
 ### Pipeline Settings
 
-Go to pipeline settings (it's the cogwheel symbol) and explore the options
+Go to pipeline settings (it's the cogwheel symbol) and explore the following options
 
 Main settings:
   * Pipeline root folder and source code folder
@@ -122,9 +125,9 @@ Also:
 
 ### Pipeline Graph
 
-* Make sure you understand the pipeline graph. Click on a particular note to see which options can be displayed.
-* On the panel on the right hand side of the screen you can disable and enable the pipeline view entirely. 
-* You can always get to your pipeline by clicking on "Data Engineering" on the left menu bar and then on "Pipelines" 
+* Make sure you understand the pipeline graph. Click on a particular node to see which options can be displayed.
+* On the panel on the right hand side of the screen you can disable or enable the pipeline view entirely. 
+* You can always get to your pipeline by clicking on **Data Engineering** on the left menu bar and then on **Pipelines** 
 * Explore the pipeline graph
   * Identify bronze, silver, and gold tables
   * Identify Streaming Tables and Materialized Views in the graph
@@ -133,9 +136,11 @@ Also:
 
 ### Explore sample data, table matrics and performance
 
-Click on a table in the pipeline graph and explore these metrics.
+Select a table in the pipeline graph and explore sample data, table metrics and performance metrics. 
 
-### Explore Streaming Declarative Pipelines
+### Explore Streaming  Pipelines
+
+Streaming data pipelines incrementally ingest data from folder, cloud object stores or message brokers.
 
 * Take a note of the ingested records in the bronze tables
 * Run the pipeline again by clicking on "Start" (top right in the Pipeline view)
@@ -149,19 +154,14 @@ Click on a table in the pipeline graph and explore these metrics.
 
 Watch your instructor explaining UC lineage. 
 
-#### Delta Tables
+#### OPTIONAL: Delta Tables
 
 (Instructor Demo)
 
-Declarative Pipelines is an abstraction for Spark Structured Streaming and built on Delta tables. Delta tables unify DWH, data engineering, streaming, and DS/ML.
-* Check out Delta table details
-  * When viewing the Pipeline Graph select the table "raw_txs"
-    * Click on the link under "Metastore" for this table to see table details
-    * How many files does that table consist of?
-    * Check the [generator notebook]($./00-Loan-Data-Generator) to estimate the number of generated files
-* Repeat the same exercise, but start with the navigation bar on the left
+Declarative Pipelines are an abstraction for Spark Structured Streaming built on Delta tables. Delta tables unify DWH, data engineering, streaming, and DS/ML.
+* At the navigation bar on the left, select **Catalog** and navigate to your catalog and schema. Then check out the table details of one of your pipelineline tables:
   * Click on "Data"
-  * Select your catalog / schema. The name of your schema is the **user_id** parameter of your pipeline setting.
+  * Select your catalog / schema. The name of your schema is the `user_id` parameter of your pipeline setting.
   * Drill down to the `raw_tx` table
   * Check the table's schema and sample data
 
@@ -177,25 +177,24 @@ Go and try using this feature and put the three gold tables into the `USER_ID_da
 
 Watch your instructor explaining how to retrieve pipeline events, lineage, and runtime data from expectations.
 
-[Notebook used]($./03-Log-Analysis)
 
 ## 3. Notebooks and Spark with Serverless Compute
 
-You can now use Notebooks to run serverless Spark jobs
+You can now run Notebooks with Spark on serverless compute
 
-* On the left menu bar, click on +New Notebook
+* On the left menu bar, click on **+New Notebook**
 * Edit the name of the notebook
 * Make sure next to the notebook's name `Python` is displayed for the default cell type (or change it)
 * Make sure on the right-hand side you see a green dot and `connected`. Click on that button to verify you are connected to `serverless compute` (if not, connect to serverless compute)
 
-### Use /explain and /doc
+### Use `/explain` and `/doc`
 
 * Add the following command to a Python cell, then run it by clicking on the triangle (or using SHIFT-RETURN shortcut):
 
 `display(spark.range(10).toDF("serverless"))`
 * Click on the symbol for Databricks Assistant and document the cell. Hint: use /doc in the command line for Assistant and accept the suggestion.
 
-### Use /fix
+### Use `/fix`
 
 * Add another Python cell and copy the following command into that cell. The command contains a syntax error.
 `display(spark.createDataFrame([("Python",), ("Spark",), ("Databricks",)], ["serverless"]))`
@@ -221,38 +220,38 @@ The Lakehouse unifies classic data lakes and DWHs. This lab will teach you how t
 ### Create a Workflow
 
 * In the menu bar on the left, select Workflows
-* Select "Workflows owned by me"
-* Click on "Create Job"
-* Name the new job same as **your user_id** from above
+* Select **Workflows owned by me**
+* Click on **Create Job**
+* Name the new job same as `user_id` from above
 
 ### Add a first task
 
-* Task name: Ingest
-* Task type: Pipeline task
-* Pipeline: your pipeline name for the Pipelines SQL notebook from above. 
-* Note,the pipeline should be in triggered mode for this lab.
+* Task name: `Ingest`
+* Task type: `Pipeline task`
+* Pipeline: `your pipeline name` for the Pipelines SQL notebook from above. 
+* Note,the pipeline should be in `triggered mode` for this lab.
 
 ### Add a second task
 
-* Task name: Update Downstream
-* Task type: Notebook
+* Task name: `Update Downstream`
+* Task type: `Notebook`
 * Select the `04-Update-Downstream` notebook
 * Note that `Serverless` is automatically selected for compute on the right-hand side
 
 ### Run the workflow
 
-* Run the workflow from the "Run now" button top right
-  * The Workflow will fail with an error in the second task.
+* Run the workflow from the **Run now** button top right
+  * The Workflow will fail with an error in the second task. This is intentional. Do not panic. 
   * Switch to the Matrix view.
     * To explore the Matrix View, run the workflow again (it will fail again).
 
 ### Repair and Rerun (OPTIONAL)
 
   * In the Matrix View, click on the second task marked in red to find out what the error is
-    * Click on "Highlight Error"
+    * Click on **Highlight Error**
   * Debug the 04-Udpate-Downstream notebook (just comment out the line where the error is caused with `raise`)
   * Select the Run with the Run ID again and view the Task
-  * Use the "Repair and Rerun" Feature to rerun the workflow
+  * Use the **Repair and Rerun** Feature to rerun the workflow
     * It should successfully run now.
   * You can delete the other failed run.
 
