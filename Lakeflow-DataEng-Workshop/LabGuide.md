@@ -12,7 +12,7 @@ You will learn how to create a Lakeflow Declarative Pipeline for streaming data,
 
 ### This is your task
 
-You started a new job as a data engineer last week. Congratulations! Now you are asked to take over an ingestion pipeline written in SQL. The pipeline ingests and processes a constant stream of loan requests from an online transcation broker. Don't worry about the transaction broker, your instructor set set this up for you (the code is provided in the repo for transparency). So let's make sure you can work with data pipelines and task orchestration.
+You started a new job as a data engineer last week. Congratulations! Now you are asked to take over an ingestion pipeline written in SQL. The pipeline ingests and processes a constant stream of loan requests from an online transaction broker. Don't worry about the transaction broker, your instructor set this up for you (the code is provided in the repo for transparency). So let's make sure you can work with data pipelines and task orchestration.
 
 
 ## Important
@@ -39,7 +39,7 @@ To kick it off, let's create a git folder in your workspace and clone the repo y
 * On the left-hand side, click on `Workspace` and `Home` and then use the button at the top right and click **Create / Git Folder** to add a new git folder
   * For Git Repo URL use  [`https://github.com/databricks/tmm`](https://github.com/databricks/tmm)
   * Git provider and repo name will be filled automatically (repo name is `tmm`).
-  * Select **Sparse Checkout Mode** since we only need one folder (without spare checkout, you will clone more content than necessary)
+  * Select **Sparse Checkout Mode** since we only need one folder (without sparse checkout, you will clone more content than necessary)
   * under **Cone Pattern** put `Lakeflow-DataEng-Workshop`
   * Click **Create Repo** and the resources for this course will be cloned.
 * In the file browser, click on **Lakeflow-DataEng-Workshop**. This is the folder we will be working with in this lab.
@@ -63,9 +63,9 @@ Pipelines are more than just code. Pipelines write data to schemas, they get tri
 1. On your workspace, select **Data Engineering / Pipelines**. 
 2. Top right, select **Create / ETL Pipeline**
 3. Then define the name of the pipeline. Make sure to use your own `user_id` from above as the name of the pipeline
-4. For **Unity Catalog**, change the seetings for **catalog.schema** to  
+4. For **Unity Catalog**, change the settings for **catalog.schema** to  
     - Catalog: `demo`
-    - Target Schema: Your `user_id`. Note, you will **work with your own schema** to separate your data from others. Depending on the training environment, the schema with your user_id is alredy created for you. Make sure to select the correct schema name. 
+    - Target Schema: Your `user_id`. Note, you will **work with your own schema** to separate your data from others. Depending on the training environment, the schema with your user_id is already created for you. Make sure to select the correct schema name. 
 
 
 ### Add existing assets
@@ -92,7 +92,7 @@ The new pipeline editor introduces several enhanced capabilities. Please familia
 1. A new file hierarchy that lets you define path inclusion and organize files into custom directories (e.g., bronze, silver, and gold).
 2. Dedicated location for pipeline configuration settings.
 3. Flexible source code options for data pipelines: 
-    - You can use files or keep existingt notebooks. 
+    - You can use files or keep existing notebooks. 
     - A file can contain a single or multiple data sets like streaming tables or materialized views 
     - You can have any number of Python or SQL files.
     - You can create subfolder, e.g. to model the medallion architecture.  
