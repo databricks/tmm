@@ -1,0 +1,22 @@
+{
+    "cluster_config": {
+      "spark_version": "15.4.x-cpu-ml-scala2.12",
+      "node_type_id": "i3.xlarge",
+      "num_workers": "2",
+      "autotermination_minutes": 60,
+      "runtime_engine": "STANDARD"
+    },
+    "metastore_config": {
+      "default_catalog": "demo"
+    },
+    "user_config": {
+      "catalog": "demo",
+      "schema": "USERNAME"
+    },
+    "warehouse_config": {
+      "warehouse_type": "PRO",
+      "enable_serverless_compute": true
+    },
+    "enable_workspace": false,
+    "enable_files": true
+  }
