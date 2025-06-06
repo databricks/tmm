@@ -30,9 +30,12 @@ SELECT
         THEN nw.total_net_worth * 0.1  -- Liquidate 10% for cash
         
         ELSE 0
-    END as suggested_rebalancing_amount
+    END as suggested_rebalancing_amount,
+    
+    c.campaign_name
 
 FROM banking_summary bt
 INNER JOIN customer_net_worth nw ON bt.customer_id = nw.customer_id
+INNER JOIN finance_summit.ingestion.campaign c ON bt.customer_id = c.customer_id
 WHERE bt.avg_amount > 5000 
   AND nw.total_net_worth > 10000;
