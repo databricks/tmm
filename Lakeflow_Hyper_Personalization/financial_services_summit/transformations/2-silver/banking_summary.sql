@@ -1,5 +1,5 @@
-CREATE OR REFRESH MATERIALIZED VIEW banking_summary
-AS SELECT
+CREATE OR REFRESH MATERIALIZED VIEW banking_summary AS
+SELECT
   customer_id,
   COUNT(*) AS num_transactions,
   MAX(amount) AS max_amount,

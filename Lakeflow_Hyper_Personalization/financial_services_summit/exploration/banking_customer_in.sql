@@ -1,5 +1,5 @@
-CREATE STREAMING TABLE banking_customer
-AS
+
+CREATE STREAMING TABLE banking_customer_in AS
 SELECT
   *
 FROM

@@ -1,0 +1,5 @@
+CREATE STREAMING TABLE campaign_ref AS
+SELECT
+  *
+FROM
+  STREAM campaign

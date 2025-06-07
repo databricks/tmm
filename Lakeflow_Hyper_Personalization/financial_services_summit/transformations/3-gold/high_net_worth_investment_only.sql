@@ -16,17 +16,9 @@ FROM
     -- The JOIN is essentially asking: Who invests with us but doesn't bank with us?
     LEFT JOIN banking_customer b
       ON nw.customer_id = b.customer_id
-    LEFT JOIN campaign c
+    LEFT JOIN campaign_ref c
       ON nw.customer_id = c.customer_id
 WHERE
   b.customer_id IS NULL
   AND nw.total_net_worth > 500000;
 
-/*
-nodes:
-  finance_summit.pipeline.high_value_investment_prospects:
-    description:
-      text: Identify high net worth customers not banking with us and segment their
-        wealth.
-      hash: 8edb7abc
-*/
