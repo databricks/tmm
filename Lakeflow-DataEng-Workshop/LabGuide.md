@@ -112,7 +112,7 @@ Under your username / Settings / Developer (see screenshot) enable
 * ETL Pipeline Multi-File Editor
 * Tabs for Notebooks and Files
 
-<img src="https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-DataEng-Workshop/media/enable_editor.png" alt="run your first delcarative pipeline" width="75%">
+<img src="https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-DataEng-Workshop/media/enable_editor.png" alt="enable editor="75%">
 
 ### Run your first pipeline
 
