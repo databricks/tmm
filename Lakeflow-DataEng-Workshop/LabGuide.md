@@ -2,6 +2,10 @@
 # (Lab Guide)
 ### Data+AI Summit 2025
 
+<img src="https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-DataEng-Workshop/media/pl_graph.png" alt="pipeline graph" width="75%">
+
+
+
 ## 0. Background
 
 This lab guide is part of the Databricks Foundational Workshop "AI-Powered Data Engineering". This instructor led, beginner/intermediate level workshop is designed to give you hands-on experience with the latest Databricks data engineering capabilities. This lab guide provides high level steps to follow along with the tasks shown by the intructor. This guide is not a stand alone step-by-step beginners tutorial.  
@@ -112,7 +116,7 @@ Under your username / Settings / Developer (see screenshot) enable
 * ETL Pipeline Multi-File Editor
 * Tabs for Notebooks and Files
 
-<img src="https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-DataEng-Workshop/media/enable_editor.png" alt="enable editor="75%">
+<img src="https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-DataEng-Workshop/media/enable_editor.png" alt="enable editor" width="75%">
 
 ### Run your first pipeline
 
