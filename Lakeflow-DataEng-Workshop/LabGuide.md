@@ -91,6 +91,23 @@ and click on **Add**.
 
 ## 3. Explore the new Pipeline Editor
 
+### Enable Editor
+
+Click on **Pipelines**, then click **Create** and select **ETL Pipeline**. There should be a popup asking you to enable the new editor. Enable it. If this succeeds, skip the two steps below.
+
+
+Otherwise, follow those steps. This is only necessary since the new editor is still in beta. 
+
+Under your username / Settings / Developer (see screenshot) enable
+* ETL Pipeline Multi-File Editor
+* Tabs for Notebooks and Files
+
+<img src="https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-DataEng-Workshop/media/enable_editor.png" alt="enable editor" width="75%">
+
+
+### Explore 
+
+
 Note that the new editor is still in beta, so you the exact layout might be slightly different than on the screenshot below. 
 
 <img src="https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-DataEng-Workshop/media/pl_details.png" alt="run your first delcarative pipeline" width="75%">
@@ -110,13 +127,6 @@ The new pipeline editor introduces several enhanced capabilities. Please familia
 
 ### Run your first pipeline
 
-Enable the new pipeline editor. This step is only necessary since the new editor is still in beta. 
-
-Under your username / Settings / Developer (see screenshot) enable
-* ETL Pipeline Multi-File Editor
-* Tabs for Notebooks and Files
-
-<img src="https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-DataEng-Workshop/media/enable_editor.png" alt="enable editor" width="75%">
 
 ### Run your first pipeline
 
