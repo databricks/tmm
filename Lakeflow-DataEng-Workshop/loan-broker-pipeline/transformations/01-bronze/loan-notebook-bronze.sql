@@ -20,7 +20,7 @@
 
 -- MAGIC %md 
 -- MAGIC
--- MAGIC Our datasets are coming from 3 different systems we need to integrate with. The data managed in UC governed volumes. You can see these volumes under `Catalog / demo / loan_io`:
+-- MAGIC Our datasets are coming from 3 different systems we need to integrate with. The datasources are UC governed volumes. You can see these volumes under `Catalog / demo / loan_io`:
 -- MAGIC
 -- MAGIC * `raw_transactions` (loans - streaming data)
 -- MAGIC * `ref_accounting` (reference table, mostly static)

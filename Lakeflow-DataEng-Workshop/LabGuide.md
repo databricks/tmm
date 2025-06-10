@@ -106,6 +106,16 @@ The new pipeline editor introduces several enhanced capabilities. Please familia
 
 ### Run your first pipeline
 
+Enable the new pipeline editor. This step is only necessary since the new editor is still in beta. 
+
+Under your username / Settings / Developer (see screenshot) enable
+* ETL Pipeline Multi-File Editor
+* Tabs for Notebooks and Files
+
+<img src="https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-DataEng-Workshop/media/enable_editor.png" alt="run your first delcarative pipeline" width="75%">
+
+### Run your first pipeline
+
 1. Drill down to the notebook that defines the bronze layer. 
 * Explore the the SQL and make sure you can identify the declaration of streaming tables. 
 * Do the same for the silver and gold layer. 
