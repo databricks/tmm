@@ -64,27 +64,6 @@ After this module, you should be able to work with the pipelines editor and answ
 * What is the CTAS pattern?
 
 
-### Define your first pipeline
-
-Pipelines are more than just code. Pipelines write data to schemas, they get triggered or run continuously, and they either run on serverless compute or not. All these settings can be defined when you create a new pipeline. Here we keep it short. Always leave the default values unless told otherwise.  
-
-1. In your workspace, select **Data Engineering / Job Runs (or Pipelines previously)**. 
-2. Top right, select **Create / ETL Pipeline**
-3. Then define the name of the pipeline. Make sure to use your own `user_id` from above as the name of the pipeline
-4. For **Unity Catalog**, change the settings for **catalog.schema** to  
-    - Catalog: `demo`
-    - Target Schema: Your `user_id`. Note, you will **work with your own schema** to separate your data from others. Depending on the training environment, the schema with your user_id is already created for you. Make sure to select the correct schema name. 
-
-
-### Add existing assets
-
-Remember that you created a git folder which contains the code for the pipeline? In section we will add the pipeline code from that folder to the new pipeline definition! 
-
-1. Under **Get started with your pipeline**, click on **Add existing assets** 
-2. Select the following:
-  - **Pipeline root folder**: `tmm / Lakeflow-DataEng-Workshop / loans-pipeline` 
-  - For **Source code paths** use the same path as for root folder, then select the `transformations` sub folder
-and click on **Add**. 
 
 
 
@@ -125,7 +104,27 @@ The new pipeline editor introduces several enhanced capabilities. Please familia
 5. Easy access to sample data, table metrics and performance monitoring.
 6. Direct navigation to error locations in your source code.
 
-### Run your first pipeline
+### Define your first pipeline
+
+Pipelines are more than just code. Pipelines write data to schemas, they get triggered or run continuously, and they either run on serverless compute or not. All these settings can be defined when you create a new pipeline. Here we keep it short. Always leave the default values unless told otherwise.  
+
+1. In your workspace, select **Data Engineering / Job Runs (or Pipelines previously)**. 
+2. Top right, select **Create / ETL Pipeline**
+3. Then define the name of the pipeline. Make sure to use your own `user_id` from above as the name of the pipeline
+4. For **Unity Catalog**, change the settings for **catalog.schema** to  
+    - Catalog: `demo`
+    - Target Schema: Your `user_id`. Note, you will **work with your own schema** to separate your data from others. Depending on the training environment, the schema with your user_id is already created for you. Make sure to select the correct schema name. 
+
+
+### Add existing assets
+
+Remember that you created a git folder which contains the code for the pipeline? In section we will add the pipeline code from that folder to the new pipeline definition! 
+
+1. Under **Get started with your pipeline**, click on **Add existing assets** 
+2. Select the following:
+  - **Pipeline root folder**: `tmm / Lakeflow-DataEng-Workshop / loans-pipeline` 
+  - For **Source code paths** use the same path as for root folder, then select the `transformations` sub folder
+and click on **Add**. 
 
 
 ### Run your first pipeline
