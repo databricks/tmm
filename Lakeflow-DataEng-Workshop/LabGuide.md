@@ -289,22 +289,6 @@ The Lakehouse unifies classic data lakes and DWHs. This lab will teach you how t
 
 
 
-
-### Setup Admin level
-
-1. As a workspace admin, go to Previews under your user badge.
-2. Enable **Pipelines multi-file developer Experience**
-
-
-### Setup User level
-If you want to enable the ETL Pipeline Multi-File Editor, follow these steps:
-
-1. In the top-right corner, select your user icon
-2. Right-click on Settings 
-3. Select Developer.
-4. Scroll to the bottom and enable **ETL Pipeline Multi-File Editor**.
-
-
 ## 6. Outlook (optional topics in preview)
 
 Follow your instructor for capabilities such as Genie Data Rooms. Time permitting.
