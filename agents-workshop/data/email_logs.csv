@@ -1,0 +1,51 @@
+email_id,customer_id,subject,sent_date,opened,clicked
+E0001,C005,Discover our new seasonal edit,2025-06-11,True,True
+E0002,C015,Discover our new collection,2025-06-11,True,False
+E0003,C004,Discover our new seasonal edit,2025-06-11,True,True
+E0004,C020,Discover our new luxury line,2025-06-11,False,False
+E0005,C010,Discover our new luxury line,2025-06-11,True,False
+E0006,C001,Discover our new collection,2025-06-11,False,False
+E0007,C020,Discover our new collection,2025-06-11,True,False
+E0008,C012,Discover our new seasonal edit,2025-06-11,True,False
+E0009,C012,Discover our new seasonal edit,2025-06-11,True,True
+E0010,C001,Discover our new seasonal edit,2025-06-11,False,False
+E0011,C018,Discover our new luxury line,2025-06-11,True,False
+E0012,C018,Discover our new seasonal edit,2025-06-11,False,False
+E0013,C003,Discover our new luxury line,2025-06-11,True,True
+E0014,C018,Discover our new luxury line,2025-06-11,False,False
+E0015,C011,Discover our new luxury line,2025-06-11,True,True
+E0016,C005,Discover our new seasonal edit,2025-06-11,False,False
+E0017,C020,Discover our new luxury line,2025-06-11,False,False
+E0018,C014,Discover our new collection,2025-06-11,False,False
+E0019,C020,Discover our new luxury line,2025-06-11,True,True
+E0020,C013,Discover our new seasonal edit,2025-06-11,True,False
+E0021,C012,Discover our new collection,2025-06-11,False,False
+E0022,C007,Discover our new seasonal edit,2025-06-11,False,False
+E0023,C012,Discover our new seasonal edit,2025-06-11,True,True
+E0024,C003,Discover our new luxury line,2025-06-11,True,False
+E0025,C013,Discover our new luxury line,2025-06-11,True,False
+E0026,C007,Discover our new luxury line,2025-06-11,False,False
+E0027,C016,Discover our new luxury line,2025-06-11,True,True
+E0028,C004,Discover our new collection,2025-06-11,False,False
+E0029,C016,Discover our new collection,2025-06-11,False,False
+E0030,C006,Discover our new collection,2025-06-11,True,False
+E0031,C012,Discover our new luxury line,2025-06-11,True,False
+E0032,C002,Discover our new collection,2025-06-11,False,False
+E0033,C015,Discover our new seasonal edit,2025-06-11,False,False
+E0034,C018,Discover our new luxury line,2025-06-11,True,True
+E0035,C002,Discover our new seasonal edit,2025-06-11,True,False
+E0036,C012,Discover our new luxury line,2025-06-11,False,False
+E0037,C009,Discover our new collection,2025-06-11,True,False
+E0038,C009,Discover our new seasonal edit,2025-06-11,False,False
+E0039,C008,Discover our new collection,2025-06-11,True,False
+E0040,C006,Discover our new seasonal edit,2025-06-11,True,True
+E0041,C013,Discover our new luxury line,2025-06-11,False,False
+E0042,C005,Discover our new seasonal edit,2025-06-11,True,True
+E0043,C014,Discover our new collection,2025-06-11,False,False
+E0044,C014,Discover our new collection,2025-06-11,False,False
+E0045,C017,Discover our new collection,2025-06-11,True,True
+E0046,C017,Discover our new luxury line,2025-06-11,False,False
+E0047,C018,Discover our new seasonal edit,2025-06-11,True,True
+E0048,C016,Discover our new luxury line,2025-06-11,False,False
+E0049,C009,Discover our new seasonal edit,2025-06-11,False,False
+E0050,C016,Discover our new collection,2025-06-11,True,True

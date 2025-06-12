@@ -27,6 +27,37 @@
 
 # COMMAND ----------
 
+# MAGIC %sql
+# MAGIC
+
+# COMMAND ----------
+
+import urllib
+import os
+from databricks.sdk.service import catalog
+
+catalog_name = "marion_test"
+schema_name = "agents"
+volume = "data"
+
+files = ['browsing_history', 'customers', 'email_logs', 'products_agents', 'purchases']
+spark.sql(f"CREATE VOLUME IF NOT EXISTS {catalog_name}.{schema_name}.{volume}")
+base_url = 'https://raw.githubusercontent.com/databricks/tmm/main/agents-workshop/data/'
+
+
+for d in files:
+  file_name = d+'.csv'
+  url = base_url+file_name
+  urllib.request.urlretrieve(url, f'/Volumes/{catalog_name}/{schema_name}/{volume}/{file_name}')
+  df_csv = spark.read.csv(f'/Volumes/{catalog_name}/{schema_name}/{volume}/{file_name}',
+    header=True,
+    sep=",")
+  df_csv.write.option("mergeSchema", "true").mode("append").saveAsTable(f'{catalog_name}.{schema_name}.{d}')
+  display(df_csv)
+
+
+# COMMAND ----------
+
 # DBTITLE 1,Parameter Configs
 from databricks.sdk import WorkspaceClient
 import yaml
@@ -39,7 +70,7 @@ username = user_email.split("@")[0]
 
 # Catalog and schema have been automatically created thanks to lab environment
 #catalog_name = f"{username}_vocareum_com"
-catalog_name = "retail_prod"
+catalog_name = "marion_test"
 schema_name = "agents"
 
 workspace_id = str(w.get_workspace_id())
@@ -76,7 +107,7 @@ spark.sql(f"CREATE SCHEMA IF NOT EXISTS {catalog_name}.{schema_name}")
 # MAGIC   issue_category, 
 # MAGIC   issue_description, 
 # MAGIC   name
-# MAGIC FROM retail_prod.agents.cust_service_data 
+# MAGIC FROM ${catalog_name}.${schema_name}.cust_service_data 
 # MAGIC -- Order the results by the interaction date and time in descending order
 # MAGIC ORDER BY date_time DESC
 # MAGIC -- Limit the results to the most recent interaction
@@ -100,7 +131,7 @@ spark.sql(f"CREATE SCHEMA IF NOT EXISTS {catalog_name}.{schema_name}")
 # MAGIC     issue_category, 
 # MAGIC     issue_description, 
 # MAGIC     name
-# MAGIC   FROM retail_prod.agents.cust_service_data 
+# MAGIC   FROM ${catalog_name}.${schema_name}.cust_service_data 
 # MAGIC   ORDER BY date_time DESC
 # MAGIC   LIMIT 1
 # MAGIC )
@@ -132,7 +163,7 @@ spark.sql(f"CREATE SCHEMA IF NOT EXISTS {catalog_name}.{schema_name}")
 # MAGIC LANGUAGE SQL
 # MAGIC RETURN 
 # MAGIC SELECT policy, policy_details, last_updated 
-# MAGIC FROM retail_prod.agents.policies
+# MAGIC FROM ${catalog_name}.${schema_name}.policies
 # MAGIC WHERE policy = 'Return Policy'
 # MAGIC LIMIT 1;
 
@@ -163,7 +194,7 @@ spark.sql(f"CREATE SCHEMA IF NOT EXISTS {catalog_name}.{schema_name}")
 # MAGIC LANGUAGE SQL
 # MAGIC RETURN 
 # MAGIC SELECT customer_id 
-# MAGIC FROM retail_prod.agents.cust_service_data 
+# MAGIC FROM ${catalog_name}.${schema_name}.cust_service_data 
 # MAGIC WHERE name = user_name
 # MAGIC LIMIT 1
 # MAGIC ;
@@ -195,7 +226,7 @@ spark.sql(f"CREATE SCHEMA IF NOT EXISTS {catalog_name}.{schema_name}")
 # MAGIC LANGUAGE SQL
 # MAGIC RETURN 
 # MAGIC SELECT count(*) as returns_last_12_months, issue_category 
-# MAGIC FROM retail_prod.agents.cust_service_data 
+# MAGIC FROM ${catalog_name}.${schema_name}.cust_service_data 
 # MAGIC WHERE customer_id = user_id 
 # MAGIC GROUP BY issue_category;
 
