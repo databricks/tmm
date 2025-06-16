@@ -16,10 +16,11 @@ CREATE OR REPLACE STREAMING TABLE raw_space_events AS
     `kafka.sasl.jaas.config` =>  
          '
           kafkashaded.org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required
-          clientId="7u2rpivvxxxxxxxxxxxxxxxxxxx"
-          clientSecret="1errfm2jdgl0uolkb78kjnf8v94eyyyyyyyyyyyyyyy" ;         
+          clientId="2q7c1mecnsifa04rme4apr9grc"
+          clientSecret="bqr8fu5kpdsnocgkqpp6ko49l618722c5s81lm4kvm8pqa3pb02" ;         
          '
   );
+
 
 -- COMMAND ----------
 
@@ -36,37 +37,6 @@ AS
         timestamp,
         explode(split(msg, '\\n')) AS line 
       FROM (LIVE.raw_space_events)
-    )
-    WHERE line != ''
-  ),
-  pivot_table AS (
-    SELECT *
-    FROM (
-      SELECT key, value, timestamp
-      FROM extracted_key_values
-    )
-    PIVOT (
-      MAX(value) FOR key IN ('TITLE', 'NOTICE_DATE', 'NOTICE_TYPE', 'NEXT_POINT_RA', 'NEXT_POINT_DEC', 'NEXT_POINT_ROLL', 'SLEW_TIME', 'SLEW_DATE', 'OBS_TIME', 'TGT_NAME', 'TGT_NUM', 'MERIT', 'INST_MODES', 'SUN_POSTN', 'SUN_DIST', 'MOON_POSTN', 'MOON_DIST', 'MOON_ILLUM', 'GAL_COORDS', 'ECL_COORDS', 'COMMENTS')
-    )
-  )
-  SELECT timestamp, TITLE, CAST(NOTICE_DATE AS TIMESTAMP) AS NOTICE_DATE, NOTICE_TYPE, NEXT_POINT_RA, NEXT_POINT_DEC, NEXT_POINT_ROLL, SLEW_TIME, SLEW_DATE, OBS_TIME, TGT_NAME, TGT_NUM, CAST(MERIT AS DECIMAL) AS MERIT, INST_MODES, SUN_POSTN, SUN_DIST, MOON_POSTN, MOON_DIST, MOON_ILLUM, GAL_COORDS, ECL_COORDS, COMMENTS
-  FROM pivot_table
-
--- COMMAND ----------
-
-CREATE OR REPLACE STREAMING TABLE split_events_st
-COMMENT "Split Swift event message into individual rows"
-AS
-  WITH extracted_key_values AS (
-    SELECT
-      timestamp,
-      split_part(line, ':', 1) AS key,
-      TRIM(SUBSTRING(line, INSTR(line, ':') + 1)) AS value
-    FROM (
-      SELECT
-        timestamp,
-        explode(split(msg, '\\n')) AS line 
-      FROM STREAM(LIVE.raw_space_events)
     )
     WHERE line != ''
   ),
