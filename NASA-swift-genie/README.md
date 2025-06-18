@@ -1,5 +1,5 @@
 # From Supernovas to Streaming Data Pipelines
-##(Lakeflow Declarative Pipelines, Genie, UC, Serverless) 
+(Lakeflow Declarative Pipelines, Genie, UC, Serverless) 
 
 ## Overview
 
