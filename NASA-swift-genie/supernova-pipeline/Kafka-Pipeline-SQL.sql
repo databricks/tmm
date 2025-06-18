@@ -20,8 +20,8 @@ AS
     `kafka.sasl.jaas.config` =>  
          '
           kafkashaded.org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required
-          clientId="2q7c1mecnsifa04rme4apr9grc"
-          clientSecret="bqr8fu5kpdsnocgkqpp6ko49l618722c5s81lm4kvm8pqa3pb02" ;         
+          clientId="..."
+          clientSecret="..." ;         
          '
   );
 
@@ -88,60 +88,3 @@ COMMENTS:        Note that preplanned targets are overridden by any TOO Target i
 COMMENTS:        The spacecraft longitude,latitude at Notice_time is 203.45,18.92 [deg].  
 COMMENTS:        This Notice was ground-generated -- not flight-generated.  
 */
-
--- COMMAND ----------
-
-/**
-
--- Create or refresh the streaming live table named "swift_split"
-CREATE OR REFRESH STREAMING LIVE TABLE swift_split
--- Add a comment to describe the purpose of the table
-COMMENT "Split Swift event message into individual rows"
-AS
--- Begin the main SELECT statement
-SELECT
-  -- Select the timestamp column
-  timestamp,
-  -- Use MAX and CASE statements to extract the value for each key and assign it to a column
-  MAX(CASE WHEN key = 'TITLE' THEN value ELSE NULL END) AS TITLE,
-  MAX(CASE WHEN key = 'NOTICE_DATE' THEN value ELSE NULL END) AS NOTICE_DATE,
-  MAX(CASE WHEN key = 'NOTICE_TYPE' THEN value ELSE NULL END) AS NOTICE_TYPE,
-  MAX(CASE WHEN key = 'NEXT_POINT_RA' THEN value ELSE NULL END) AS NEXT_POINT_RA,
-  MAX(CASE WHEN key = 'NEXT_POINT_DEC' THEN value ELSE NULL END) AS NEXT_POINT_DEC,
-  MAX(CASE WHEN key = 'NEXT_POINT_ROLL' THEN value ELSE NULL END) AS NEXT_POINT_ROLL,
-  MAX(CASE WHEN key = 'SLEW_TIME' THEN value ELSE NULL END) AS SLEW_TIME,
-  MAX(CASE WHEN key = 'SLEW_DATE' THEN value ELSE NULL END) AS SLEW_DATE,
-  MAX(CASE WHEN key = 'OBS_TIME' THEN value ELSE NULL END) AS OBS_TIME,
-  MAX(CASE WHEN key = 'TGT_NAME' THEN value ELSE NULL END) AS TGT_NAME,
-  MAX(CASE WHEN key = 'TGT_NUM' THEN value ELSE NULL END) AS TGT_NUM,
-  MAX(CASE WHEN key = 'MERIT' THEN value ELSE NULL END) AS MERIT,
-  MAX(CASE WHEN key = 'INST_MODES' THEN value ELSE NULL END) AS INST_MODES,
-  MAX(CASE WHEN key = 'SUN_POSTN' THEN value ELSE NULL END) AS SUN_POSTN,
-  MAX(CASE WHEN key = 'SUN_DIST' THEN value ELSE NULL END) AS SUN_DIST,
-  MAX(CASE WHEN key = 'MOON_POSTN' THEN value ELSE NULL END) AS MOON_POSTN,
-  MAX(CASE WHEN key = 'MOON_DIST' THEN value ELSE NULL END) AS MOON_DIST,
-  MAX(CASE WHEN key = 'MOON_ILLUM' THEN value ELSE NULL END) AS MOON_ILLUM,
-  MAX(CASE WHEN key = 'GAL_COORDS' THEN value ELSE NULL END) AS GAL_COORDS,
-  MAX(CASE WHEN key = 'ECL_COORDS' THEN value ELSE NULL END) AS ECL_COORDS,
-  MAX(CASE WHEN key = 'COMMENTS' THEN value ELSE NULL END) AS COMMENTS
--- Begin a subquery to extract key-value pairs from the input message
-FROM (
-  SELECT
-    timestamp,
-    -- Split each line by the first occurrence of ':' and assign the parts to 'key' and 'value' columns
-    split_part(line, ':', 1) AS key,
-    TRIM(SUBSTRING(line, INSTR(line, ':') + 1)) AS value
-  FROM (
-    SELECT
-      timestamp,
-      -- Explode the 'msg' column by splitting it on newline characters
-      explode(split(msg, '\\n')) AS line
-    FROM STREAM(LIVE.raw_space_events)
-  )
-  -- Filter out empty lines
-  WHERE line != ''
-)
--- Group the result by timestamp to aggregate the key-value pairs for each event
-GROUP BY timestamp;
-
-**/
