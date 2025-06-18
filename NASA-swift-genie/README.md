@@ -1,28 +1,28 @@
 # From Supernovas to Streaming Data Pipelines
-###(Lakeflow Declarative Pipelines, Genie, UC, Serverless) 
+##(Lakeflow Declarative Pipelines, Genie, UC, Serverless) 
 
 ## Overview
 
 This git project accompanies the Data + AI Summit 2024 presentation "Streaming Data Pipelines: From Supernovas to LLMs", which is available [here](https://www.databricks.com/dataaisummit/session/streaming-data-pipelines-supernovas-llms).
 
-**Note:** This is not a beginner tutorial, nor is it a step-by-step guide. You can find a [getting started guide here](https://docs.databricks.com/aws/en/getting-started/data-pipeline-get-started). For more demos please visit [databricks.com/demos](https://databricks.com/demos).
+**Note:** This is not a beginner tutorial, nor is it a step-by-step guide. You can find a [Lakeflow Declarative Pipelines getting started guide here](https://docs.databricks.com/aws/en/getting-started/data-pipeline-get-started). 
 
-To better understand the context, I suggest you have read the blog [Supernovas, Black Holes and Streaming Data](https://www.databricks.com/blog/supernovas-black-holes-and-streaming-data) or watched the original DAIS session [From Supernovas to LLMs](https://www.databricks.com/dataaisummit/session/streaming-data-pipelines-supernovas-llms), which provides all the context and walks you through the steps required to make this run.
+To better understand the context, I suggest you have read the blog [Supernovas, Black Holes and Streaming Data](https://www.databricks.com/blog/supernovas-black-holes-and-streaming-data) which provides all the context and walks you through the steps required to make this run. For more demos please visit [databricks.com/demos](https://databricks.com/demos).
 
 
-[![Supernovas, Black Holes and Streaming Data](https://www.databricks.com/sites/default/files/styles/max_1000x1000/public/2024-08/db-324-blog-img-og.png?itok=OS1-8MP9&v=1723114498)](https://www.databricks.com/sites/default/files/styles/max_1000x1000/public/2024-08/db-324-blog-img-og.png?itok=OS1-8MP9&v=1723114498)
+
+[![Supernovas, Black Holes and Streaming Data](https://www.databricks.com/sites/default/files/styles/max_1000x1000/public/2024-08/db-324-blog-img-og.png?itok=OS1-8MP9&v=1723114498)](https://www.databricks.com/blog/supernovas-black-holes-and-streaming-data)
 
 
 ## Project Description
 
-This hands-on, in-depth project demonstrates the use of live streaming data with the Databricks Intelligence Platform. The main challenge addressed is the analysis of real-time data from collapsing supernovas that emit gamma-ray bursts, provided by NASA's GCN project.
+This hands-on, in-depth project demonstrates the use of live streaming data coming from NASA satellites with the Databricks Intelligence Platform. The main challenge addressed is the analysis of real-time data from collapsing supernovas that emit gamma-ray bursts, provided by NASA's GCN project.
 
 Key aspects of the project include:
 
 1. Ingesting data in SQL from Kafka with read_kafka() and OIDC
-2. Comparing Delta Live Tables, DBSQL, and Databricks Workflows for stream processing (see recording)
-3. Coding ETL pipelines in SQL with Lakeflow, including Streaming Tables and Materialized Views
-4. Demonstrating natural language analytics using Genie Data Rooms
+2. Coding ETL pipelines in SQL with Lakeflow, including Streaming Tables and Materialized Views
+3. Demonstrating streaming data analytics with natural language using Genie Data Rooms
 
 ## Prerequisites
 
@@ -42,7 +42,7 @@ Key aspects of the project include:
 
 4. Run one of GCN of Spark Kafka client ingestion notebooks to start streaming data from GCN. 
 
-5. If the data ingestion works, use the provided code to configure a triggered pipeline using serverless compute.
+5. Once you verified the data ingestion works with your credentials, use the provided code to configure a triggered pipeline using serverless compute.
    * Make sure to reference the correct secrets from the pipeline code.
 ![Lakeflow pipeline](misc/pipelines_ide.png)
 
@@ -51,19 +51,19 @@ Key aspects of the project include:
    * Materialized views are used for complex transformations such as pivot().
    * With serverless compute, materialized views are recomputed incrementally (if possible).
 
-7. Use the final materialized view from the pipeline and explore it in Unity Catalog under **sample data** and **Lineage**, then enable a Genie Data Room for it.
+7. Select the materialized view from the pipeline and explore it. In Unity Catalog explore **Lineage**. 
 
-8. Explore the data by asking questions about:
+8. Enable a Genie Data Room.Explore the data by asking questions about:
    * The first event
    * The last event
    * The total number of events
-   * The distribution of merit values
+   * The distribution of merit values (ask for a histogram, change bin sizes!)
    * Plot the DEC and RA coordinates 
 ![AI/BI Genie Plot](misc/genie_plot.png)
 
 9. Try asking questions in other languages (e.g., Spanish, German, or French) if you speak them.
 
-Congratulations! You are now exploring a data stream coming from all of space using natural language.
+Congratulations! You are now exploring a data stream coming from space using natural language.
 
 (Optional) Explore the cleaned and processed data using Databricks SQL or your preferred analysis tools.
 
