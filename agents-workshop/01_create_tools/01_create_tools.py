@@ -38,16 +38,12 @@ user_email = w.current_user.me().display_name
 username = user_email.split("@")[0]
 
 # Catalog and schema have been automatically created thanks to lab environment
-#catalog_name = f"{username}_vocareum_com"
-catalog_name = "retail_prod"
+catalog_name = f"{username}"
 schema_name = "agents"
 
-workspace_id = str(w.get_workspace_id())
-
-# Allows us to reference these values directly in the SQL/Python function creation
+# Allows us to reference these values when creating SQL/Python functions
 dbutils.widgets.text("catalog_name", defaultValue=catalog_name, label="Catalog Name")
 dbutils.widgets.text("schema_name", defaultValue=schema_name, label="Schema Name")
-dbutils.widgets.text("workspace_id", defaultValue=workspace_id, label="Workspace ID")
 
 spark.sql(f"CREATE SCHEMA IF NOT EXISTS {catalog_name}.{schema_name}")
 
@@ -76,7 +72,7 @@ spark.sql(f"CREATE SCHEMA IF NOT EXISTS {catalog_name}.{schema_name}")
 # MAGIC   issue_category, 
 # MAGIC   issue_description, 
 # MAGIC   name
-# MAGIC FROM retail_prod.agents.cust_service_data 
+# MAGIC FROM agents_lab.product.cust_service_data 
 # MAGIC -- Order the results by the interaction date and time in descending order
 # MAGIC ORDER BY date_time DESC
 # MAGIC -- Limit the results to the most recent interaction
@@ -86,30 +82,26 @@ spark.sql(f"CREATE SCHEMA IF NOT EXISTS {catalog_name}.{schema_name}")
 
 # DBTITLE 1,Create a function registered to Unity Catalog
 # MAGIC %sql
-# MAGIC -- First lets make sure it doesnt already exist
-# MAGIC DROP FUNCTION IF EXISTS ${catalog_name}.${schema_name}.get_latest_return;
-# MAGIC -- Now we create our first function. This takes in no parameters and returns the most recent interaction.
-# MAGIC CREATE OR REPLACE FUNCTION
-# MAGIC ${catalog_name}.${schema_name}.get_latest_return()
-# MAGIC returns table(purchase_date DATE, issue_category STRING, issue_description STRING, name STRING)
+# MAGIC CREATE OR REPLACE FUNCTION 
+# MAGIC   IDENTIFIER(:catalog_name || '.' || :schema_name || '.get_latest_return')()
+# MAGIC RETURNS TABLE(purchase_date DATE, issue_category STRING, issue_description STRING, name STRING)
 # MAGIC COMMENT 'Returns the most recent customer service interaction, such as returns.'
-# MAGIC return
-# MAGIC (
+# MAGIC RETURN (
 # MAGIC   SELECT 
-# MAGIC     cast(date_time as date) as purchase_date, 
-# MAGIC     issue_category, 
-# MAGIC     issue_description, 
+# MAGIC     CAST(date_time AS DATE) AS purchase_date,
+# MAGIC     issue_category,
+# MAGIC     issue_description,
 # MAGIC     name
-# MAGIC   FROM retail_prod.agents.cust_service_data 
+# MAGIC   FROM agents_lab.product.cust_service_data
 # MAGIC   ORDER BY date_time DESC
 # MAGIC   LIMIT 1
-# MAGIC )
+# MAGIC );
 
 # COMMAND ----------
 
 # DBTITLE 1,Test function call to retrieve latest return
 # MAGIC %sql
-# MAGIC select * from ${catalog_name}.${schema_name}.get_latest_return()
+# MAGIC select * from IDENTIFIER(:catalog_name || '.' || :schema_name || '.get_latest_return')()
 
 # COMMAND ----------
 
@@ -126,21 +118,30 @@ spark.sql(f"CREATE SCHEMA IF NOT EXISTS {catalog_name}.{schema_name}")
 
 # DBTITLE 1,Create function to retrieve return policy
 # MAGIC %sql
-# MAGIC CREATE OR REPLACE FUNCTION ${catalog_name}.${schema_name}.get_return_policy()
-# MAGIC RETURNS TABLE (policy STRING, policy_details STRING, last_updated DATE)
+# MAGIC CREATE OR REPLACE FUNCTION
+# MAGIC   IDENTIFIER(:catalog_name || '.' || :schema_name || '.get_return_policy')()
+# MAGIC RETURNS TABLE (
+# MAGIC   policy           STRING,
+# MAGIC   policy_details   STRING,
+# MAGIC   last_updated     DATE
+# MAGIC )
 # MAGIC COMMENT 'Returns the details of the Return Policy'
 # MAGIC LANGUAGE SQL
-# MAGIC RETURN 
-# MAGIC SELECT policy, policy_details, last_updated 
-# MAGIC FROM retail_prod.agents.policies
-# MAGIC WHERE policy = 'Return Policy'
-# MAGIC LIMIT 1;
+# MAGIC RETURN (
+# MAGIC   SELECT
+# MAGIC     policy,
+# MAGIC     policy_details,
+# MAGIC     last_updated
+# MAGIC   FROM agents_lab.product.policies
+# MAGIC   WHERE policy = 'Return Policy'
+# MAGIC   LIMIT 1
+# MAGIC );
 
 # COMMAND ----------
 
 # DBTITLE 1,Test function to retrieve return policy
 # MAGIC %sql
-# MAGIC select * from ${catalog_name}.${schema_name}.get_return_policy()
+# MAGIC select * from IDENTIFIER(:catalog_name || '.' || :schema_name || '.get_return_policy')()
 
 # COMMAND ----------
 
@@ -157,13 +158,14 @@ spark.sql(f"CREATE SCHEMA IF NOT EXISTS {catalog_name}.{schema_name}")
 
 # DBTITLE 1,Create function that retrieves userID based on name
 # MAGIC %sql
-# MAGIC CREATE OR REPLACE FUNCTION ${catalog_name}.${schema_name}.get_user_id(user_name STRING)
+# MAGIC CREATE OR REPLACE FUNCTION
+# MAGIC   IDENTIFIER(:catalog_name || '.' || :schema_name || '.get_user_id')(user_name STRING)
 # MAGIC RETURNS STRING
 # MAGIC COMMENT 'This takes the name of a customer as an input and returns the corresponding user_id'
 # MAGIC LANGUAGE SQL
 # MAGIC RETURN 
 # MAGIC SELECT customer_id 
-# MAGIC FROM retail_prod.agents.cust_service_data 
+# MAGIC FROM agents_lab.product.cust_service_data 
 # MAGIC WHERE name = user_name
 # MAGIC LIMIT 1
 # MAGIC ;
@@ -172,7 +174,9 @@ spark.sql(f"CREATE SCHEMA IF NOT EXISTS {catalog_name}.{schema_name}")
 
 # DBTITLE 1,Test function that retrieves userID based on name
 # MAGIC %sql
-# MAGIC select ${catalog_name}.${schema_name}.get_user_id('Nicolas Pelaez')
+# MAGIC
+# MAGIC --New Parameter Syntax (MLR > 15.1)
+# MAGIC select IDENTIFIER(:catalog_name || '.' || :schema_name || '.get_user_id')('Nicolas Pelaez');
 
 # COMMAND ----------
 
@@ -189,13 +193,14 @@ spark.sql(f"CREATE SCHEMA IF NOT EXISTS {catalog_name}.{schema_name}")
 
 # DBTITLE 1,Create function that retrieves order history based on userID
 # MAGIC %sql
-# MAGIC CREATE OR REPLACE FUNCTION ${catalog_name}.${schema_name}.get_order_history(user_id STRING)
+# MAGIC CREATE OR REPLACE FUNCTION
+# MAGIC   IDENTIFIER(:catalog_name || '.' || :schema_name || '.get_order_history')(user_id STRING)
 # MAGIC RETURNS TABLE (returns_last_12_months INT, issue_category STRING)
 # MAGIC COMMENT 'This takes the user_id of a customer as an input and returns the number of returns and the issue category'
 # MAGIC LANGUAGE SQL
 # MAGIC RETURN 
 # MAGIC SELECT count(*) as returns_last_12_months, issue_category 
-# MAGIC FROM retail_prod.agents.cust_service_data 
+# MAGIC FROM agents_lab.product.cust_service_data 
 # MAGIC WHERE customer_id = user_id 
 # MAGIC GROUP BY issue_category;
 
@@ -203,7 +208,7 @@ spark.sql(f"CREATE SCHEMA IF NOT EXISTS {catalog_name}.{schema_name}")
 
 # DBTITLE 1,Test function that retrieves order history based on userID
 # MAGIC %sql
-# MAGIC select * from ${catalog_name}.${schema_name}.get_order_history('453e50e0-232e-44ea-9fe3-28d550be6294')
+# MAGIC select * from IDENTIFIER(:catalog_name || '.' || :schema_name || '.get_order_history')('453e50e0-232e-44ea-9fe3-28d550be6294')
 
 # COMMAND ----------
 

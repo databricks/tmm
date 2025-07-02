@@ -4,8 +4,13 @@
 # MAGIC
 # MAGIC ## Part 2 - Agent Evaluation
 # MAGIC Now that we've created an agent, how do we evaluate its performance?
-# MAGIC For the second part, we're going to create a more basic agent so we can focus on evaluation.
+# MAGIC For the second part, we're going to create a product support agent so we can focus on evaluation.
 # MAGIC This agent will use a RAG approach to help answer questions about products using the product documentation.
+# MAGIC
+# MAGIC ### 2.1 Define our new Agent and retriever tool
+# MAGIC - [**agent.py**]($./agent.py): An example Agent has been configured - first we'll explore this file and understand the building blocks
+# MAGIC - **Vector Search**: We've created a Vector Search endpoint that can be queried to find related documentation about a specific product.
+# MAGIC - **Create Retriever Function**: Define some properties about our retriever and package it so it can be called by our LLM.
 # MAGIC
 # MAGIC ### 2.2 Create Evaluation Dataset
 # MAGIC - We've provided an example evaluation dataset - though you can also generate this [synthetically](https://www.databricks.com/blog/streamline-ai-agent-evaluation-with-new-synthetic-data-capabilities).
@@ -20,34 +25,15 @@
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC # Driver notebook
-# MAGIC
-# MAGIC This was an auto-generated notebook created by an AI Playground export. We generated three notebooks in the same folder:
-# MAGIC - [agent]($./agent): contains the code to build the agent.
-# MAGIC - [config.yml]($./config.yml): contains the configurations.
-# MAGIC - [**driver**]($./driver): logs, evaluate, registers, and deploys the agent.
-# MAGIC
-# MAGIC This notebook uses Mosaic AI Agent Framework ([AWS](https://docs.databricks.com/en/generative-ai/retrieval-augmented-generation.html) | [Azure](https://learn.microsoft.com/en-us/azure/databricks/generative-ai/retrieval-augmented-generation)) to deploy the agent defined in the [agent]($./agent) notebook. The notebook does the following:
-# MAGIC 1. Logs the agent to MLflow
-# MAGIC 2. Evaluate the agent with Agent Evaluation
-# MAGIC 3. Registers the agent to Unity Catalog
-# MAGIC 4. Deploys the agent to a Model Serving endpoint
-# MAGIC
-# MAGIC ## Prerequisities
-# MAGIC
-# MAGIC - Address all `TODO`s in this notebook.
-# MAGIC - Review the contents of [config.yml]($./config.yml) as it defines the tools available to your agent, the LLM endpoint, and the agent prompt.
-# MAGIC - Review and run the [agent]($./agent) notebook in this folder to view the agent's code, iterate on the code, and test outputs.
-# MAGIC
-# MAGIC ## Next steps
-# MAGIC
-# MAGIC After your agent is deployed, you can chat with it in AI playground to perform additional checks, share it with SMEs in your organization for feedback, or embed it in a production application. See docs ([AWS](https://docs.databricks.com/en/generative-ai/deploy-agent.html) | [Azure](https://learn.microsoft.com/en-us/azure/databricks/generative-ai/deploy-agent)) for details
+# MAGIC %pip install -U -qqqq mlflow-skinny[databricks] langgraph==0.3.4 databricks-langchain databricks-agents uv
+# MAGIC dbutils.library.restartPython()
 
 # COMMAND ----------
 
-# MAGIC %pip install -U -qqqq databricks-agents mlflow langchain==0.2.16 langgraph-checkpoint==1.0.12  langchain_core langchain-community==0.2.16 langgraph==0.2.16 pydantic langchain_databricks
-# MAGIC dbutils.library.restartPython()
+# DBTITLE 1,Quick test to see if Agent works
+from agent import AGENT
+
+AGENT.predict({"messages": [{"role": "user", "content": "Can you give me troubleshooting tips for my Soundwave X5 Pro Headphones?"}]})
 
 # COMMAND ----------
 
@@ -57,37 +43,55 @@
 
 # COMMAND ----------
 
-# Log the model to MLflow
-import os
+# Determine Databricks resources to specify for automatic auth passthrough at deployment time
 import mlflow
+from agent import tools, LLM_ENDPOINT_NAME
+from databricks_langchain import VectorSearchRetrieverTool
+from mlflow.models.resources import DatabricksFunction, DatabricksServingEndpoint
+from unitycatalog.ai.langchain.toolkit import UnityCatalogTool
+
+resources = [DatabricksServingEndpoint(endpoint_name=LLM_ENDPOINT_NAME)]
+for tool in tools:
+    if isinstance(tool, VectorSearchRetrieverTool):
+        resources.extend(tool.resources)
+    elif isinstance(tool, UnityCatalogTool):
+        resources.append(DatabricksFunction(function_name=tool.uc_function_name))
 
 input_example = {
     "messages": [
         {
             "role": "user",
-            "content": "Can you give me some troubleshooting steps for SoundWave X5 Pro Headphones that won't connect?"
+            "content": "What color options are available for the Aria Modern Bookshelf?"
         }
     ]
 }
 
 with mlflow.start_run():
-    logged_agent_info = mlflow.langchain.log_model(
-        lc_model=os.path.join(
-            os.getcwd(),
-            'agent',
-        ),
-        pip_requirements=[
-            "langchain==0.2.16",
-            "langchain-community==0.2.16",
-            "langgraph-checkpoint==1.0.12",
-            "langgraph==0.2.16",
-            "pydantic",
-            "langchain_databricks", # used for the retriever tool
-        ],
-        model_config="config.yml",
-        artifact_path='agent',
+    logged_agent_info = mlflow.pyfunc.log_model(
+        artifact_path="agent",
+        python_model="agent.py",
         input_example=input_example,
+        resources=resources,
+        extra_pip_requirements=[
+            "databricks-connect"
+        ]
     )
+
+# COMMAND ----------
+
+# Load the model and create a prediction function
+logged_model_uri = f"runs:/{logged_agent_info.run_id}/agent"
+loaded_model = mlflow.pyfunc.load_model(logged_model_uri)
+
+def predict_wrapper(query):
+    # Format for chat-style models
+    model_input = {
+        "messages": [{"role": "user", "content": query}]
+    }
+    response = loaded_model.predict(model_input)
+    
+    messages = response['messages']
+    return messages[-1]['content']
 
 # COMMAND ----------
 
@@ -106,12 +110,7 @@ data = {
         "How should I clean the Aurora Oak Coffee Table to avoid damaging it?",
         "How should I clean the BlendMaster Elite 4000 after each use?",
         "How many colors is the Flexi-Comfort Office Desk available in?",
-        "What sizes are available for the StormShield Pro Men's Weatherproof Jacket?",
-        "What should I do if my SmartX Pro device won’t turn on?",
-        "How many people can the Elegance Extendable Dining Table seat comfortably?",
-        "What colors is the Urban Explorer Jacket available in?",
-        "What is the water resistance rating of the BrownBox SwiftWatch X500?",
-        "What colors are available for the StridePro Runner?"
+        "What sizes are available for the StormShield Pro Men's Weatherproof Jacket?"
     ],
     "expected_facts": [
         [
@@ -133,24 +132,6 @@ data = {
         ],
         [
             "The available sizes for the StormShield Pro Men's Weatherproof Jacket are Small, Medium, Large, XL, and XXL."
-        ],
-        [
-            "Press and hold the power button for 20 seconds to reset the device.",
-            "Ensure the device is charged for at least 30 minutes before attempting to turn it on again."
-        ],
-        [
-            "The Elegance Extendable Dining Table can comfortably seat 6 people."
-        ],
-        [
-            "The Urban Explorer Jacket is available in charcoal, navy, and olive green"
-        ],
-        [
-            "The water resistance rating of the BrownBox SwiftWatch X500 is 5 ATM."
-        ],
-        [
-            "The colors available for the StridePro Runner should include Midnight Blue.",
-            "The colors available for the StridePro Runner should include Electric Red.",
-            "The colors available for the StridePro Runner should include Forest Green."
         ]
     ]
 }
@@ -159,24 +140,63 @@ eval_dataset = pd.DataFrame(data)
 
 # COMMAND ----------
 
-# DBTITLE 1,Run MLflow Evaluations!
-import mlflow
-import pandas as pd
+from mlflow.genai.scorers import Guidelines, Safety
+import mlflow.genai
 
-with mlflow.start_run(run_id=logged_agent_info.run_id):
-    eval_results = mlflow.evaluate(
-        f"runs:/{logged_agent_info.run_id}/agent",  # replace `chain` with artifact_path that you used when calling log_model.
-        data=eval_dataset,  # Your evaluation dataset
-        model_type="databricks-agent",  # Enable Mosaic AI Agent Evaluation
+eval_data = []
+for request, facts in zip(data["request"], data["expected_facts"]):
+    eval_data.append({
+        "inputs": {
+            "query": request  # This matches the function parameter
+        },
+        "expected_response": "\n".join(facts)
+    })
+
+# Define scorers for evaluation
+# These are guidelines that the LLM judge will use to evaluate responses
+
+# Define custom scorers tailored to product information evaluation
+scorers = [
+    Guidelines(
+        guidelines="""Response must include ALL expected facts:
+        - Lists ALL colors/sizes if relevant (not partial lists)
+        - States EXACT specs if relevant (e.g., "5 ATM" not "water resistant")
+        - Includes ALL cleaning steps if asked
+        Fails if ANY fact is missing or wrong.""",
+        name="completeness_and_accuracy",
+    ),
+    Guidelines(
+        guidelines="""Response must be clear and direct:
+        - Answers the exact question asked
+        - Uses lists for options, steps for instructions
+        - No marketing fluff or extra background
+        - Concise but complete.""",
+        name="relevance_and_structure",
+    ),
+    Guidelines(
+        guidelines="""Response must stay on-topic:
+        - ONLY the product asked about
+        - NO made-up features or colors
+        - NO generic advice
+        - Uses exact product name from request.""",
+        name="product_specificity",
+    ),
+]
+
+# COMMAND ----------
+
+print("Running evaluation...")
+with mlflow.start_run():
+    results = mlflow.genai.evaluate(
+        data=eval_data,
+        predict_fn=predict_wrapper, 
+        scorers=scorers,
     )
-
-# Review the evaluation results in the MLFLow UI (see console output), or access them in place:
-display(eval_results.tables['eval_results'])
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Lets go back to the [agent]($./agent) notebook and change our retriever to 1.
+# MAGIC ## Lets go back to the [agent.py]($./agent.py) file and change our prompt to reduce marketing fluff.
 
 # COMMAND ----------
 
@@ -198,8 +218,7 @@ user_email = w.current_user.me().display_name
 username = user_email.split("@")[0]
 
 # Catalog and schema have been automatically created thanks to lab environment
-#catalog_name = f"{username}_vocareum_com"
-catalog_name = "retail_prod"
+catalog_name = f"{username}"
 schema_name = "agents"
 
 # TODO: define the catalog, schema, and model name for your UC model
@@ -232,4 +251,6 @@ display(HTML(html_link))
 from databricks import agents
 
 # Deploy the model to the review app and a model serving endpoint
-agents.deploy(UC_MODEL_NAME, uc_registered_model_info.version, tags = {"endpointSource": "playground"})
+
+#Disabled for the lab environment but we've deployed the agent already!
+#agents.deploy(UC_MODEL_NAME, uc_registered_model_info.version, tags = {"endpointSource": "Agent Lab"})
