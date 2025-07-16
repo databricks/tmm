@@ -20,7 +20,7 @@
 # MAGIC - LLM Judges will score the outputs and collect everything in a nice UI for review
 # MAGIC
 # MAGIC ### 2.4 Make Needed Improvements and re-run Evaluations
-# MAGIC - Take feedback from our evaluation run and change retrieval settings
+# MAGIC - Take feedback from our evaluation run and change the prompt
 # MAGIC - Run evals again and see the improvement!
 
 # COMMAND ----------
@@ -33,7 +33,7 @@
 # DBTITLE 1,Quick test to see if Agent works
 from agent import AGENT
 
-AGENT.predict({"messages": [{"role": "user", "content": "Can you give me troubleshooting tips for my Soundwave X5 Pro Headphones?"}]})
+AGENT.predict({"messages": [{"role": "user", "content": "Hello, what do you do?"}]})
 
 # COMMAND ----------
 
@@ -85,6 +85,7 @@ loaded_model = mlflow.pyfunc.load_model(logged_model_uri)
 
 def predict_wrapper(query):
     # Format for chat-style models
+    
     model_input = {
         "messages": [{"role": "user", "content": query}]
     }
@@ -108,8 +109,6 @@ data = {
     "request": [
         "What color options are available for the Aria Modern Bookshelf?",
         "How should I clean the Aurora Oak Coffee Table to avoid damaging it?",
-        "How should I clean the BlendMaster Elite 4000 after each use?",
-        "How many colors is the Flexi-Comfort Office Desk available in?",
         "What sizes are available for the StormShield Pro Men's Weatherproof Jacket?"
     ],
     "expected_facts": [
@@ -123,14 +122,6 @@ data = {
             "Avoid using abrasive cleaners."
         ],
         [
-            "The jar of the BlendMaster Elite 4000 should be rinsed.",
-            "Rinse with warm water.",
-            "The cleaning should take place after each use."
-        ],
-        [
-            "The Flexi-Comfort Office Desk is available in three colors."
-        ],
-        [
             "The available sizes for the StormShield Pro Men's Weatherproof Jacket are Small, Medium, Large, XL, and XXL."
         ]
     ]
@@ -140,7 +131,7 @@ eval_dataset = pd.DataFrame(data)
 
 # COMMAND ----------
 
-from mlflow.genai.scorers import Guidelines, Safety
+from mlflow.genai.scorers import RetrievalGroundedness, RelevanceToQuery, Safety, Guidelines
 import mlflow.genai
 
 eval_data = []
@@ -152,35 +143,28 @@ for request, facts in zip(data["request"], data["expected_facts"]):
         "expected_response": "\n".join(facts)
     })
 
-# Define scorers for evaluation
-# These are guidelines that the LLM judge will use to evaluate responses
-
 # Define custom scorers tailored to product information evaluation
 scorers = [
-    Guidelines(
-        guidelines="""Response must include ALL expected facts:
-        - Lists ALL colors/sizes if relevant (not partial lists)
-        - States EXACT specs if relevant (e.g., "5 ATM" not "water resistant")
-        - Includes ALL cleaning steps if asked
-        Fails if ANY fact is missing or wrong.""",
-        name="completeness_and_accuracy",
-    ),
+    #RetrievalGroundedness(),  # Pre-defined judge that checks against retrieval results
+    RelevanceToQuery(),  # Checks if answer is relevant to the question
+    #Safety(),  # Checks for harmful or inappropriate content
     Guidelines(
         guidelines="""Response must be clear and direct:
         - Answers the exact question asked
         - Uses lists for options, steps for instructions
         - No marketing fluff or extra background
+        - Does not tell user to contact customer support
         - Concise but complete.""",
-        name="relevance_and_structure",
+        name="clarity_and_structure",
     ),
-    Guidelines(
-        guidelines="""Response must stay on-topic:
-        - ONLY the product asked about
-        - NO made-up features or colors
-        - NO generic advice
-        - Uses exact product name from request.""",
-        name="product_specificity",
-    ),
+    #Guidelines(
+    #    guidelines="""Response must include ALL expected facts:
+    #    - Lists ALL colors/sizes if relevant (not partial lists)
+    #    - States EXACT specs if relevant (e.g., "5 ATM" not "water resistant")
+    #    - Includes ALL cleaning steps if asked
+    #    Fails if ANY fact is missing or wrong.""",
+    #    name="completeness_and_accuracy",
+    #)
 ]
 
 # COMMAND ----------
@@ -253,4 +237,4 @@ from databricks import agents
 # Deploy the model to the review app and a model serving endpoint
 
 #Disabled for the lab environment but we've deployed the agent already!
-#agents.deploy(UC_MODEL_NAME, uc_registered_model_info.version, tags = {"endpointSource": "Agent Lab"})
+#agents.deploy(UC_MODEL_NAME, uc_registered_model_info.version, tags = {"endpointSource": "DI Days"})

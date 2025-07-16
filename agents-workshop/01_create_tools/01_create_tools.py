@@ -148,45 +148,11 @@ spark.sql(f"CREATE SCHEMA IF NOT EXISTS {catalog_name}.{schema_name}")
 # MAGIC %md
 # MAGIC ---
 # MAGIC
-# MAGIC ## 3. Retrieve UserID for the Latest Return
-# MAGIC - **Action**: Note the user’s unique identifier from the return request details.  
-# MAGIC - **Why**: Accurately referencing the correct user’s data streamlines the process and avoids mixing up customer records.
-# MAGIC
-# MAGIC ---
-
-# COMMAND ----------
-
-# DBTITLE 1,Create function that retrieves userID based on name
-# MAGIC %sql
-# MAGIC CREATE OR REPLACE FUNCTION
-# MAGIC   IDENTIFIER(:catalog_name || '.' || :schema_name || '.get_user_id')(user_name STRING)
-# MAGIC RETURNS STRING
-# MAGIC COMMENT 'This takes the name of a customer as an input and returns the corresponding user_id'
-# MAGIC LANGUAGE SQL
-# MAGIC RETURN 
-# MAGIC SELECT customer_id 
-# MAGIC FROM agents_lab.product.cust_service_data 
-# MAGIC WHERE name = user_name
-# MAGIC LIMIT 1
-# MAGIC ;
-
-# COMMAND ----------
-
-# DBTITLE 1,Test function that retrieves userID based on name
-# MAGIC %sql
-# MAGIC
-# MAGIC --New Parameter Syntax (MLR > 15.1)
-# MAGIC select IDENTIFIER(:catalog_name || '.' || :schema_name || '.get_user_id')('Nicolas Pelaez');
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ---
-# MAGIC
-# MAGIC ## 4. Use the UserID to Look Up the Order History
-# MAGIC - **Action**: Query your order management system or customer database using the UserID.  
+# MAGIC ## 3. Use the User Name to Look Up the Order History
+# MAGIC - **Action**: Query your order management system or customer database using the Username.  
 # MAGIC - **Why**: Reviewing past purchases, return patterns, and any specific notes helps you determine appropriate next steps (e.g., confirm eligibility for return).
 # MAGIC
+# MAGIC ###### Note: We've doing a little trick to give the LLM extra context into the current date by adding todays_date in the function's response
 # MAGIC ---
 
 # COMMAND ----------
@@ -194,32 +160,32 @@ spark.sql(f"CREATE SCHEMA IF NOT EXISTS {catalog_name}.{schema_name}")
 # DBTITLE 1,Create function that retrieves order history based on userID
 # MAGIC %sql
 # MAGIC CREATE OR REPLACE FUNCTION
-# MAGIC   IDENTIFIER(:catalog_name || '.' || :schema_name || '.get_order_history')(user_id STRING)
-# MAGIC RETURNS TABLE (returns_last_12_months INT, issue_category STRING)
-# MAGIC COMMENT 'This takes the user_id of a customer as an input and returns the number of returns and the issue category'
+# MAGIC   IDENTIFIER(:catalog_name || '.' || :schema_name || '.get_order_history')(user_name STRING)
+# MAGIC RETURNS TABLE (returns_last_12_months INT, issue_category STRING, todays_date DATE)
+# MAGIC COMMENT 'This takes the user_name of a customer as an input and returns the number of returns and the issue category'
 # MAGIC LANGUAGE SQL
 # MAGIC RETURN 
-# MAGIC SELECT count(*) as returns_last_12_months, issue_category 
+# MAGIC SELECT count(*) as returns_last_12_months, issue_category, now() as todays_date
 # MAGIC FROM agents_lab.product.cust_service_data 
-# MAGIC WHERE customer_id = user_id 
+# MAGIC WHERE name = user_name 
 # MAGIC GROUP BY issue_category;
 
 # COMMAND ----------
 
 # DBTITLE 1,Test function that retrieves order history based on userID
 # MAGIC %sql
-# MAGIC select * from IDENTIFIER(:catalog_name || '.' || :schema_name || '.get_order_history')('453e50e0-232e-44ea-9fe3-28d550be6294')
+# MAGIC select * from IDENTIFIER(:catalog_name || '.' || :schema_name || '.get_order_history')('Nicolas Pelaez')
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC ---
 # MAGIC
-# MAGIC ## 5. Give the LLM a Python Function to Know Today’s Date
+# MAGIC ## 4. Python functions can be used as well! Here's an example
 # MAGIC - **Action**: Provide a **Python function** that can supply the Large Language Model (LLM) with the current date.  
 # MAGIC - **Why**: Automating date retrieval helps in scheduling pickups, refund timelines, and communication deadlines.
 # MAGIC
-# MAGIC ###### Note: There is also a function registered in System.ai.python_exec that will let your LLM run generated code in a sandboxed environment
+# MAGIC ###### Note: For this lab we will not be using this function but leaving as example.
 # MAGIC ---
 
 # COMMAND ----------
@@ -249,11 +215,11 @@ from unitycatalog.ai.core.databricks import DatabricksFunctionClient
 client = DatabricksFunctionClient()
 
 # this will deploy the tool to UC, automatically setting the metadata in UC based on the tool's docstring & typing hints
-python_tool_uc_info = client.create_python_function(func=get_todays_date, catalog=catalog_name, schema=schema_name, replace=True)
+#python_tool_uc_info = client.create_python_function(func=get_todays_date, catalog=catalog_name, schema=schema_name, replace=True)
 
 # the tool will deploy to a function in UC called `{catalog}.{schema}.{func}` where {func} is the name of the function
 # Print the deployed Unity Catalog function name
-print(f"Deployed Unity Catalog function name: {python_tool_uc_info.full_name}")
+#print(f"Deployed Unity Catalog function name: {python_tool_uc_info.full_name}")
 
 # COMMAND ----------
 
@@ -264,7 +230,7 @@ from IPython.display import display, HTML
 workspace_url = spark.conf.get('spark.databricks.workspaceUrl')
 
 # Create HTML link to created functions
-html_link = f'<a href="https://{workspace_url}/explore/data/functions/{catalog_name}/{schema_name}/get_todays_date" target="_blank">Go to Unity Catalog to see Registered Functions</a>'
+html_link = f'<a href="https://{workspace_url}/explore/data/functions/{catalog_name}/{schema_name}/get_order_history" target="_blank">Go to Unity Catalog to see Registered Functions</a>'
 display(HTML(html_link))
 
 # COMMAND ----------
@@ -272,7 +238,7 @@ display(HTML(html_link))
 # MAGIC %md
 # MAGIC ## Now lets go over to the AI Playground to see how we can use these functions and assemble our first Agent!
 # MAGIC
-# MAGIC ### The AI Playground can be found on the left navigation bar under 'Machine Learning' or you can use the link created below
+# MAGIC ### The AI Playground can be found on the left navigation bar under 'AI/ML' or you can use the link created below
 
 # COMMAND ----------
 

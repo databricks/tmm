@@ -1,7 +1,5 @@
 pydantic
-databricks-agents
 mlflow
-databricks-sdk[openai]
 unitycatalog-langchain[databricks]
 unitycatalog-ai[databricks]
 pyyaml

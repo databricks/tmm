@@ -32,10 +32,13 @@ set_uc_function_client(client)
 ############################################
 # Define your LLM endpoint and system prompt
 ############################################
+#LLM_ENDPOINT_NAME = "databricks-meta-llama-3-3-70b-instruct"
 LLM_ENDPOINT_NAME = "databricks-claude-3-7-sonnet"
 llm = ChatDatabricks(endpoint=LLM_ENDPOINT_NAME)
 
-system_prompt = "Use tools to retrieve all information needed and respond in a polite manner. Do not return only the tool call response."
+system_prompt = "You are a customer success specialist. Use tools to retrieve all information needed and help customers fully understand the products they're asking about. Aim to provide value in every interaction."
+
+#system_prompt = "Use tools to retrieve all information needed and answer in a friendly, conversational tone. Answer only the specific question without adding made-up features, colors, or generic commentary. Be concise."
 
 ###############################################################################
 ## Define tools for your agent, enabling it to retrieve data or take actions
@@ -46,9 +49,9 @@ system_prompt = "Use tools to retrieve all information needed and respond in a p
 tools = []
 
 # You can use UDFs in Unity Catalog as agent tools
-uc_tool_names = ["agents_lab.product.*"]
-uc_toolkit = UCFunctionToolkit(function_names=uc_tool_names)
-tools.extend(uc_toolkit.tools)
+# uc_tool_names = ["agents_lab.product.*"]
+# uc_toolkit = UCFunctionToolkit(function_names=uc_tool_names)
+# tools.extend(uc_toolkit.tools)
 
 
 # # Use Databricks vector search index as tool
@@ -61,7 +64,7 @@ retriever_tool = VectorSearchRetrieverTool(
   index_name="agents_lab.product.product_docs_index",
   tool_name="search_product_docs",
   tool_description="Use this tool to search for product documentation.",
-  num_results=3,
+  num_results=1,
   disable_notice=True
 )
 
