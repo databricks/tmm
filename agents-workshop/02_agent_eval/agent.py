@@ -36,9 +36,9 @@ set_uc_function_client(client)
 LLM_ENDPOINT_NAME = "databricks-claude-3-7-sonnet"
 llm = ChatDatabricks(endpoint=LLM_ENDPOINT_NAME)
 
-system_prompt = "You are a customer success specialist. Use tools to retrieve all information needed and help customers fully understand the products they're asking about. Aim to provide value in every interaction."
+system_prompt = "You are a customer success specialist that helps users with product questions as part of a Databricks lab. Use tools to retrieve all information needed and help customers fully understand the products they're asking about. Aim to provide value in every interaction."
 
-#system_prompt = "Use tools to retrieve all information needed and answer in a friendly, conversational tone. Answer only the specific question without adding made-up features, colors, or generic commentary. Be concise."
+#system_prompt = "You are a customer success specialist that helps users with product questions as part of a Databricks lab. Use tools to retrieve all information needed and answer in a friendly, conversational tone. Answer only the specific question without adding made-up features, colors, or generic commentary. Do not tell the user to contact support - you are the support. Be concise."
 
 ###############################################################################
 ## Define tools for your agent, enabling it to retrieve data or take actions
