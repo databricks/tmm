@@ -1,4 +1,4 @@
-## Billions of Avionic Events, Thousands of Aircraft, One Simple Declarative Pipeline
+## Billions of Events, Thousands of Aircraft, One Simple Declarative Pipeline
 
 ![Aviation Data Processing Header](misc/header.gif)
 
@@ -113,10 +113,13 @@ You can analyze the streaming data with AI/BI Genie with simple English queries:
 
 ## Learn More
 
+- [Deep Dive Blog - comming soon!]
+- [Video Guide - comming soon!]
 - [OpenSky Network](https://opensky-network.org)
+- [Spark Declarative Pipelines](https://www.databricks.com/blog/bringing-declarative-pipelines-apache-spark-open-source-project)
 - [Lakeflow Documentation](https://docs.databricks.com/aws/en/dlt)
 - [PySpark Custom Data Sources](https://docs.databricks.com/aws/en/pyspark/datasources)
 
----
+## Learn More
 
-The complete flight tracking pipeline runs on Databricks Free Edition, making these advanced streaming concepts accessible to any practitioner.
+The complete flight tracking pipeline runs on [Databricks Free Edition](https://www.databricks.com/learn/free-edition), making these  streaming concepts accessible to any practitioner.
