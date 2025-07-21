@@ -125,7 +125,7 @@ You can analyze the streaming data with AI/BI Genie with simple English queries:
 ## FAQ
 
 <details>
-<summary>Question: What about the Lakeflow Connect and Jobs components?</summary>
+<summary>Question: What about Lakeflow Connect and Jobs?</summary>
 
 **Answer:**  
 This tutorial is centered around Lakeflow Declarative Pipelines for data ingestion and transformation. In this example, the custom connector was provided for you. Lakeflow Connect can handle enterprise data ingestion from hundreds of source systems, such as databases, SaaS applications, and message queues, without writing custom connectors.
