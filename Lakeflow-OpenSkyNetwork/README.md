@@ -43,24 +43,6 @@ The new Lakeflow IDE is working with files. Add the OpenSky data source to your 
 pyspark_datasources
 ```
 
-### Materialized View
-
-Use the new Lakeflow Pipeline editor and create the following materialized view:
-
-```sql
-CREATE MATERIALIZED VIEW flight_stats AS
-  SELECT
-  COUNT(*) AS num_events,
-  COUNT(DISTINCT icao24) AS unique_aircraft,
-  MAX(vertical_rate) AS max_asc_rate,
-  MIN(vertical_rate) AS max_desc_rate,
-  MAX(velocity) AS max_speed,
-  MAX(geo_altitude) AS max_altitude,
-  TIMESTAMPDIFF(SECOND, MIN(time_ingest),
-                    MAX(time_ingest))
-                    AS observation_duration
-FROM ingest_flights
-```
 
 ## Visualization Options
 
@@ -69,6 +51,8 @@ FROM ingest_flights
 - Build interactive maps with frameworks like Dash and OpenLayers
 
 ## Optional Configurations
+
+I recommend running your streaming table from above first. Later, you can extend it with the options below, e.g. set the region to your continent if you are not in the U.S.
 
 ### Regional Filtering
 
@@ -101,6 +85,24 @@ def ingest_flights():
         .option("interval", INTERVAL)
         .load()
     )
+```
+### Materialized View
+
+Use the new Lakeflow Pipeline editor and create the following materialized view:
+
+```sql
+CREATE MATERIALIZED VIEW flight_stats AS
+  SELECT
+  COUNT(*) AS num_events,
+  COUNT(DISTINCT icao24) AS unique_aircraft,
+  MAX(vertical_rate) AS max_asc_rate,
+  MIN(vertical_rate) AS max_desc_rate,
+  MAX(velocity) AS max_speed,
+  MAX(geo_altitude) AS max_altitude,
+  TIMESTAMPDIFF(SECOND, MIN(time_ingest),
+                    MAX(time_ingest))
+                    AS observation_duration
+FROM ingest_flights
 ```
 
 ## Natural Language Queries
