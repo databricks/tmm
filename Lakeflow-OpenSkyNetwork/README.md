@@ -34,6 +34,9 @@ This repository is a small, self-contained example that you can easily run yours
 The Lakeflow IDE works with files. The first file will be a streaming table in Python that ingests live aircraft positions from the OpenSky Network in real-time. Use the Lakeflow Pipeline Editor to create it:
 
 ```python
+
+from pyspark_datasources import OpenSkyDataSource
+
 @dlt.table
 def ingest_flights():
     return spark.readStream.format("opensky").load()
@@ -46,7 +49,7 @@ Next, you need to add the OpenSky data source to your environment. Note, this is
 1. In your pipeline, navigate to **Settings → Environment**.
 2. Add the following package:
    ```
-   pyspark_datasources
+   pyspark-data-sources
    ```
 
 ---
@@ -104,6 +107,7 @@ For production and higher rate limits, register for API credentials at [opensky-
 ### Advanced Streaming Table Configuration
 
 ```python
+from pyspark_datasources import OpenSkyDataSource
 @dlt.expect("icao24_not_null", "icao24 IS NOT NULL")
 @dlt.expect_or_drop("coord_exist", "latitude IS NOT NULL AND longitude IS NOT NULL")
 @dlt.table
