@@ -5,10 +5,10 @@ All notable changes to this project will be documented in this file.
 ## [3.0.0] - 2025-07-19
 
 ### Changed
-- Optimized token usage across the platform
-- Reduced tool calls in AI Playground for improved efficiency
+- Reduced tool calls in AI Playground for improved latency
 - Implemented more specific judges with fewer evaluations required
-- Enhanced agent definition system to include both before and after prompts
+- Now includes before and after prompts in the Agent defintion
+- Removed unused tools from Agent definition for eval section
 
 ## [2.0.0] - 2025-06-24
 
@@ -19,7 +19,7 @@ All notable changes to this project will be documented in this file.
 - Shifted eval quality improvement focus to prompt modification instead of retriever adjustments
 
 ### Improved
-- Overall evaluation quality through enhanced prompt engineering
+- Qvaluation quality through prompt changes instead of retriever settings
 
 ## [1.0.0] - 2025-01-06
 
