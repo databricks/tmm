@@ -157,35 +157,36 @@ Databricks Apps let you quickly create web front-ends and dashboards powered by 
 ## FAQ
 
 <details>
-<summary>**What about Lakeflow Connect and Jobs?**</summary>
+<summary>What about Lakeflow Connect and Jobs?</summary>
 
 **Answer:**  
 This project focuses on Lakeflow Declarative Pipelines for data ingestion and transformation. In this example, the custom connector is provided for you. Lakeflow Connect can orchestrate large-scale ingestion from databases, SaaS apps, and message queues—no custom code required. Lakeflow Jobs helps you schedule, orchestrate, and manage complex workflows that combine pipelines, ML models, and business processes across your data platform. For example, you could use Jobs to integrate these pipelines into a broader logistics workflow.
 </details>
 
+
 <details>
-<summary>**Can I use Declarative Pipelines for batch processing as well as streaming?**</summary>
+<summary>Can I use Declarative Pipelines for batch processing as well as streaming?</summary>
 
 **Answer:**  
 Yes! The same code works for both batch and streaming data. You can choose to run the pipeline continuously or schedule it at specific times (for example, every Friday at 3:30 PM). Streaming tables always ingest data incrementally, so batch data is only read once when it's new.
 </details>
 
 <details>
-<summary>**Is it legal to access sensor data from flying planes?**</summary>
+<summary>Is it legal to access sensor data from flying planes?</summary>
 
 **Answer:**  
 Yes, it’s legal to use the OpenSky Network API. They provide public access to crowd-sourced aircraft data for private and academic use via their official REST API. Be sure to review their terms of use for any specific limitations or attribution requirements.
 </details>
 
 <details>
-<summary>**Why might I stop seeing new avionic data coming in after a while?**</summary>
+<summary>Why might I stop seeing new avionic data coming in after a while?</summary>
 
 **Answer:**  
 OpenSky Network enforces a fair use policy to keep its free service sustainable. Anonymous users face stricter rate limits, which can cause data gaps during peak usage. Creating a free account increases your request allowance. For even higher limits, contribute your own ADS-B receiver data—contributors get priority access and help expand global coverage.
 </details>
 
 <details>
-<summary>**How can I feed my own data to the OpenSky Network?**</summary>
+<summary>How can I feed my own data to the OpenSky Network?</summary>
 
 **Answer:**  
 The OpenSky Network website offers detailed setup guides and software so you can get your receiver online and contribute to their global, crowd-sourced aviation tracking system.
