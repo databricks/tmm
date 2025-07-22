@@ -13,17 +13,16 @@ Our mini guide assumes you're following these steps interactively. There are als
 - **Simplicity**: Transform complex data engineering into maintainable code using declarative pipelines
 - **AI-Powered Analytics**: Enable natural language queries on streaming IoT data
 
-## Getting Started
 
-### Prerequisites
-- [Sign up for Databricks Free Edition](https://databricks.com/try-databricks)
+## Prerequisites
+- [Sign up here for Databricks Free Edition](https://signup.databricks.com/?provider=DB_FREE_TIER&dbx_source=lf_fm1)
+- [Understand how to work with the Lakeflow Pipeline Editor](https://docs.databricks.com/aws/en/dlt/dlt-multi-file-editor)
 
 ## Code Snippets
 
 ### Streaming Table
 
-Use the new Lakeflow Pipeline editor and create the following streaming table:
-
+Use the new Lakeflow Pipeline editor and create a new ETL pipeline with the following streaming table:
 
 
 ```python
@@ -34,11 +33,10 @@ def ingest_flights():
 
 ### Environment Setup
 
-The new Lakeflow IDE is working with files. Add the OpenSky data source to your environment (this is the equivalent of running pip install in notebook):
+The new Lakeflow IDE is working with files. Add the OpenSky data source to your environment (this is the equivalent of running pip install in a notebook):
 
-1. Open your pipeline
-2. Navigate to Settings → Environment
-3. Add the following package:
+1. In your pipeline navigate to Settings → Environment
+2. Add the following package:
 ```
 pyspark_datasources
 ```
@@ -113,11 +111,19 @@ You can analyze the streaming data with AI/BI Genie with simple English queries:
 - "Plot altitude vs velocity for all aircraft"
 - "Show the locations of all planes on a map"
 
+![Aviation Data Processing Header](misc/genie.png)
+
+## Databricks Apps
+
+A Databricks app is the perfect front-end to visualize the metrics defined in the the materialized view.The animation in the header was created with Databricks Apps and a timelapse function.
+
+![Aviation Data Processing Header](misc/stats.png)
 ## Learn More
 
 - [Deep Dive Blog - comming soon!]
 - [Video Guide - comming soon!]
 - [OpenSky Network](https://opensky-network.org)
+- [Feed your own data to Open Sky](https://opensky-network.org/feed) (finally dust off that Raspberry Pi in your drawer!)
 - [Spark Declarative Pipelines](https://www.databricks.com/blog/bringing-declarative-pipelines-apache-spark-open-source-project)
 - [Lakeflow Documentation](https://docs.databricks.com/aws/en/dlt)
 - [PySpark Custom Data Sources](https://docs.databricks.com/aws/en/pyspark/datasources)
