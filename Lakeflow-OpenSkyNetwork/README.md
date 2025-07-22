@@ -146,7 +146,7 @@ Databricks Apps let you quickly create web front-ends and dashboards powered by 
 - [Deep Dive Blog – coming soon!]
 - [Video Guide – coming soon!]
 - [OpenSky Network](https://opensky-network.org)
-- [Feed your own data to OpenSky](https://opensky-network.org/feed) (time to dust off that Raspberry Pi!)
+- [Feed your own data to OpenSky](https://opensky-network.org/feed) 
 - [Spark Declarative Pipelines](https://www.databricks.com/blog/bringing-declarative-pipelines-apache-spark-open-source-project)
 - [Lakeflow Documentation](https://docs.databricks.com/aws/en/dlt)
 - [PySpark Custom Data Sources](https://docs.databricks.com/aws/en/pyspark/datasources)
@@ -156,13 +156,13 @@ Databricks Apps let you quickly create web front-ends and dashboards powered by 
 
 ## FAQ
 
+
 <details>
 <summary>What about Lakeflow Connect and Jobs?</summary>
 
 **Answer:**  
 This project focuses on Lakeflow Declarative Pipelines for data ingestion and transformation. In this example, the custom connector is provided for you. Lakeflow Connect can orchestrate large-scale ingestion from databases, SaaS apps, and message queues—no custom code required. Lakeflow Jobs helps you schedule, orchestrate, and manage complex workflows that combine pipelines, ML models, and business processes across your data platform. For example, you could use Jobs to integrate these pipelines into a broader logistics workflow.
 </details>
-
 
 <details>
 <summary>Can I use Declarative Pipelines for batch processing as well as streaming?</summary>
@@ -175,7 +175,7 @@ Yes! The same code works for both batch and streaming data. You can choose to ru
 <summary>Is it legal to access sensor data from flying planes?</summary>
 
 **Answer:**  
-Yes, it’s legal to use the OpenSky Network API. They provide public access to crowd-sourced aircraft data for private and academic use via their official REST API. Be sure to review their terms of use for any specific limitations or attribution requirements.
+Yes, it’s legal to use the OpenSky Network API. They provide public access to crowd-sourced aircraft data for private and academic use via their official REST API. Be sure to review their [terms of use](https://opensky-network.org/about/terms-of-use) for any specific limitations or attribution requirements.
 </details>
 
 <details>
@@ -189,5 +189,5 @@ OpenSky Network enforces a fair use policy to keep its free service sustainable.
 <summary>How can I feed my own data to the OpenSky Network?</summary>
 
 **Answer:**  
-The OpenSky Network website offers detailed setup guides and software so you can get your receiver online and contribute to their global, crowd-sourced aviation tracking system.
+The OpenSky Network website offers [detailed setup guides and software](https://opensky-network.org/feed) so you can get your receiver online and contribute to their global, crowd-sourced aviation tracking system. Time to dust off that old Raspberry Pi in your drawer. 
 </details>
