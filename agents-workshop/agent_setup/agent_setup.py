@@ -195,6 +195,11 @@ except Exception as e:
 
 # COMMAND ----------
 
+# MAGIC %pip install -U -qqqq mlflow-skinny[databricks] langgraph==0.3.4 databricks-langchain databricks-agents uv
+# MAGIC %restart_python
+
+# COMMAND ----------
+
 # DBTITLE 1,Deploy Agent
 from agent import AGENT
 
