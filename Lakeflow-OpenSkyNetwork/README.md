@@ -37,7 +37,7 @@ The Lakeflow IDE works with files. The first file will be a streaming table in P
 from pyspark_datasources import OpenSkyDataSource
 spark.dataSource.register(OpenSkyDataSource)
 
-# declare streaming table 
+# declare a streaming table 
 @dlt.table
 def ingest_flights():
     return spark.readStream.format("opensky").load()
@@ -61,6 +61,7 @@ Next, you need to add the OpenSky data source to your environment. Note, this is
 The materialized view summarizes and aggregates flight statistics for analytics and dashboards, making it easy to power visualizations and BI queries. We will code the materialized view on plain SQL.
 
 ```sql
+-- create a materialized view in SQL
 CREATE MATERIALIZED VIEW flight_stats AS
   SELECT
     COUNT(*) AS num_events,
