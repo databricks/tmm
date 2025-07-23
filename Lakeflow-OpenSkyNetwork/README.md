@@ -3,66 +3,72 @@
 
 ![Aviation Data Processing Header](misc/header.gif)
 
-
-
-
-This repository is a small, self-contained example that you can easily run yourself using the Databricks Free Edition. It demonstrates how to build an IoT pipeline with Lakeflow streaming tables, materialized views, AI-powered queries, and Databricks Apps for visualization. Using real-time ADS-B aircraft data from OpenSky Network, you’ll see how to set up ingestion, aggregation, and interactive analytics—all with minimal setup.
+This repository provides a small, self-contained example that you can run for free on the Databricks Platform. It demonstrates how to build a production-grade IoT pipeline with Lakeflow Declarative Pipelines using streaming tables, materialized views, and AI-powered queries. Using a custom PySpark data source that connects to real-time ADS-B aircraft data from the OpenSky Network, you’ll see how to set up ingestion, aggregation, and interactive analytics—all with minimal setup and code.
 
 ---
-
 
 ### Key Features
-- **IoT Streaming Data at Scale:** Ingest, process, and analyze billions of real-time avionics events from aircraft globally.
-- **Declarative Simplicity:** Focus on *what* you want to build, not *how* to wire it together—Lakeflow handles orchestration, dependencies, and incremental processing.
-- **AI-Driven Analytics:** Unlock natural language queries and rapid insights from streaming data.
-- **Built for Databricks Free Edition:** No paid account required to get started.
+
+-   **IoT Streaming Data at Scale:** Ingest, process, and analyze billions of real-time avionics events from aircraft globally.
+-   **Declarative:** Focus on *what* you want to build, not *how* to wire it together. Lakeflow handles the orchestration, dependencies, and incremental processing for you.
+-   **AI-Driven Analytics:** Unlock natural language queries and rapid insights from your streaming data using AI/BI Genie.
+-   **Built for Databricks Free Edition:** No paid account required to get started.
 
 ---
+
+## What You'll Build
+
+This hands-on guide walks you through the entire process from data to dashboard in four simple steps:
+
+1.  **Create a Pipeline with a Streaming Table:** You'll use the Lakeflow Pipelines Editor to create a new pipeline and ingest live flight data using a custom PySpark data source with a streaming table.
+2.  **Create a Materialized View for Analytics:** You'll add a SQL-based transformation to continuously aggregate the raw data into a summary table for fast analytics.
+3.  **Run the Pipeline:** You'll execute the pipeline and watch as Lakeflow automatically manages dependencies and processes the data.
+4.  **Explore with Natural Language:** You'll connect your new tables to AI/BI Genie and ask questions in plain English to generate charts and maps instantly.
 
 ## Prerequisites
-- [Sign up for Databricks Free Edition](https://signup.databricks.com/?provider=DB_FREE_TIER&dbx_source=lf_fm1)
-- [Get familiar with the Lakeflow Pipeline Editor](https://docs.databricks.com/aws/en/dlt/dlt-multi-file-editor)
+
+-   A Databricks account. [**Sign up for the Free Edition here**](https://login.databricks.com/signup?provider=DB_FREE_TIER&dbx_source=lf_fm1).
+-   Familiarity with the Databricks workspace and the new Lakeflow Pipeline Editor. To learn more, see the [**Lakeflow Pipelines Editor documentation**](https://docs.databricks.com/aws/en/dlt/dlt-multi-file-editor). 
+-   Approximately 3-5 minutes.
+
 
 ---
 
-## Show Me the Code
+### Step 1: Create Your Streaming Table (Live Aircraft Feed)
 
-### Streaming Table (Live Aircraft Feed)
-
-The Lakeflow IDE works with files. The first file will be a streaming table in Python that ingests live aircraft positions from the OpenSky Network in real-time. Use the Lakeflow Pipeline Editor to create it:
+The first step is to create a pipeline and ingest live aircraft positions from the OpenSky Network. The Lakeflow Editor works with files. We'll start with a Python file.
 
 ```python
-
 # import and register the datasource
 from pyspark_datasources import OpenSkyDataSource
 spark.dataSource.register(OpenSkyDataSource)
 
-# declare a streaming table 
+# declare a streaming table
 @dlt.table
 def ingest_flights():
     return spark.readStream.format("opensky").load()
-
 ```
+
 
 #### Environment Setup
 
-Next, you need to add the OpenSky data source to your environment. Note, this is the equivalent of `pip install` in a notebook (but remember, we are working with files)
+Next, you need to add the OpenSky data source to your pipeline's environment. This is the equivalent of running `pip install` for your serverless pipeline.
 
-1. In your pipeline, navigate to **Settings → Environment**.
-2. Add the following package:
-   ```
-   pyspark-data-sources
-   ```
+1.  In your pipeline, navigate to **Settings** → **Environment**.
+2.  Add the following package dependency:
+    ```
+    pyspark-data-sources
+    ```
 
 ---
 
-### Materialized View (Aggregated Flight Statistics)
+### Step 2: Create a Materialized View (Aggregated Flight Statistics)
 
-The materialized view summarizes and aggregates flight statistics for analytics and dashboards, making it easy to power visualizations and BI queries. We will code the materialized view on plain SQL.
+Next, let's add a second transformation that calculates statistics on the incoming flight data. A materialized view pre-computes results, making it perfect for powering fast analytics and dashboards. We'll create our materialized view using plain SQL.
 
 ```sql
 -- create a materialized view in SQL
-CREATE MATERIALIZED VIEW flight_stats AS
+CREATE MATERIALIZED VIEW flights_stats AS
   SELECT
     COUNT(*) AS num_events,
     COUNT(DISTINCT icao24) AS unique_aircraft,
@@ -71,43 +77,62 @@ CREATE MATERIALIZED VIEW flight_stats AS
     MAX(velocity) AS max_speed,
     MAX(geo_altitude) AS max_altitude,
     TIMESTAMPDIFF(SECOND, MIN(time_ingest), MAX(time_ingest)) AS observation_duration
-  FROM ingest_flights
+  FROM STREAM(TABLE(ingest_flights));```
 ```
+---
+
+### Step 3: Run the Pipeline
+
+With your transformations defined, click the **Run pipeline** button. You can explore the pipeline graph, click on the nodes to preview data, and view the **Performance** and **Data** tabs at the bottom of the IDE to see your pipeline in action.
 
 ---
-## Run the Pipeline
 
-Run the pipeline. Then explore the pipeline graph, click on the nodes of the graph, and the performance and data tabs at the bottom of the IDE. 
+### Step 4: Explore with Natural Language Queries
+
+With Genie, you can create a new space and connect the `ingest_flights` and `flights_stats` data tables. Once your data is connected, you can analyze it by asking natural language questions, such as _explain the data set_ to understand the schema or _how many unique flights did we spot?_ to query specific metrics.
+
+Genie also generates visualizations directly from your requests; for instance, ask to _plot the locations of planes with unique call signs_ to create an interactive map, or _plot altitude vs velocity_ to produce a scatter plot analyzing flight characteristics. Try asking the following questions in the prompt box at the bottom:
+
+
+
+![Aviation Data Processing Genie](misc/genie.png)
 
 ---
+
 ## Visualization Options
 
-- Use AI/BI Genie for instant dashboards and natural language insights.
-- Build custom visualizations with Databricks Apps using any modern web framework.
-- Create interactive real-time maps with frameworks like Dash and OpenLayers.
+-   Use **AI/BI Genie** for instant dashboards and natural language insights.
+-   Build custom visualizations with **Databricks Apps** using any modern web framework.
+-   Create interactive real-time maps with frameworks like **Dash** and **OpenLayers**.
+
+![Aviation Data Processing Stats](misc/stats.png)
 
 ---
 
 ## Optional Configurations
 
-The example above is standalone and should work out of the box for most users. However, you may want to fine-tune your pipeline for specific regions, authentication, or advanced data filtering. Consider these configuration options:
+The example above is standalone and should work out of the box. However, you can fine-tune your pipeline for specific regions, authentication, or advanced data filtering.
 
 ### Regional Filtering
 
 The data source provides built-in regions to limit data to your area of interest:
-- AFRICA
-- EUROPE
-- NORTH_AMERICA
-- GLOBAL (for worldwide coverage)
+
+-   `AFRICA`
+-   `EUROPE`
+-   `NORTH_AMERICA`
+-   `GLOBAL` (for worldwide coverage)
 
 ### Authentication
 
-For production and higher rate limits, register for API credentials at [opensky-network.org](https://opensky-network.org):
-- Anonymous: 100 calls per day
-- Authenticated: 4,000 calls per day
-- Data contributors: 8,000 calls per day
+For production use and higher rate limits, register for API credentials at [opensky-network.org](https://opensky-network.org/):
+
+-   **Anonymous:** 100 calls per day
+-   **Authenticated:** 4,000 calls per day
+-   **Data contributors:** 8,000 calls per day
 
 ### Advanced Streaming Table Configuration
+
+This example adds data quality rules with `@dlt.expect` and configures the data source with a specific region and credentials.
 
 ```python
 from pyspark_datasources import OpenSkyDataSource
@@ -130,73 +155,43 @@ def ingest_flights():
 
 ---
 
-## Natural Language Queries
-
-Query your streaming data using AI/BI Genie, just by typing questions like:
-
-- "How many unique flights are currently tracked?"
-- "Plot altitude vs. velocity for all aircraft."
-- "Show the locations of all planes on a map."
-
-![Aviation Data Processing Genie](misc/genie.png)
-
----
-
-## Databricks Apps
-
-Databricks Apps let you quickly create web front-ends and dashboards powered by your data pipeline. The example dashboard below and the animation in the header were both created using Databricks Apps and a timelapse function.
-
-![Aviation Data Processing Stats](misc/stats.png)
-
----
-
 ## Learn More
 
-- [Deep Dive Blog – coming soon!]
-- [Video Guide – coming soon!]
-- [OpenSky Network](https://opensky-network.org)
-- [Feed your own data to OpenSky](https://opensky-network.org/feed) 
-- [Spark Declarative Pipelines](https://www.databricks.com/blog/bringing-declarative-pipelines-apache-spark-open-source-project)
-- [Lakeflow Documentation](https://docs.databricks.com/aws/en/dlt)
-- [PySpark Custom Data Sources](https://docs.databricks.com/aws/en/pyspark/datasources)
+-   [Blog: Bringing Declarative Pipelines to the Apache Spark™ Open Source Project](https://www.databricks.com/blog/bringing-declarative-pipelines-apache-spark-open-source-project)
+-   [Documentation: Lakeflow Declarative Pipelines](https://docs.databricks.com/aws/en/dlt)
+-   [Documentation: PySpark Custom Data Sources](https://docs.databricks.com/aws/en/pyspark/datasources)
+-   [OpenSky Network](https://opensky-network.org/)
+-   [Feed your own data to OpenSky](https://opensky-network.org/community/projects/3-ads-b-receiver-network)
 
 ---
 
-
 ## FAQ
-
 
 <details>
 <summary>What about Lakeflow Connect and Jobs?</summary>
 
-**Answer:**  
-This project focuses on Lakeflow Declarative Pipelines for data ingestion and transformation. In this example, the custom connector is provided for you. Lakeflow Connect can orchestrate large-scale ingestion from databases, SaaS apps, and message queues—no custom code required. Lakeflow Jobs helps you schedule, orchestrate, and manage complex workflows that combine pipelines, ML models, and business processes across your data platform. For example, you could use Jobs to integrate these pipelines into a broader logistics workflow.
+**Answer:**
+This project focuses on Lakeflow Declarative Pipelines for data ingestion and transformation. In this example, the custom connector is provided for you. Lakeflow Connect can orchestrate large-scale ingestion from databases, SaaS apps, and message queues--no custom code required. Lakeflow Jobs helps you schedule, orchestrate, and manage complex workflows that combine pipelines, ML models, and business processes across your data platform. For example, you could use Jobs to integrate these pipelines into a broader logistics workflow.
 </details>
 
 <details>
 <summary>Can I use Declarative Pipelines for batch processing as well as streaming?</summary>
 
-**Answer:**  
+**Answer:**
 Yes! The same code works for both batch and streaming data. You can choose to run the pipeline continuously or schedule it at specific times (for example, every Friday at 3:30 PM). Streaming tables always ingest data incrementally, so batch data is only read once when it's new.
 </details>
 
 <details>
 <summary>Is it legal to access sensor data from flying planes?</summary>
 
-**Answer:**  
+**Answer:**
 Yes, it’s legal to use the OpenSky Network API. They provide public access to crowd-sourced aircraft data for private and academic use via their official REST API. Be sure to review their [terms of use](https://opensky-network.org/about/terms-of-use) for any specific limitations or attribution requirements.
 </details>
 
 <details>
 <summary>Why might I stop seeing new avionic data coming in after a while?</summary>
 
-**Answer:**  
-OpenSky Network enforces a fair use policy to keep its free service sustainable. Anonymous users face stricter rate limits, which can cause data gaps during peak usage. Creating a free account increases your request allowance. For even higher limits, contribute your own ADS-B receiver data—contributors get priority access and help expand global coverage.
+**Answer:**
+OpenSky Network enforces a fair use policy to keep its free service sustainable. Anonymous users face stricter rate limits, which can cause data gaps during peak usage. Creating a [free account](https://opensky-network.org/community/registration) increases your request allowance. For even higher limits, contribute your own ADS-B receiver data--contributors get priority access and help expand global coverage.
 </details>
 
-<details>
-<summary>How can I feed my own data to the OpenSky Network?</summary>
-
-**Answer:**  
-The OpenSky Network website offers [detailed setup guides and software](https://opensky-network.org/feed) so you can get your receiver online and contribute to their global, crowd-sourced aviation tracking system. Time to dust off that old Raspberry Pi in your drawer. 
-</details>
