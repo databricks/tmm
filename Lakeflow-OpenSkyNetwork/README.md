@@ -1,7 +1,5 @@
 
-# Billions of Avionic Events,  
-# Thousands of Aircraft,  
-# One Simple Declarative Pipeline
+# Billions of Avionic Events, Thousands of Aircraft, One Simple Declarative Pipeline
 
 ![Aviation Data Processing Header](misc/header.gif)
 
