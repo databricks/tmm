@@ -35,11 +35,15 @@ The Lakeflow IDE works with files. The first file will be a streaming table in P
 
 ```python
 
+# import and register the datasource
 from pyspark_datasources import OpenSkyDataSource
+spark.dataSource.register(OpenSkyDataSource)
 
+# declare streaming table 
 @dlt.table
 def ingest_flights():
     return spark.readStream.format("opensky").load()
+
 ```
 
 #### Environment Setup
@@ -74,7 +78,7 @@ CREATE MATERIALIZED VIEW flight_stats AS
 ---
 ## Run the Pipeline
 
-Run the pipeline. Then explore the pipeline graph, click on the nodes of the graph and the performance and data tabs at the bottom of the IDE. 
+Run the pipeline. Then explore the pipeline graph, click on the nodes of the graph, and the performance and data tabs at the bottom of the IDE. 
 
 ---
 ## Visualization Options
@@ -108,6 +112,8 @@ For production and higher rate limits, register for API credentials at [opensky-
 
 ```python
 from pyspark_datasources import OpenSkyDataSource
+spark.dataSource.register(OpenSkyDataSource)
+
 @dlt.expect("icao24_not_null", "icao24 IS NOT NULL")
 @dlt.expect_or_drop("coord_exist", "latitude IS NOT NULL AND longitude IS NOT NULL")
 @dlt.table
