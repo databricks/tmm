@@ -167,7 +167,7 @@ def ingest_flights():
 -   [Documentation: Lakeflow Declarative Pipelines](https://docs.databricks.com/aws/en/dlt)
 -   [Documentation: PySpark Custom Data Sources](https://docs.databricks.com/aws/en/pyspark/datasources)
 -   [OpenSky Network](https://opensky-network.org/)
--   [Feed your own data to OpenSky](https://opensky-network.org/community/projects/3-ads-b-receiver-network)
+-   [Feed your own data to OpenSky](https://opensky-network.org/feed)
 
 ---
 
