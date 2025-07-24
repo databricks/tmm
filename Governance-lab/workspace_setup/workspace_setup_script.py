@@ -7,7 +7,6 @@ from databricks.sdk import WorkspaceClient
 
 # Initialize clients
 w = WorkspaceClient()
-client = VectorSearchClient()
 
 base_url = "https://raw.githubusercontent.com/databricks/tmm/main/Governance-lab/data"
 csv_files = {
