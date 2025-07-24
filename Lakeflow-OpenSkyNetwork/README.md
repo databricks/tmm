@@ -38,7 +38,7 @@ This hands-on guide walks you through the entire process from data to dashboard 
 
 ### Step 0: Chose your Path
 
-We offer two ways to follow this guide. I recommend to learn about the Lakeflow Pipelines Editor and then follow the Fast Track. This will maximise your learning. If you prefer a detailed step by step walkthrough, expand the <a href="Instructions.md" target="_blank">Step-by-Step Guide to Declarative Pipelines</a>.
+We offer two ways to follow this guide. I recommend to learn about the Lakeflow Pipelines Editor and then follow the Fast Track. This will maximise your learning. If you prefer a detailed step by step walkthrough, expand the [Step-by-Step Guide to Declarative Pipelines](Instructions.md)
 
 ### Step 1: Create Your Streaming Table (Live Aircraft Feed)
 
@@ -181,10 +181,10 @@ This project focuses on Lakeflow Declarative Pipelines for data ingestion and tr
 </details>
 
 <details>
-<summary>What about Datbrick DLT or Delta Live Tables?</summary>
+<summary>What about Databricks DLT and Databricks Delta Live Tables?</summary>
 
 **Answer:**
-At Data + AI Summit in June 2025, Databricks released Lakeflow. Lakeflow unifies Data Engineering with Lakeflow Connect, Lakeflow Declarative Pipelines (previously known as DLT), and Lakeflow Jobs (previously known as Workflows).
+At Data + AI Summit in June 2025, Databricks released Lakeflow. Lakeflow unifies Data Engineering with Lakeflow Connect, Lakeflow Declarative Pipelines (previously known as DLT), and Lakeflow Jobs (previously known as Workflows). DLT is now Lakeflow Declarative Pipelines. 
 </details>
 
 <details>
