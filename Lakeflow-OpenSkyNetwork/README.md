@@ -36,6 +36,10 @@ This hands-on guide walks you through the entire process from data to dashboard 
 
 ---
 
+### Step 0: Chose your Path
+
+We offer two ways to follow this guide. I recommend to learn about the Lakeflow Pipelines Editor and then follow the Fast Track. This will maximise your learning. If you prefer a detailed step by step walkthrough, expand the [Step-by-Step Guide](Instructions.md).
+
 ### Step 1: Create Your Streaming Table (Live Aircraft Feed)
 
 The first step is to create a pipeline and ingest live aircraft positions from the OpenSky Network. The Lakeflow Editor works with files. We'll start with a Python file.
