@@ -3,7 +3,9 @@
 
 ![Aviation Data Processing Header](misc/header.gif)
 
-This repository provides a small, self-contained example that you can run for free on the Databricks Platform. It demonstrates how to build a production-grade IoT pipeline with Lakeflow Declarative Pipelines using streaming tables, materialized views, and AI-powered queries. Using a custom PySpark data source that connects to real-time ADS-B aircraft data from the OpenSky Network, you’ll see how to set up ingestion, aggregation, and interactive analytics—all with minimal setup and code.
+This repository provides a small, self-contained Declarative Pipelines example that you can run on the Free Edition of the Databricks Platform. It demonstrates how to build a IoT pipeline using streaming tables, materialized views, and AI-powered queries. We use a custom PySpark data source that connects to real-time aircraft data from the OpenSky Network. 
+
+Learn how to use ingestion, aggregation, and interactive analytics—all with minimal setup and code.
 
 ---
 
@@ -12,7 +14,7 @@ This repository provides a small, self-contained example that you can run for fr
 -   **IoT Streaming Data at Scale:** Ingest, process, and analyze billions of real-time avionics events from aircraft globally.
 -   **Declarative:** Focus on *what* you want to build, not *how* to wire it together. Lakeflow handles the orchestration, dependencies, and incremental processing for you.
 -   **AI-Driven Analytics:** Unlock natural language queries and rapid insights from your streaming data using AI/BI Genie.
--   **Built for Databricks Free Edition:** No paid account required to get started.
+-   **Works on Databricks Free Edition:** No paid account required to get started.
 
 ---
 
@@ -175,6 +177,13 @@ This project focuses on Lakeflow Declarative Pipelines for data ingestion and tr
 </details>
 
 <details>
+<summary>What about Datbrick DLT or Delta Live Tables?</summary>
+
+**Answer:**
+At Data + AI Summit in June 2025, Databricks released Lakeflow. Lakeflow unifies Data Engineering with Lakeflow Connect, Lakeflow Declarative Pipelines (previously known as DLT), and Lakeflow Jobs (previously known as Workflows).
+</details>
+
+<details>
 <summary>Can I use Declarative Pipelines for batch processing as well as streaming?</summary>
 
 **Answer:**
@@ -185,7 +194,7 @@ Yes! The same code works for both batch and streaming data. You can choose to ru
 <summary>Is it legal to access sensor data from flying planes?</summary>
 
 **Answer:**
-Yes, it’s legal to use the OpenSky Network API. They provide public access to crowd-sourced aircraft data for private and academic use via their official REST API. Be sure to review their [terms of use](https://opensky-network.org/about/terms-of-use) for any specific limitations or attribution requirements.
+The OpenSky Network API provides public access to crowd-sourced aircraft data for private and academic use via their official REST API. Be sure to review their [terms of use](https://opensky-network.org/about/terms-of-use) for any specific limitations or attribution requirements.
 </details>
 
 <details>
