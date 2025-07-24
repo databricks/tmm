@@ -1,0 +1,11 @@
+review_id,employee_id,review_date,rating,comments,reviewer_id
+R001,E001,2023-12-15,4.5,Exceeds expectations in technical leadership,M001
+R002,E002,2023-12-16,3.8,Consistently meets sales targets,M002
+R003,E003,2023-12-17,4.2,Strong HR partner and problem solver,M003
+R004,E004,2023-12-18,4.7,Outstanding technical contributions,M001
+R005,E005,2023-12-19,4,Good marketing campaigns and team collaboration,M004
+R006,E006,2023-12-15,3.9,Solid sales performance with room for growth,M002
+R007,E007,2023-12-16,4.3,Excellent employee relations skills,M003
+R008,E008,2023-12-17,4.6,Impressive start as new engineer,M001
+R009,E009,2023-12-18,3.7,Meeting expectations in all areas,M004
+R010,E010,2023-12-19,4.4,Strong financial analysis and reporting,M005

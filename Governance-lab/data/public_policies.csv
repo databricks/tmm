@@ -1,0 +1,9 @@
+policy_id,policy_name,category,description,last_updated,version
+POL001,Code of Conduct,Ethics,Company ethical guidelines and behavioral standards,2023-06-15,2.1
+POL002,Remote Work Policy,Operations,Guidelines for remote work arrangements and expectations,2023-09-01,1.5
+POL003,PTO Policy,Benefits,Paid time off accrual and usage guidelines,2023-01-01,3
+POL004,Health Benefits,Benefits,Company health insurance and wellness program offerings,2023-11-01,2.3
+POL005,Anti-Harassment Policy,Compliance,Zero tolerance policy for workplace harassment,2023-08-15,2
+POL006,Data Privacy Policy,Security,Employee and customer data protection guidelines,2023-10-20,1.8
+POL007,Expense Reimbursement,Finance,Guidelines for business expense claims and limits,2023-07-01,1.2
+POL008,Professional Development,Benefits,Training and education reimbursement programs,2023-05-15,1

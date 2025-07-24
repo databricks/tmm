@@ -1,0 +1,9 @@
+procedure_id,procedure_name,category,access_level,description,last_reviewed
+PROC001,Termination Process,HR Operations,HR Only,Steps for employee separation and offboarding,2023-11-01
+PROC002,Salary Review Process,Compensation,HR/Management,Annual compensation review workflow and approvals,2023-12-01
+PROC003,Investigation Protocol,Compliance,HR Only,Procedures for conducting workplace investigations,2023-10-15
+PROC004,Onboarding Checklist,HR Operations,HR/Management,New employee onboarding tasks and timeline,2023-09-20
+PROC005,Performance Improvement Plan,Performance,HR/Management,PIP creation and monitoring procedures,2023-08-30
+PROC006,Recruitment Workflow,Talent Acquisition,HR/Management,End-to-end hiring process and approvals,2023-07-25
+PROC007,Benefits Enrollment,Benefits,HR Only,Employee benefits selection and processing,2023-06-10
+PROC008,Disciplinary Actions,Compliance,HR Only,Progressive discipline guidelines and documentation,2023-11-30

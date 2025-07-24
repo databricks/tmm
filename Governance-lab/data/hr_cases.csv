@@ -1,0 +1,6 @@
+case_id,employee_id,case_type,status,opened_date,closed_date,severity,description
+HR001,E002,Performance Improvement,Closed,2023-10-01,2023-11-15,Low,Sales target improvement plan
+HR002,E006,Workplace Conflict,Active,2023-12-01,,Medium,Disagreement with colleague over project ownership
+HR003,E004,Leave Request,Closed,2023-11-20,2023-11-22,Low,Approved family medical leave
+HR004,E009,Compliance Training,Active,2023-12-10,,Low,Overdue mandatory security training
+HR005,E003,Policy Violation,Under Investigation,2023-12-18,,High,Alleged misuse of company resources
