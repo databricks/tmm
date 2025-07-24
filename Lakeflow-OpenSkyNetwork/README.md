@@ -1,6 +1,6 @@
 
 # Billions of Avionic Events, Thousands of Aircraft, One Simple Declarative Pipeline
-
+### Fast Track To Lakeflow Declarative Pipelines
 ![Aviation Data Processing Header](misc/header.gif)
 
 This repository provides a small, self-contained Declarative Pipelines example that you can run on the Free Edition of the Databricks Platform. It demonstrates how to build a IoT pipeline using streaming tables, materialized views, and AI-powered queries. We use a custom PySpark data source that connects to real-time aircraft data from the OpenSky Network. 
@@ -38,7 +38,7 @@ This hands-on guide walks you through the entire process from data to dashboard 
 
 ### Step 0: Chose your Path
 
-We offer two ways to follow this guide. I recommend to learn about the Lakeflow Pipelines Editor and then follow the Fast Track. This will maximise your learning. If you prefer a detailed step by step walkthrough, expand the [Step-by-Step Guide](Instructions.md).
+We offer two ways to follow this guide. I recommend to learn about the Lakeflow Pipelines Editor and then follow the Fast Track. This will maximise your learning. If you prefer a detailed step by step walkthrough, expand the <a href="Instructions.md" target="_blank">Step-by-Step Guide to Declarative Pipelines</a>.
 
 ### Step 1: Create Your Streaming Table (Live Aircraft Feed)
 
