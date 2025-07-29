@@ -1,0 +1,17 @@
+resources:
+  pipelines:
+    opensky_pl:
+      name: opensky_pl
+      libraries:
+        - glob:
+            include: ../src/opensky-pipeline/transformations/**
+      catalog: ${var.catalog_name}
+      channel: PREVIEW
+      development: true
+      environment:
+        dependencies:
+          - pyspark-data-sources
+      photon: true
+      root_path: ../src/opensky-pipeline/
+      schema: ${var.schema_name}
+      serverless: true

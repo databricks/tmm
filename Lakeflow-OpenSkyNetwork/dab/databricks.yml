@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=bundle_config_schema.json
+# This is a Databricks asset bundle definition for lakeflow_ddd.
+# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
+bundle:
+  name: lakeflow_opensky
+  uuid: 3439dcc3-45ad-4fe9-b9ab-703b866a2bf4
+
+variables:
+  catalog_name:
+    description: "Catalog name for the pipeline"
+    default: "demos1"
+  schema_name:
+    description: "Schema name for the pipeline"
+    default: "opensky"
+
+
+include:
+  - resources/*.yml
+
+targets:
+  dev:
+    # The default target uses 'mode: development' to create a development copy.
+    # - Deployed resources get prefixed with '[dev my_user_name]'
+    # - Any job schedules and triggers are paused by default.
+    # See also https://docs.databricks.com/dev-tools/bundles/deployment-modes.html.
+    mode: development
+    default: true
+    workspace:
+      host: https://e2-dogfood.staging.cloud.databricks.com
+
+  prod:
+    mode: development 
+    workspace:
+      host: https://dbc-34e8a5a4-09d1.cloud.databricks.com/ 
+      root_path: /Workspace/Users/frank.munz@databricks.com/dab_${bundle.name}
+
+
