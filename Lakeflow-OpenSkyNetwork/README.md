@@ -1,5 +1,6 @@
 
-# Billions of Avionic Events, Thousands of Aircraft, One Simple Declarative Pipeline
+# Processing Millions of Events from Thousands of Aircraft with One Declarative Pipeline
+
 ### Fast Track To Lakeflow Declarative Pipelines
 ![Aviation Data Processing Header](misc/header.gif)
 
