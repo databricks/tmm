@@ -1,4 +1,4 @@
-CREATE MATERIALIZED VIEW new_loan_balances_by_country
+CREATE OR REFRESH MATERIALIZED VIEW new_loan_balances_by_country
   COMMENT "new loan balances per country"
 AS 
 SELECT 

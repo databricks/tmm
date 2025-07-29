@@ -59,7 +59,7 @@
 -- COMMAND ----------
 
 -- DBTITLE 1,Capture new incoming transactions
-CREATE STREAMING TABLE raw_txs
+CREATE OR REFRESH STREAMING TABLE raw_txs
   COMMENT "New raw loan data incrementally ingested from cloud object storage landing zone"
 AS 
 SELECT *
@@ -72,7 +72,7 @@ FROM cloud_files(
 -- COMMAND ----------
 
 -- DBTITLE 1,Historical transaction from legacy system
-CREATE STREAMING TABLE raw_historical_loans
+CREATE OR REFRESH STREAMING TABLE raw_historical_loans
   TBLPROPERTIES ("pipelines.trigger.interval" = "6 hour")
   COMMENT "Raw historical transactions"
 AS 
@@ -88,7 +88,7 @@ FROM
 -- COMMAND ----------
 
 -- DBTITLE 1,Reference table - metadata (small & almost static)
-CREATE MATERIALIZED VIEW ref_accounting_treatment
+CREATE OR REFRESH MATERIALIZED VIEW ref_accounting_treatment
   COMMENT "Lookup mapping for accounting codes"
 AS 
 SELECT 

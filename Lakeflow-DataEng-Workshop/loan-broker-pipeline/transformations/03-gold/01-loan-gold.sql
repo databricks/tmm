@@ -1,4 +1,4 @@
-CREATE MATERIALIZED VIEW total_loan_balances
+CREATE OR REFRESH MATERIALIZED VIEW total_loan_balances
   COMMENT "Combines historical and new loan data for unified rollup of loan balances"
   TBLPROPERTIES ("pipelines.autoOptimize.zOrderCols" = "location_code")
 AS 

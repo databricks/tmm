@@ -21,7 +21,7 @@ FROM
     ref_accounting_treatment ref 
       ON txs.accounting_treatment_id = ref.id;
 
-CREATE STREAMING TABLE cleaned_new_txs (
+CREATE OR REFRESH STREAMING TABLE cleaned_new_txs (
     CONSTRAINT `Payments should be this year`  EXPECT (next_payment_date > date('2020-12-31')),
     CONSTRAINT `Balance should be positive`    EXPECT (balance > 0 AND arrears_balance > 0) ON VIOLATION DROP ROW,
     CONSTRAINT `Cost center must be specified` EXPECT (cost_center_code IS NOT NULL) ON VIOLATION FAIL UPDATE
@@ -34,7 +34,7 @@ FROM
     STREAM(new_txs);
 
 -- This is the inverse condition of the above statement to quarantine incorrect data for further analysis.
-CREATE STREAMING TABLE quarantine_bad_txs (
+CREATE OR REFRESH STREAMING TABLE quarantine_bad_txs (
     CONSTRAINT `Payments should be this year`  EXPECT (next_payment_date <= date('2020-12-31')),
     CONSTRAINT `Balance should be positive`    EXPECT (balance <= 0 OR arrears_balance <= 0) ON VIOLATION DROP ROW
 )
@@ -46,7 +46,7 @@ FROM
     STREAM(new_txs);
 
 -- define the historical tx
-CREATE MATERIALIZED VIEW historical_txs
+CREATE OR REFRESH MATERIALIZED VIEW historical_txs
   COMMENT "Historical loan transactions"
 AS 
 SELECT 
