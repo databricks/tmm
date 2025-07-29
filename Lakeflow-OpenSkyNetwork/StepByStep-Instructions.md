@@ -1,6 +1,7 @@
 
-# Fast Track to Lakeflow Declarative Pipelines on Databricks
 
+#Step-By-Step Instructions: Lakeflow Declarative Pipelines on Databricks
+This resource is provided as-is. The Lakeflow UI is being improved continuously, so expect minor deviations from the steps below. I'm actually considering replacing this step-by-step guide with a video in the future, so please [bookmark this README](README.md).
 
 
 ---

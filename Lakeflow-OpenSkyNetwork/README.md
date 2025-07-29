@@ -38,7 +38,7 @@ This hands-on guide walks you through the entire process from data to dashboard 
 
 ### Step 0: Chose your Path
 
-We offer two ways to follow this guide. I recommend to learn about the Lakeflow Pipelines Editor and then follow the Fast Track. This will maximise your learning. If you prefer a detailed step by step walkthrough, expand the [Step-by-Step Guide to Declarative Pipelines](Instructions.md)
+We offer two ways to follow this guide. I recommend to learn about the Lakeflow Pipelines Editor and then follow the Fast Track. This will maximise your learning. If you prefer a detailed step by step walkthrough, expand the [Step-by-Step Guide to Declarative Pipelines](StepByStep-Instructions.md)
 
 ### Step 1: Create Your Streaming Table (Live Aircraft Feed)
 
