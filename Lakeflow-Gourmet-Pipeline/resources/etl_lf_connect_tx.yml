@@ -2,12 +2,12 @@
 
 resources: 
   pipelines:
-    gourmet-pipeline:
-      name: gourmet-pipeline
-      root_path: ../src/gourmet-pipeline/
+    lf-connect-tx:
+      name: lf-connect-tx
+      root_path: ../src/lf-connect-tx
       libraries:
         - glob:
-            include: ../src/gourmet-pipeline/transformations/**
+            include: ../src/lf-connect-tx/transformations/**
       serverless: true
       development: false
       catalog: ${var.catalog_name}

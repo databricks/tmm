@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../bundle_config_schema.json
+
+resources: 
+  pipelines:
+    lf_connect_suppliers:
+      root_path: ../src/gourmet-pipeline/
+      libraries:
+        - glob:
+            include: ../src/lf_connect_suppliers/transformations/**
+      serverless: true
+      development: false
+      catalog: ${var.catalog_name}
+      schema: ${var.schema_name}
+      photon: true
+      channel: PREVIEW

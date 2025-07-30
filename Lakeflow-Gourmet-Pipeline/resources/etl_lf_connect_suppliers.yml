@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../bundle_config_schema.json
+
+resources: 
+  pipelines:
+    lf-connect-suppliers:
+      name: lf-connect-suppliers
+      root_path: ../src/lf-connect-suppliers/
+      libraries:
+        - glob:
+            include: ../src/lf-connect-suppliers/transformations/**
+      serverless: true
+      development: false
+      catalog: ${var.catalog_name}
+      schema: ${var.schema_name}
+      photon: true
+      channel: PREVIEW

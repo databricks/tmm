@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../bundle_config_schema.json
+
+resources: 
+  pipelines:
+    lf-connect-franchises:
+      name: lf-connect-franchises
+      root_path: ../src/lf-connect-franchises/
+      libraries:
+        - glob:
+            include: ../src/lf-connect-franchises/transformations/**
+      serverless: true
+      development: false
+      catalog: ${var.catalog_name}
+      schema: ${var.schema_name}
+      photon: true
+      channel: PREVIEW

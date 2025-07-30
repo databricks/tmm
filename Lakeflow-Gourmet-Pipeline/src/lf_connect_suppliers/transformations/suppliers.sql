@@ -1,0 +1,2 @@
+CREATE MATERIALIZED VIEW lf_connect_suppliers AS
+SELECT 1;
