@@ -3,10 +3,29 @@
 
 resources:
   jobs:
-    bakehouse_orchestration:
+    gourmet-workflow:
       name: gourmet-workflow
       tasks:
+        - task_key: lf-connect-franchises
+          pipeline_task:
+            full_refresh: false 
+            pipeline_id: ${resources.pipelines.lf-connect-franchises.id}
+          run_if: ALL_SUCCESS
+        - task_key: lf-connect-suppliers
+          pipeline_task:
+            full_refresh: false 
+            pipeline_id: ${resources.pipelines.lf-connect-suppliers.id}
+          run_if: ALL_SUCCESS
+        - task_key: lf-connect-tx
+          pipeline_task:
+            full_refresh: false 
+            pipeline_id: ${resources.pipelines.lf-connect-tx.id}
+          run_if: ALL_SUCCESS
         - task_key: ingest-pipeline
+          depends_on:
+            - task_key: lf-connect-tx
+            - task_key: lf-connect-franchises
+            - task_key: lf-connect-suppliers
           notification_settings: {}
           pipeline_task:
             full_refresh: true 
@@ -34,6 +53,9 @@ resources:
             file:
               path: ../src/ai_query.sql
             warehouse_id: ${var.prod_warehouse_id}
+            parameters:
+              target_catalog: ${var.catalog_name}
+              target_schema: ${var.schema_name}
         - task_key: email-exit_without_AI
           depends_on:
             - outcome: "false"
@@ -63,4 +85,5 @@ resources:
       parameters:
         - default: "TRUE"
           name: ai_enabled
-      
+        
+        

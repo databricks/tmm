@@ -2,11 +2,12 @@
 
 resources: 
   pipelines:
-    lf_connect_suppliers:
+    gourmet-pipeline:
+      name: gourmet-pipeline
       root_path: ../src/gourmet-pipeline/
       libraries:
         - glob:
-            include: ../src/lf_connect_suppliers/transformations/**
+            include: ../src/gourmet-pipeline/transformations/**
       serverless: true
       development: false
       catalog: ${var.catalog_name}

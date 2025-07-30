@@ -1,0 +1,2 @@
+CREATE MATERIALIZED VIEW lf_connect_franchises AS
+SELECT 1;
