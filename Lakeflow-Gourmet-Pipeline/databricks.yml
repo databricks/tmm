@@ -1,15 +1,22 @@
 # yaml-language-server: $schema=./bundle_config_schema.json
 
-# Databricks asset bundle definition for cookies.
+# Gourmet-Snack-Corp
 
 variables:
   prod_warehouse_id:
     description: define prod warehouse id
     default: 4cc49c92ab107b7a
 
+  catalog_name:
+    description: "Catalog name for the pipeline"
+    default: demos1
+  schema_name:
+    description: "Schema name for the pipeline"
+    default: gourmet-snacks
+
 
 bundle:
-  name: cookies
+  name: gourmet-snack-corp
 
 include:
   - resources/*.yml
@@ -47,9 +54,8 @@ targets:
     
     workspace:
       host: https://dbc-34e8a5a4-09d1.cloud.databricks.com/      
-      #old host 
-      #host: https://dbc-0f968c38-858c.cloud.databricks.com/      
-      root_path: /Users/frank.munz@databricks.com/.bundle/${bundle.name}/${bundle.target}
+  
+      root_path: /Users/frank.munz@databricks.com/dab_${bundle.name}
       
     #run_as:
       # We could also use a service principal here,

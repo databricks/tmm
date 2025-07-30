@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../bundle_config_schema.json
+
+resources: 
+  pipelines:
+    gourmet-pipeline:
+      name: gourmet-pipeline
+      root_path: ../src/gourmet-pipeline/
+      libraries:
+        - glob:
+            include: ../src/gourmet-pipeline/transformations/**
+      serverless: true
+      development: false
+      catalog: ${var.catalog_name}
+      schema: ${var.schema_name}
+      photon: true
+      channel: PREVIEW

@@ -4,14 +4,13 @@
 resources:
   jobs:
     bakehouse_orchestration:
-      name: bakehouse_orchestration
+      name: gourmet-workflow
       tasks:
         - task_key: ingest-pipeline
           notification_settings: {}
           pipeline_task:
             full_refresh: true 
-            pipeline_id: ${resources.pipelines.bakehouse_etl.id}
-            #pipeline_id: ${var.my_pl_id}
+            pipeline_id: ${resources.pipelines.gourmet-pipeline.id}
           webhook_notifications: {}
           run_if: ALL_SUCCESS
           email_notifications: {}
@@ -64,7 +63,4 @@ resources:
       parameters:
         - default: "TRUE"
           name: ai_enabled
-      trigger:
-        file_arrival:
-          url: /Volumes/bakehouse/data_eng/file_arrival/
-        pause_status: PAUSED
+      
