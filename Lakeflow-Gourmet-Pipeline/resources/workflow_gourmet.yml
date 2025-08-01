@@ -6,10 +6,13 @@ resources:
     gourmet-workflow:
       name: gourmet-workflow
       parameters:
-        - name: gourmet_catalog
+        - name: my_catalog
           default: ${var.catalog_name}
-        - name: gourmet_schema
+        - name: my_schema
           default: ${var.schema_name}
+        - name: ai_enabled
+          default: "TRUE"
+          
       tasks:
         - task_key: lf-connect-franchises
           pipeline_task:
@@ -58,9 +61,6 @@ resources:
             file:
               path: ../src/ai_query.sql
             warehouse_id: ${var.prod_warehouse_id}
-            parameters:
-              target_catalog: ${var.catalog_name}
-              target_schema: ${var.schema_name}
         - task_key: sentiment_translate_ai_functions
           depends_on:
             - task_key: new_recipe_Claude_LLM
@@ -68,9 +68,6 @@ resources:
             file:
               path: ../src/sentiment_translate.sql
             warehouse_id: ${var.prod_warehouse_id}
-            parameters:
-              target_catalog: ${var.catalog_name}
-              target_schema: ${var.schema_name}
         - task_key: email-exit_without_AI
           depends_on:
             - outcome: "false"
@@ -97,8 +94,6 @@ resources:
         enabled: true
       notification_settings: {}
       max_concurrent_runs: 1
-      parameters:
-        - default: "TRUE"
-          name: ai_enabled
+      
         
         
