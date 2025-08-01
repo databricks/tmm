@@ -55,7 +55,8 @@ targets:
     workspace:
       host: https://dbc-34e8a5a4-09d1.cloud.databricks.com/      
       root_path: /Users/frank.munz@databricks.com/dab_${bundle.name}
-      
+    presets:
+      source_linked_deployment: true  
     #run_as:
       # We could also use a service principal here,
       # see https://docs.databricks.com/dev-tools/bundles/permissions.html.

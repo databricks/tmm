@@ -44,7 +44,7 @@ resources:
           notification_settings: {}
           run_if: ALL_SUCCESS
           webhook_notifications: {}
-        - task_key: query_DBRX_in_SQL
+        - task_key: use_Claude_LLM_desc
           depends_on:
             - task_key: is_AI_enabled
               outcome: "true"
@@ -52,6 +52,16 @@ resources:
           sql_task:
             file:
               path: ../src/ai_query.sql
+            warehouse_id: ${var.prod_warehouse_id}
+            parameters:
+              target_catalog: ${var.catalog_name}
+              target_schema: ${var.schema_name}
+        - task_key: sentiment_translate_ai_functions
+          depends_on:
+            - task_key: new_recipe_Claude_LLM
+          sql_task:
+            file:
+              path: ../src/sentiment_translate.sql
             warehouse_id: ${var.prod_warehouse_id}
             parameters:
               target_catalog: ${var.catalog_name}
