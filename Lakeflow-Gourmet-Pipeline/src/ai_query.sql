@@ -1,7 +1,7 @@
 -- create flagship description for location 
 
 USE CATALOG {{my_catalog}} ;
-USE IDENTIFIER ({{my_schema}}) ;
+USE SCHEMA {{my_schema}} ;
 
 
 
