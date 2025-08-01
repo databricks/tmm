@@ -44,7 +44,7 @@ resources:
           notification_settings: {}
           run_if: ALL_SUCCESS
           webhook_notifications: {}
-        - task_key: use_Claude_LLM_desc
+        - task_key: new_recipe_Claude_LLM
           depends_on:
             - task_key: is_AI_enabled
               outcome: "true"
@@ -76,7 +76,7 @@ resources:
           run_if: ALL_SUCCESS
         - task_key: update_downstream
           depends_on:
-            - task_key: query_DBRX_in_SQL
+            - task_key: new_recipe_Claude_LLM
           notebook_task:
             source: WORKSPACE
             notebook_path: ../src/Update_Downstream.py
