@@ -2,8 +2,8 @@
 
 -- USE CATALOG :target_catalog;
 -- USE SCHEMA :target_schema;
-USE CATALOG demos1;
-USE SCHEMA `gourmet-snacks`;
+USE CATALOG ${var.catalog_name};
+USE SCHEMA ${var.schema_name};
 
 DROP FUNCTION IF EXISTS gen_flagship_description;
 
