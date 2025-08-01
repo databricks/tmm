@@ -5,6 +5,11 @@ resources:
   jobs:
     gourmet-workflow:
       name: gourmet-workflow
+      parameters:
+        - name: gourmet_catalog
+          default: ${var.catalog_name}
+        - name: gourmet_schema
+          default: ${var.schema_name}
       tasks:
         - task_key: lf-connect-franchises
           pipeline_task:

@@ -1,12 +1,6 @@
 
-USE CATALOG demos1;
-USE SCHEMA `gourmet-snacks`;
-
---ALTER TABLE flagship_stores
---ADD COLUMN desc_es STRING;
-
--- ALTER TABLE flagship_stores
---ADD COLUMN sentiment STRING;
+USE CATALOG {{my_catalog}} ;
+USE SCHEMA {{my_schema}} ;
 
 
 CREATE OR REPLACE TABLE flagship_stores AS

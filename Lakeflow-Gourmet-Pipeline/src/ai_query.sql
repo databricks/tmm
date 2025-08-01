@@ -1,9 +1,8 @@
 -- create flagship description for location 
 
--- USE CATALOG :target_catalog;
--- USE SCHEMA :target_schema;
-USE CATALOG ${var.catalog_name};
-USE SCHEMA ${var.schema_name};
+
+USE CATALOG {{my_catalog}} ;
+USE SCHEMA {{my_schema}} ;
 
 DROP FUNCTION IF EXISTS gen_flagship_description;
 

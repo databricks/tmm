@@ -57,6 +57,10 @@ targets:
       root_path: /Users/frank.munz@databricks.com/dab_${bundle.name}
     presets:
       source_linked_deployment: true  
+    variables:
+      catalog_name: demos1
+      schema_name: gourmet-snacks
+
     #run_as:
       # We could also use a service principal here,
       # see https://docs.databricks.com/dev-tools/bundles/permissions.html.
