@@ -1,7 +1,9 @@
 -- create flagship description for location 
 
 USE CATALOG {{my_catalog}} ;
-USE SCHEMA {{my_schema}} ;
+USE IDENTIFIER ({{my_schema}}) ;
+
+
 
 DROP FUNCTION IF EXISTS gen_flagship_description;
 
