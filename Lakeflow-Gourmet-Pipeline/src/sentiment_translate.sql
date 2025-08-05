@@ -1,6 +1,7 @@
 
 USE CATALOG {{my_catalog}} ;
-USE SCHEMA {{my_schema}} ;
+USE IDENTIFIER({{my_schema}});
+
 
 
 CREATE OR REPLACE TABLE flagship_stores AS

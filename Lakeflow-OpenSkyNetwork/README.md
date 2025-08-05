@@ -28,6 +28,8 @@ This hands-on guide walks you through the entire process from data to dashboard 
 3.  **Run the Pipeline:** You'll execute the pipeline and watch as Lakeflow automatically manages dependencies and processes the data.
 4.  **Explore with Natural Language:** You'll connect your new tables to AI/BI Genie and ask questions in plain English to generate charts and maps instantly.
 
+![Aviation Data Processing Header](misc/ldp_animated.gif)
+
 ## Prerequisites
 
 -   A Databricks account. [**Sign up for the Free Edition here**](https://login.databricks.com/signup?provider=DB_FREE_TIER&dbx_source=lf_fm1).
