@@ -3,7 +3,7 @@
     {
       "name": "1375151d",
       "displayName": "results",
-      "query": "select * from bakehouse_active.pipelines.flagship_stores"
+      "query": "select * from demos1.gourmet_pipe.flagship_stores"
     },
     {
       "name": "5b810f29",
