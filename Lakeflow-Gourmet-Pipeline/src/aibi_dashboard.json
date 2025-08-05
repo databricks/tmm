@@ -44,14 +44,6 @@
                     {
                       "name": "description",
                       "expression": "`description`"
-                    },
-                    {
-                      "name": "in spanish",
-                      "expression": "`desc_es`"
-                    },
-                    {
-                      "name": "description",
-                      "expression": "`sentiment`"
                     }
                   ],
                   "disaggregated": true
