@@ -44,6 +44,14 @@
                     {
                       "name": "description",
                       "expression": "`description`"
+                    },
+                    {
+                      "name": "in spanish",
+                      "expression": "`desc_es`"
+                    },
+                    {
+                      "name": "description",
+                      "expression": "`sentiment`"
                     }
                   ],
                   "disaggregated": true
@@ -182,7 +190,7 @@
                     "displayAs": "string",
                     "visible": true,
                     "order": 5,
-                    "title": "DBRX Description of new Store",
+                    "title": "LLM model new recipe",
                     "allowSearch": false,
                     "alignContent": "left",
                     "allowHTML": false,
