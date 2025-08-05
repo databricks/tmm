@@ -3,18 +3,22 @@
     {
       "name": "1375151d",
       "displayName": "results",
-      "query": "select * from demos1.gourmet_pipe.flagship_stores"
+      "queryLines": [
+        "select * from demos1.gourmet_pipe.flagship_stores"
+      ]
     },
     {
       "name": "5b810f29",
       "displayName": "franchises",
-      "query": "SELECT country, city, longitude, latitude, size FROM bakehouse.sales.franchises"
+      "queryLines": [
+        "SELECT country, city, longitude, latitude, size FROM bakehouse.sales.franchises"
+      ]
     }
   ],
   "pages": [
     {
       "name": "8936ccd4",
-      "displayName": "New Page",
+      "displayName": "Dashboard",
       "layout": [
         {
           "widget": {
@@ -44,6 +48,14 @@
                     {
                       "name": "description",
                       "expression": "`description`"
+                    },
+                    {
+                      "name": "desc_es",
+                      "expression": "`desc_es`"
+                    },
+                    {
+                      "name": "sentiment",
+                      "expression": "`sentiment`"
                     }
                   ],
                   "disaggregated": true
@@ -190,6 +202,60 @@
                     "useMonospaceFont": false,
                     "preserveWhitespace": false,
                     "displayName": "description"
+                  },
+                  {
+                    "fieldName": "desc_es",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 6,
+                    "title": "in Spanish",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "desc_es"
+                  },
+                  {
+                    "fieldName": "sentiment",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 7,
+                    "title": "sentiment",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "sentiment"
                   }
                 ]
               },
@@ -421,7 +487,42 @@
             "height": 6
           }
         }
-      ]
+      ],
+      "pageType": "PAGE_TYPE_CANVAS"
     }
-  ]
+  ],
+  "uiSettings": {
+    "theme": {
+      "canvasBackgroundColor": {
+        "light": "#F4F2ED",
+        "dark": "#1F1E1D"
+      },
+      "widgetBackgroundColor": {
+        "light": "#EBE9E2",
+        "dark": "#1B1817"
+      },
+      "widgetBorderColor": {
+        "light": "#D5CEC3",
+        "dark": "#2F2E2B"
+      },
+      "fontColor": {
+        "light": "#3D3C39",
+        "dark": "#FAFBF9"
+      },
+      "selectionColor": {
+        "light": "#5F7E52",
+        "dark": "#7A8F3E"
+      },
+      "visualizationColors": [
+        "#1A4F27",
+        "#B35900",
+        "#3A9BDC",
+        "#7A8F3E",
+        "#E8B200",
+        "#767676",
+        "#C23B22"
+      ],
+      "widgetHeaderAlignment": "LEFT"
+    }
+  }
 }
