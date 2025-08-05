@@ -1,5 +1,5 @@
-# DLT Kafka Sink Pipeline
-A Delta Live Tables pipeline that reads cookie sales data and streams it to Confluent Kafka using DLT with Kafka sink capability.
+# LDP Kafka Sink Pipeline
+A LDP pipeline that reads cookie sales data and streams it to Confluent Kafka using DLT with Kafka sink capability.
 
 
 ![img](misc/diag.png)
@@ -8,7 +8,7 @@ A Delta Live Tables pipeline that reads cookie sales data and streams it to Conf
 ## Overview
 This pipeline demonstrates:
 - Reading from a Delta table source 
-- Processing and filtering records in Delta Live Tables
+- Processing and filtering records in Lakeflow Declarative Pipelines
 - Sinking transformed data to a Confluent Cloud Kafka topic
 - Using Databricks secrets for secure credential management
 
@@ -36,12 +36,8 @@ TOPIC = "your-topic-name"            # Your target Kafka topic
 ```
 3. Create Pipeline Settings
 
-- Create and configure a new **serverless DLT pipeline** in your workspace under "Pipelines" using the SQL source file
-- If you are running this while Kafka sinks are in preview you also need to select the PREVIEW channel under Setttings and add the following parameter under Settings / Avanced / Configuration 
+- Create a Lakeflow pipeline using the notebook provided 
 
-```
-pipelines.externalSink.enabled true
-```
 
 ## Security
 - Uses SASL/SSL for Kafka authentication
