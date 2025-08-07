@@ -1,6 +1,5 @@
 # AI-Powered Data Engineering with Lakeflow 
-# (Lab Guide)
-### Data+AI Summit 2025
+# Lab Guide / Aug-7, 2025
 
 <img src="https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-DataEng-Workshop/media/pl_graph.png" alt="pipeline graph" width="75%">
 
@@ -8,7 +7,7 @@
 
 ## 0. Background
 
-This lab guide is part of the Databricks Foundational Workshop "AI-Powered Data Engineering". This instructor led, beginner/intermediate level workshop is designed to give you hands-on experience with the latest Databricks data engineering capabilities. This lab guide provides high level steps to follow along with the tasks shown by the intructor. This guide is not a stand alone step-by-step beginners tutorial.  
+This lab guide is part of the Databricks Foundational Workshop "AI-Powered Data Engineering". This instructor led, beginner/intermediate level workshop is designed to give you hands-on experience with the latest Databricks data engineering capabilities. The lab guide provides high level steps to follow along with the tasks shown by the intructor. It's not a stand alone step-by-step beginners tutorial.  
 
 ### Environment
 
@@ -75,10 +74,10 @@ After this module, you should be able to work with the pipelines editor and answ
 Click on **Pipelines**, then click **Create** and select **ETL Pipeline**. There should be a popup asking you to enable the new editor. Enable it. If this succeeds, skip the two steps below.
 
 
-Otherwise, follow those steps. This is only necessary since the new editor is still in beta. 
+Otherwise, follow those steps below (note, this is only necessary since the new editor is still in beta) 
 
 Under your username / Settings / Developer (see screenshot) enable
-* ETL Pipeline Multi-File Editor
+* Lakeflow Pipelines Editor
 * Tabs for Notebooks and Files
 
 <img src="https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-DataEng-Workshop/media/enable_editor.png" alt="enable editor" width="75%">

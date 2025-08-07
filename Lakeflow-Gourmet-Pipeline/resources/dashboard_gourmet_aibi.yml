@@ -6,3 +6,4 @@ resources:
       display_name: "Gourmet-Snack Corp: Realtime Data + genAI"
       file_path: ../src/aibi_dashboard.json
       warehouse_id: ${var.prod_warehouse_id}
+      

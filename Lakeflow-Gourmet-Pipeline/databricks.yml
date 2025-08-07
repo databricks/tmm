@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=./bundle_config_schema.json
 
-# Gourmet-Snack-Corp
+# Gourmet-Pipe-Corp
 
 variables:
   prod_warehouse_id:
@@ -16,7 +16,7 @@ variables:
 
 
 bundle:
-  name: gourmet-snack-corp
+  name: gourmet-pipe-corp
 
 include:
   - resources/*.yml

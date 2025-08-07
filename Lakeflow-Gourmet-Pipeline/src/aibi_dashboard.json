@@ -11,7 +11,7 @@
       "name": "5b810f29",
       "displayName": "franchises",
       "queryLines": [
-        "SELECT country, city, longitude, latitude, size FROM bakehouse.sales.franchises"
+        "SELECT country, city, longitude, latitude, size FROM samples.bakehouse.sales_franchises"
       ]
     }
   ],
@@ -474,7 +474,7 @@
                 }
               },
               "frame": {
-                "title": "Bakehouse Franchise Location",
+                "title": "Gourmet-Pipe Shop Locations",
                 "showTitle": true,
                 "showDescription": false
               }
