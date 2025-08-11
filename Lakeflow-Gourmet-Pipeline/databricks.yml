@@ -9,10 +9,10 @@ variables:
 
   catalog_name:
     description: "Catalog name for the pipeline"
-    default: demos1
+    default: daiwt
   schema_name:
     description: "Schema name for the pipeline"
-    default: gourmet_pipe
+    default: sydney
 
 
 bundle:
