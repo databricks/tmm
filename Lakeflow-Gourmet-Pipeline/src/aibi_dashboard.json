@@ -4,7 +4,7 @@
       "name": "1375151d",
       "displayName": "results",
       "queryLines": [
-        "select * from demos1.gourmet_pipe.flagship_stores"
+        "select * from daiwt_gourmet.virtual.flagship_stores"
       ]
     },
     {
