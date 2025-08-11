@@ -16,7 +16,7 @@ variables:
 
 
 bundle:
-  name: gourmet-pipe-corp
+  name: gourmet-pipeline-food
 
 include:
   - resources/*.yml
@@ -54,7 +54,7 @@ targets:
     
     workspace:
       host: https://dbc-34e8a5a4-09d1.cloud.databricks.com/      
-      root_path: /Users/frank.munz@databricks.com/dab_${bundle.name}
+      root_path: /Users/frank.munz@databricks.com/.bundle/dab_${bundle.name}
     presets:
       source_linked_deployment: true  
 

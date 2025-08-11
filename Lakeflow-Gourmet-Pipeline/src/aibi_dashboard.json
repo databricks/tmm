@@ -299,9 +299,9 @@
           },
           "position": {
             "x": 0,
-            "y": 16,
+            "y": 18,
             "width": 6,
-            "height": 4
+            "height": 6
           }
         },
         {
@@ -352,7 +352,7 @@
           },
           "position": {
             "x": 0,
-            "y": 10,
+            "y": 12,
             "width": 3,
             "height": 6
           }
@@ -414,7 +414,7 @@
           },
           "position": {
             "x": 3,
-            "y": 10,
+            "y": 12,
             "width": 3,
             "height": 6
           }
@@ -432,7 +432,7 @@
             "x": 0,
             "y": 0,
             "width": 6,
-            "height": 10
+            "height": 12
           }
         }
       ],
