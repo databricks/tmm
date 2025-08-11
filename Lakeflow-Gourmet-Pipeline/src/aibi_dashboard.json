@@ -293,13 +293,13 @@
               "withRowNumber": true,
               "frame": {
                 "showTitle": true,
-                "title": "Future Flagship Stores with AI Details"
+                "title": "Top Selling Stores + new Food and new Marketing Campaigns"
               }
             }
           },
           "position": {
             "x": 0,
-            "y": 0,
+            "y": 16,
             "width": 6,
             "height": 4
           }
@@ -352,75 +352,7 @@
           },
           "position": {
             "x": 0,
-            "y": 4,
-            "width": 3,
-            "height": 6
-          }
-        },
-        {
-          "widget": {
-            "name": "a26a97eb",
-            "queries": [
-              {
-                "name": "main_query",
-                "query": {
-                  "datasetName": "1375151d",
-                  "fields": [
-                    {
-                      "name": "total_sales",
-                      "expression": "`total_sales`"
-                    },
-                    {
-                      "name": "city",
-                      "expression": "`city`"
-                    },
-                    {
-                      "name": "sum(total_sales)",
-                      "expression": "SUM(`total_sales`)"
-                    }
-                  ],
-                  "disaggregated": false
-                }
-              }
-            ],
-            "spec": {
-              "version": 3,
-              "widgetType": "bar",
-              "encodings": {
-                "x": {
-                  "fieldName": "city",
-                  "scale": {
-                    "type": "categorical",
-                    "sort": {
-                      "by": "y-reversed"
-                    }
-                  },
-                  "displayName": "city"
-                },
-                "y": {
-                  "fieldName": "sum(total_sales)",
-                  "scale": {
-                    "type": "quantitative"
-                  },
-                  "displayName": "Sum of total_sales"
-                },
-                "color": {
-                  "fieldName": "total_sales",
-                  "scale": {
-                    "type": "quantitative"
-                  },
-                  "displayName": "total_sales"
-                }
-              },
-              "frame": {
-                "title": "Sales per City",
-                "showTitle": true
-              }
-            }
-          },
-          "position": {
-            "x": 3,
-            "y": 4,
+            "y": 10,
             "width": 3,
             "height": 6
           }
@@ -474,17 +406,33 @@
                 }
               },
               "frame": {
-                "title": "Gourmet-Pipe Shop Locations",
+                "title": "Gourmet-Pipeline Locations Worldwide / Size of Shop",
                 "showTitle": true,
                 "showDescription": false
               }
             }
           },
           "position": {
-            "x": 0,
+            "x": 3,
             "y": 10,
-            "width": 6,
+            "width": 3,
             "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "efe03611",
+            "multilineTextboxSpec": {
+              "lines": [
+                "![Gourmet Pipe Corp](https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-Gourmet-Pipeline/misc/gourmet_header.jpg)"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 10
           }
         }
       ],
