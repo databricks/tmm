@@ -5,14 +5,14 @@
 variables:
   prod_warehouse_id:
     description: define prod warehouse id
-    default: 4cc49c92ab107b7a
+    default: bf9ae481f24f675a
 
   catalog_name:
     description: "Catalog name for the pipeline"
-    default: daiwt
+    default: daiwt_gourmet
   schema_name:
     description: "Schema name for the pipeline"
-    default: sydney
+    default: virtual
 
 
 bundle:
@@ -53,8 +53,8 @@ targets:
     mode: development
     
     workspace:
-      host: https://dbc-34e8a5a4-09d1.cloud.databricks.com/      
-      root_path: /Users/frank.munz@databricks.com/.bundles/dab_${bundle.name}
+      host: https://e2-demo-field-eng.cloud.databricks.com/      
+      root_path: ~/.bundles/dab_${bundle.name}
     presets:
       source_linked_deployment: true  
 
