@@ -127,12 +127,7 @@ The example above is standalone and should work out of the box. However, you can
 
 ### Regional Filtering
 
-The data source provides built-in regions to limit data to your area of interest:
-
--   `AFRICA`
--   `EUROPE`
--   `NORTH_AMERICA`
--   `GLOBAL` (for worldwide coverage)
+The data source provides built-in regions to limit data to your area of interest: `AFRICA`, `EUROPE`, `NORTH_AMERICA`, `SOUTH_AMERICA`, `AUSTRALIA`, `ASIA`, and `GLOBAL` (for worldwide coverage)
 
 ### Authentication
 

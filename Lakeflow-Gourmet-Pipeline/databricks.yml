@@ -13,8 +13,8 @@ variables:
 
   schema_name:
     description: "Schema name for the pipeline"
-    #default: ${workspace.current_user.short_name}
-    default: virtual
+    default: ${workspace.current_user.short_name}
+    #default: virtual
 
 #resources:
 #  schemas:
@@ -27,17 +27,20 @@ variables:
 bundle:
   name: gourmet-pipeline-food
 
-
-
 include:
   - resources/*.yml
 
+# for individual installations 
+# - keep comments on permission 
+# - keep comment on run as
+# - install into short_name schema
 
-permissions:
-      - user_name: frank.munz@databricks.com
-        level: CAN_MANAGE
-      - group_name: "account users"
-        level: CAN_RUN
+
+#permissions:
+#      - user_name: frank.munz@databricks.com
+#        level: CAN_MANAGE
+#      - group_name: "account users"
+#        level: CAN_RUN
         
 
 targets:
@@ -70,7 +73,5 @@ targets:
       source_linked_deployment: true  
 
 
-    run_as:
-      # We could also use a service principal here,
-      # see https://docs.databricks.com/dev-tools/bundles/permissions.html.
-      user_name: frank.munz@databricks.com
+#    run_as:
+#      user_name: frank.munz@databricks.com
