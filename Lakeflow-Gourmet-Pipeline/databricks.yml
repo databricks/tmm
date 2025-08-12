@@ -10,25 +10,35 @@ variables:
   catalog_name:
     description: "Catalog name for the pipeline"
     default: daiwt_gourmet
+
   schema_name:
     description: "Schema name for the pipeline"
+    #default: ${workspace.current_user.short_name}
     default: virtual
+
+#resources:
+#  schemas:
+#    my_schema:
+#      name: ${var.schema_name}
+#      catalog_name: ${var.catalog_name}
+#      comment: "personal schema created"
 
 
 bundle:
   name: gourmet-pipeline-food
 
+
+
 include:
   - resources/*.yml
 
 
-#permissions:
-#  - level: CAN_VIEW
-#    group_name: marketing
-#  - level: CAN_MANAGE
-#    user_name: frank.munz@databricks.com
-#  - level: CAN_RUN
-#    service_principal_name: 123456-abcdef
+permissions:
+      - user_name: frank.munz@databricks.com
+        level: CAN_MANAGE
+      - group_name: "account users"
+        level: CAN_RUN
+        
 
 targets:
 
@@ -52,6 +62,7 @@ targets:
     # 'run_as' must be set for all jobs when using 'mode: production'
     mode: development
     
+        
     workspace:
       host: https://e2-demo-field-eng.cloud.databricks.com/      
       root_path: ~/.bundles/dab_${bundle.name}
@@ -59,7 +70,7 @@ targets:
       source_linked_deployment: true  
 
 
-    #run_as:
+    run_as:
       # We could also use a service principal here,
       # see https://docs.databricks.com/dev-tools/bundles/permissions.html.
-      #user_name: frank.munz@databricks.com
+      user_name: frank.munz@databricks.com

@@ -3,7 +3,7 @@
 resources:
   dashboards:
     bakehouse_dashboard:
-      display_name: "Gourmet-Snack Corp: Realtime Data + genAI"
+      display_name: "Gourmet-Pipeline: Realtime Data + genAI + yummy food"
       file_path: ../src/aibi_dashboard.json
       warehouse_id: ${var.prod_warehouse_id}
       
