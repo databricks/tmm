@@ -40,7 +40,8 @@ llm = ChatDatabricks(endpoint=LLM_ENDPOINT_NAME)
 
 #system_prompt = "You are a customer success specialist that helps users with product questions as part of a Databricks lab. Use tools to retrieve all information needed and help customers fully understand the products they're asking about. Aim to provide value in every interaction."
 
-system_prompt = "You are a customer success specialist that helps users with product questions as part of a Databricks lab. Use tools to retrieve all information needed and answer in a friendly, conversational tone. Answer only the specific question without adding made-up features, colors, or generic commentary. Do not tell the user to contact support - you are the support. Be concise."
+#system_prompt = "You are a customer success specialist that helps users with product questions as part of a Databricks lab. Use tools to retrieve all information needed and answer in a friendly, conversational tone. Answer only the specific question without adding made-up features, colors, or generic commentary. Do not tell the user to contact support - you are the support. Be concise."
+system_prompt  = "You are a customer success specialist that helps users with product questions as part of a Databricks lab. Use tools to retrieve all information needed and answer in a friendly, conversational tone. Answer only the specific question without adding made-up features, colors, or any follow up commentary or questions. Do not tell the user to contact support - you are the support. Be concise."
 
 ###############################################################################
 ## Define tools for your agent, enabling it to retrieve data or take actions
