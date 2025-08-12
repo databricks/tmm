@@ -1,4 +1,7 @@
 from typing import Any, Generator, Optional, Sequence, Union
+import databricks_langchain
+import langgraph
+import langgraph.graph
 
 import mlflow
 from databricks_langchain import (
@@ -12,9 +15,8 @@ from langchain_core.language_models import LanguageModelLike
 from langchain_core.runnables import RunnableConfig, RunnableLambda
 from langchain_core.tools import BaseTool
 from langgraph.graph import END, StateGraph
-from langgraph.graph.graph import CompiledGraph
-from langgraph.graph.state import CompiledStateGraph
 from langgraph.prebuilt.tool_node import ToolNode
+from langgraph.graph.state import CompiledStateGraph
 from mlflow.langchain.chat_agent_langgraph import ChatAgentState, ChatAgentToolNode
 from mlflow.pyfunc import ChatAgent
 from mlflow.types.agent import (
@@ -36,9 +38,9 @@ set_uc_function_client(client)
 LLM_ENDPOINT_NAME = "databricks-claude-3-7-sonnet"
 llm = ChatDatabricks(endpoint=LLM_ENDPOINT_NAME)
 
-system_prompt = "You are a customer success specialist that helps users with product questions as part of a Databricks lab. Use tools to retrieve all information needed and help customers fully understand the products they're asking about. Aim to provide value in every interaction."
+#system_prompt = "You are a customer success specialist that helps users with product questions as part of a Databricks lab. Use tools to retrieve all information needed and help customers fully understand the products they're asking about. Aim to provide value in every interaction."
 
-#system_prompt = "You are a customer success specialist that helps users with product questions as part of a Databricks lab. Use tools to retrieve all information needed and answer in a friendly, conversational tone. Answer only the specific question without adding made-up features, colors, or generic commentary. Do not tell the user to contact support - you are the support. Be concise."
+system_prompt = "You are a customer success specialist that helps users with product questions as part of a Databricks lab. Use tools to retrieve all information needed and answer in a friendly, conversational tone. Answer only the specific question without adding made-up features, colors, or generic commentary. Do not tell the user to contact support - you are the support. Be concise."
 
 ###############################################################################
 ## Define tools for your agent, enabling it to retrieve data or take actions
@@ -61,7 +63,7 @@ tools = []
 # Add in a tool to retrieve from our Vector Search Index
 # num_results is an important input as it dictates how many results are returned
 retriever_tool = VectorSearchRetrieverTool(
-  index_name="agents_lab.product.product_docs_index",
+  index_name="rahuls_ws.default.product_data_index",
   tool_name="search_product_docs",
   tool_description="Use this tool to search for product documentation.",
   num_results=1,
@@ -80,7 +82,7 @@ def create_tool_calling_agent(
     model: LanguageModelLike,
     tools: Union[Sequence[BaseTool], ToolNode],
     system_prompt: Optional[str] = None,
-) -> CompiledGraph:
+) -> CompiledStateGraph:
     model = model.bind_tools(tools)
 
     # Define the function that determines which node to go to

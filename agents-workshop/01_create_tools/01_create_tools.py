@@ -38,8 +38,8 @@ user_email = w.current_user.me().display_name
 username = user_email.split("@")[0]
 
 # Catalog and schema have been automatically created thanks to lab environment
-catalog_name = f"{username}"
-schema_name = "agents"
+catalog_name = "rahuls_ws"
+schema_name = "default"
 
 # Allows us to reference these values when creating SQL/Python functions
 dbutils.widgets.text("catalog_name", defaultValue=catalog_name, label="Catalog Name")
@@ -72,7 +72,7 @@ spark.sql(f"CREATE SCHEMA IF NOT EXISTS {catalog_name}.{schema_name}")
 # MAGIC   issue_category, 
 # MAGIC   issue_description, 
 # MAGIC   name
-# MAGIC FROM agents_lab.product.cust_service_data 
+# MAGIC FROM rahuls_ws.default.cust_service_data 
 # MAGIC -- Order the results by the interaction date and time in descending order
 # MAGIC ORDER BY date_time DESC
 # MAGIC -- Limit the results to the most recent interaction
@@ -92,7 +92,7 @@ spark.sql(f"CREATE SCHEMA IF NOT EXISTS {catalog_name}.{schema_name}")
 # MAGIC     issue_category,
 # MAGIC     issue_description,
 # MAGIC     name
-# MAGIC   FROM agents_lab.product.cust_service_data
+# MAGIC   FROM rahuls_ws.default.cust_service_data
 # MAGIC   ORDER BY date_time DESC
 # MAGIC   LIMIT 1
 # MAGIC );
@@ -132,7 +132,7 @@ spark.sql(f"CREATE SCHEMA IF NOT EXISTS {catalog_name}.{schema_name}")
 # MAGIC     policy,
 # MAGIC     policy_details,
 # MAGIC     last_updated
-# MAGIC   FROM agents_lab.product.policies
+# MAGIC   FROM rahuls_ws.default.policies_data
 # MAGIC   WHERE policy = 'Return Policy'
 # MAGIC   LIMIT 1
 # MAGIC );
@@ -166,7 +166,7 @@ spark.sql(f"CREATE SCHEMA IF NOT EXISTS {catalog_name}.{schema_name}")
 # MAGIC LANGUAGE SQL
 # MAGIC RETURN 
 # MAGIC SELECT count(*) as returns_last_12_months, issue_category, now() as todays_date
-# MAGIC FROM agents_lab.product.cust_service_data 
+# MAGIC FROM rahuls_ws.default.cust_service_data 
 # MAGIC WHERE name = user_name 
 # MAGIC GROUP BY issue_category;
 

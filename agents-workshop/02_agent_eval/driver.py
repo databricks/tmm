@@ -32,7 +32,6 @@
 
 # DBTITLE 1,Quick test to see if Agent works
 from agent import AGENT
-
 AGENT.predict({"messages": [{"role": "user", "content": "Hello, what do you do?"}]})
 
 # COMMAND ----------
@@ -202,8 +201,8 @@ user_email = w.current_user.me().display_name
 username = user_email.split("@")[0]
 
 # Catalog and schema have been automatically created thanks to lab environment
-catalog_name = f"{username}"
-schema_name = "agents"
+catalog_name = "rahuls_ws"
+schema_name = "default"
 
 # TODO: define the catalog, schema, and model name for your UC model
 model_name = "product_agent"
@@ -237,4 +236,4 @@ from databricks import agents
 # Deploy the model to the review app and a model serving endpoint
 
 #Disabled for the lab environment but we've deployed the agent already!
-#agents.deploy(UC_MODEL_NAME, uc_registered_model_info.version, tags = {"endpointSource": "DI Days"})
+agents.deploy(UC_MODEL_NAME, uc_registered_model_info.version, tags = {"endpointSource": "DI Days"})
