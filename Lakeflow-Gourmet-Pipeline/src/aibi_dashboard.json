@@ -4,7 +4,7 @@
       "name": "1375151d",
       "displayName": "results",
       "queryLines": [
-        "select * from daiwt_gourmet.virtual.flagship_stores"
+        "select * from daiwt_gourmet.virtual_event.flagship_stores"
       ]
     },
     {
@@ -299,7 +299,7 @@
           },
           "position": {
             "x": 0,
-            "y": 10,
+            "y": 11,
             "width": 6,
             "height": 6
           }
@@ -352,7 +352,7 @@
           },
           "position": {
             "x": 0,
-            "y": 4,
+            "y": 5,
             "width": 3,
             "height": 6
           }
@@ -414,7 +414,7 @@
           },
           "position": {
             "x": 3,
-            "y": 4,
+            "y": 5,
             "width": 3,
             "height": 6
           }
@@ -432,7 +432,7 @@
             "x": 0,
             "y": 0,
             "width": 6,
-            "height": 4
+            "height": 5
           }
         }
       ],
