@@ -30,7 +30,7 @@ bundle:
 include:
   - resources/*.yml
 
-# for individual installations 
+# for presenter installations 
 # - keep comments on permission 
 # - keep comment on run as
 # - install into short_name schema
@@ -38,17 +38,30 @@ include:
 
 
 
-permissions:
-      - user_name: frank.munz@databricks.com
-        level: CAN_MANAGE
-      - group_name: "account users"
-        level: CAN_RUN
+#permissions:
+#      - user_name: frank.munz@databricks.com
+#        level: CAN_MANAGE
+#      - group_name: "account users"
+#        level: CAN_RUN
         
 
 targets:
 
+  presenter:
+
+    mode: development
+    presets:
+      source_linked_deployment: true  
+    default: true
+    workspace:
+      host: https://e2-demo-field-eng.cloud.databricks.com/  
+    variables:
+      schema_name: ${workspace.current_user.short_name}
+
+
+
   # The 'dev' target, for development purposes. This target is the default.
-  dev:
+  frankmunz:
 
     mode: development
     presets:
@@ -57,15 +70,13 @@ targets:
     default: true
     workspace:
       host: https://e2-demo-field-eng.cloud.databricks.com/  
+    variables:
+      schema_name: virtual_event
+    permissions:
+      - user_name: frank.munz@databricks.com
+        level: CAN_MANAGE
+      - group_name: "account users"
+        level: CAN_RUN
+        
     run_as:
           user_name: frank.munz@databricks.com
-      
-  prod:
-      
-    workspace:
-      host: https://e2-demo-field-eng.cloud.databricks.com/      
-      root_path: ~/.bundles/dab_${bundle.name}
-      
-
-    run_as:
-      user_name: frank.munz@databricks.com
