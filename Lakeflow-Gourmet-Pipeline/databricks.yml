@@ -57,9 +57,7 @@ targets:
       host: https://e2-demo-field-eng.cloud.databricks.com/  
     variables:
       schema_name: ${workspace.current_user.short_name}
-    permissions:
-      - group_name: "account users"
-        level: CAN_VIEW
+ 
 
 
   # The 'dev' target, for development purposes. This target is the default.
