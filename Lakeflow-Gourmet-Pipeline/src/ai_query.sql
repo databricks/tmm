@@ -15,7 +15,7 @@ CREATE FUNCTION gen_flagship_description(
     ingredient STRING
 ) RETURNS STRING
   RETURN ai_query(
-    'databricks-claude-sonnet-4',
+    'databricks-claude-3-7-sonnet',
     CONCAT(
         'Create a seasonal cookie recipe description for the district ', 
         district, ' in the city ', city, ' in country ', country, 

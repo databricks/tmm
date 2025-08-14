@@ -86,6 +86,13 @@ resources:
           notification_settings: {}
           email_notifications: {}
           webhook_notifications: {}
+        - task_key: update_aibi_dashboard
+          depends_on:
+            - task_key: new_recipe_Claude_LLM
+          dashboard_task:
+            subscription: {}
+            warehouse_id: ${var.prod_warehouse_id}
+            dashboard_id: ${resources.dashboards.gourmet_dashboard.id}
       email_notifications:
         on_failure:
           - roland@databricks.de
