@@ -6,7 +6,7 @@
 
 Gourmet Pipeline is a global food company specializing in high-quality snacks. Their growth was hampered by a disconnected IT landscape and brittle data pipelines, making it difficult to analyze sales, supplier, and market data in real-time. Then their business problems got worse because they couldn't figure out how to drive new product innovation and create AI-driven, localized marketing campaigns. 
 
-This Lakeflow applications solves Gourmet Pipeline's issues! It provides an automated, end-to-end data pipeline that ingests disparate data sources with Lakeflow Connect, transforms them for analysis with Lakeflow Declarative Pipelines, enriches them using LLMs and AI functions, and visualizes the results on a real-time dashboard.
+The new Lakeflow application solves all of Gourmet Pipeline's issues! It provides an automated, end-to-end data pipeline that ingests disparate data sources with Lakeflow Connect, transforms them for analysis with Lakeflow Declarative Pipelines, enriches them using LLMs and AI functions, and visualizes the results on a real-time dashboard.
 
 This project demonstrates a complete data engineering workflow using Databricks Asset Bundles. It covers everything from initial data ingestion to the final business intelligence dashboard, providing a practical example of CI/CD and infrastructure-as-code for the Databricks Data Intelligence Platform.
 
