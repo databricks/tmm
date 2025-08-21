@@ -19,7 +19,7 @@ The asset bundle is designed to be deployed and run entirely from the Databricks
 1.  **Clone the Git Repository into your Workspace**:
     *   Navigate to **Workspace** in the sidebar.
     *   Click the **Create** button and select **Git folder**.
-    *   In the "Create Git folder" dialog, paste the URL ```https://github.com/databricks/tmm/Lakeflow-Gourmet-Pipeline.git``` of the Git repository.
+    *   In the "Create Git folder" dialog, paste the URL `https://github.com/databricks/tmm` of the Git repository.
     *   Select your Git provider (e.g., GitHub).
     *   Enable **Sparse checkout mode** and specify the path to this specific project folder ```Lakeflow-Gourmet-Pipeline``` within the repository. This ensures you only clone the relevant project files.
     *   Click **Create Git folder**. The repository will be cloned into your workspace.
@@ -28,9 +28,9 @@ The asset bundle is designed to be deployed and run entirely from the Databricks
 2.   **Check the configuration** 
 
       * Before deploying, you need to make sure you have the proper settings defined in the `databricks.yml` file.
-         * `catalog_name` and `schema_name` defines the location where the pipeline tables will be created. Adjust this setting and update the SQL for the dashboard if you change the default values. 
+         * `catalog_name` and `schema_name` defines the location where the pipeline tables will be created. 
          * the ID of the Databricks SQL Warehouse (`prod_warehouse_id`) that will power the dashboard
-         * the `host` setting
+         * Update the SQL for the dashboard to match the correct catalog and schema in `src/aibi_dashboard.json`
 
 3.  **Deploy the Asset Bundle**:
     *   Navigate to the newly cloned folder in your Workspace.
