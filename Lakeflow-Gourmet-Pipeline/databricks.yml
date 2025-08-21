@@ -5,7 +5,7 @@
 variables:
   prod_warehouse_id:
     description: define prod warehouse id
-    default: bf9ae481f24f675a
+    default: 4cc49c92ab107b7a
 
   catalog_name:
     description: "Catalog name for the pipeline"
@@ -13,15 +13,9 @@ variables:
 
   schema_name:
     description: "Schema name for the pipeline"
-    #default: ${workspace.current_user.short_name}
-    default: virtual_event
+    default: ${workspace.current_user.short_name}
 
-#resources:
-#  schemas:
-#    my_schema:
-#      name: ${var.schema_name}
-#      catalog_name: ${var.catalog_name}
-#      comment: "personal schema created"
+
 
 
 bundle:
@@ -30,20 +24,6 @@ bundle:
 include:
   - resources/*.yml
 
-# for presenter installations 
-# - keep comments on permission 
-# - keep comment on run as
-# - install into short_name schema
-# - use dev mode
-
-
-
-#permissions:
-#      - user_name: frank.munz@databricks.com
-#        level: CAN_MANAGE
-#      - group_name: "account users"
-#        level: CAN_RUN
-        
 
 targets:
 
@@ -53,30 +33,28 @@ targets:
     presets:
       source_linked_deployment: true  
     default: true
-    workspace:
-      host: https://e2-demo-field-eng.cloud.databricks.com/  
     variables:
       schema_name: ${workspace.current_user.short_name}
  
 
 
   # The 'dev' target, for development purposes. This target is the default.
-  frankmunz:
+  virtual:
 
     mode: development
     presets:
       name_prefix: '[DAIWT-${workspace.current_user.short_name}]'
       source_linked_deployment: true  
     default: true
-    workspace:
-      host: https://e2-demo-field-eng.cloud.databricks.com/  
+    #workspace:
+    #  host: https://host.databricks.com/  
     variables:
       schema_name: virtual_event
-    permissions:
-      - user_name: frank.munz@databricks.com
-        level: CAN_MANAGE
-      - group_name: "account users"
-        level: CAN_RUN
+    #permissions:
+    #  - user_name: frank.munz@databricks.com
+    #    level: CAN_MANAGE
+    #  - group_name: "account users"
+    #    level: CAN_VIEW
         
     run_as:
           user_name: frank.munz@databricks.com
