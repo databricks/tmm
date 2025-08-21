@@ -1,12 +1,6 @@
 ![Gourmet Pipe Corp](https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-Gourmet-Pipeline/misc/gourmet_header.jpg)
 
-## Getting Started
 
-2. **Deploy the application**
-   - Navigate to tmm/Lakeflow-Gourmet-Pipeline
-   - Click on "Open in Editor"
-   - Verify the settings in databricks.yml
-   - Click on Deploy (auto approve)
 
 # Gourmet-Pipeline: An End-to-End Data Engineering Project on Databricks
 
