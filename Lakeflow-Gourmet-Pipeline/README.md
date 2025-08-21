@@ -2,19 +2,12 @@
 
 
 
-# Gourmet-Pipeline: An End-to-End Data Engineering Project on Databricks
+# Gourmet-Pipeline: End-to-End Data Engineering with Lakeflow and Databricks Asset Bundle in the Workspace
 
-Gourmet Pipeline is a global food company specializing in high-quality snacks. Their growth was hampered by a disconnected IT landscape, making it difficult to analyze sales, supplier, and market data in real-time to drive new product innovation. This Lakeflow applications solves the issue and provides an automated, end-to-end data pipeline that ingests disparate data sources, transforms them for analysis, enriches them with AI, and visualizes the results on a real-time dashboard.
+Gourmet Pipeline is a global food company specializing in high-quality snacks. Their growth was hampered by a disconnected IT landscape, making it difficult to analyze sales, supplier, and market data in real-time to drive new product innovation with AI driven, localized marketing campaigns. This Lakeflow applications solves the issue and provides an automated, end-to-end data pipeline that ingests disparate data sources, transforms them for analysis, enriches them with AI, and visualizes the results on a real-time dashboard.
 
 This project demonstrates a complete data engineering workflow using Databricks Asset Bundles. It covers everything from initial data ingestion to the final business intelligence dashboard, providing a practical example of CI/CD and infrastructure-as-code for the Databricks Data Intelligence Platform.
 
-## Setup
-
-Before deploying, you need to configure the target for your data assets. This project requires you to specify the Unity Catalog `catalog` and `schema` where the tables will be created, as well as the ID of the Databricks SQL Warehouse (`databricks_sql_warehouse_id`) that will power the dashboard.
-
-
-- **src/**: Databricks artifacts (pipeline files, workflows, dashboard, etc)
-- **resources/**: Lakeflow pipeline definitions
 
 
 ### Running the Project from the Databricks Workspace
@@ -29,7 +22,14 @@ This bundle is designed to be deployed and run entirely from the Databricks UI, 
     *   Enable **Sparse checkout mode** and specify the path to this specific project folder ```Lakeflow-Gourmet-Pipeline``` within the repository. This ensures you only clone the relevant project files.
     *   Click **Create Git folder**. The repository will be cloned into your workspace.
 
-2.  **Deploy the Asset Bundle**:
+
+2.   **Check the configuration** 
+
+      * Before deploying, you need to make sure you have data catalog as defined in the `databricks.yml` file under  `catalog` and `schema` where the tables will be created, as well as the ID of the Databricks SQL Warehouse (`databricks_sql_warehouse_id`) that will power the dashboard.
+
+
+
+3.  **Deploy the Asset Bundle**:
     *   Navigate to the newly cloned folder in your Workspace.
     *   The `databricks.yml` file identifies this folder as an Asset Bundle. Click the **Deployments** icon (a rocket ship) in the left-hand pane.
     *   In the Deployments pane, select your target workspace (e.g., `presenter`).

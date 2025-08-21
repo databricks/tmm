@@ -6,9 +6,9 @@ USE IDENTIFIER({{my_schema}});
 
 
 
-DROP FUNCTION IF EXISTS gen_flagship_description;
+DROP FUNCTION IF EXISTS gen_marketing_campaign;
 
-CREATE FUNCTION gen_flagship_description(
+CREATE FUNCTION gen_marketing_campaign(
     district STRING, 
     city STRING, 
     country STRING, 
@@ -33,7 +33,7 @@ DROP TABLE IF EXISTS flagship_stores;
 CREATE TABLE flagship_stores AS 
 SELECT 
     *,
-    gen_flagship_description(
+    gen_marketing_campaign(
         district, 
         city, 
         country, 
