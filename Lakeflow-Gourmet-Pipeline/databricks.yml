@@ -38,23 +38,22 @@ targets:
  
 
 
-  # The 'dev' target, for development purposes. This target is the default.
-  virtual:
 
-    mode: development
-    presets:
-      name_prefix: '[DAIWT-${workspace.current_user.short_name}]'
-      source_linked_deployment: true  
-    default: true
+
+
+
+
+  #The 'dev' target, for development purposes. This target is the default.
+  #virtual:#
+  #
+  #  mode: development
+  #  presets:
+  #    name_prefix: '[DAIWT-${workspace.current_user.short_name}]'
+  #    source_linked_deployment: true  
+  #  default: true
     #workspace:
     #  host: https://host.databricks.com/  
-    variables:
-      schema_name: virtual_event
-    #permissions:
-    #  - user_name: frank.munz@databricks.com
-    #    level: CAN_MANAGE
-    #  - group_name: "account users"
-    #    level: CAN_VIEW
-        
-    run_as:
-          user_name: frank.munz@databricks.com
+  #  variables:
+   #   schema_name: virtual_event
+   # run_as:
+   #       user_name: frank.munz@databricks.com
