@@ -41,6 +41,9 @@ Your editor should now contain the following code:
 ```python
 import dlt
 
+from pyspark_datasources import OpenSkyDataSource
+spark.dataSource.register(OpenSkyDataSource)
+
 @dlt.table(
   name="ingest_flights",
   comment="Streaming table ingesting data from opensky format"
