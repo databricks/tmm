@@ -19,19 +19,6 @@ include:
 
 targets:
   dev:
-    # The default target uses 'mode: development' to create a development copy.
-    # - Deployed resources get prefixed with '[dev my_user_name]'
-    # - Any job schedules and triggers are paused by default.
     # See also https://docs.databricks.com/dev-tools/bundles/deployment-modes.html.
     mode: development
     default: true
-    workspace:
-      host: https://e2-dogfood.staging.cloud.databricks.com
-
-  prod:
-    mode: development 
-    workspace:
-      host: https://dbc-34e8a5a4-09d1.cloud.databricks.com/ 
-      root_path: /Workspace/Users/frank.munz@databricks.com/dab_${bundle.name}
-
-

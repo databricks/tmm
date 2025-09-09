@@ -39,12 +39,15 @@ Instead of writing PySpark code manually, we'll use the built-in AI assistant to
 
 Your editor should now contain the following code:
 ```python
-import dlt
+# use OSS pyspark package for declarative pipelines
+from pyspark import pipelines as dp
 
+# import and register the datasource
 from pyspark_datasources import OpenSkyDataSource
 spark.dataSource.register(OpenSkyDataSource)
 
-@dlt.table(
+
+@dp.table(
   name="ingest_flights",
   comment="Streaming table ingesting data from opensky format"
 )

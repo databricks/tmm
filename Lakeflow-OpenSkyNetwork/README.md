@@ -51,12 +51,16 @@ I thought I'd give you options to learn.
 The first step is to create a pipeline and ingest live aircraft positions from the OpenSky Network. The Lakeflow Editor works with files. We'll start with a Python file.
 
 ```python
+
+# use OSS pyspark package for declarative pipelines
+from pyspark import pipelines as dp
+
 # import and register the datasource
 from pyspark_datasources import OpenSkyDataSource
 spark.dataSource.register(OpenSkyDataSource)
 
 # declare a streaming table
-@dlt.table
+@dp.table
 def ingest_flights():
     return spark.readStream.format("opensky").load()
 ```
