@@ -1,0 +1,1501 @@
+customer_id,customer_segment,city,state,registration_date,customer_status,preferred_contact_method,loyalty_tier,churn_risk_score,customer_value_score,satisfaction_score
+CUS-10001,Family,North Judithbury,IN,2020-02-21,Active,Email,Bronze,6,82,64
+CUS-10002,Individual,Lake Curtis,WA,2020-03-06,Active,Email,Gold,1,82,82
+CUS-10003,Family,New Roberttown,CO,2023-12-07,Active,Email,Silver,71,64,56
+CUS-10004,Family,East William,AK,2021-11-27,Active,Email,Platinum,1,92,94
+CUS-10005,Individual,Lake Debra,ND,2024-10-01,Active,Email,Bronze,49,48,58
+CUS-10006,Student,Robinsonshire,KY,2022-02-14,Active,Email,Gold,50,60,96
+CUS-10007,Individual,Port Lindachester,MA,2020-05-22,Active,Email,Silver,5,61,65
+CUS-10008,Individual,Ericmouth,CT,2022-07-17,Active,Email,Bronze,19,46,61
+CUS-10009,Family,South Colinstad,PA,2020-12-16,Active,Email,Gold,7,100,100
+CUS-10010,Individual,Lindsaymouth,ND,2021-10-26,Active,Phone,Silver,5,60,84
+CUS-10011,Individual,South Christianport,MP,2021-03-08,Inactive,Phone,Platinum,33,92,95
+CUS-10012,Individual,Barbaraland,AZ,2025-02-15,Active,Email,Bronze,67,47,81
+CUS-10013,Individual,Port Keith,CO,2023-04-12,Active,Phone,Bronze,18,52,88
+CUS-10014,Individual,Port Craig,KY,2020-04-06,Active,Email,Bronze,43,58,90
+CUS-10015,Individual,Reidstad,GA,2022-02-20,Active,Email,Silver,39,49,60
+CUS-10016,Family,Michaelview,UT,2023-01-04,Active,Phone,Bronze,27,70,65
+CUS-10017,Individual,New Cynthiaside,VA,2025-05-07,Active,Phone,Platinum,58,65,91
+CUS-10018,Premium,East Steven,KY,2024-11-17,Active,SMS,Gold,7,100,92
+CUS-10019,Family,Lake Mark,WI,2023-01-09,Suspended,SMS,Platinum,77,97,56
+CUS-10020,Individual,East Lydiamouth,MO,2025-03-17,Active,SMS,Gold,25,51,80
+CUS-10021,Business,Carlshire,FM,2025-04-23,Active,Phone,Platinum,43,100,70
+CUS-10022,Individual,Jasonfort,MO,2022-08-31,Inactive,Email,Silver,75,61,58
+CUS-10023,Premium,Thomasberg,IA,2024-03-26,Active,Email,Silver,47,100,74
+CUS-10024,Individual,Juliechester,MH,2022-11-25,Active,Email,Bronze,9,55,94
+CUS-10025,Individual,Coxberg,NY,2021-03-27,Active,Phone,Bronze,4,43,81
+CUS-10026,Individual,Daviston,VI,2021-05-02,Active,Email,Gold,36,80,99
+CUS-10027,Individual,East Courtneychester,PA,2024-05-25,Active,Email,Bronze,62,45,70
+CUS-10028,Individual,South Patrickmouth,NC,2022-08-14,Active,Email,Silver,48,51,54
+CUS-10029,Individual,Tashatown,TX,2021-11-25,Active,Email,Bronze,37,54,61
+CUS-10030,Individual,Lake Nicoleview,WI,2021-07-24,Active,SMS,Bronze,52,58,56
+CUS-10031,Individual,Danielchester,GA,2023-01-12,Active,SMS,Platinum,53,74,70
+CUS-10032,Individual,Smithview,NY,2022-09-12,Active,Email,Bronze,31,38,78
+CUS-10033,Individual,New Rita,VI,2024-05-24,Active,Email,Silver,66,59,78
+CUS-10034,Individual,Meaganhaven,PA,2021-08-30,Active,Email,Platinum,1,81,73
+CUS-10035,Individual,East Nathaniel,GA,2022-09-03,Active,SMS,Bronze,39,40,64
+CUS-10036,Individual,New Mariotown,DE,2020-05-19,Active,Email,Bronze,56,62,64
+CUS-10037,Individual,Natashaport,IA,2020-03-22,Active,Email,Gold,23,75,82
+CUS-10038,Individual,East Natalieland,CO,2024-01-06,Active,Email,Bronze,61,43,77
+CUS-10039,Individual,Cabreraside,WI,2024-03-19,Inactive,Email,Silver,86,46,47
+CUS-10040,Individual,East Donna,OH,2022-11-02,Active,SMS,Gold,54,64,83
+CUS-10041,Individual,West Allison,PA,2022-06-16,Active,Phone,Silver,57,68,82
+CUS-10042,Individual,Brandtside,WV,2024-07-31,Active,SMS,Bronze,76,36,61
+CUS-10043,Individual,Lake Larry,TN,2020-08-07,Active,Email,Silver,13,64,71
+CUS-10044,Family,Samuelhaven,NV,2024-10-12,Active,Email,Platinum,64,82,63
+CUS-10045,Family,East Jeffreymouth,AK,2024-08-25,Active,Email,Gold,50,80,70
+CUS-10046,Family,New Jeffrey,CA,2023-02-03,Active,Phone,Bronze,69,60,81
+CUS-10047,Individual,East Carloston,VI,2022-01-26,Active,Email,Bronze,23,50,58
+CUS-10048,Business,Chadbury,KY,2021-03-06,Active,Phone,Gold,10,100,100
+CUS-10049,Family,Lewisberg,VA,2025-03-10,Inactive,SMS,Platinum,91,85,78
+CUS-10050,Individual,Sanchezfort,AS,2024-02-17,Inactive,Phone,Silver,92,50,59
+CUS-10051,Individual,Leeville,TN,2023-12-07,Active,SMS,Gold,24,60,95
+CUS-10052,Individual,Gomezchester,NH,2024-08-07,Active,Email,Bronze,32,44,75
+CUS-10053,Individual,Lake Deniseville,AR,2020-05-22,Suspended,Email,Gold,55,81,50
+CUS-10054,Premium,Chandlerville,IA,2020-08-24,Active,Email,Platinum,1,100,76
+CUS-10055,Individual,East Amanda,DC,2021-12-08,Active,Email,Gold,25,63,89
+CUS-10056,Business,Whitemouth,IA,2021-01-24,Active,Phone,Silver,44,100,64
+CUS-10057,Individual,South Lindseyside,CT,2020-05-23,Inactive,SMS,Gold,62,67,77
+CUS-10058,Individual,Lake Yvettetown,CO,2023-09-27,Active,Email,Bronze,28,40,81
+CUS-10059,Family,East Richard,NJ,2022-02-15,Active,SMS,Gold,13,91,100
+CUS-10060,Family,Port Richard,AR,2021-09-14,Active,Email,Gold,33,90,93
+CUS-10061,Individual,South Aaron,MS,2023-10-15,Active,Email,Platinum,60,69,63
+CUS-10062,Individual,Saramouth,LA,2023-09-21,Active,Email,Gold,58,61,78
+CUS-10063,Individual,Hortonside,TN,2021-02-11,Active,Email,Platinum,29,74,94
+CUS-10064,Individual,Mooreport,IL,2023-07-13,Active,Phone,Bronze,45,42,60
+CUS-10065,Family,New Jillton,WA,2020-01-12,Active,SMS,Platinum,39,100,77
+CUS-10066,Individual,Brianshire,NJ,2025-05-15,Active,Email,Silver,78,43,74
+CUS-10067,Individual,North Susan,CO,2022-08-09,Active,SMS,Silver,67,62,86
+CUS-10068,Family,North Brooke,TX,2024-12-31,Active,SMS,Silver,77,66,75
+CUS-10069,Individual,South David,FM,2024-03-19,Active,Phone,Gold,43,68,100
+CUS-10070,Individual,New Brooke,RI,2022-06-19,Active,Email,Bronze,26,55,60
+CUS-10071,Individual,South Dianeshire,NC,2021-04-18,Active,Email,Silver,26,65,76
+CUS-10072,Individual,Sarahborough,TN,2022-05-01,Active,SMS,Silver,54,67,51
+CUS-10073,Business,Johnfurt,DC,2024-04-16,Active,Email,Platinum,14,100,94
+CUS-10074,Individual,Stephenland,AL,2024-02-13,Active,Phone,Bronze,34,41,81
+CUS-10075,Individual,Howellshire,CT,2022-03-07,Active,Phone,Gold,5,73,77
+CUS-10076,Student,New Jasonview,DC,2022-12-29,Active,Email,Silver,10,39,85
+CUS-10077,Individual,Nicolebury,MN,2022-08-03,Active,Email,Bronze,36,48,74
+CUS-10078,Family,Ericside,VT,2022-02-15,Active,SMS,Gold,47,81,91
+CUS-10079,Individual,Cherylhaven,AL,2023-01-09,Active,SMS,Bronze,13,57,60
+CUS-10080,Family,Sarahville,FM,2025-04-28,Active,SMS,Silver,35,64,83
+CUS-10081,Family,West Darrell,CT,2023-03-01,Inactive,Email,Bronze,62,61,86
+CUS-10082,Family,West Juan,IL,2024-03-11,Active,Phone,Bronze,39,56,90
+CUS-10083,Individual,Jamesview,NY,2021-09-30,Active,SMS,Silver,62,56,52
+CUS-10084,Individual,Kington,CO,2024-08-28,Active,Email,Gold,64,71,65
+CUS-10085,Family,Calderonton,AL,2023-03-05,Active,Email,Silver,33,68,86
+CUS-10086,Family,Kellieview,GA,2020-01-26,Active,SMS,Bronze,23,85,85
+CUS-10087,Family,Arnoldchester,OH,2022-06-10,Active,Phone,Silver,45,85,81
+CUS-10088,Individual,North Charlesberg,ND,2024-08-18,Active,Email,Gold,63,54,75
+CUS-10089,Business,Port Mikeside,FL,2021-05-14,Active,Phone,Platinum,1,100,100
+CUS-10090,Business,Andersonport,MN,2021-01-07,Active,Email,Gold,1,100,87
+CUS-10091,Individual,West Jasonbury,TN,2022-11-24,Inactive,Email,Gold,59,74,74
+CUS-10092,Family,West Kimberlychester,RI,2023-08-15,Active,Email,Bronze,38,62,78
+CUS-10093,Family,East Michelle,AS,2021-09-19,Active,Email,Gold,14,93,100
+CUS-10094,Individual,South Angel,WA,2023-12-10,Active,Email,Bronze,66,40,67
+CUS-10095,Individual,Kimberlychester,AS,2023-01-02,Suspended,Phone,Bronze,96,52,28
+CUS-10096,Family,West Erik,UT,2024-04-05,Active,Email,Bronze,32,62,68
+CUS-10097,Individual,South Monicafort,IN,2021-09-11,Active,Phone,Silver,5,68,77
+CUS-10098,Family,Port Samantha,MI,2020-09-15,Active,Phone,Bronze,1,81,78
+CUS-10099,Individual,Loribury,IN,2022-06-21,Active,SMS,Bronze,61,53,55
+CUS-10100,Family,Lake Jamesmouth,KY,2022-03-31,Active,Phone,Gold,4,83,100
+CUS-10101,Premium,Port Joshuahaven,MO,2020-06-23,Suspended,Email,Platinum,53,100,69
+CUS-10102,Individual,Sheilaville,FM,2022-12-06,Active,SMS,Bronze,45,50,70
+CUS-10103,Individual,Gregoryview,AZ,2020-05-03,Active,Phone,Platinum,3,95,83
+CUS-10104,Individual,New Ryanmouth,NE,2020-06-15,Active,Email,Bronze,1,57,88
+CUS-10105,Family,South Rachelborough,KS,2022-08-20,Active,Email,Gold,41,92,66
+CUS-10106,Family,Lake Ryanhaven,AS,2025-03-07,Active,Phone,Silver,71,66,73
+CUS-10107,Individual,West Ryan,TN,2021-04-05,Active,SMS,Platinum,1,73,80
+CUS-10108,Family,Cindyville,VA,2023-05-03,Active,Phone,Bronze,17,70,76
+CUS-10109,Family,Williamchester,MD,2025-04-14,Active,Phone,Silver,58,61,76
+CUS-10110,Family,Terryside,DC,2023-05-21,Active,Email,Platinum,63,100,95
+CUS-10111,Student,South Elizabeth,MS,2024-04-15,Active,Email,Bronze,68,28,77
+CUS-10112,Individual,New Ashley,MO,2022-06-24,Inactive,Email,Silver,76,63,50
+CUS-10113,Individual,West Justinchester,WY,2022-04-16,Active,Phone,Platinum,16,82,98
+CUS-10114,Individual,Stevenmouth,TX,2025-04-19,Active,Phone,Bronze,25,40,71
+CUS-10115,Individual,New Thomas,MH,2024-05-01,Active,Phone,Platinum,52,80,89
+CUS-10116,Individual,Lake Christopher,NY,2021-01-19,Active,Phone,Gold,18,63,80
+CUS-10117,Individual,Clarencebury,TX,2020-09-25,Inactive,Email,Gold,27,63,100
+CUS-10118,Family,Jeffreyborough,FL,2021-05-05,Active,Email,Bronze,26,64,69
+CUS-10119,Student,North Johnfort,RI,2025-02-12,Active,SMS,Silver,29,45,73
+CUS-10120,Individual,South Robertshire,ID,2021-07-13,Active,Email,Gold,20,78,75
+CUS-10121,Individual,Snyderbury,FL,2025-03-02,Active,Phone,Bronze,24,38,82
+CUS-10122,Individual,Port Michelleville,WI,2024-06-01,Active,SMS,Bronze,39,50,90
+CUS-10123,Student,Robinsonhaven,NH,2022-09-29,Active,Email,Silver,28,54,89
+CUS-10124,Individual,New Johnville,NH,2025-03-25,Active,Email,Silver,56,52,63
+CUS-10125,Business,Port Steven,NC,2022-04-21,Active,Phone,Platinum,31,100,88
+CUS-10126,Student,Stephaniemouth,RI,2024-06-10,Active,SMS,Silver,22,36,88
+CUS-10127,Student,Rivasside,NV,2021-11-10,Active,SMS,Gold,26,64,65
+CUS-10128,Family,Lake Michelle,NV,2022-04-19,Active,SMS,Bronze,55,67,70
+CUS-10129,Family,Karenview,WI,2022-03-25,Active,SMS,Platinum,49,100,85
+CUS-10130,Student,Simsview,NV,2023-07-07,Active,Phone,Gold,12,64,72
+CUS-10131,Individual,Lake Justinview,MA,2023-11-02,Inactive,SMS,Gold,67,57,97
+CUS-10132,Family,Patricialand,DC,2020-07-24,Active,Phone,Platinum,1,100,73
+CUS-10133,Individual,East Patrick,FL,2022-02-06,Active,Email,Gold,37,64,73
+CUS-10134,Individual,North Robert,MA,2023-06-02,Active,Phone,Bronze,78,53,54
+CUS-10135,Individual,Perryborough,MP,2023-07-30,Active,Email,Bronze,71,49,64
+CUS-10136,Family,Priceshire,UT,2020-11-19,Active,SMS,Platinum,9,100,96
+CUS-10137,Family,Port Nicoleshire,MS,2022-07-24,Active,Email,Bronze,36,61,68
+CUS-10138,Individual,Smithstad,ME,2022-01-05,Active,SMS,Silver,57,62,66
+CUS-10139,Individual,Castanedachester,ND,2024-11-06,Active,Phone,Bronze,58,46,67
+CUS-10140,Family,South Jeffrey,NE,2021-04-16,Active,Email,Gold,29,90,73
+CUS-10141,Family,Johnsonmouth,TN,2025-01-24,Active,Email,Gold,12,88,91
+CUS-10142,Family,Ramseymouth,PW,2020-07-03,Inactive,Email,Gold,32,88,98
+CUS-10143,Business,New Amanda,PW,2022-01-19,Active,SMS,Platinum,1,100,88
+CUS-10144,Family,Vargastown,CO,2021-11-24,Active,Email,Bronze,51,67,75
+CUS-10145,Student,Taylormouth,HI,2024-07-05,Active,Email,Bronze,36,39,60
+CUS-10146,Individual,West Nicholasborough,NH,2023-10-09,Active,Email,Bronze,60,45,54
+CUS-10147,Family,Matthewfurt,KY,2022-08-23,Active,SMS,Silver,65,87,61
+CUS-10148,Family,Kingland,NJ,2023-07-25,Active,SMS,Bronze,46,58,59
+CUS-10149,Individual,Lake Amberstad,IN,2020-03-17,Active,Email,Bronze,56,62,57
+CUS-10150,Individual,Port Susanton,WV,2022-01-29,Active,Phone,Platinum,20,87,75
+CUS-10151,Business,East Jamestown,RI,2023-09-03,Active,Email,Gold,55,98,61
+CUS-10152,Family,East David,TN,2021-03-20,Active,SMS,Platinum,1,100,100
+CUS-10153,Premium,New Staciemouth,UT,2023-08-13,Active,Email,Bronze,12,94,63
+CUS-10154,Family,Katieburgh,PA,2023-08-07,Active,SMS,Bronze,41,62,60
+CUS-10155,Family,Port Loriport,CT,2021-02-24,Active,Phone,Silver,13,79,79
+CUS-10156,Family,West Barbarafurt,MO,2024-06-03,Inactive,Email,Gold,49,76,95
+CUS-10157,Individual,North Brittany,MP,2020-12-23,Active,SMS,Bronze,22,50,93
+CUS-10158,Individual,North Heidi,ME,2020-12-22,Active,Email,Gold,1,65,100
+CUS-10159,Individual,Port Tonyaton,MI,2022-01-11,Active,Email,Gold,54,79,62
+CUS-10160,Family,Stanleyland,NY,2025-02-04,Active,Phone,Silver,21,61,86
+CUS-10161,Family,Alexanderchester,GU,2022-05-23,Active,Email,Platinum,1,90,90
+CUS-10162,Family,Garciastad,SC,2020-05-14,Active,Phone,Gold,35,95,87
+CUS-10163,Student,Zimmermanchester,HI,2022-12-22,Active,Phone,Silver,59,40,84
+CUS-10164,Family,Christinaside,WI,2021-03-16,Active,SMS,Gold,42,96,87
+CUS-10165,Individual,Marshallshire,KY,2020-07-13,Active,Email,Silver,9,69,63
+CUS-10166,Individual,Melissaland,KY,2020-06-23,Active,Email,Platinum,41,78,97
+CUS-10167,Individual,Sanchezmouth,OK,2025-05-13,Active,Email,Bronze,42,43,55
+CUS-10168,Student,Rogersfort,PR,2023-05-14,Active,Email,Silver,19,51,71
+CUS-10169,Family,Hunterborough,MI,2021-12-18,Active,Email,Platinum,29,97,92
+CUS-10170,Family,Matthewview,OH,2024-04-20,Active,Phone,Silver,21,82,73
+CUS-10171,Individual,New Stacyland,IA,2021-07-13,Active,Email,Silver,1,56,69
+CUS-10172,Individual,Freemanbury,UT,2022-03-31,Active,Phone,Platinum,1,85,83
+CUS-10173,Individual,Brewerfort,NV,2022-07-18,Active,Email,Gold,45,76,99
+CUS-10174,Individual,North Kellyfurt,UT,2020-04-17,Active,Phone,Bronze,5,53,87
+CUS-10175,Family,West Elizabeth,MN,2022-09-21,Active,Email,Bronze,39,60,75
+CUS-10176,Individual,Transtad,NE,2021-08-03,Active,Phone,Gold,11,62,82
+CUS-10177,Individual,Michaelmouth,KY,2023-05-12,Active,Email,Platinum,49,70,77
+CUS-10178,Individual,Johnville,VA,2020-09-02,Active,Phone,Bronze,24,61,70
+CUS-10179,Individual,West David,ND,2024-09-02,Active,Email,Bronze,67,33,74
+CUS-10180,Individual,East Javier,NJ,2025-03-01,Active,Email,Silver,45,60,77
+CUS-10181,Individual,Jennyhaven,PA,2022-04-09,Active,Email,Platinum,34,83,87
+CUS-10182,Individual,Tinaborough,LA,2024-09-25,Active,Email,Silver,25,53,74
+CUS-10183,Family,West Harry,AL,2021-03-29,Active,Email,Gold,1,98,100
+CUS-10184,Individual,West Brandon,AR,2024-05-08,Active,Phone,Gold,62,57,73
+CUS-10185,Individual,Heidiberg,SC,2021-06-08,Active,Phone,Platinum,32,73,75
+CUS-10186,Student,Garciatown,OK,2023-07-10,Active,Phone,Gold,38,63,100
+CUS-10187,Student,Taylormouth,MA,2021-10-23,Active,Phone,Bronze,7,45,87
+CUS-10188,Family,North Johnny,VI,2024-06-18,Active,Email,Silver,39,76,81
+CUS-10189,Individual,Wilsonland,MO,2022-01-25,Active,Email,Platinum,48,71,100
+CUS-10190,Individual,Joneston,FL,2022-02-26,Active,Phone,Platinum,51,70,88
+CUS-10191,Premium,Port Anna,ME,2023-03-16,Active,Email,Gold,1,100,98
+CUS-10192,Individual,East Davidchester,PA,2025-01-15,Active,SMS,Bronze,61,35,50
+CUS-10193,Individual,Port Alexandra,NV,2022-06-15,Suspended,Phone,Silver,69,59,35
+CUS-10194,Individual,Evansshire,NE,2024-05-05,Active,Phone,Gold,51,63,64
+CUS-10195,Individual,Ashleyton,RI,2023-02-16,Active,Email,Gold,41,75,71
+CUS-10196,Individual,Port Jaredborough,KS,2023-04-08,Active,SMS,Bronze,51,48,58
+CUS-10197,Individual,East Johnside,CA,2025-04-05,Active,Phone,Silver,41,44,85
+CUS-10198,Individual,North Ricky,UT,2023-10-05,Active,Email,Bronze,31,40,75
+CUS-10199,Premium,Carterbury,LA,2022-09-22,Active,SMS,Bronze,10,85,90
+CUS-10200,Family,Jacquelinemouth,CA,2024-09-06,Active,Phone,Silver,76,81,53
+CUS-10201,Individual,West Kristin,SC,2020-11-11,Active,SMS,Platinum,41,78,90
+CUS-10202,Individual,South Danny,IN,2022-01-16,Active,Email,Gold,12,73,82
+CUS-10203,Individual,West Margaret,CA,2021-09-25,Suspended,Phone,Platinum,44,81,68
+CUS-10204,Student,East Laurashire,PW,2022-08-03,Active,Phone,Silver,33,43,66
+CUS-10205,Family,Scottmouth,UT,2020-10-10,Active,Email,Gold,13,100,74
+CUS-10206,Family,Hollyview,NY,2022-11-22,Active,Email,Gold,15,91,99
+CUS-10207,Individual,Kimton,FM,2022-06-14,Active,SMS,Gold,52,69,61
+CUS-10208,Individual,Navarroview,AK,2022-03-22,Active,Email,Platinum,18,76,68
+CUS-10209,Individual,East Suzanneshire,OR,2020-07-21,Active,Phone,Platinum,1,75,88
+CUS-10210,Premium,Port Emilyview,OK,2022-08-25,Active,Email,Platinum,10,100,68
+CUS-10211,Premium,Port Katelynfort,NC,2020-02-08,Active,SMS,Platinum,21,100,99
+CUS-10212,Individual,Moonburgh,OR,2024-05-08,Active,Email,Bronze,46,53,90
+CUS-10213,Individual,Waltersfort,CO,2020-08-15,Active,Email,Gold,30,80,100
+CUS-10214,Individual,Baileymouth,MD,2020-10-21,Active,Email,Silver,36,66,64
+CUS-10215,Family,Port Eugenechester,UT,2020-06-24,Active,Email,Platinum,24,100,98
+CUS-10216,Individual,Robertsfurt,GU,2022-03-10,Active,Email,Silver,28,57,56
+CUS-10217,Individual,South Christopherview,MD,2020-05-18,Active,Phone,Gold,39,82,84
+CUS-10218,Individual,Port Richardhaven,GU,2021-12-22,Active,SMS,Bronze,53,54,80
+CUS-10219,Family,Lake Mollymouth,MT,2024-07-19,Active,Phone,Platinum,12,91,80
+CUS-10220,Individual,East Aprilfort,SC,2021-02-12,Active,Email,Silver,25,69,85
+CUS-10221,Individual,Wolfborough,KY,2024-03-22,Active,Email,Gold,13,73,89
+CUS-10222,Individual,West Samuel,UT,2024-06-25,Active,SMS,Gold,67,64,78
+CUS-10223,Student,Martinezbury,VT,2022-10-13,Active,Email,Gold,15,49,94
+CUS-10224,Individual,West Andrea,OH,2023-05-18,Suspended,Email,Bronze,66,37,37
+CUS-10225,Family,Davisville,NH,2021-09-19,Active,Phone,Bronze,30,71,82
+CUS-10226,Individual,Lake Marilynfort,VT,2024-11-16,Inactive,Phone,Silver,90,42,46
+CUS-10227,Family,Williamview,MT,2022-04-11,Active,SMS,Gold,55,79,68
+CUS-10228,Family,Bairdbury,NH,2023-10-20,Active,Email,Bronze,69,74,70
+CUS-10229,Individual,South James,PA,2025-04-28,Active,Phone,Silver,80,51,67
+CUS-10230,Individual,Port Chad,WI,2020-06-06,Active,Phone,Silver,41,62,67
+CUS-10231,Student,Morganhaven,KY,2020-02-23,Active,Email,Silver,35,48,69
+CUS-10232,Family,West Jessicashire,OR,2023-12-12,Active,SMS,Bronze,78,69,57
+CUS-10233,Individual,Grimesmouth,ND,2024-10-12,Active,Email,Gold,15,61,89
+CUS-10234,Family,Reedside,WV,2023-01-31,Active,SMS,Gold,44,96,73
+CUS-10235,Family,Gibsonmouth,VI,2022-11-07,Active,SMS,Gold,13,92,69
+CUS-10236,Individual,Lake John,MS,2023-03-18,Active,SMS,Silver,49,48,55
+CUS-10237,Individual,Port Kimberly,AZ,2024-01-08,Active,Phone,Gold,62,72,62
+CUS-10238,Individual,Juliefurt,MS,2021-10-11,Active,Email,Gold,15,64,100
+CUS-10239,Family,South Tammie,DC,2021-01-07,Active,Email,Gold,45,84,68
+CUS-10240,Individual,Mollymouth,CT,2021-09-14,Active,Email,Platinum,14,86,86
+CUS-10241,Family,Smithberg,MT,2021-05-28,Active,SMS,Silver,41,80,91
+CUS-10242,Individual,North Terrance,KS,2022-10-26,Active,Phone,Silver,18,66,95
+CUS-10243,Individual,Cindyfurt,SD,2025-03-07,Active,SMS,Bronze,22,50,92
+CUS-10244,Individual,Port Markside,MS,2021-03-07,Active,Email,Gold,21,82,100
+CUS-10245,Individual,Courtneyfort,VI,2025-05-13,Active,Email,Gold,35,59,92
+CUS-10246,Individual,New Caseyport,IN,2020-05-02,Active,Email,Gold,11,84,77
+CUS-10247,Individual,South Tiffanyville,NV,2024-01-11,Active,SMS,Bronze,45,38,74
+CUS-10248,Individual,Lake Kevin,AK,2020-08-05,Active,Email,Silver,15,58,63
+CUS-10249,Individual,West Lauraport,MI,2025-04-20,Active,Phone,Bronze,75,35,65
+CUS-10250,Premium,Ryanbury,NC,2024-01-16,Active,Phone,Gold,27,100,96
+CUS-10251,Business,Knightburgh,GA,2022-10-15,Active,SMS,Gold,1,98,100
+CUS-10252,Individual,North Chelsea,MS,2020-04-13,Active,Phone,Platinum,33,90,82
+CUS-10253,Individual,South Roberta,FL,2024-10-01,Active,Email,Bronze,43,43,75
+CUS-10254,Individual,South Dana,NH,2020-04-14,Active,Email,Gold,1,77,100
+CUS-10255,Individual,Elizabethmouth,MH,2023-01-31,Active,SMS,Silver,16,50,63
+CUS-10256,Individual,Ericaburgh,CA,2024-06-15,Suspended,Phone,Bronze,69,38,55
+CUS-10257,Individual,Landryshire,ME,2022-10-21,Active,Email,Gold,49,72,94
+CUS-10258,Individual,Vaughnmouth,PR,2023-05-26,Active,Email,Platinum,30,70,89
+CUS-10259,Student,Jamesfurt,PR,2024-02-23,Active,Phone,Silver,52,50,81
+CUS-10260,Family,Rodriguezfurt,OK,2021-09-05,Active,Email,Silver,9,84,96
+CUS-10261,Individual,Baileyport,AK,2025-01-14,Active,Phone,Bronze,50,38,87
+CUS-10262,Individual,Hillshire,VI,2024-01-17,Active,Email,Silver,66,62,71
+CUS-10263,Individual,New Julieport,WI,2023-10-26,Active,Phone,Gold,22,54,94
+CUS-10264,Individual,New Laurie,IN,2020-11-06,Active,Email,Gold,29,78,68
+CUS-10265,Family,New John,WV,2022-11-28,Active,Email,Silver,41,79,72
+CUS-10266,Student,Lake Colton,SC,2022-07-30,Inactive,Email,Bronze,86,48,59
+CUS-10267,Family,West Kristinaton,OR,2021-01-28,Suspended,Email,Silver,100,81,28
+CUS-10268,Family,Jessicaland,PW,2023-11-14,Active,Email,Bronze,79,62,63
+CUS-10269,Individual,Markchester,HI,2023-10-17,Active,SMS,Bronze,42,38,70
+CUS-10270,Individual,East Kristin,FM,2025-05-10,Active,Email,Silver,36,55,66
+CUS-10271,Individual,Alyssaview,MP,2023-01-08,Active,Phone,Bronze,15,56,94
+CUS-10272,Individual,West Robin,NJ,2020-04-13,Active,Phone,Gold,1,68,96
+CUS-10273,Individual,Juliemouth,AS,2022-08-25,Active,Phone,Bronze,42,43,78
+CUS-10274,Family,South Sydneyberg,WV,2024-12-08,Active,Email,Bronze,38,61,71
+CUS-10275,Family,Port Erica,TX,2025-02-02,Active,Phone,Bronze,67,51,58
+CUS-10276,Individual,Coffeyside,MN,2024-09-11,Active,SMS,Platinum,35,77,74
+CUS-10277,Premium,Port Ralphview,ND,2025-05-24,Active,Email,Bronze,24,93,94
+CUS-10278,Individual,South Miguelview,OR,2021-11-17,Active,SMS,Gold,24,64,98
+CUS-10279,Individual,Carsonstad,CT,2021-01-29,Active,Email,Platinum,31,80,75
+CUS-10280,Individual,South Angel,FM,2021-11-21,Active,Phone,Platinum,4,89,100
+CUS-10281,Business,Rosebury,SD,2024-08-20,Active,Email,Gold,1,92,78
+CUS-10282,Individual,Lake Madisonport,SD,2025-03-31,Active,Email,Bronze,68,38,68
+CUS-10283,Individual,Wilsonton,AZ,2024-01-20,Active,Email,Bronze,35,34,60
+CUS-10284,Individual,Wendyville,CT,2020-11-23,Active,Phone,Platinum,35,82,70
+CUS-10285,Family,New Derek,NH,2025-04-10,Active,Phone,Bronze,28,65,64
+CUS-10286,Individual,Ellenside,MT,2023-05-25,Active,Phone,Platinum,58,82,72
+CUS-10287,Family,South Diana,MP,2023-10-25,Active,SMS,Bronze,48,70,74
+CUS-10288,Individual,Gilbertview,AZ,2023-03-01,Active,SMS,Platinum,11,84,100
+CUS-10289,Individual,Jeffmouth,IA,2021-11-02,Active,Email,Gold,38,78,94
+CUS-10290,Individual,Corystad,ND,2022-11-11,Active,Email,Bronze,34,51,90
+CUS-10291,Individual,Bruceview,ID,2022-08-04,Active,Email,Bronze,23,38,69
+CUS-10292,Individual,Port Madisonland,TN,2020-04-02,Active,Phone,Gold,1,67,100
+CUS-10293,Individual,Lake Danielle,AK,2022-04-17,Active,Email,Gold,41,79,88
+CUS-10294,Individual,Port Matthewberg,WY,2024-12-30,Active,SMS,Platinum,34,63,98
+CUS-10295,Individual,North Maria,OH,2024-10-27,Active,Email,Silver,53,45,64
+CUS-10296,Family,New Jason,VI,2024-03-28,Active,Email,Silver,54,76,84
+CUS-10297,Individual,West Kim,WY,2021-04-15,Active,Email,Silver,59,55,51
+CUS-10298,Family,West Micheleberg,DC,2022-05-08,Active,SMS,Platinum,10,95,72
+CUS-10299,Individual,Laurenville,TN,2020-03-09,Active,Phone,Platinum,5,76,94
+CUS-10300,Individual,East Alexisbury,OR,2023-01-10,Active,SMS,Bronze,41,46,66
+CUS-10301,Family,Alfredview,AR,2024-02-07,Active,Phone,Gold,62,83,73
+CUS-10302,Individual,Lake Robert,DE,2020-10-20,Suspended,Phone,Gold,47,64,66
+CUS-10303,Premium,South Shanestad,NY,2024-12-06,Active,Email,Gold,30,100,67
+CUS-10304,Student,South Williamton,VA,2025-04-12,Active,Email,Silver,64,43,74
+CUS-10305,Individual,Stephentown,AR,2022-02-09,Active,Phone,Silver,18,58,66
+CUS-10306,Family,Boonechester,TX,2025-02-16,Active,Email,Silver,53,64,74
+CUS-10307,Individual,South Jennifermouth,CA,2021-02-20,Active,Email,Gold,13,64,100
+CUS-10308,Family,West Charleneland,DC,2021-01-25,Active,Email,Gold,1,84,82
+CUS-10309,Family,Claudiashire,OH,2023-04-18,Active,Phone,Silver,65,76,66
+CUS-10310,Student,Oscarhaven,LA,2020-02-01,Active,Email,Platinum,37,80,78
+CUS-10311,Family,Wagnerchester,CT,2023-12-12,Active,SMS,Silver,69,73,71
+CUS-10312,Individual,Port Dianaside,VA,2023-08-21,Active,Email,Silver,51,59,56
+CUS-10313,Family,South Shannon,IN,2024-01-19,Active,SMS,Platinum,33,93,90
+CUS-10314,Individual,Morganmouth,MO,2024-11-04,Active,Email,Bronze,79,49,82
+CUS-10315,Family,Blairmouth,NE,2021-08-27,Active,Email,Silver,55,78,80
+CUS-10316,Individual,Elizabethstad,FL,2025-04-16,Active,Email,Gold,56,70,90
+CUS-10317,Individual,Jonesland,CO,2024-02-09,Active,Email,Gold,41,58,96
+CUS-10318,Student,Davisstad,AS,2025-05-14,Active,Email,Gold,70,41,56
+CUS-10319,Individual,New Brian,OH,2024-09-21,Active,Email,Bronze,33,47,83
+CUS-10320,Individual,Elizabethchester,MI,2023-06-19,Active,SMS,Platinum,52,80,61
+CUS-10321,Individual,Parrishton,LA,2023-02-03,Active,Email,Gold,33,65,65
+CUS-10322,Individual,Michaelshire,NY,2023-11-30,Active,SMS,Platinum,16,67,100
+CUS-10323,Individual,East Diane,IN,2021-01-28,Active,Email,Silver,50,64,55
+CUS-10324,Individual,West Meganstad,DE,2022-04-11,Active,Email,Gold,14,61,70
+CUS-10325,Individual,Audreychester,PR,2022-02-15,Active,Email,Gold,38,64,68
+CUS-10326,Individual,New Sarahview,AK,2022-06-07,Active,Email,Platinum,2,84,72
+CUS-10327,Individual,West Jacqueline,ME,2025-01-19,Active,SMS,Silver,22,42,73
+CUS-10328,Business,Michaelburgh,VI,2023-02-28,Active,Email,Platinum,1,100,100
+CUS-10329,Individual,New Diane,CA,2024-08-07,Active,Email,Bronze,30,50,69
+CUS-10330,Individual,Lake Cynthia,AK,2024-10-05,Active,SMS,Bronze,68,35,52
+CUS-10331,Individual,Lake Alyssafurt,MT,2021-12-09,Active,Email,Platinum,14,89,100
+CUS-10332,Student,Petersonstad,ME,2022-03-23,Suspended,Email,Gold,85,63,54
+CUS-10333,Individual,Kimberlyshire,PA,2023-02-06,Inactive,Email,Silver,81,58,49
+CUS-10334,Family,North Ericton,TX,2021-08-27,Active,Phone,Bronze,11,73,98
+CUS-10335,Individual,West Scottchester,NM,2022-03-08,Active,Email,Bronze,24,53,79
+CUS-10336,Family,Perryborough,WV,2020-07-28,Active,Email,Gold,25,100,91
+CUS-10337,Individual,West Russellport,TX,2020-07-02,Active,Email,Gold,10,76,68
+CUS-10338,Individual,Roseport,AZ,2022-03-05,Active,Phone,Gold,10,77,100
+CUS-10339,Individual,South Tracey,AR,2022-02-18,Active,Email,Silver,13,51,68
+CUS-10340,Individual,East Kevinborough,WI,2022-05-12,Active,Phone,Silver,65,56,87
+CUS-10341,Individual,Port Jonathan,MD,2023-06-16,Active,Email,Bronze,80,47,65
+CUS-10342,Family,North Tylerchester,HI,2022-02-17,Active,Email,Silver,56,89,87
+CUS-10343,Individual,South Amanda,IN,2021-10-18,Active,Phone,Gold,4,72,90
+CUS-10344,Individual,Charleston,NE,2023-11-24,Active,SMS,Gold,30,66,81
+CUS-10345,Family,South Samanthamouth,OK,2022-03-15,Active,SMS,Bronze,39,64,88
+CUS-10346,Individual,Berrychester,LA,2024-01-29,Active,Phone,Silver,38,45,79
+CUS-10347,Family,South Andrewmouth,GA,2020-10-12,Active,Email,Gold,35,96,87
+CUS-10348,Individual,Collierstad,CO,2023-05-09,Active,Email,Silver,68,59,81
+CUS-10349,Individual,Richardbury,NE,2022-01-06,Active,SMS,Gold,52,62,66
+CUS-10350,Family,Warrenfurt,VI,2023-09-08,Active,Email,Silver,56,85,74
+CUS-10351,Student,Juliebury,MA,2021-11-10,Suspended,Email,Bronze,59,37,51
+CUS-10352,Family,North William,DE,2023-02-16,Active,Phone,Silver,34,80,91
+CUS-10353,Family,Port Michael,VA,2020-11-04,Active,Email,Bronze,26,65,62
+CUS-10354,Family,East Curtis,KS,2024-02-04,Active,Email,Silver,33,79,84
+CUS-10355,Individual,East Carrie,WV,2020-07-18,Active,Phone,Silver,19,55,64
+CUS-10356,Individual,East Stephaniefort,NH,2021-12-03,Active,Phone,Bronze,50,47,83
+CUS-10357,Individual,Maldonadoshire,SD,2020-11-23,Active,Email,Gold,41,75,100
+CUS-10358,Individual,Michellemouth,FL,2023-08-04,Active,Email,Gold,66,61,85
+CUS-10359,Individual,Jonesmouth,SC,2022-03-07,Active,Email,Silver,50,51,86
+CUS-10360,Individual,Laurashire,AR,2024-11-20,Active,Email,Bronze,27,39,86
+CUS-10361,Individual,Williamport,NH,2023-08-01,Active,Email,Bronze,27,46,77
+CUS-10362,Family,Johnsonstad,MP,2023-06-18,Active,Phone,Gold,68,94,94
+CUS-10363,Individual,Chaseland,RI,2020-10-01,Active,Email,Bronze,23,47,88
+CUS-10364,Individual,Fordside,WY,2023-05-06,Active,Email,Bronze,50,53,61
+CUS-10365,Individual,South Reginashire,SD,2022-09-29,Active,Email,Gold,36,58,85
+CUS-10366,Student,West Cassidy,NY,2022-09-19,Active,SMS,Platinum,29,77,96
+CUS-10367,Individual,North Shannon,AS,2022-10-04,Active,SMS,Silver,12,65,59
+CUS-10368,Family,Toniland,NY,2021-03-27,Active,Email,Gold,1,96,100
+CUS-10369,Family,North John,NV,2024-04-17,Active,Phone,Silver,37,80,76
+CUS-10370,Individual,Warrenburgh,MN,2024-03-29,Active,Phone,Silver,47,46,66
+CUS-10371,Individual,Samanthafurt,MT,2020-03-07,Active,Email,Platinum,18,78,82
+CUS-10372,Individual,Erikaton,WY,2024-02-19,Active,Email,Gold,50,66,70
+CUS-10373,Family,Cameronville,OH,2024-05-26,Active,Email,Bronze,42,69,69
+CUS-10374,Individual,Mitchellberg,MA,2020-12-10,Active,Phone,Silver,17,69,63
+CUS-10375,Individual,New Elizabethstad,ME,2024-03-16,Active,SMS,Platinum,65,83,65
+CUS-10751,Individual,Kyliebury,KY,2025-01-12,Active,Email,Silver,55,43,67
+CUS-10752,Individual,East Angelaport,WI,2020-09-06,Active,Email,Gold,23,70,79
+CUS-10753,Family,Port Melanieport,IL,2020-08-11,Active,SMS,Gold,1,99,100
+CUS-10754,Premium,Lake Peter,SD,2023-12-18,Active,Phone,Silver,38,100,92
+CUS-10755,Individual,Port Rachaelbury,NM,2020-09-22,Active,Email,Platinum,21,88,77
+CUS-10756,Business,Rodriguezfort,SC,2021-04-21,Active,SMS,Silver,1,100,100
+CUS-10757,Family,New Pamelatown,MN,2024-02-19,Active,Phone,Platinum,36,84,84
+CUS-10758,Individual,Davidshire,MT,2024-07-08,Active,Email,Bronze,38,40,57
+CUS-10759,Individual,Amyburgh,WV,2022-11-03,Active,Phone,Bronze,29,47,80
+CUS-10760,Family,Bestland,AK,2023-06-15,Suspended,SMS,Bronze,100,65,40
+CUS-10761,Premium,North Joseton,AR,2024-06-20,Active,Email,Bronze,34,94,75
+CUS-10762,Individual,Hunterhaven,WI,2024-07-25,Active,Phone,Gold,29,70,85
+CUS-10763,Individual,Hendersonfurt,CO,2020-02-08,Active,Phone,Platinum,46,86,65
+CUS-10764,Student,West Christopher,CO,2021-07-28,Active,Email,Silver,36,46,89
+CUS-10765,Family,Port Eric,MD,2021-01-18,Active,SMS,Platinum,35,100,65
+CUS-10766,Individual,Willisland,ME,2020-06-26,Active,Email,Gold,50,73,73
+CUS-10767,Individual,Blairbury,AR,2020-12-24,Active,Phone,Platinum,48,75,89
+CUS-10768,Individual,North Sandy,DE,2024-06-24,Active,Phone,Bronze,79,47,78
+CUS-10769,Individual,Salazarton,ME,2021-11-01,Active,SMS,Platinum,53,86,68
+CUS-10770,Individual,North Alexander,DC,2020-03-15,Active,Phone,Gold,1,74,72
+CUS-10771,Family,East Tylerstad,NC,2023-05-02,Active,Email,Gold,6,92,88
+CUS-10772,Individual,Garyberg,WA,2024-04-02,Active,SMS,Bronze,32,42,71
+CUS-10773,Individual,Jessicaville,WI,2024-05-01,Active,Email,Bronze,37,36,53
+CUS-10774,Student,West Lindsayview,NC,2023-02-20,Active,Email,Bronze,29,34,64
+CUS-10775,Premium,West Jennifershire,SC,2024-07-04,Active,Email,Bronze,44,87,86
+CUS-10776,Individual,South Spencerstad,AR,2020-09-23,Active,SMS,Bronze,24,44,61
+CUS-10777,Individual,Villarrealburgh,MN,2021-01-01,Active,SMS,Gold,34,77,100
+CUS-10778,Individual,West Kerri,MH,2021-11-11,Active,Phone,Gold,27,62,94
+CUS-10779,Individual,East Joycetown,AZ,2020-07-09,Active,SMS,Gold,19,73,96
+CUS-10780,Individual,East Brandonstad,MS,2025-04-24,Active,SMS,Silver,78,51,70
+CUS-10781,Individual,East Sarah,PR,2025-02-21,Active,Phone,Gold,39,65,64
+CUS-10782,Individual,New Lindachester,IN,2020-08-19,Active,Email,Bronze,49,55,89
+CUS-10783,Individual,Johnmouth,KY,2022-11-06,Active,SMS,Gold,18,74,71
+CUS-10784,Family,New Nathanhaven,TX,2022-12-27,Active,Phone,Bronze,24,74,66
+CUS-10785,Student,East Jeffreyhaven,AZ,2022-02-25,Active,Email,Gold,21,62,100
+CUS-10786,Family,Jonesmouth,VI,2023-01-20,Active,Email,Silver,56,84,80
+CUS-10787,Individual,Kiaraport,MD,2023-05-05,Active,Phone,Gold,11,65,93
+CUS-10788,Individual,New Stephenstad,ID,2020-08-10,Active,Phone,Platinum,10,89,71
+CUS-10789,Individual,Anneport,WA,2024-07-31,Active,Phone,Gold,61,52,67
+CUS-10790,Family,South Micheal,NM,2022-07-16,Active,Email,Silver,18,74,77
+CUS-10791,Individual,Lake Rachel,WV,2024-06-14,Inactive,Email,Platinum,67,73,62
+CUS-10792,Individual,East Adam,MT,2023-06-06,Suspended,Email,Bronze,78,36,38
+CUS-10793,Premium,East Ambertown,MA,2020-04-18,Active,Phone,Platinum,1,100,71
+CUS-10794,Individual,Port Dianeport,CT,2023-12-09,Active,Phone,Gold,35,66,90
+CUS-10795,Individual,New Tonya,MT,2023-09-18,Active,Email,Silver,73,55,72
+CUS-10796,Individual,Woodwardberg,VT,2024-11-22,Active,Email,Bronze,21,35,87
+CUS-10797,Family,Christopherbury,MH,2020-10-05,Active,Phone,Gold,19,100,94
+CUS-10798,Family,Haynesstad,NH,2022-07-19,Active,Phone,Silver,28,75,66
+CUS-10799,Individual,New Codyberg,SC,2020-01-16,Active,SMS,Silver,32,63,80
+CUS-10800,Premium,Jonesshire,AR,2023-03-26,Active,SMS,Gold,30,100,71
+CUS-10801,Individual,Batesberg,IA,2025-05-23,Active,Email,Gold,64,58,87
+CUS-10802,Individual,Josemouth,AS,2022-12-07,Active,Email,Silver,55,49,89
+CUS-10803,Individual,Haynesmouth,MD,2023-04-02,Active,Email,Bronze,59,36,79
+CUS-10804,Individual,Nelsonland,ID,2025-01-29,Active,Phone,Silver,71,49,64
+CUS-10805,Individual,Port Kayla,CT,2023-11-24,Inactive,Phone,Gold,76,62,58
+CUS-10806,Family,North Frank,NH,2023-03-30,Active,Email,Platinum,51,100,61
+CUS-10807,Individual,Richardside,MI,2020-06-17,Active,Email,Platinum,6,78,100
+CUS-10808,Individual,South Kyle,KS,2024-10-22,Active,Phone,Silver,78,59,54
+CUS-10809,Family,North Ericport,GU,2022-01-27,Active,Email,Platinum,25,94,98
+CUS-10810,Business,East Marymouth,FL,2021-12-03,Suspended,SMS,Platinum,70,100,57
+CUS-10811,Family,Lake Johnstad,MO,2022-04-25,Active,Email,Gold,35,84,76
+CUS-10812,Individual,Lake Kentburgh,AK,2024-09-20,Active,Phone,Gold,17,52,77
+CUS-10813,Individual,Bondside,WA,2022-09-02,Active,Phone,Gold,31,65,88
+CUS-10814,Family,North Steven,AS,2022-03-09,Active,Email,Platinum,1,98,98
+CUS-10815,Individual,North Alexander,MP,2021-10-08,Suspended,Phone,Bronze,100,57,50
+CUS-10816,Individual,East James,MO,2024-09-25,Active,SMS,Gold,31,59,81
+CUS-10817,Family,Ginaland,OR,2021-06-06,Active,Email,Platinum,38,98,100
+CUS-10818,Family,Samanthaland,AK,2022-11-30,Active,Phone,Bronze,43,57,52
+CUS-10819,Family,East Rachelmouth,AS,2020-01-25,Active,Phone,Gold,12,92,86
+CUS-10820,Individual,North Rebecca,MP,2020-03-10,Active,Email,Platinum,32,81,100
+CUS-10821,Family,Davidmouth,AR,2023-12-21,Suspended,Email,Silver,84,84,50
+CUS-10822,Family,New Ryan,VA,2021-01-13,Active,Phone,Silver,29,75,95
+CUS-10823,Individual,Crawfordfurt,TX,2021-07-20,Active,Phone,Gold,40,71,78
+CUS-10824,Individual,Thompsonborough,PW,2020-05-31,Active,Email,Silver,3,62,76
+CUS-10825,Individual,West Joshua,FM,2020-05-22,Active,SMS,Gold,1,84,100
+CUS-10826,Individual,North Christina,RI,2023-01-12,Active,Email,Silver,67,61,63
+CUS-10827,Individual,Lake Kenneth,MT,2020-05-29,Active,Phone,Platinum,1,89,79
+CUS-10828,Family,Brownview,MS,2020-01-02,Inactive,Phone,Silver,74,85,71
+CUS-10829,Individual,South James,FM,2022-11-21,Active,Phone,Silver,33,49,88
+CUS-10830,Individual,Lake Virginia,ND,2022-02-26,Suspended,SMS,Gold,70,76,48
+CUS-10831,Individual,South Kimberlystad,NJ,2021-09-12,Active,Phone,Platinum,1,82,100
+CUS-10832,Business,Coopershire,NY,2021-11-27,Active,Email,Platinum,19,100,78
+CUS-10833,Individual,Paulburgh,AK,2022-02-25,Active,Email,Silver,10,69,80
+CUS-10834,Individual,Carlatown,MH,2024-12-17,Active,Phone,Bronze,32,31,91
+CUS-10835,Individual,Brianfort,NC,2022-03-07,Active,Phone,Silver,39,63,54
+CUS-10836,Individual,Katiebury,GA,2020-04-24,Active,Phone,Gold,3,85,100
+CUS-10837,Individual,East Dianeview,ND,2023-10-20,Active,Phone,Gold,24,56,68
+CUS-10838,Family,Port Wendybury,OK,2022-09-28,Active,Email,Platinum,1,94,78
+CUS-10839,Individual,Kellyburgh,HI,2023-07-19,Active,Email,Gold,39,74,73
+CUS-10840,Family,New Louis,WA,2020-05-10,Active,Email,Gold,41,100,76
+CUS-10841,Individual,Robintown,VT,2021-02-19,Active,SMS,Platinum,33,84,84
+CUS-10842,Individual,Staceyshire,FL,2023-11-02,Active,Email,Gold,60,60,60
+CUS-10843,Individual,Port Vanessa,FM,2021-11-18,Active,Email,Platinum,3,81,100
+CUS-10844,Individual,Weaverburgh,NM,2021-05-13,Inactive,Email,Bronze,84,62,83
+CUS-10845,Individual,North Brianbury,AK,2020-11-19,Active,Email,Bronze,11,45,95
+CUS-10846,Business,Smithborough,AS,2022-05-02,Active,Phone,Gold,1,100,79
+CUS-10847,Family,West Jennifer,PW,2022-12-07,Active,Email,Bronze,52,58,88
+CUS-10848,Individual,Brianberg,OR,2022-10-20,Active,Email,Gold,17,68,93
+CUS-10849,Individual,Port Daniel,NC,2021-04-27,Active,SMS,Platinum,29,83,99
+CUS-10850,Individual,Susanstad,VT,2022-08-08,Active,Phone,Bronze,19,41,66
+CUS-10851,Family,Willismouth,ME,2025-02-09,Active,Email,Silver,22,61,79
+CUS-10852,Individual,Derekburgh,VA,2022-06-09,Active,Phone,Gold,25,59,71
+CUS-10853,Family,Connerfort,SD,2025-03-09,Active,Email,Bronze,52,53,54
+CUS-10854,Business,Grantside,UT,2024-01-17,Active,Phone,Gold,42,98,76
+CUS-10855,Family,Jeffreyshire,GU,2021-10-29,Active,Email,Gold,5,92,83
+CUS-10856,Individual,South Kurt,UT,2023-04-13,Active,SMS,Bronze,69,55,76
+CUS-10857,Individual,Davidtown,UT,2022-02-03,Active,Phone,Gold,11,65,89
+CUS-10858,Individual,Rosalesshire,AZ,2023-11-18,Active,Email,Bronze,49,48,77
+CUS-10859,Individual,New Lucas,AS,2021-12-04,Active,Email,Bronze,53,60,89
+CUS-10860,Premium,Lake Ariana,NM,2023-03-29,Suspended,SMS,Bronze,89,97,44
+CUS-10861,Business,West Julie,IA,2021-03-19,Active,SMS,Gold,21,100,81
+CUS-10862,Individual,Toniburgh,SC,2022-06-08,Active,SMS,Silver,15,66,57
+CUS-10863,Individual,Port Jennamouth,NV,2020-03-31,Active,Email,Platinum,1,88,100
+CUS-10864,Individual,West Jasonland,MI,2024-07-16,Active,SMS,Silver,35,44,88
+CUS-10865,Family,Kristintown,AR,2023-11-20,Active,SMS,Bronze,38,61,58
+CUS-10866,Individual,Kimchester,GA,2023-10-02,Active,Phone,Gold,57,72,60
+CUS-10867,Student,Snyderfurt,MI,2022-08-07,Active,SMS,Silver,57,49,89
+CUS-10868,Individual,Garciafort,WY,2023-07-21,Active,Phone,Bronze,64,45,81
+CUS-10869,Individual,East Shannon,AS,2022-05-22,Active,Phone,Silver,42,54,57
+CUS-10870,Family,West Andrewview,CT,2021-11-18,Active,Email,Platinum,36,100,66
+CUS-10871,Individual,West Georgefurt,GA,2022-01-18,Active,Email,Silver,45,66,55
+CUS-10872,Individual,New Shellyland,MA,2024-05-03,Active,SMS,Bronze,27,53,85
+CUS-10873,Family,Bushchester,SD,2024-03-20,Active,SMS,Bronze,67,60,67
+CUS-10874,Individual,New Pamela,GA,2021-07-01,Active,Email,Bronze,24,52,84
+CUS-10875,Individual,North Markborough,MT,2022-12-14,Active,Email,Silver,60,64,66
+CUS-10876,Individual,Donnaport,IA,2022-01-23,Active,SMS,Platinum,54,71,72
+CUS-10877,Business,North Philipside,MP,2022-07-26,Active,Email,Bronze,1,76,70
+CUS-10878,Individual,Hernandezstad,AL,2023-11-28,Active,Email,Bronze,80,54,45
+CUS-10879,Individual,Millerfort,ID,2023-10-29,Active,Email,Bronze,48,54,52
+CUS-10880,Individual,North Jamieport,CO,2020-05-08,Active,SMS,Platinum,23,95,87
+CUS-10881,Individual,Anthonyport,WY,2021-12-03,Active,Phone,Gold,35,76,98
+CUS-10882,Individual,Ruizview,CO,2021-09-14,Active,SMS,Silver,52,58,64
+CUS-10883,Individual,Lopezfurt,MN,2021-08-13,Active,Email,Silver,31,56,93
+CUS-10884,Premium,South Bradley,NV,2023-12-28,Active,Email,Bronze,50,83,60
+CUS-10885,Individual,Bakerview,OK,2020-03-25,Suspended,Phone,Gold,53,70,43
+CUS-10886,Individual,East Karenville,CO,2020-03-12,Active,SMS,Bronze,28,62,65
+CUS-10887,Individual,Lindseychester,WV,2020-09-05,Inactive,Email,Gold,29,78,85
+CUS-10888,Individual,New Bruce,MS,2024-02-21,Active,Phone,Silver,38,58,71
+CUS-10889,Student,Sheppardfort,OK,2024-03-24,Suspended,Phone,Bronze,96,37,32
+CUS-10890,Family,South Kent,MO,2024-02-07,Active,Email,Silver,27,72,56
+CUS-10891,Individual,New Ashleyhaven,AS,2024-09-18,Active,Email,Bronze,58,51,61
+CUS-10892,Individual,North Stacy,NV,2021-03-30,Active,Phone,Bronze,5,59,87
+CUS-10893,Family,East Teresa,AS,2025-05-15,Active,Phone,Bronze,40,69,90
+CUS-10894,Individual,East Brad,CO,2020-04-24,Inactive,Email,Bronze,84,58,67
+CUS-10895,Individual,Harrisberg,MP,2020-01-25,Active,Email,Platinum,45,92,66
+CUS-10896,Individual,Luisland,CO,2024-12-23,Active,SMS,Gold,28,56,92
+CUS-10897,Family,Hawkinsside,MD,2022-04-28,Active,Phone,Bronze,18,68,87
+CUS-10898,Student,Apriltown,WY,2022-12-11,Suspended,Email,Platinum,86,69,28
+CUS-10899,Individual,Rodriguezberg,FL,2023-08-01,Inactive,Email,Silver,95,63,49
+CUS-10900,Individual,North Annaville,WY,2024-08-31,Active,Phone,Bronze,72,41,83
+CUS-10901,Individual,Mikaylastad,FM,2023-02-19,Active,Email,Gold,8,64,88
+CUS-10902,Student,Bakerfort,OK,2024-09-04,Active,Email,Silver,38,45,64
+CUS-10903,Individual,Johnsonview,MO,2023-11-09,Active,Email,Gold,41,56,100
+CUS-10904,Family,New Charlotte,UT,2023-04-05,Active,Email,Bronze,53,71,57
+CUS-10905,Individual,Williamsmouth,UT,2024-02-10,Active,SMS,Bronze,23,37,76
+CUS-10906,Individual,North Julie,PW,2023-11-20,Active,Email,Bronze,46,54,73
+CUS-10907,Individual,Pennytown,MA,2021-08-20,Active,SMS,Gold,41,81,73
+CUS-10908,Family,Larryfort,PR,2023-05-11,Active,Phone,Gold,52,85,77
+CUS-10909,Family,Port Jeremyport,WA,2023-11-10,Active,Phone,Bronze,29,54,63
+CUS-10910,Individual,Schroedermouth,KY,2022-02-02,Active,Email,Platinum,4,72,83
+CUS-10911,Individual,Jacobsland,ID,2021-03-28,Active,Phone,Gold,34,78,98
+CUS-10912,Family,Lewischester,WA,2023-12-09,Active,Email,Silver,24,67,64
+CUS-10913,Premium,Malonestad,GU,2022-09-09,Active,Phone,Bronze,20,100,89
+CUS-10914,Family,New Laceyland,ME,2021-12-01,Active,Email,Platinum,1,97,78
+CUS-10915,Business,Taylorhaven,FM,2020-10-18,Active,Email,Gold,1,100,77
+CUS-10916,Individual,East Jamesborough,MP,2024-05-05,Active,Email,Bronze,22,49,93
+CUS-10917,Individual,East Antonioton,PW,2020-08-31,Inactive,Email,Silver,30,57,61
+CUS-10918,Premium,Janetview,MN,2021-02-24,Active,Email,Platinum,1,100,79
+CUS-10919,Family,Wagnerville,TX,2025-04-12,Active,Phone,Bronze,74,66,85
+CUS-10920,Individual,East Nathanmouth,HI,2023-03-13,Active,SMS,Gold,33,62,76
+CUS-10921,Student,Matthewsstad,MI,2020-12-17,Inactive,Phone,Platinum,26,69,97
+CUS-10922,Business,Port Patricia,WA,2022-08-30,Active,Phone,Gold,1,98,92
+CUS-10923,Student,West Anthonyton,GA,2022-05-18,Active,Email,Bronze,26,31,84
+CUS-10924,Individual,Port Jeffrey,IN,2020-10-05,Active,Email,Silver,46,54,56
+CUS-10925,Individual,West Denise,NY,2020-08-24,Active,Email,Platinum,33,88,78
+CUS-10926,Individual,Port Kimberlytown,NJ,2021-08-18,Suspended,Email,Platinum,89,86,46
+CUS-10927,Individual,Lake Glen,AS,2023-10-12,Active,Email,Silver,62,46,55
+CUS-10928,Individual,East Johnnyport,VT,2022-03-31,Active,SMS,Platinum,52,74,64
+CUS-10929,Individual,Rodneyfurt,PR,2021-02-11,Active,Phone,Platinum,1,79,97
+CUS-10930,Family,Stephenborough,NH,2021-07-24,Active,Phone,Gold,39,100,88
+CUS-10931,Individual,Ericafurt,OR,2023-09-27,Active,Email,Silver,37,48,82
+CUS-10932,Individual,North Williamstad,OH,2021-05-28,Active,Email,Platinum,1,74,73
+CUS-10933,Family,Kennethville,NJ,2022-10-17,Active,SMS,Bronze,51,67,59
+CUS-10934,Individual,West Vanessamouth,VI,2023-06-30,Active,Email,Gold,59,70,88
+CUS-10935,Individual,Joseport,ID,2023-09-17,Active,Phone,Silver,71,61,80
+CUS-10936,Individual,New Kathy,MH,2024-04-13,Active,Email,Platinum,34,77,84
+CUS-10937,Business,Port Meredithfurt,TN,2022-06-25,Active,Email,Gold,36,100,73
+CUS-10938,Individual,Erintown,SD,2020-10-02,Active,Email,Platinum,26,88,100
+CUS-10939,Family,Brightview,PW,2023-03-17,Active,Phone,Bronze,13,68,74
+CUS-10940,Individual,Sullivanton,OR,2022-02-12,Active,Email,Platinum,14,70,69
+CUS-10941,Individual,West Jessica,IN,2020-09-19,Active,Email,Platinum,1,93,91
+CUS-10942,Individual,Knoxstad,NY,2022-05-26,Active,Email,Bronze,48,45,66
+CUS-10943,Individual,Meganside,HI,2021-10-01,Active,SMS,Bronze,21,43,77
+CUS-10944,Individual,Connorberg,WA,2023-01-07,Active,Email,Gold,35,73,89
+CUS-10945,Individual,Jessicaside,WV,2023-11-26,Active,Email,Bronze,56,46,69
+CUS-10946,Individual,Lake Rachel,SD,2024-07-13,Active,Phone,Bronze,51,48,71
+CUS-10947,Individual,East Michaelport,MT,2021-09-05,Active,Email,Gold,46,63,95
+CUS-10948,Individual,Nathanshire,LA,2021-06-27,Active,SMS,Gold,5,80,74
+CUS-10949,Family,Yorkfort,AR,2023-03-30,Active,Email,Bronze,61,72,78
+CUS-10950,Individual,South Pamelahaven,DE,2021-12-12,Active,Phone,Silver,54,59,77
+CUS-10951,Family,Morenochester,AR,2021-10-03,Active,Email,Gold,21,97,77
+CUS-10952,Business,East Victoria,MA,2023-07-09,Active,SMS,Gold,8,100,86
+CUS-10953,Premium,Benitezmouth,FL,2022-12-27,Active,SMS,Platinum,43,100,100
+CUS-10954,Individual,Michelleburgh,WI,2021-02-14,Active,Email,Bronze,43,51,79
+CUS-10955,Individual,South Marvinburgh,MD,2024-10-27,Active,Email,Bronze,46,39,69
+CUS-10956,Family,North Shannonborough,WV,2021-06-09,Active,Email,Silver,10,77,59
+CUS-10957,Individual,New Kathy,NM,2024-08-21,Active,Email,Platinum,37,82,65
+CUS-10958,Individual,East Christinachester,MO,2021-07-12,Active,Email,Platinum,33,88,75
+CUS-10959,Family,Sanfordfurt,AL,2020-03-27,Suspended,Email,Bronze,95,67,31
+CUS-10960,Family,New Jamesstad,AL,2024-11-10,Active,SMS,Gold,52,73,85
+CUS-10961,Premium,Katherinehaven,ID,2024-01-23,Active,Email,Gold,27,100,98
+CUS-10962,Family,Lake Adambury,IN,2023-04-03,Inactive,SMS,Bronze,96,58,56
+CUS-10963,Individual,Larryville,MS,2024-05-02,Active,Email,Silver,44,50,79
+CUS-10964,Individual,Garyton,ME,2020-08-06,Active,SMS,Gold,6,82,72
+CUS-10965,Individual,Stephenhaven,PA,2022-02-06,Active,Email,Gold,24,66,83
+CUS-10966,Business,Ryanberg,MA,2025-04-02,Active,Email,Silver,24,75,94
+CUS-10967,Individual,Howardborough,GA,2024-02-23,Active,SMS,Silver,70,50,62
+CUS-10968,Individual,Smithbury,VA,2021-09-25,Active,Phone,Platinum,35,73,97
+CUS-10969,Business,East Jessica,OR,2024-10-22,Active,Email,Platinum,54,100,79
+CUS-10970,Individual,North Michael,SD,2024-08-11,Active,Email,Gold,20,66,100
+CUS-10971,Individual,South Nancyview,WI,2024-07-21,Active,Email,Bronze,75,34,76
+CUS-10972,Individual,New Virginiaville,SD,2022-04-25,Inactive,Email,Gold,83,62,64
+CUS-10973,Family,North Hannahchester,NV,2022-11-02,Active,Email,Gold,33,87,93
+CUS-10974,Family,Martinezview,NJ,2024-04-09,Active,Phone,Silver,70,83,54
+CUS-10975,Individual,East Heather,SC,2021-02-13,Active,Email,Bronze,10,49,91
+CUS-10976,Family,West Robertville,TN,2024-04-21,Active,Phone,Gold,53,86,80
+CUS-10977,Individual,Cindyberg,MT,2024-11-23,Active,Email,Silver,72,51,64
+CUS-10978,Individual,New Jenniferville,LA,2022-04-28,Active,Email,Silver,58,67,63
+CUS-10979,Individual,Port Danielborough,PA,2020-02-17,Inactive,Phone,Gold,78,67,84
+CUS-10980,Individual,Port Jose,NC,2023-12-07,Active,Email,Silver,58,52,58
+CUS-10981,Individual,West Jade,LA,2022-01-23,Active,Phone,Bronze,37,52,82
+CUS-10982,Family,North Amy,PW,2022-10-09,Active,Phone,Bronze,63,65,66
+CUS-10983,Family,Lake Sarah,MA,2022-02-21,Active,SMS,Gold,46,88,73
+CUS-10984,Individual,North Alexander,CO,2022-04-16,Active,Email,Platinum,10,88,96
+CUS-10985,Premium,Port Audreyfort,FL,2022-01-27,Active,Phone,Silver,19,98,77
+CUS-10986,Student,Port Williamville,MH,2022-03-25,Active,Phone,Platinum,42,78,78
+CUS-10987,Individual,Dawnmouth,LA,2023-02-14,Active,Email,Bronze,67,47,85
+CUS-10988,Premium,Stevenville,GU,2024-07-01,Active,Phone,Bronze,21,93,95
+CUS-10989,Individual,Port Benjamin,LA,2022-03-19,Active,Email,Platinum,1,87,81
+CUS-10990,Individual,Lauriemouth,NE,2022-10-28,Active,Email,Silver,13,57,91
+CUS-10991,Individual,North Melissaton,AL,2021-06-17,Active,Email,Bronze,56,49,72
+CUS-10992,Premium,Lake Deborah,MA,2021-08-02,Inactive,Email,Platinum,66,100,90
+CUS-10993,Individual,Patriciaview,FM,2025-01-02,Active,Phone,Silver,80,45,79
+CUS-10994,Business,West Lisaburgh,DE,2023-09-08,Active,Email,Bronze,8,77,70
+CUS-10995,Individual,Rossmouth,KY,2021-06-16,Active,Email,Bronze,58,56,51
+CUS-10996,Individual,Vaughnfort,AS,2023-12-23,Active,Email,Bronze,66,38,54
+CUS-10997,Individual,Banksburgh,DE,2021-02-21,Active,Email,Bronze,32,50,90
+CUS-10998,Business,Lake Jessica,PR,2023-04-14,Active,SMS,Bronze,44,89,63
+CUS-10999,Individual,North Robert,OR,2020-06-06,Active,Email,Bronze,21,44,74
+CUS-11000,Family,Phammouth,HI,2023-10-25,Active,Email,Platinum,16,94,76
+CUS-11001,Individual,Maxwelltown,VI,2022-07-31,Active,Phone,Silver,24,67,56
+CUS-11002,Individual,South Samantha,DE,2020-03-30,Active,SMS,Silver,46,73,59
+CUS-11003,Individual,Alexanderland,KS,2020-04-09,Active,Email,Platinum,37,77,98
+CUS-11004,Student,Alexanderhaven,WI,2022-02-20,Active,Email,Silver,53,51,55
+CUS-11005,Individual,Lake Morgan,NC,2021-03-02,Active,Phone,Silver,48,72,60
+CUS-11006,Individual,South Dorothybury,NJ,2022-10-02,Active,Phone,Platinum,54,86,68
+CUS-11007,Individual,Elizabethfurt,FL,2020-07-15,Active,Phone,Gold,46,76,91
+CUS-11008,Individual,North Dawnburgh,NY,2023-05-14,Active,Phone,Gold,39,61,90
+CUS-11009,Family,Christianburgh,CA,2020-07-09,Active,Email,Gold,4,100,79
+CUS-11010,Premium,Floresmouth,KY,2022-12-15,Active,Phone,Silver,20,94,86
+CUS-11011,Individual,New Jeffreyfurt,MO,2020-09-18,Active,Email,Silver,27,62,91
+CUS-11012,Individual,North Stephen,AS,2020-06-05,Inactive,Phone,Gold,46,67,90
+CUS-11013,Family,Millerfort,NV,2023-03-10,Active,Email,Silver,59,82,50
+CUS-11014,Individual,Davidfort,WA,2023-09-16,Active,Phone,Gold,12,56,94
+CUS-11015,Business,North Richardton,OH,2021-09-01,Active,Phone,Platinum,5,100,85
+CUS-11016,Individual,Port Christopherport,FM,2025-02-23,Active,Email,Bronze,67,49,63
+CUS-11017,Business,Lake Emily,MA,2020-08-05,Active,Email,Gold,1,100,100
+CUS-11018,Individual,Marciabury,PR,2022-04-09,Active,SMS,Gold,26,68,100
+CUS-11019,Family,Riverafort,VT,2023-06-17,Active,Phone,Silver,45,74,56
+CUS-11020,Individual,Jenniferville,CT,2020-01-29,Active,SMS,Gold,2,65,83
+CUS-11021,Individual,North Matthew,MP,2020-10-24,Active,Email,Gold,40,80,74
+CUS-11022,Individual,Amystad,UT,2024-04-25,Active,Email,Bronze,30,37,82
+CUS-11023,Student,North Pennyfort,DC,2022-08-23,Active,Email,Bronze,25,46,80
+CUS-11024,Individual,Rodriguezborough,ID,2020-01-17,Active,SMS,Gold,16,80,100
+CUS-11025,Individual,Port Philipmouth,GU,2023-02-09,Suspended,Email,Bronze,81,54,53
+CUS-11026,Premium,Lake Matthew,WV,2025-01-27,Active,Email,Platinum,28,100,92
+CUS-11027,Individual,Williamsshire,DE,2023-02-07,Active,SMS,Silver,39,49,84
+CUS-11028,Family,Ellisshire,NY,2023-08-16,Active,Phone,Bronze,38,61,83
+CUS-11029,Individual,South Adam,WA,2021-04-20,Active,Phone,Gold,48,81,90
+CUS-11030,Individual,New Savannahshire,NJ,2021-08-23,Active,Email,Gold,52,81,83
+CUS-11031,Family,Lake Beth,VA,2024-06-25,Suspended,Email,Bronze,100,54,40
+CUS-11032,Individual,North Paul,PA,2021-02-12,Active,Email,Platinum,50,87,79
+CUS-11033,Individual,Williamfurt,MT,2023-02-14,Active,Email,Gold,21,61,77
+CUS-11034,Family,West Raymond,MA,2025-01-05,Active,SMS,Bronze,27,70,69
+CUS-11035,Individual,Shawnberg,DC,2021-04-03,Active,SMS,Platinum,39,73,98
+CUS-11036,Individual,Morrisonhaven,ME,2020-11-05,Active,SMS,Gold,1,64,98
+CUS-11037,Family,Jenniferside,SC,2025-05-25,Active,Email,Bronze,59,69,55
+CUS-11038,Family,East Jason,VT,2020-03-26,Active,Email,Bronze,13,76,68
+CUS-11039,Family,Glendaberg,VT,2023-12-21,Active,Phone,Gold,16,78,90
+CUS-11040,Individual,New Amy,SC,2020-10-09,Active,Email,Platinum,39,73,78
+CUS-11041,Family,Jenniferstad,OH,2022-08-28,Active,Phone,Bronze,30,71,77
+CUS-11042,Family,Aguilarchester,TX,2021-05-17,Active,Phone,Gold,5,85,96
+CUS-11043,Individual,Nataliechester,AS,2022-04-18,Active,SMS,Gold,38,70,64
+CUS-11044,Individual,New Danielfurt,FL,2024-04-26,Active,SMS,Platinum,15,73,87
+CUS-11045,Individual,Lake Brianview,WV,2024-04-30,Active,Email,Gold,52,73,69
+CUS-11046,Premium,West Frances,FL,2020-04-28,Suspended,SMS,Platinum,71,100,44
+CUS-11047,Individual,Lake Kristenborough,WV,2024-12-19,Active,Phone,Bronze,67,41,69
+CUS-11048,Individual,West Lisaville,RI,2021-07-26,Inactive,Phone,Bronze,56,55,62
+CUS-11049,Business,Lake Deborah,MS,2023-07-02,Active,Phone,Gold,51,100,85
+CUS-11050,Family,New Kristen,AS,2024-12-09,Active,Email,Bronze,66,55,80
+CUS-11051,Student,Heatherton,MS,2021-08-04,Active,Phone,Silver,23,61,66
+CUS-11052,Individual,Butlermouth,OH,2024-12-28,Active,Phone,Bronze,69,40,74
+CUS-11053,Student,North Juliaborough,RI,2020-08-14,Active,SMS,Silver,32,55,61
+CUS-11054,Individual,Greerstad,WV,2023-08-26,Inactive,Email,Silver,50,59,71
+CUS-11055,Student,Port Jenny,ID,2024-07-07,Active,Phone,Gold,70,62,90
+CUS-11056,Family,Shaneland,HI,2021-04-23,Active,Email,Platinum,35,100,71
+CUS-11057,Family,Lake Willie,MS,2022-11-30,Active,Email,Silver,20,78,85
+CUS-11058,Individual,South Joshuaview,DC,2023-12-28,Active,Email,Bronze,47,38,81
+CUS-11059,Individual,New Meghan,AL,2020-06-08,Active,Phone,Gold,23,76,82
+CUS-11060,Individual,Stevenberg,AZ,2023-07-27,Active,Email,Platinum,41,78,72
+CUS-11061,Individual,West Candice,WI,2020-09-17,Active,Email,Platinum,22,89,73
+CUS-11062,Family,Tracyshire,OH,2022-07-21,Active,Phone,Platinum,19,91,100
+CUS-11063,Business,Charlesmouth,NC,2020-08-13,Active,Phone,Silver,1,92,83
+CUS-11064,Individual,East Abigail,WY,2022-02-05,Active,Email,Platinum,3,87,96
+CUS-11065,Individual,South Amy,MO,2025-01-05,Active,Email,Bronze,67,46,47
+CUS-11066,Individual,West Jeffreyborough,TN,2021-12-15,Active,Email,Gold,12,78,96
+CUS-11067,Premium,Markport,IL,2024-05-19,Active,SMS,Platinum,3,100,100
+CUS-11068,Family,Barajastown,DE,2024-04-08,Active,Email,Gold,30,75,100
+CUS-11069,Family,Seanbury,AZ,2022-04-18,Active,SMS,Silver,7,83,76
+CUS-11070,Family,Patrickville,MS,2024-11-08,Active,Email,Silver,69,70,82
+CUS-11071,Family,Amberport,AK,2023-08-11,Active,Email,Silver,56,66,85
+CUS-11072,Individual,Williehaven,NV,2024-03-17,Active,SMS,Bronze,79,50,56
+CUS-11073,Student,Williamsborough,MD,2021-07-17,Active,Email,Platinum,47,79,89
+CUS-11074,Individual,North Garyside,ND,2022-12-28,Active,Email,Bronze,64,37,69
+CUS-11075,Individual,Lake Cameronborough,VI,2022-04-29,Active,Phone,Silver,10,52,64
+CUS-11076,Individual,Houstonborough,ND,2021-08-07,Active,Email,Bronze,21,54,66
+CUS-11077,Individual,Lucasland,WA,2025-05-22,Active,Email,Bronze,44,33,72
+CUS-11078,Individual,North Stephen,MA,2025-01-02,Active,Email,Gold,17,52,79
+CUS-11079,Individual,North Charlesburgh,WY,2023-05-07,Active,Email,Gold,24,59,83
+CUS-11080,Individual,Angelashire,GU,2022-08-09,Active,Email,Bronze,47,45,52
+CUS-11081,Individual,West Rickey,NV,2025-05-27,Active,Email,Gold,51,54,79
+CUS-11082,Individual,Hamiltontown,MS,2022-07-02,Active,Phone,Bronze,15,49,91
+CUS-11083,Student,New Adamland,WV,2024-05-20,Active,SMS,Platinum,45,66,63
+CUS-11084,Individual,Lake Melaniestad,NY,2022-08-09,Suspended,Phone,Silver,57,48,22
+CUS-11085,Premium,West Kristinport,PA,2022-09-14,Active,Email,Gold,4,100,83
+CUS-11086,Individual,West Kathymouth,MS,2022-11-11,Active,Email,Silver,12,56,63
+CUS-11087,Individual,Shorttown,NJ,2020-09-08,Active,Phone,Platinum,46,87,74
+CUS-11088,Family,New Jeffrey,WA,2025-05-14,Active,SMS,Platinum,50,88,88
+CUS-11089,Individual,Roblesside,LA,2023-09-18,Suspended,Email,Silver,98,54,12
+CUS-11090,Premium,West Erica,PW,2020-09-30,Active,Email,Gold,32,100,75
+CUS-11091,Individual,Susantown,OH,2025-01-07,Active,Email,Bronze,25,51,59
+CUS-11092,Individual,North Bobby,OK,2025-01-01,Active,Phone,Silver,42,53,90
+CUS-11093,Individual,Medinaland,ME,2020-12-28,Active,SMS,Platinum,1,87,93
+CUS-11094,Premium,Lake Judith,VA,2022-06-29,Active,Phone,Platinum,24,100,78
+CUS-11095,Individual,Jasonhaven,FL,2023-06-10,Active,SMS,Bronze,51,46,52
+CUS-11096,Individual,East Jeffrey,MP,2025-01-26,Active,Phone,Bronze,72,50,71
+CUS-11097,Individual,Jamesburgh,TN,2021-07-22,Active,Email,Gold,33,79,100
+CUS-11098,Individual,Port Karenside,NH,2020-05-13,Active,Phone,Bronze,59,63,63
+CUS-11099,Business,West Emilyview,CT,2024-02-01,Active,Email,Gold,39,100,100
+CUS-11100,Individual,Lake Beverly,MA,2023-02-21,Active,Email,Silver,52,66,53
+CUS-11101,Business,Davidbury,CT,2021-10-23,Active,SMS,Gold,21,100,95
+CUS-11102,Individual,Christineborough,MD,2022-11-25,Active,SMS,Bronze,25,50,89
+CUS-11103,Individual,Hayesport,UT,2020-01-11,Active,Email,Platinum,41,75,76
+CUS-11104,Student,New Ashley,AS,2022-05-17,Suspended,SMS,Bronze,67,37,21
+CUS-11105,Family,Susanburgh,AL,2020-07-17,Active,Email,Bronze,51,84,71
+CUS-11106,Family,Johnbury,VT,2021-05-21,Active,Email,Silver,4,81,93
+CUS-11107,Family,Hillstad,DC,2025-04-16,Active,Phone,Silver,26,80,83
+CUS-11108,Individual,Nataliemouth,NV,2020-06-24,Suspended,SMS,Silver,96,56,19
+CUS-11109,Individual,Kimfort,OH,2024-07-01,Active,Email,Silver,24,45,59
+CUS-11110,Individual,East Debbieland,MP,2021-08-26,Active,Email,Gold,18,68,100
+CUS-11111,Family,Micheleberg,MH,2023-07-01,Active,Email,Gold,66,94,96
+CUS-11112,Individual,West Jessica,SC,2023-08-26,Inactive,Phone,Silver,71,63,58
+CUS-11113,Individual,Lake Charlestown,PR,2020-01-26,Active,Email,Platinum,2,93,78
+CUS-11114,Family,Port Bonniefurt,WI,2021-06-08,Active,Email,Gold,2,88,78
+CUS-11115,Family,North Andrea,ND,2020-05-03,Active,Phone,Gold,31,96,83
+CUS-11116,Individual,Valdezberg,MN,2023-01-13,Active,Email,Bronze,30,46,77
+CUS-11117,Student,Walkershire,VA,2022-11-26,Active,Phone,Bronze,40,44,55
+CUS-11118,Individual,Dennishaven,NY,2021-02-04,Suspended,Phone,Silver,44,62,34
+CUS-11119,Family,South Michaeltown,TN,2023-11-23,Active,Email,Silver,74,82,82
+CUS-11120,Student,Port Tamara,RI,2023-06-15,Active,Email,Bronze,76,26,76
+CUS-11121,Individual,Port Willie,NV,2020-01-08,Active,Phone,Gold,3,72,100
+CUS-11122,Family,East Ashley,OK,2025-05-04,Active,SMS,Bronze,45,55,51
+CUS-11123,Individual,Lake Jessica,MI,2020-05-31,Active,Phone,Bronze,28,50,95
+CUS-11124,Individual,East Kathleenbury,CA,2024-04-16,Active,SMS,Bronze,38,38,67
+CUS-11125,Business,Miketon,TN,2024-01-12,Active,SMS,Silver,17,79,68
+CUS-10376,Family,Andersonland,ME,2020-09-28,Active,Phone,Platinum,38,100,94
+CUS-10377,Individual,Schneidermouth,GU,2023-07-19,Active,Email,Silver,60,47,73
+CUS-10378,Individual,Lake Jacqueline,WA,2021-07-23,Active,SMS,Gold,22,71,100
+CUS-10379,Individual,Lake Ellenhaven,MN,2024-05-04,Active,Email,Platinum,50,74,64
+CUS-10380,Family,West Kyleborough,MA,2022-03-25,Active,Email,Silver,22,79,74
+CUS-10381,Individual,Leeberg,FL,2023-03-29,Active,SMS,Gold,57,57,61
+CUS-10382,Individual,West Meganville,NY,2024-05-24,Active,Email,Platinum,20,76,95
+CUS-10383,Individual,Lake Matthewberg,PA,2025-05-16,Active,SMS,Platinum,66,80,76
+CUS-10384,Individual,Mooreburgh,MP,2025-03-25,Active,Email,Bronze,25,41,65
+CUS-10385,Individual,Lake Samuel,MT,2023-07-05,Active,Phone,Bronze,61,37,54
+CUS-10386,Individual,Ericabury,NV,2022-09-03,Active,Phone,Silver,35,48,53
+CUS-10387,Family,Karenmouth,IN,2024-07-31,Active,SMS,Silver,50,64,64
+CUS-10388,Individual,West Tammy,WY,2024-02-05,Active,Email,Bronze,39,37,77
+CUS-10389,Family,Mckeeborough,MN,2024-03-22,Active,Phone,Silver,24,79,92
+CUS-10390,Individual,Murrayport,WI,2023-08-24,Active,Email,Bronze,67,39,73
+CUS-10391,Family,Shawchester,GA,2022-06-25,Active,Email,Bronze,54,61,87
+CUS-10392,Family,Port Cassandra,VI,2021-12-20,Suspended,Email,Bronze,60,80,23
+CUS-10393,Individual,Brettfort,VI,2023-05-15,Active,Phone,Gold,54,56,79
+CUS-10394,Individual,Angelaville,VT,2023-05-27,Active,Phone,Bronze,23,42,87
+CUS-10395,Individual,West Christopherburgh,KY,2021-05-08,Active,Phone,Gold,1,73,90
+CUS-10396,Individual,Whiteheadberg,MP,2024-10-28,Active,Email,Silver,31,56,58
+CUS-10397,Individual,Davisbury,GU,2020-05-18,Active,Email,Platinum,50,86,92
+CUS-10398,Individual,Wilkersontown,MT,2023-12-30,Active,Email,Gold,15,74,100
+CUS-10399,Individual,South Waynebury,MS,2020-11-08,Active,Email,Gold,3,67,100
+CUS-10400,Individual,West Jeffreymouth,CT,2023-04-16,Active,SMS,Silver,14,55,85
+CUS-10401,Family,Laceyberg,AZ,2024-09-29,Active,Email,Platinum,17,95,100
+CUS-10402,Family,Samanthafort,UT,2021-09-25,Active,Phone,Bronze,2,64,60
+CUS-10403,Individual,Port Janice,NV,2025-05-05,Active,Phone,Gold,26,55,88
+CUS-10404,Individual,North Andrewborough,MP,2024-05-18,Active,Phone,Bronze,77,32,66
+CUS-10405,Family,New Shelby,PA,2021-07-11,Active,Email,Platinum,31,93,95
+CUS-10406,Individual,Rodriguezport,IA,2022-01-07,Active,SMS,Bronze,14,48,64
+CUS-10407,Business,Davidbury,MT,2023-10-12,Active,Email,Gold,1,89,85
+CUS-10408,Individual,Brownfort,PA,2022-01-15,Active,Email,Platinum,48,70,96
+CUS-10409,Family,Lake Zacharybury,VT,2024-01-02,Active,Email,Bronze,46,64,68
+CUS-10410,Family,West Ruben,RI,2023-03-16,Active,Phone,Platinum,11,93,100
+CUS-10411,Student,Johnchester,HI,2025-05-07,Active,SMS,Gold,59,49,79
+CUS-10412,Individual,New Theresaland,NC,2022-07-24,Active,Email,Silver,25,67,70
+CUS-10413,Individual,South Morganton,SC,2023-04-26,Suspended,SMS,Gold,86,73,38
+CUS-10414,Individual,Zavalaview,WA,2025-03-24,Active,Email,Bronze,73,30,67
+CUS-10415,Individual,West Kristinastad,IA,2023-09-08,Active,Phone,Bronze,33,51,69
+CUS-10416,Individual,Port Bonniemouth,DC,2025-05-22,Active,SMS,Gold,15,51,81
+CUS-10417,Business,West Amyburgh,MP,2022-11-30,Active,SMS,Gold,30,94,100
+CUS-10418,Individual,Pollardfort,SC,2020-09-30,Active,Email,Gold,1,76,78
+CUS-10419,Individual,Port Dennis,VT,2021-06-18,Active,SMS,Silver,54,61,70
+CUS-10420,Individual,Johnsonborough,AZ,2021-04-23,Active,Email,Platinum,27,75,74
+CUS-10421,Individual,North Leslie,ME,2022-07-09,Active,Email,Silver,55,54,77
+CUS-10422,Individual,Haysside,NJ,2021-06-26,Active,Email,Platinum,10,90,70
+CUS-10423,Individual,Benjaminborough,LA,2024-10-20,Active,Email,Bronze,42,43,84
+CUS-10424,Individual,Michelleton,VI,2021-09-04,Active,SMS,Bronze,27,55,90
+CUS-10425,Family,Joshuastad,NE,2021-05-26,Active,Email,Platinum,1,91,73
+CUS-10426,Family,Paulfurt,MA,2021-03-31,Active,SMS,Silver,40,92,57
+CUS-10427,Individual,South Heather,MN,2021-06-14,Inactive,Email,Platinum,33,91,92
+CUS-10428,Family,Lauriechester,CO,2020-07-07,Inactive,SMS,Silver,32,88,57
+CUS-10429,Individual,Morrisonburgh,ND,2023-03-21,Active,Phone,Silver,34,59,65
+CUS-10430,Individual,Manuelland,MD,2025-02-03,Active,Email,Gold,12,69,100
+CUS-10431,Family,Kirkchester,GA,2023-08-18,Active,Email,Silver,23,67,73
+CUS-10432,Individual,Bellton,VA,2022-05-08,Active,SMS,Gold,35,76,64
+CUS-10433,Student,Christinachester,KY,2024-05-20,Active,Email,Gold,32,60,96
+CUS-10434,Individual,North Emilyfurt,MN,2021-07-07,Active,Email,Silver,58,59,52
+CUS-10435,Family,North Douglas,PA,2022-08-24,Active,Phone,Platinum,7,91,84
+CUS-10436,Family,Johnsonland,IA,2021-06-29,Active,Phone,Platinum,39,98,99
+CUS-10437,Family,Michaelshire,AZ,2024-06-21,Active,SMS,Platinum,21,87,81
+CUS-10438,Individual,Lake Shannon,MN,2024-07-09,Active,Email,Silver,65,53,83
+CUS-10439,Individual,Scottland,OK,2023-02-27,Inactive,SMS,Gold,60,73,77
+CUS-10440,Individual,New Michael,MD,2020-03-18,Active,Email,Silver,33,70,54
+CUS-10441,Individual,Johnville,AK,2023-06-11,Active,Email,Gold,68,65,60
+CUS-10442,Individual,South April,PW,2023-04-16,Active,Email,Bronze,43,47,56
+CUS-10443,Individual,West Kimberlymouth,IL,2025-04-13,Active,Phone,Bronze,40,34,62
+CUS-10444,Family,Heatherfort,ID,2022-06-13,Active,SMS,Silver,17,85,96
+CUS-10445,Family,East Melissamouth,HI,2021-04-02,Active,SMS,Silver,46,81,59
+CUS-10446,Individual,Osbornmouth,TN,2020-01-04,Inactive,SMS,Silver,79,73,47
+CUS-10447,Individual,Jennaside,ND,2021-10-13,Inactive,SMS,Silver,69,53,78
+CUS-10448,Individual,Patriciaburgh,VT,2024-03-06,Active,Email,Bronze,60,35,88
+CUS-10449,Family,Port Michael,IN,2021-11-18,Active,Email,Silver,7,81,75
+CUS-10450,Family,East Laurabury,WY,2024-01-15,Active,Email,Gold,20,86,97
+CUS-10451,Business,Johnsonside,OK,2021-12-20,Active,Email,Gold,33,100,78
+CUS-10452,Individual,Tannerside,DC,2020-05-30,Active,Email,Bronze,16,47,61
+CUS-10453,Individual,North Kylefort,NC,2024-12-23,Active,Phone,Silver,77,43,66
+CUS-10454,Individual,Hammondshire,CA,2023-06-10,Active,Phone,Silver,61,50,86
+CUS-10455,Business,West Dawn,NV,2020-11-17,Active,Email,Platinum,1,100,100
+CUS-10456,Individual,Frazierstad,DC,2021-07-30,Active,Email,Silver,37,66,62
+CUS-10457,Individual,Port Tammy,NE,2020-01-08,Active,Email,Gold,28,80,77
+CUS-10458,Individual,Port Davidberg,ME,2021-02-27,Active,Email,Bronze,54,45,69
+CUS-10459,Family,East Marcus,VT,2022-08-22,Active,Phone,Bronze,41,70,63
+CUS-10460,Individual,West Stacey,NC,2022-02-20,Active,Email,Silver,33,57,68
+CUS-10461,Family,Meghanview,ID,2023-03-01,Active,Phone,Silver,14,77,92
+CUS-10462,Individual,Davidport,RI,2024-03-29,Active,Phone,Gold,62,69,84
+CUS-10463,Student,New Danielleshire,OR,2023-11-08,Active,Email,Gold,40,53,67
+CUS-10464,Individual,East Donna,VA,2024-10-14,Active,Phone,Platinum,61,79,97
+CUS-10465,Individual,Meganshire,AZ,2025-04-28,Active,Email,Platinum,23,66,74
+CUS-10466,Individual,North Brandonshire,KS,2020-06-09,Suspended,Email,Platinum,70,78,64
+CUS-10467,Individual,Port Ashley,RI,2025-02-08,Active,SMS,Bronze,55,42,84
+CUS-10468,Individual,South Pamelaside,LA,2021-07-19,Active,SMS,Bronze,45,60,88
+CUS-10469,Individual,Timothyfurt,ME,2022-05-09,Active,Email,Gold,32,62,70
+CUS-10470,Individual,Joneston,GA,2020-07-25,Active,SMS,Platinum,46,87,77
+CUS-10471,Individual,Perrymouth,IL,2022-09-21,Active,Email,Bronze,32,41,93
+CUS-10472,Family,Catherinemouth,VI,2023-11-21,Active,Email,Gold,54,81,63
+CUS-10473,Family,Jessicastad,MO,2025-02-28,Active,Email,Bronze,70,59,65
+CUS-10474,Individual,Port Mitchell,OH,2022-10-03,Active,Phone,Platinum,11,71,87
+CUS-10475,Student,West Johnville,KY,2022-06-26,Active,Email,Gold,34,68,69
+CUS-10476,Individual,Wrightville,AR,2021-03-08,Inactive,Email,Gold,53,73,63
+CUS-10477,Individual,Soniachester,IA,2020-11-21,Active,Phone,Gold,39,79,99
+CUS-10478,Individual,Port Mark,OK,2021-01-29,Active,Email,Bronze,2,56,63
+CUS-10479,Premium,Jamesburgh,NM,2023-12-14,Active,Email,Gold,20,100,73
+CUS-10480,Family,Jimenezport,NM,2021-05-10,Active,Phone,Bronze,55,77,86
+CUS-10481,Individual,North Sierrahaven,NH,2021-12-06,Active,SMS,Platinum,37,72,81
+CUS-10482,Individual,East Brandy,AR,2020-04-11,Active,Phone,Platinum,44,82,76
+CUS-10483,Family,West Troyfort,LA,2021-07-05,Active,Phone,Platinum,40,91,92
+CUS-10484,Premium,Port Danielberg,FM,2023-08-18,Active,SMS,Silver,43,99,69
+CUS-10485,Individual,Jessicafurt,MN,2022-02-10,Active,Email,Silver,23,65,95
+CUS-10486,Individual,South Brettside,ID,2020-07-28,Active,SMS,Platinum,43,85,97
+CUS-10487,Family,Angelaland,MS,2023-06-01,Active,Phone,Silver,41,73,92
+CUS-10488,Individual,Duranview,GU,2021-07-21,Active,Phone,Platinum,10,77,77
+CUS-10489,Individual,East Theresafurt,MN,2021-05-07,Active,SMS,Platinum,28,84,85
+CUS-10490,Family,Angelastad,WV,2024-01-17,Active,Email,Bronze,78,66,70
+CUS-10491,Individual,East Carrie,MO,2020-03-13,Active,SMS,Platinum,11,82,100
+CUS-10492,Family,North Benjaminmouth,AS,2022-09-01,Inactive,Phone,Silver,91,73,77
+CUS-10493,Individual,Stoneberg,PA,2020-07-18,Active,Phone,Platinum,25,79,86
+CUS-10494,Family,West Sarah,MD,2021-03-31,Active,Phone,Silver,50,82,73
+CUS-10495,Individual,South Vicki,WA,2021-08-25,Active,Email,Bronze,42,59,89
+CUS-10496,Premium,Brittneyhaven,MP,2020-05-25,Active,Email,Gold,18,100,100
+CUS-10497,Individual,Ericksonport,NJ,2020-04-20,Active,Email,Platinum,11,88,100
+CUS-10498,Business,West Markville,MT,2022-07-26,Active,SMS,Bronze,1,88,81
+CUS-10499,Family,Lauratown,PA,2020-12-28,Active,Email,Gold,3,88,100
+CUS-10500,Family,Bakershire,OK,2022-09-29,Active,Phone,Bronze,34,77,81
+CUS-10501,Individual,Lake Brett,NJ,2025-05-30,Active,Email,Silver,66,51,47
+CUS-10502,Business,New Cristina,RI,2024-03-30,Active,Email,Gold,35,95,77
+CUS-10503,Family,Hernandezbury,AZ,2021-12-06,Active,Email,Gold,12,85,72
+CUS-10504,Family,East Andrewmouth,MT,2021-09-02,Inactive,Email,Gold,55,91,86
+CUS-10505,Business,South Hannah,MT,2020-10-01,Active,SMS,Gold,1,100,95
+CUS-10506,Individual,Salaston,VT,2021-04-04,Active,Email,Platinum,27,88,75
+CUS-10507,Individual,New Jared,MD,2023-12-27,Active,Email,Gold,26,71,100
+CUS-10508,Individual,Foxmouth,HI,2020-04-08,Active,Phone,Bronze,44,48,78
+CUS-10509,Individual,Barrmouth,ND,2020-09-10,Active,Email,Bronze,44,64,52
+CUS-10510,Individual,Ericaview,RI,2023-09-17,Active,Phone,Silver,64,48,74
+CUS-10511,Family,Leebury,KY,2020-08-02,Active,Phone,Silver,50,77,81
+CUS-10512,Individual,Jeffreyport,WI,2021-02-13,Active,SMS,Platinum,12,85,86
+CUS-10513,Individual,Janetfort,MD,2023-01-27,Active,Email,Platinum,20,73,66
+CUS-10514,Individual,Baileyview,LA,2020-07-01,Inactive,SMS,Gold,29,66,97
+CUS-10515,Individual,New Ericafurt,MH,2024-01-21,Active,Email,Bronze,38,41,82
+CUS-10516,Individual,Cardenasberg,LA,2024-07-23,Active,Email,Bronze,71,42,73
+CUS-10517,Family,West Stephanieland,MI,2020-07-13,Active,SMS,Bronze,8,84,69
+CUS-10518,Individual,Douglasfort,IL,2025-01-05,Active,Phone,Gold,15,62,88
+CUS-10519,Individual,Port Amanda,OH,2022-03-31,Active,Email,Platinum,39,84,89
+CUS-10520,Family,Derrickshire,IA,2024-06-20,Active,Email,Gold,70,77,62
+CUS-10521,Individual,North Elizabeth,NC,2023-04-24,Active,Phone,Silver,49,58,73
+CUS-10522,Family,Lake Jesse,CT,2024-11-01,Active,SMS,Platinum,18,96,98
+CUS-10523,Individual,Riverafort,CT,2022-04-22,Active,Email,Gold,1,75,100
+CUS-10524,Family,North Tamara,GA,2021-04-03,Suspended,Phone,Silver,73,91,22
+CUS-10525,Individual,Delgadofort,NJ,2024-01-28,Active,Email,Silver,44,47,87
+CUS-10526,Business,Port Tamara,MD,2023-06-09,Active,Phone,Bronze,59,85,80
+CUS-10527,Business,Debbieland,SD,2020-06-02,Active,Email,Gold,1,100,100
+CUS-10528,Individual,New Joanne,PR,2023-08-10,Active,SMS,Bronze,48,53,79
+CUS-10529,Individual,East Robertburgh,PW,2022-10-17,Active,Email,Silver,49,47,57
+CUS-10530,Individual,Port Randyfort,HI,2020-03-14,Active,Email,Bronze,38,64,93
+CUS-10531,Individual,Nancytown,ME,2022-11-07,Active,Phone,Silver,29,58,58
+CUS-10532,Family,West Justinside,NC,2024-09-25,Active,Phone,Silver,50,72,78
+CUS-10533,Individual,Smallberg,PR,2024-04-04,Active,Email,Bronze,60,42,83
+CUS-10534,Individual,Nelsonville,MA,2023-12-08,Active,SMS,Silver,72,57,52
+CUS-10535,Individual,Lake Stephen,KS,2021-02-05,Active,SMS,Silver,29,58,76
+CUS-10536,Individual,North Jill,WY,2022-04-28,Active,Phone,Gold,2,73,99
+CUS-10537,Family,Ashleyborough,HI,2025-05-12,Active,SMS,Bronze,67,51,82
+CUS-10538,Premium,Wilcoxhaven,MD,2024-09-13,Active,SMS,Platinum,53,100,97
+CUS-10539,Individual,South Elizabethburgh,DC,2024-07-27,Active,Email,Silver,76,52,77
+CUS-10540,Business,Morrisbury,AL,2022-05-07,Suspended,SMS,Platinum,37,100,54
+CUS-10541,Student,Patrickmouth,WV,2022-07-16,Active,Email,Silver,62,54,67
+CUS-10542,Family,Stephanieport,OR,2023-01-26,Active,Phone,Platinum,39,92,75
+CUS-10543,Individual,West Desireebury,AR,2024-01-03,Active,Email,Silver,65,64,58
+CUS-10544,Individual,South Kurtfurt,TX,2023-11-22,Active,Phone,Gold,45,69,98
+CUS-10545,Individual,Hannahport,MN,2023-09-28,Active,Phone,Gold,44,63,89
+CUS-10546,Family,East Susan,NJ,2022-12-06,Active,Email,Bronze,11,63,75
+CUS-10547,Family,South Julie,PA,2020-11-25,Suspended,Phone,Bronze,43,72,35
+CUS-10548,Family,Robertside,PW,2020-03-07,Active,Email,Gold,33,100,78
+CUS-10549,Family,Toddborough,WV,2023-02-23,Active,Phone,Gold,43,85,65
+CUS-10550,Premium,Lake Karen,VI,2022-03-04,Active,Phone,Platinum,15,100,67
+CUS-10551,Family,New Seanstad,CA,2021-02-19,Active,Phone,Platinum,43,99,100
+CUS-10552,Family,North Mariahaven,ID,2023-08-19,Active,Phone,Gold,22,81,84
+CUS-10553,Individual,East Mark,NC,2023-10-30,Active,SMS,Gold,17,66,69
+CUS-10554,Individual,Wilsonborough,VT,2023-02-13,Active,Email,Gold,1,66,99
+CUS-10555,Family,Davishaven,NV,2020-11-13,Active,SMS,Gold,39,100,100
+CUS-10556,Family,South Davidchester,NH,2021-09-08,Active,Phone,Silver,52,81,83
+CUS-10557,Individual,New Stevenport,VA,2021-01-11,Active,Phone,Bronze,34,60,79
+CUS-10558,Individual,South Jonathantown,WA,2021-03-29,Active,Phone,Silver,18,58,96
+CUS-10559,Individual,New Charles,NE,2023-02-23,Active,SMS,Bronze,51,47,78
+CUS-10560,Individual,Isabellaside,AR,2023-08-08,Active,Phone,Platinum,53,75,84
+CUS-10561,Premium,South Anthonychester,HI,2025-04-19,Active,Email,Platinum,1,100,93
+CUS-10562,Individual,Port Darlene,VA,2022-11-07,Active,Email,Gold,10,67,100
+CUS-10563,Individual,Brooksfurt,NV,2020-07-15,Active,SMS,Gold,1,84,74
+CUS-10564,Individual,Bennettside,DC,2023-07-13,Active,SMS,Silver,26,51,89
+CUS-10565,Family,Davidside,MO,2024-12-04,Suspended,Phone,Silver,100,63,19
+CUS-10566,Individual,Lake Tiffany,MP,2024-01-08,Active,Email,Bronze,70,42,81
+CUS-10567,Individual,Port Andrewport,NH,2024-08-09,Active,Email,Bronze,60,44,75
+CUS-10568,Individual,Patelbury,IA,2022-03-08,Active,Phone,Gold,34,61,100
+CUS-10569,Individual,Reedview,ID,2024-10-03,Active,SMS,Bronze,70,40,84
+CUS-10570,Individual,North Lisachester,RI,2024-04-16,Inactive,Email,Gold,41,68,72
+CUS-10571,Individual,East Jamieville,PA,2020-10-06,Active,Phone,Platinum,8,93,78
+CUS-10572,Individual,South Carlaton,IA,2024-12-21,Inactive,Phone,Gold,63,51,93
+CUS-10573,Business,South Scottside,IL,2020-10-16,Active,Email,Platinum,9,100,74
+CUS-10574,Individual,East Williamport,IN,2024-03-12,Active,Phone,Bronze,77,53,77
+CUS-10575,Individual,Barbaramouth,IA,2021-01-11,Active,SMS,Bronze,11,61,61
+CUS-10576,Business,Nancyhaven,IN,2025-03-24,Suspended,Phone,Gold,39,94,37
+CUS-10577,Individual,Turnerton,OH,2021-02-08,Active,Email,Silver,8,72,74
+CUS-10578,Individual,Lake Erika,OH,2023-06-22,Active,Email,Silver,41,64,71
+CUS-10579,Family,Williamsstad,SD,2020-11-08,Active,Email,Silver,27,78,55
+CUS-10580,Individual,Floydmouth,UT,2024-05-28,Active,Phone,Silver,73,53,54
+CUS-10581,Family,Russellport,MS,2021-11-10,Active,Email,Silver,22,85,91
+CUS-10582,Individual,Port Amanda,IA,2023-08-15,Active,SMS,Gold,18,72,79
+CUS-10583,Individual,West Meredith,FL,2024-12-20,Active,Phone,Gold,64,67,98
+CUS-10584,Individual,Melendezside,MT,2023-04-06,Active,Phone,Bronze,12,53,74
+CUS-10585,Individual,Grantberg,MS,2023-01-10,Active,Phone,Bronze,23,55,74
+CUS-10586,Individual,West James,SD,2022-10-23,Active,Email,Silver,50,54,89
+CUS-10587,Family,South Melanieland,ND,2024-03-30,Active,Email,Bronze,80,71,53
+CUS-10588,Family,North Joseph,TX,2022-09-17,Inactive,Email,Gold,41,79,78
+CUS-10589,Individual,Port Charlesshire,VA,2020-03-28,Active,Phone,Platinum,14,90,97
+CUS-10590,Business,South Jason,PW,2020-03-22,Suspended,Email,Platinum,48,100,48
+CUS-10591,Family,Kevintown,IL,2021-06-23,Active,Phone,Silver,25,82,92
+CUS-10592,Family,Lake David,WV,2024-09-07,Active,Email,Platinum,24,98,91
+CUS-10593,Individual,Rochaborough,MO,2024-11-12,Active,Phone,Gold,10,67,76
+CUS-10594,Individual,New Marc,LA,2021-04-16,Active,Phone,Silver,11,57,81
+CUS-10595,Family,Owensstad,ME,2024-07-31,Active,Email,Gold,56,75,89
+CUS-10596,Family,Michaelfort,NH,2022-09-08,Active,Email,Gold,1,85,72
+CUS-10597,Individual,Port Tinafort,WV,2023-04-28,Active,Phone,Bronze,46,40,54
+CUS-10598,Individual,Robinstad,MD,2025-03-04,Active,SMS,Silver,56,60,50
+CUS-10599,Business,Williamsbury,WA,2024-01-30,Active,Email,Bronze,33,87,84
+CUS-10600,Business,North Jose,OR,2020-12-15,Active,Email,Gold,12,100,100
+CUS-10601,Family,Phillipsborough,MA,2021-06-25,Active,Phone,Platinum,29,100,69
+CUS-10602,Individual,South Ashley,IA,2022-02-28,Active,Email,Gold,52,75,86
+CUS-10603,Family,Piercemouth,KS,2023-05-25,Active,Email,Silver,22,82,88
+CUS-10604,Family,Levyfort,NH,2020-07-09,Active,Email,Gold,42,84,89
+CUS-10605,Individual,Lake Laura,GA,2022-01-28,Active,Phone,Gold,54,74,84
+CUS-10606,Individual,Lake Amy,HI,2024-07-05,Active,Phone,Silver,26,55,63
+CUS-10607,Individual,New Arthurland,GU,2024-04-17,Active,SMS,Bronze,76,50,71
+CUS-10608,Individual,Port Adamberg,MP,2020-01-12,Active,Phone,Gold,1,81,70
+CUS-10609,Individual,North Jasmine,AL,2021-02-24,Active,Email,Silver,9,65,96
+CUS-10610,Individual,New Stephen,AR,2024-10-16,Active,Phone,Silver,63,53,61
+CUS-10611,Individual,Hopkinstown,AL,2024-05-24,Active,Email,Silver,50,50,69
+CUS-10612,Individual,Smithhaven,VA,2024-05-04,Active,Phone,Gold,52,56,74
+CUS-10613,Individual,Amandaport,AK,2023-12-03,Inactive,Email,Silver,100,54,75
+CUS-10614,Family,Drakeburgh,CT,2023-11-02,Active,Email,Platinum,10,86,77
+CUS-10615,Individual,New Eduardoborough,RI,2023-05-14,Active,Email,Bronze,15,55,59
+CUS-10616,Family,Lisaview,WY,2025-03-21,Suspended,Phone,Silver,100,79,13
+CUS-10617,Premium,Millerfurt,NH,2024-08-06,Active,Email,Bronze,59,93,67
+CUS-10618,Individual,Lake Jeremiah,TX,2024-05-24,Active,Phone,Bronze,30,33,77
+CUS-10619,Individual,Lake Victoriaton,CO,2020-01-01,Suspended,Email,Silver,65,66,42
+CUS-10620,Individual,Grayside,NJ,2021-02-14,Active,Phone,Bronze,5,59,77
+CUS-10621,Family,Lake Albertburgh,CO,2023-02-19,Inactive,Email,Platinum,46,93,99
+CUS-10622,Student,Brucemouth,OK,2022-07-20,Inactive,Phone,Bronze,62,44,54
+CUS-10623,Individual,New Samanthabury,IL,2022-10-27,Active,SMS,Gold,14,74,100
+CUS-10624,Individual,Nelsonland,TX,2022-06-25,Suspended,Phone,Gold,84,68,53
+CUS-10625,Family,Rachelshire,TN,2025-01-10,Active,Email,Bronze,24,63,96
+CUS-10626,Family,East Sarahmouth,AK,2021-03-27,Active,Email,Silver,22,88,90
+CUS-10627,Individual,New Douglas,GU,2024-08-31,Active,Email,Bronze,67,42,51
+CUS-10628,Individual,Hickmanport,GA,2020-12-31,Active,Email,Platinum,7,78,81
+CUS-10629,Individual,New Mary,MS,2021-02-12,Active,Email,Silver,14,58,73
+CUS-10630,Family,Patrickberg,WY,2021-12-30,Active,Email,Platinum,37,100,100
+CUS-10631,Individual,New Juliestad,AR,2024-10-21,Active,Email,Silver,59,51,80
+CUS-10632,Business,South Jesseland,MA,2024-12-09,Active,SMS,Gold,43,100,79
+CUS-10633,Individual,Novakmouth,AK,2024-03-16,Active,Email,Gold,40,70,64
+CUS-10634,Individual,Kristenmouth,NM,2022-03-17,Active,Phone,Gold,2,75,99
+CUS-10635,Individual,West Angela,MS,2020-01-18,Active,Email,Gold,10,76,100
+CUS-10636,Business,Lopezshire,TN,2021-01-18,Active,Email,Gold,14,100,91
+CUS-10637,Individual,Millerport,AS,2022-05-18,Active,Phone,Bronze,60,50,65
+CUS-10638,Individual,Lake Charles,KY,2023-03-16,Active,Phone,Bronze,16,44,72
+CUS-10639,Individual,South Jennifer,SC,2024-10-19,Active,Email,Platinum,19,76,67
+CUS-10640,Individual,Lake Peter,MN,2022-10-20,Active,SMS,Silver,42,57,83
+CUS-10641,Individual,North Adamport,NV,2023-02-25,Active,Email,Bronze,19,37,70
+CUS-10642,Family,Kathleenville,DC,2022-09-02,Active,Email,Gold,13,89,91
+CUS-10643,Individual,East Ryanside,OH,2025-03-23,Active,Email,Silver,42,59,64
+CUS-10644,Individual,Garcialand,MI,2023-08-23,Active,Email,Gold,32,65,96
+CUS-10645,Individual,New Carlymouth,VI,2024-02-17,Active,Email,Silver,49,63,60
+CUS-10646,Business,Smithchester,MS,2023-08-04,Active,Email,Gold,31,100,68
+CUS-10647,Individual,Lake Rachelbury,OK,2021-12-04,Active,Email,Silver,20,69,81
+CUS-10648,Individual,Lake Oscar,DC,2022-06-30,Active,SMS,Gold,29,72,91
+CUS-10649,Individual,Kevinfort,FL,2024-10-15,Active,Phone,Silver,80,43,57
+CUS-10650,Individual,East Ryanchester,ME,2020-07-29,Active,SMS,Gold,1,64,95
+CUS-10651,Individual,Pattonstad,KS,2020-06-19,Active,Phone,Bronze,59,56,68
+CUS-10652,Individual,Lake Colleen,PA,2024-02-19,Active,Phone,Bronze,73,38,47
+CUS-10653,Individual,South Daniel,ME,2021-12-31,Active,Email,Gold,49,77,78
+CUS-10654,Individual,South Martinfurt,AS,2020-10-03,Suspended,Phone,Bronze,78,57,55
+CUS-10655,Family,Scottchester,GU,2024-12-01,Active,Phone,Silver,39,72,83
+CUS-10656,Individual,West Malik,UT,2024-07-06,Active,Email,Silver,29,51,55
+CUS-10657,Individual,South Leon,MO,2024-07-27,Active,Email,Bronze,54,32,81
+CUS-10658,Premium,Kellyfort,OK,2022-09-04,Active,Phone,Platinum,20,100,66
+CUS-10659,Individual,West Nicholas,GU,2021-01-21,Active,Phone,Silver,10,72,82
+CUS-10660,Family,Diazshire,ID,2021-03-27,Active,Email,Silver,48,91,68
+CUS-10661,Individual,Lake Katrina,AK,2024-03-01,Active,Email,Bronze,24,38,64
+CUS-10662,Individual,Hahnborough,NV,2023-07-28,Active,Email,Gold,41,61,82
+CUS-10663,Individual,Marieland,GU,2020-04-11,Suspended,Email,Platinum,48,83,39
+CUS-10664,Family,Chambersberg,SC,2024-01-29,Active,Email,Bronze,33,63,80
+CUS-10665,Individual,Johnberg,VT,2024-06-25,Active,Email,Silver,22,52,61
+CUS-10666,Family,Mccormickland,NV,2025-05-02,Active,Email,Bronze,54,65,61
+CUS-10667,Individual,Aguilarside,NY,2024-09-19,Active,Email,Bronze,69,38,71
+CUS-10668,Family,Stephensstad,UT,2022-06-26,Active,SMS,Bronze,53,61,83
+CUS-10669,Family,North Kaylastad,GA,2021-03-02,Active,Phone,Silver,20,77,96
+CUS-10670,Family,New Tonyafurt,WV,2024-03-05,Inactive,Phone,Bronze,90,62,54
+CUS-10671,Individual,Tammychester,CT,2020-04-16,Active,Email,Bronze,40,58,72
+CUS-10672,Individual,North Jonathanhaven,WA,2024-06-14,Active,Email,Gold,10,53,100
+CUS-10673,Family,South Neil,NH,2022-08-31,Active,Email,Gold,12,83,99
+CUS-10674,Individual,West Whitney,NJ,2023-06-20,Active,SMS,Gold,13,56,90
+CUS-10675,Family,West Robertland,DE,2023-12-07,Active,Email,Silver,40,81,74
+CUS-10676,Family,West Larry,NH,2022-06-17,Active,Email,Bronze,52,62,66
+CUS-10677,Business,New Timothy,NJ,2022-09-20,Active,Phone,Gold,13,98,100
+CUS-10678,Individual,South Jennifermouth,MD,2021-12-13,Active,Email,Platinum,31,87,74
+CUS-10679,Individual,West Bradleyville,AK,2020-11-13,Active,SMS,Gold,19,63,100
+CUS-10680,Individual,Deborahburgh,WA,2024-02-11,Active,Email,Gold,59,72,74
+CUS-10681,Individual,New Greg,GA,2020-05-09,Active,Phone,Silver,33,70,89
+CUS-10682,Individual,Anitamouth,IN,2021-08-02,Active,Phone,Bronze,35,43,55
+CUS-10683,Family,Sotoburgh,SC,2020-09-22,Active,Email,Bronze,12,66,60
+CUS-10684,Individual,Fosterborough,NV,2024-09-08,Active,Email,Silver,57,50,52
+CUS-10685,Individual,Priceborough,IL,2023-05-25,Active,Email,Platinum,51,80,65
+CUS-10686,Individual,Karenland,OK,2023-08-01,Active,Phone,Platinum,36,76,66
+CUS-10687,Family,Port Monicaburgh,MN,2021-06-28,Active,Phone,Platinum,1,97,100
+CUS-10688,Individual,Jamesville,KS,2024-01-25,Active,Email,Bronze,62,40,84
+CUS-10689,Family,Rosemouth,PA,2021-01-01,Active,Phone,Platinum,39,100,99
+CUS-10690,Individual,Carrshire,DE,2022-07-28,Active,Email,Bronze,57,43,84
+CUS-10691,Individual,Michaelmouth,RI,2021-11-22,Active,Phone,Gold,52,71,80
+CUS-10692,Individual,Port Emily,AS,2021-10-26,Active,Email,Gold,45,70,99
+CUS-10693,Individual,Samanthashire,CO,2023-01-22,Active,Phone,Platinum,15,77,95
+CUS-10694,Individual,West David,ME,2022-03-24,Active,Email,Silver,6,65,67
+CUS-10695,Student,East Nathanielberg,NY,2021-09-10,Active,SMS,Silver,22,41,73
+CUS-10696,Premium,Barnesberg,OK,2022-11-13,Active,SMS,Bronze,1,96,82
+CUS-10697,Individual,Hendersonfort,SC,2021-06-26,Active,Phone,Silver,52,60,55
+CUS-10698,Individual,New Garrett,LA,2023-03-11,Inactive,Phone,Gold,80,71,65
+CUS-10699,Individual,East Leonard,NV,2025-01-15,Active,Phone,Platinum,48,80,80
+CUS-10700,Individual,Port Michaeltown,NM,2024-07-13,Active,Email,Bronze,69,42,69
+CUS-10701,Business,East Lisa,OH,2022-06-08,Active,SMS,Platinum,1,100,100
+CUS-10702,Premium,Ortizfort,MT,2023-07-22,Active,Email,Silver,7,100,93
+CUS-10703,Individual,Burnsland,OK,2021-10-31,Active,Email,Bronze,49,52,79
+CUS-10704,Family,Port Kathleenport,AZ,2023-03-24,Active,Email,Bronze,35,60,61
+CUS-10705,Individual,Jeffreyport,GA,2022-09-01,Active,Email,Bronze,12,50,90
+CUS-10706,Individual,Cunninghamfort,OH,2023-11-30,Active,Email,Silver,51,56,86
+CUS-10707,Individual,New Dannyside,GU,2023-06-15,Suspended,Phone,Bronze,77,48,35
+CUS-10708,Family,Amberton,WV,2023-03-25,Active,Phone,Silver,32,72,74
+CUS-10709,Individual,Paynechester,CT,2023-09-04,Active,Email,Platinum,49,79,100
+CUS-10710,Individual,West Nancy,AZ,2020-04-01,Inactive,Email,Gold,29,67,72
+CUS-10711,Family,Bakerland,NV,2021-05-12,Inactive,SMS,Platinum,72,100,56
+CUS-10712,Individual,Port Lisaborough,AS,2024-07-05,Active,Email,Bronze,33,49,67
+CUS-10713,Individual,Michellechester,GA,2022-12-07,Active,Phone,Silver,17,47,81
+CUS-10714,Individual,Port Jamie,IL,2023-09-20,Active,Email,Bronze,32,53,71
+CUS-10715,Individual,New Michaelview,PA,2023-09-02,Inactive,Email,Silver,92,56,48
+CUS-10716,Individual,West Tiffany,LA,2024-11-11,Active,Email,Platinum,42,64,82
+CUS-10717,Individual,Ashleyhaven,MH,2023-05-07,Active,Email,Silver,39,63,54
+CUS-10718,Individual,East Sydneychester,PW,2025-03-03,Active,Email,Bronze,30,30,76
+CUS-10719,Family,West Michelleberg,UT,2021-12-28,Active,Email,Platinum,26,98,68
+CUS-10720,Family,East Dustin,MD,2024-12-04,Active,SMS,Platinum,70,98,73
+CUS-10721,Individual,Port Megan,MO,2021-11-30,Active,Phone,Bronze,27,56,94
+CUS-10722,Business,Thomasview,SC,2023-11-06,Active,Email,Bronze,24,88,77
+CUS-10723,Individual,Brooksland,SC,2020-09-26,Active,Email,Gold,41,69,70
+CUS-10724,Individual,South Zacharyview,UT,2023-12-15,Active,SMS,Silver,78,48,81
+CUS-10725,Premium,Shawnfort,MD,2021-10-12,Active,Phone,Platinum,1,100,79
+CUS-10726,Family,Port Kimland,VA,2024-04-16,Active,SMS,Platinum,29,97,100
+CUS-10727,Premium,Reidstad,PR,2021-07-14,Active,Email,Gold,1,100,100
+CUS-10728,Individual,Port Amandaborough,NE,2023-03-07,Active,Phone,Bronze,11,47,63
+CUS-10729,Family,South Joseph,MP,2022-09-03,Active,SMS,Silver,48,79,62
+CUS-10730,Business,Matthewshire,DC,2022-10-03,Active,Email,Silver,18,82,74
+CUS-10731,Student,Kramerton,AZ,2021-03-31,Active,SMS,Platinum,1,67,98
+CUS-10732,Business,Lake Kristenmouth,AK,2022-09-30,Active,SMS,Platinum,9,100,71
+CUS-10733,Family,Port Ericmouth,AL,2024-08-15,Active,Email,Silver,67,80,85
+CUS-10734,Individual,Harrisberg,FM,2023-08-06,Active,Phone,Silver,48,59,53
+CUS-10735,Business,Erikview,CO,2021-05-18,Active,Email,Platinum,11,100,100
+CUS-10736,Family,Johnstad,TN,2025-05-25,Active,Email,Bronze,39,59,82
+CUS-10737,Individual,North Randy,ME,2021-08-25,Active,Email,Gold,1,75,98
+CUS-10738,Individual,South Diana,VT,2022-10-22,Active,Phone,Platinum,42,84,70
+CUS-10739,Individual,North Jasonland,DC,2021-10-24,Active,Email,Gold,38,66,92
+CUS-10740,Individual,New Erin,AL,2021-10-25,Active,SMS,Platinum,38,73,68
+CUS-10741,Individual,Lake Matthewville,VI,2022-07-09,Active,Email,Gold,42,74,100
+CUS-10742,Premium,Bensonfort,CA,2022-02-14,Active,Email,Gold,1,100,79
+CUS-10743,Individual,South Christopher,AS,2020-10-23,Active,Phone,Gold,9,77,87
+CUS-10744,Family,North Lawrenceport,DC,2020-08-28,Active,SMS,Bronze,48,72,51
+CUS-10745,Individual,Ayalaberg,SD,2024-10-17,Active,SMS,Silver,51,48,63
+CUS-10746,Individual,North Alyssa,AL,2022-09-01,Active,Email,Silver,7,55,94
+CUS-10747,Individual,South Michael,IL,2023-07-11,Active,SMS,Bronze,29,36,77
+CUS-10748,Individual,South Christina,NV,2024-10-14,Active,Phone,Silver,41,43,55
+CUS-10749,Individual,North Peggy,DC,2020-12-31,Active,Email,Gold,34,82,100
+CUS-10750,Family,New Jessicastad,NE,2020-12-29,Suspended,Phone,Silver,42,75,41
+CUS-11126,Family,New Rebecca,MN,2025-02-08,Active,SMS,Bronze,61,53,69
+CUS-11127,Premium,Harrisonmouth,FM,2021-09-16,Active,Email,Gold,1,100,100
+CUS-11128,Business,North Tinamouth,CT,2024-12-03,Active,Email,Platinum,3,100,82
+CUS-11129,Individual,Maryview,OR,2023-11-23,Active,Phone,Platinum,25,65,100
+CUS-11130,Individual,South Desiree,MN,2024-10-15,Active,Phone,Bronze,23,51,73
+CUS-11131,Business,New Johnbury,NC,2024-10-09,Active,Phone,Gold,41,88,92
+CUS-11132,Family,Gomezstad,NM,2023-06-13,Active,Phone,Gold,51,91,83
+CUS-11133,Individual,Eatontown,NY,2022-08-08,Active,Phone,Silver,37,63,83
+CUS-11134,Individual,South Gabriel,CA,2022-04-01,Active,Phone,Gold,8,66,81
+CUS-11135,Individual,Jasonburgh,GA,2021-04-25,Active,Email,Platinum,26,77,88
+CUS-11136,Individual,Carolynville,TN,2020-06-22,Active,Email,Gold,12,71,100
+CUS-11137,Individual,South Lisa,VA,2022-11-15,Active,Email,Silver,34,58,85
+CUS-11138,Individual,South Emmafort,IL,2022-02-22,Active,Email,Silver,8,60,64
+CUS-11139,Individual,Lake Martha,AK,2022-10-24,Active,Phone,Gold,57,64,65
+CUS-11140,Individual,North David,OR,2022-01-07,Active,Email,Bronze,25,48,74
+CUS-11141,Family,East Crystal,AZ,2024-04-22,Active,Email,Gold,18,90,83
+CUS-11142,Individual,North Gabriel,HI,2021-09-05,Active,Email,Platinum,52,83,97
+CUS-11143,Family,Greeneshire,SC,2020-01-25,Active,Phone,Platinum,1,100,84
+CUS-11144,Individual,Lake Jessicaport,CO,2024-03-14,Active,Email,Silver,55,57,78
+CUS-11145,Individual,South Catherine,NJ,2020-06-24,Active,Email,Platinum,34,87,77
+CUS-11146,Individual,Jacksonchester,PA,2024-10-12,Active,Email,Silver,28,50,55
+CUS-11147,Individual,Port Brandi,WI,2023-09-11,Active,Email,Silver,63,57,82
+CUS-11148,Individual,New Donna,KS,2023-04-17,Active,Phone,Platinum,9,76,100
+CUS-11149,Family,Lake Gina,NH,2023-05-19,Inactive,Phone,Bronze,74,61,71
+CUS-11150,Individual,East Nicholasberg,CT,2022-03-02,Active,Email,Gold,22,79,85
+CUS-11151,Individual,East Alexandrahaven,TX,2020-08-01,Active,Email,Platinum,28,89,66
+CUS-11152,Individual,Serranoville,HI,2020-05-22,Inactive,Email,Silver,48,70,55
+CUS-11153,Individual,Valenzuelaton,FM,2022-01-24,Active,Email,Platinum,20,81,76
+CUS-11154,Student,North Timothyberg,MH,2020-09-21,Active,Email,Bronze,57,39,57
+CUS-11155,Business,Port Erikachester,NC,2021-09-26,Active,Phone,Gold,15,100,86
+CUS-11156,Individual,Woodton,UT,2022-10-26,Active,Email,Bronze,17,51,61
+CUS-11157,Family,Perezfort,WY,2023-05-23,Active,Phone,Platinum,66,100,86
+CUS-11158,Individual,Bellshire,CT,2020-03-21,Active,Email,Platinum,19,86,86
+CUS-11159,Individual,Andersonfort,WI,2024-08-13,Active,Email,Bronze,77,51,72
+CUS-11160,Individual,Port Christopher,PA,2025-02-08,Active,Phone,Bronze,64,31,63
+CUS-11161,Business,Scotttown,VT,2020-11-19,Active,Phone,Gold,33,100,77
+CUS-11162,Premium,New Alexandrahaven,AL,2022-04-22,Suspended,Phone,Platinum,24,100,68
+CUS-11163,Family,Penamouth,MT,2021-10-29,Active,Email,Silver,5,84,60
+CUS-11164,Individual,Danielchester,SD,2023-11-23,Active,Email,Bronze,45,40,76
+CUS-11165,Individual,Joseside,NE,2021-05-28,Active,SMS,Silver,48,65,82
+CUS-11166,Individual,Cherylfurt,WV,2020-06-18,Active,Email,Platinum,1,89,87
+CUS-11167,Family,South Andrea,OH,2020-12-15,Active,Phone,Bronze,7,80,84
+CUS-11168,Individual,Whiteside,OH,2023-10-07,Active,Phone,Bronze,42,39,65
+CUS-11169,Family,Kingport,OK,2025-01-02,Active,Email,Silver,73,81,79
+CUS-11170,Family,Kimfurt,WA,2024-01-07,Active,Email,Silver,48,65,89
+CUS-11171,Individual,Port Michelle,DE,2024-04-30,Active,Email,Bronze,78,40,57
+CUS-11172,Individual,South Krista,GA,2022-05-13,Active,Email,Platinum,38,71,77
+CUS-11173,Student,East Williammouth,AS,2020-07-16,Active,SMS,Bronze,10,35,84
+CUS-11174,Individual,East Paultown,AS,2024-07-28,Active,Phone,Bronze,33,49,79
+CUS-11175,Premium,Port Dustinchester,CO,2020-09-04,Active,Email,Gold,1,100,90
+CUS-11176,Individual,West Jeffreyland,PA,2021-03-11,Active,Email,Platinum,31,91,87
+CUS-11177,Individual,Lake Patrickfurt,RI,2024-12-18,Active,Email,Silver,26,58,91
+CUS-11178,Individual,Jenniferton,WI,2025-05-18,Active,Email,Silver,44,44,73
+CUS-11179,Individual,Lake Troy,AL,2024-04-08,Active,Email,Gold,40,55,83
+CUS-11180,Individual,Port Diane,AS,2025-02-10,Active,Email,Silver,34,56,91
+CUS-11181,Family,Jameshaven,NC,2020-01-28,Active,Phone,Platinum,9,100,96
+CUS-11182,Family,New Gavin,AZ,2023-06-23,Active,Email,Silver,32,69,78
+CUS-11183,Individual,Johntown,GA,2020-03-18,Active,Phone,Platinum,18,85,75
+CUS-11184,Individual,West Kimberlystad,TN,2023-08-11,Active,Email,Gold,36,75,81
+CUS-11185,Family,Sullivanborough,NC,2021-04-14,Active,Email,Silver,34,73,69
+CUS-11186,Family,Lake Janeland,OH,2023-11-26,Active,Phone,Bronze,40,59,80
+CUS-11187,Family,Jessicaside,PW,2020-05-12,Active,Email,Bronze,40,69,65
+CUS-11188,Individual,Michaelview,IN,2020-12-21,Active,SMS,Platinum,5,89,74
+CUS-11189,Individual,South Sarah,OK,2022-08-14,Active,Phone,Bronze,18,57,72
+CUS-11190,Individual,West Gregoryhaven,CT,2023-03-26,Active,Phone,Bronze,60,51,53
+CUS-11191,Student,New Kellyville,AS,2022-01-06,Active,Email,Gold,26,69,92
+CUS-11192,Family,Nancyshire,KS,2024-08-05,Suspended,Email,Gold,77,74,44
+CUS-11193,Individual,Churchshire,NJ,2020-11-08,Active,Email,Silver,19,67,75
+CUS-11194,Individual,Port Matthew,WI,2023-05-26,Active,Email,Gold,22,59,78
+CUS-11195,Individual,Maldonadoshire,VI,2024-10-30,Active,Phone,Silver,79,54,70
+CUS-11196,Student,South Darrenland,MS,2022-02-03,Active,Email,Platinum,1,72,72
+CUS-11197,Student,Lake Jacqueline,AS,2020-09-11,Active,Phone,Bronze,27,42,77
+CUS-11198,Individual,Robertstad,NC,2022-09-27,Active,Email,Bronze,31,50,69
+CUS-11199,Individual,Lake Marilynbury,LA,2020-03-11,Inactive,Email,Platinum,21,95,75
+CUS-11200,Individual,South Emilymouth,CA,2022-07-21,Inactive,Email,Bronze,73,43,46
+CUS-11201,Individual,South Lee,IL,2020-07-08,Active,SMS,Silver,37,56,86
+CUS-11202,Premium,Ianborough,NM,2024-11-29,Active,SMS,Silver,24,100,90
+CUS-11203,Family,East Jill,VI,2022-02-22,Active,Phone,Platinum,53,91,66
+CUS-11204,Family,Jamieborough,MP,2024-05-09,Active,SMS,Bronze,33,65,73
+CUS-11205,Individual,Port Christine,FL,2020-12-10,Active,Email,Bronze,44,56,85
+CUS-11206,Individual,North Samanthafort,RI,2021-08-13,Active,Email,Silver,47,55,63
+CUS-11207,Individual,Port Mercedeston,PR,2022-10-26,Inactive,Email,Gold,39,63,66
+CUS-11208,Family,Watsonmouth,NM,2024-07-15,Active,Email,Platinum,36,96,100
+CUS-11209,Premium,Travishaven,KY,2020-08-11,Active,Email,Gold,1,100,87
+CUS-11210,Individual,Walkershire,DC,2020-03-01,Active,Email,Gold,1,65,73
+CUS-11211,Individual,New Laurenfort,ND,2025-05-10,Active,Phone,Platinum,16,66,100
+CUS-11212,Family,New Michaelburgh,NH,2022-02-08,Active,SMS,Platinum,53,100,90
+CUS-11213,Family,Lake Aprilmouth,UT,2023-05-22,Active,Email,Gold,30,82,87
+CUS-11214,Family,North Emilyfurt,OR,2022-02-14,Active,SMS,Platinum,45,92,61
+CUS-11215,Individual,West Michaelview,HI,2023-12-01,Active,SMS,Platinum,11,83,75
+CUS-11216,Business,Joelfort,RI,2021-07-26,Suspended,Phone,Gold,44,100,62
+CUS-11217,Individual,Michaelfort,NE,2023-09-14,Active,SMS,Platinum,62,74,59
+CUS-11218,Family,South Jaclyn,MN,2024-11-23,Active,SMS,Bronze,48,58,89
+CUS-11219,Individual,Melissaview,NV,2024-02-22,Active,Email,Silver,79,58,51
+CUS-11220,Family,New David,OK,2021-08-24,Active,Phone,Platinum,48,100,93
+CUS-11221,Individual,Port Cory,KY,2022-10-16,Active,Email,Silver,43,61,62
+CUS-11222,Business,New Ryan,MS,2025-05-09,Active,Phone,Silver,18,80,62
+CUS-11223,Individual,East Lauren,WA,2024-01-05,Active,SMS,Bronze,44,42,66
+CUS-11224,Family,South Linda,HI,2023-09-25,Active,SMS,Bronze,28,71,95
+CUS-11225,Family,Porterhaven,ND,2020-07-04,Active,Email,Silver,36,93,57
+CUS-11226,Family,Kristenport,KS,2022-02-11,Inactive,Phone,Platinum,65,100,92
+CUS-11227,Student,South Coreyburgh,AR,2022-06-13,Active,Email,Bronze,11,31,63
+CUS-11228,Individual,Port Jonathan,MP,2023-04-27,Inactive,Phone,Bronze,63,40,68
+CUS-11229,Student,South Julieview,MN,2023-03-27,Active,Email,Silver,22,48,83
+CUS-11230,Individual,Annview,MI,2022-01-17,Active,SMS,Bronze,46,58,88
+CUS-11231,Individual,South Davidborough,OK,2022-03-20,Active,SMS,Silver,57,58,63
+CUS-11232,Individual,Port Justin,MD,2022-07-22,Active,Email,Gold,50,59,98
+CUS-11233,Individual,Hamptonmouth,FM,2022-10-25,Suspended,Email,Platinum,83,85,54
+CUS-11234,Family,South Christinamouth,SC,2021-03-17,Active,Phone,Silver,51,82,59
+CUS-11235,Family,Port Gary,AS,2021-03-07,Active,SMS,Silver,47,73,62
+CUS-11236,Business,Robertshire,MO,2024-01-29,Active,SMS,Gold,49,93,62
+CUS-11237,Individual,North Fernandobury,MD,2021-11-22,Active,Email,Silver,28,62,59
+CUS-11238,Individual,Deniseview,PA,2021-08-02,Active,SMS,Platinum,27,83,71
+CUS-11239,Individual,Nelsonmouth,WI,2024-03-20,Active,SMS,Bronze,79,42,74
+CUS-11240,Family,Juliehaven,NV,2023-03-28,Active,Phone,Bronze,19,62,70
+CUS-11241,Family,Jacksontown,DC,2021-02-04,Active,Email,Platinum,26,95,74
+CUS-11242,Individual,Lake Johnathan,WA,2022-05-24,Active,Email,Bronze,28,53,66
+CUS-11243,Premium,East Garrettville,CT,2020-08-28,Suspended,Phone,Platinum,24,100,61
+CUS-11244,Individual,South Amytown,WI,2020-08-31,Active,Email,Gold,1,84,94
+CUS-11245,Family,Warrenland,CT,2024-06-16,Active,Email,Silver,72,82,70
+CUS-11246,Individual,Christineland,SD,2023-08-30,Active,Email,Bronze,27,50,87
+CUS-11247,Individual,Parkerbury,WA,2023-04-16,Active,Phone,Bronze,57,39,86
+CUS-11248,Individual,Scottberg,DC,2022-09-18,Suspended,Phone,Bronze,55,40,39
+CUS-11249,Individual,North Austin,MI,2025-02-04,Active,Phone,Silver,64,40,73
+CUS-11250,Individual,Michellemouth,VI,2023-01-03,Active,Phone,Bronze,62,55,82
+CUS-11251,Family,Amyberg,UT,2024-06-06,Active,Phone,Bronze,62,55,59
+CUS-11252,Business,New Carla,SC,2023-11-24,Active,Phone,Platinum,2,100,78
+CUS-11253,Individual,Millsside,ME,2023-08-29,Active,Phone,Gold,12,57,75
+CUS-11254,Individual,Timothybury,AS,2022-01-14,Suspended,Email,Platinum,76,69,40
+CUS-11255,Individual,South Kylechester,KS,2025-04-21,Inactive,SMS,Bronze,84,44,52
+CUS-11256,Individual,West Alex,NC,2023-11-24,Active,SMS,Platinum,48,81,93
+CUS-11257,Individual,West Justin,ND,2020-07-21,Active,Email,Bronze,9,53,72
+CUS-11258,Student,Lake Sandrafort,ME,2023-05-18,Active,Phone,Bronze,66,44,74
+CUS-11259,Individual,Port Russellport,PA,2021-06-06,Active,Phone,Bronze,30,43,70
+CUS-11260,Family,Port Adrian,MN,2025-04-09,Active,Phone,Bronze,66,58,87
+CUS-11261,Family,South Nicole,NE,2021-01-29,Active,Phone,Gold,22,100,76
+CUS-11262,Individual,Wrightfurt,MP,2020-11-10,Active,Phone,Silver,38,60,57
+CUS-11263,Individual,Walkerland,NE,2022-12-24,Active,Phone,Bronze,49,39,74
+CUS-11264,Premium,New Kathy,PW,2024-05-12,Active,SMS,Silver,5,91,83
+CUS-11265,Student,Justinside,AS,2021-03-31,Active,Email,Platinum,1,78,89
+CUS-11266,Individual,Robertland,HI,2024-07-10,Active,Phone,Gold,65,61,92
+CUS-11267,Individual,West Daniel,NH,2020-07-21,Active,Email,Platinum,14,79,90
+CUS-11268,Family,Nelsonfort,ID,2023-10-20,Suspended,Phone,Silver,100,76,40
+CUS-11269,Individual,Andrewton,ND,2021-06-14,Active,Phone,Bronze,9,45,83
+CUS-11270,Individual,East Teresaport,KY,2021-07-01,Active,Phone,Platinum,36,78,100
+CUS-11271,Individual,Lake Samuel,AL,2022-07-26,Active,SMS,Gold,28,67,82
+CUS-11272,Student,North Edward,NM,2022-12-02,Inactive,SMS,Gold,47,67,66
+CUS-11273,Premium,West Robert,WY,2022-04-12,Active,SMS,Platinum,1,100,75
+CUS-11274,Individual,Boltonmouth,UT,2020-04-27,Active,Email,Platinum,41,75,89
+CUS-11275,Family,West Christopherberg,AR,2025-03-24,Active,Email,Silver,63,77,55
+CUS-11276,Individual,Kimberlyland,ND,2023-06-16,Active,SMS,Bronze,47,52,73
+CUS-11277,Individual,Whiteview,GU,2024-02-22,Active,SMS,Platinum,70,79,94
+CUS-11278,Individual,Claytonville,WI,2022-07-07,Suspended,Phone,Gold,69,65,38
+CUS-11279,Individual,South Kelsey,NV,2024-09-15,Active,Email,Bronze,51,43,60
+CUS-11280,Individual,Lake Virginia,ID,2020-08-19,Active,Phone,Platinum,44,77,80
+CUS-11281,Individual,Mossville,NC,2021-08-24,Active,Email,Gold,17,67,86
+CUS-11282,Premium,South Paul,ME,2025-05-18,Active,SMS,Bronze,34,94,85
+CUS-11283,Individual,Ericton,WA,2020-01-13,Active,Email,Silver,1,66,71
+CUS-11284,Individual,West Timothyport,ID,2020-01-19,Active,Email,Bronze,32,49,80
+CUS-11285,Individual,Paigeborough,DE,2022-09-25,Active,Phone,Bronze,37,49,76
+CUS-11286,Individual,Lake Ryan,AL,2022-05-27,Active,Phone,Bronze,34,52,64
+CUS-11287,Individual,Port Joshua,DE,2024-03-10,Active,Email,Gold,22,56,78
+CUS-11288,Individual,Mccormicktown,AZ,2020-09-30,Active,Phone,Platinum,1,79,100
+CUS-11289,Student,Barkerberg,MN,2021-06-28,Active,Email,Gold,34,55,84
+CUS-11290,Family,East Ericland,TX,2024-05-17,Active,Phone,Platinum,63,94,66
+CUS-11291,Individual,Sarahton,AR,2020-08-08,Active,Email,Silver,1,61,63
+CUS-11292,Family,Deannaside,WY,2021-12-01,Active,Phone,Bronze,33,69,72
+CUS-11293,Individual,East Tonymouth,OH,2024-04-07,Active,Phone,Gold,21,60,83
+CUS-11294,Family,Lindamouth,VA,2024-11-04,Active,Phone,Silver,47,67,81
+CUS-11295,Family,North Hannah,MI,2024-07-16,Active,Phone,Silver,32,80,94
+CUS-11296,Family,West Rachel,NM,2021-04-14,Active,Email,Silver,12,76,85
+CUS-11297,Individual,Hansenside,UT,2021-02-12,Active,Email,Gold,9,82,83
+CUS-11298,Individual,Lopezburgh,ND,2022-05-22,Active,Phone,Silver,25,51,72
+CUS-11299,Individual,Mariomouth,KY,2025-04-15,Active,Email,Bronze,23,35,58
+CUS-11300,Individual,North Amanda,NV,2023-09-14,Active,Email,Silver,78,63,51
+CUS-11301,Individual,Loriside,MN,2021-05-31,Inactive,Email,Silver,37,51,88
+CUS-11302,Family,Smithhaven,MS,2020-09-23,Active,Phone,Silver,49,91,84
+CUS-11303,Family,North Christine,MN,2021-05-02,Active,Email,Silver,56,75,57
+CUS-11304,Family,West Jennifer,TN,2023-05-17,Active,Phone,Platinum,51,91,72
+CUS-11305,Family,Leefort,WI,2025-03-10,Active,SMS,Silver,39,75,65
+CUS-11306,Individual,New Justin,MT,2020-11-10,Active,Email,Gold,6,80,91
+CUS-11307,Business,Danielhaven,TN,2022-07-07,Active,Email,Gold,11,100,100
+CUS-11308,Premium,North Maryberg,HI,2022-10-28,Active,Email,Silver,1,100,62
+CUS-11309,Student,East Danielborough,CT,2020-05-04,Active,Phone,Platinum,15,80,100
+CUS-11310,Business,New Darlenefurt,TN,2020-06-02,Active,Phone,Gold,24,100,91
+CUS-11311,Family,Foxshire,KS,2021-02-27,Active,Email,Silver,44,72,84
+CUS-11312,Individual,West Jeffreyland,AL,2023-12-20,Active,Email,Gold,28,62,100
+CUS-11313,Individual,Lake Travis,FM,2021-04-03,Active,Email,Bronze,9,50,67
+CUS-11314,Individual,South Laurieton,MN,2024-06-07,Active,SMS,Platinum,23,79,73
+CUS-11315,Individual,Shortton,GU,2021-12-12,Active,SMS,Silver,63,67,64
+CUS-11316,Family,Allisonland,MP,2022-04-16,Active,Email,Platinum,35,89,85
+CUS-11317,Individual,Christianborough,NC,2025-05-30,Active,Email,Bronze,62,48,54
+CUS-11318,Family,North Jessicaside,MS,2023-11-10,Active,Phone,Gold,50,93,95
+CUS-11319,Individual,East Alicia,IA,2022-06-24,Active,Email,Silver,57,60,58
+CUS-11320,Individual,New Kara,MT,2024-02-03,Active,Email,Platinum,15,78,78
+CUS-11321,Individual,Port Daniellestad,TX,2024-07-28,Active,Email,Silver,66,47,65
+CUS-11322,Individual,Parkchester,FM,2020-11-29,Active,SMS,Gold,2,65,79
+CUS-11323,Individual,East Lauraside,MO,2021-05-17,Active,Phone,Gold,37,77,71
+CUS-11324,Family,Dianeside,PA,2024-07-12,Active,Email,Bronze,27,52,57
+CUS-11325,Individual,Mahoneymouth,OH,2024-04-26,Active,Email,Silver,20,43,62
+CUS-11326,Individual,Meganchester,WV,2024-08-02,Active,Phone,Bronze,50,50,78
+CUS-11327,Family,Mckenziemouth,PA,2021-09-21,Active,Email,Bronze,46,68,91
+CUS-11328,Individual,New Amy,MS,2020-02-13,Active,Email,Silver,32,68,63
+CUS-11329,Individual,Michaelmouth,NV,2021-04-04,Active,Email,Bronze,41,51,66
+CUS-11330,Premium,Smithton,LA,2023-11-02,Active,SMS,Platinum,2,100,80
+CUS-11331,Student,New Derekport,AL,2021-04-04,Active,SMS,Silver,39,52,60
+CUS-11332,Individual,Traceyborough,PR,2025-03-08,Inactive,SMS,Silver,61,53,81
+CUS-11333,Individual,Andrewview,PW,2021-01-06,Active,Email,Gold,9,82,87
+CUS-11334,Individual,North Benjamin,MI,2020-07-31,Active,Email,Silver,16,56,57
+CUS-11335,Business,East Joseph,FM,2020-10-31,Active,Email,Gold,3,100,74
+CUS-11336,Individual,East Jonathan,ME,2022-05-25,Suspended,Email,Bronze,54,43,44
+CUS-11337,Individual,New Ricardoborough,VA,2022-10-09,Active,Phone,Silver,58,67,70
+CUS-11338,Individual,Lake Markfort,HI,2025-04-17,Active,Email,Silver,51,57,84
+CUS-11339,Individual,Petersenshire,GU,2023-01-03,Active,Email,Silver,35,63,89
+CUS-11340,Family,New Dawnton,VA,2024-07-19,Active,Phone,Bronze,20,58,57
+CUS-11341,Individual,Millerton,PW,2022-08-28,Suspended,SMS,Bronze,69,49,25
+CUS-11342,Individual,Michaelchester,MT,2020-10-22,Active,Phone,Platinum,16,80,80
+CUS-11343,Family,Port Kayleetown,SC,2020-04-24,Active,Email,Gold,1,97,71
+CUS-11344,Family,Brownhaven,AZ,2022-05-19,Active,Phone,Silver,10,83,96
+CUS-11345,Business,Amberberg,MD,2020-03-02,Active,Email,Gold,1,100,96
+CUS-11346,Individual,East Brent,VA,2021-01-08,Active,Email,Gold,50,72,90
+CUS-11347,Individual,Maddoxshire,NY,2021-11-21,Active,Phone,Bronze,10,44,61
+CUS-11348,Business,East Ryanfurt,FL,2020-03-06,Active,Email,Gold,1,100,99
+CUS-11349,Individual,West Christopher,OK,2024-08-25,Active,Phone,Bronze,34,45,64
+CUS-11350,Individual,New Raymondland,MO,2020-07-07,Active,SMS,Bronze,13,56,97
+CUS-11351,Individual,Ayalaberg,WV,2022-03-14,Active,Phone,Gold,48,61,90
+CUS-11352,Individual,South Anita,NM,2023-08-29,Active,SMS,Bronze,71,46,73
+CUS-11353,Individual,Pearsonborough,OH,2020-08-10,Active,Email,Platinum,11,74,83
+CUS-11354,Individual,East Charles,WI,2023-01-14,Active,Email,Bronze,67,45,59
+CUS-11355,Individual,Morrisshire,CO,2023-07-31,Inactive,Email,Bronze,86,53,45
+CUS-11356,Individual,Lake Robertstad,MI,2024-06-06,Active,Email,Bronze,39,32,75
+CUS-11357,Family,West Melvin,SD,2025-05-17,Active,Email,Gold,56,81,67
+CUS-11358,Family,Port Kevinstad,RI,2020-07-18,Active,SMS,Gold,22,88,67
+CUS-11359,Individual,Hansonmouth,AZ,2022-02-21,Active,SMS,Bronze,14,43,87
+CUS-11360,Individual,East Gina,FL,2023-07-05,Active,Phone,Gold,61,75,67
+CUS-11361,Family,North Jodibury,RI,2020-11-25,Suspended,Phone,Platinum,68,100,60
+CUS-11362,Premium,Port Marissa,LA,2021-11-30,Active,Email,Gold,17,100,69
+CUS-11363,Business,West Heatherville,ME,2024-05-04,Active,Email,Platinum,33,100,73
+CUS-11364,Individual,Ruizmouth,IL,2022-10-15,Active,Email,Gold,17,74,72
+CUS-11365,Individual,East Amy,WV,2022-07-20,Active,SMS,Bronze,23,56,79
+CUS-11366,Individual,Anaberg,UT,2020-05-25,Active,Phone,Silver,30,62,82
+CUS-11367,Family,South Brandyhaven,AZ,2020-10-14,Inactive,SMS,Gold,43,92,87
+CUS-11368,Individual,Georgeport,ID,2023-06-23,Inactive,Email,Bronze,100,54,60
+CUS-11369,Individual,Briantown,CA,2023-10-29,Active,Email,Gold,53,55,99
+CUS-11370,Student,Guerrerostad,VI,2020-04-26,Active,Email,Platinum,1,69,76
+CUS-11371,Individual,North Kellyfurt,IN,2020-11-20,Active,SMS,Silver,55,67,54
+CUS-11372,Individual,Romeroville,MH,2022-08-17,Active,SMS,Silver,12,53,64
+CUS-11373,Premium,Toddside,CO,2025-03-04,Active,Email,Gold,1,100,91
+CUS-11374,Student,East Vincent,NH,2022-09-22,Active,Phone,Bronze,36,28,87
+CUS-11375,Individual,North Johnhaven,ME,2022-08-20,Active,Email,Silver,45,60,54
+CUS-11376,Premium,Tracyburgh,AK,2022-01-10,Active,SMS,Gold,1,100,97
+CUS-11377,Individual,Gabriellestad,SC,2023-07-25,Active,Email,Bronze,25,44,83
+CUS-11378,Business,Joelhaven,KY,2022-12-10,Active,SMS,Bronze,1,74,87
+CUS-11379,Individual,Lake Jonathanfurt,FM,2024-03-22,Active,Email,Platinum,40,78,96
+CUS-11380,Family,New Stacybury,FL,2020-11-25,Suspended,Email,Platinum,66,100,27
+CUS-11381,Individual,Pennyberg,CO,2025-01-04,Active,Email,Silver,59,45,69
+CUS-11382,Family,Meyerbury,MT,2024-08-13,Inactive,Phone,Gold,60,72,67
+CUS-11383,Business,New Eric,ME,2025-03-27,Active,SMS,Bronze,48,78,67
+CUS-11384,Individual,Shaneberg,IL,2020-01-08,Suspended,SMS,Platinum,70,89,66
+CUS-11385,Student,New Amber,AS,2020-07-18,Active,Phone,Bronze,44,51,62
+CUS-11386,Family,Port Devin,UT,2021-03-18,Active,SMS,Platinum,26,92,88
+CUS-11387,Family,South Wendy,WI,2020-02-03,Active,Email,Platinum,1,100,99
+CUS-11388,Individual,Lake Sarah,PW,2021-12-21,Active,Phone,Gold,42,70,69
+CUS-11389,Premium,West Carlos,ND,2022-07-28,Active,Email,Gold,16,100,91
+CUS-11390,Individual,East Lonnieberg,VA,2023-09-12,Active,Email,Bronze,59,38,54
+CUS-11391,Family,Port Lucaschester,MT,2020-07-31,Active,Email,Platinum,1,100,100
+CUS-11392,Premium,Scottview,FL,2020-07-23,Active,Phone,Platinum,17,100,93
+CUS-11393,Individual,North David,AK,2024-05-10,Active,Email,Bronze,50,36,72
+CUS-11394,Student,Catherinebury,PA,2025-02-14,Active,SMS,Silver,70,42,46
+CUS-11395,Premium,East Grace,MI,2024-05-20,Active,Email,Platinum,11,100,94
+CUS-11396,Family,Lake Kimberlyberg,NY,2020-01-09,Inactive,Email,Bronze,39,76,86
+CUS-11397,Family,Josephstad,HI,2023-05-13,Active,Email,Silver,37,73,88
+CUS-11398,Student,Henryberg,GA,2021-01-29,Active,Email,Bronze,59,50,76
+CUS-11399,Individual,East Antonio,WV,2023-07-27,Active,Phone,Silver,40,61,62
+CUS-11400,Individual,West Stephaniebury,WA,2020-07-22,Active,Email,Bronze,36,56,93
+CUS-11401,Premium,Port James,HI,2024-09-10,Active,SMS,Silver,10,87,85
+CUS-11402,Individual,Camachofort,UT,2024-04-26,Active,Email,Gold,68,55,93
+CUS-11403,Individual,Michellebury,NE,2024-02-29,Active,SMS,Silver,69,54,58
+CUS-11404,Individual,Parsonsfurt,VA,2025-01-12,Active,Email,Gold,56,63,75
+CUS-11405,Family,Phillipshire,PA,2021-07-17,Active,Email,Bronze,38,64,60
+CUS-11406,Individual,New Danielmouth,GU,2023-05-05,Active,Email,Bronze,21,38,60
+CUS-11407,Individual,East Aprilfurt,WA,2022-01-10,Inactive,Email,Bronze,84,40,70
+CUS-11408,Individual,New Paulton,ID,2025-05-18,Active,Email,Silver,76,50,85
+CUS-11409,Premium,Scottport,WI,2024-07-13,Active,Email,Platinum,37,100,100
+CUS-11410,Family,Stevenchester,LA,2020-03-05,Active,Email,Silver,39,94,87
+CUS-11411,Individual,Lake Zacharyberg,NH,2022-12-04,Active,SMS,Bronze,9,54,60
+CUS-11412,Individual,Davishaven,DE,2024-04-07,Active,SMS,Bronze,33,33,74
+CUS-11413,Individual,Port Brenda,MH,2020-06-19,Active,SMS,Silver,30,60,59
+CUS-11414,Individual,South Robert,NV,2023-02-03,Active,Email,Gold,26,72,90
+CUS-11415,Premium,East Shawnborough,FM,2021-05-27,Active,Phone,Platinum,1,100,76
+CUS-11416,Individual,Davismouth,UT,2024-04-18,Active,Email,Bronze,66,48,74
+CUS-11417,Business,Lake Jessica,CO,2022-05-17,Active,Email,Silver,1,100,84
+CUS-11418,Individual,Lake Shannonstad,CO,2023-03-07,Active,SMS,Gold,28,61,67
+CUS-11419,Student,Acostahaven,RI,2021-06-02,Active,Email,Platinum,32,77,86
+CUS-11420,Individual,South Andrea,AZ,2020-08-22,Active,Email,Platinum,12,81,72
+CUS-11421,Individual,West Ariana,TN,2022-01-31,Active,Phone,Bronze,24,39,77
+CUS-11422,Individual,East Misty,HI,2023-03-08,Active,SMS,Silver,34,55,92
+CUS-11423,Individual,South Kylemouth,LA,2021-03-21,Active,Email,Gold,46,64,97
+CUS-11424,Business,North Rachel,ID,2022-05-13,Active,Email,Platinum,1,100,73
+CUS-11425,Family,New Kathytown,NH,2022-10-18,Active,Email,Bronze,36,62,91
+CUS-11426,Individual,Foleyside,AS,2022-02-23,Active,Email,Bronze,54,57,50
+CUS-11427,Premium,New Nicolebury,IL,2021-08-05,Active,SMS,Silver,21,100,58
+CUS-11428,Individual,Chavezmouth,CO,2020-02-03,Active,Email,Platinum,36,84,80
+CUS-11429,Individual,East Nicoleview,RI,2021-12-09,Active,Phone,Silver,42,51,77
+CUS-11430,Individual,North Jack,AR,2022-07-19,Active,Phone,Platinum,49,79,100
+CUS-11431,Individual,Benjaminton,TN,2021-04-03,Active,Email,Bronze,20,55,70
+CUS-11432,Individual,Markland,AR,2021-01-26,Active,SMS,Platinum,24,72,69
+CUS-11433,Individual,South Victoriaburgh,TX,2024-05-26,Active,Email,Bronze,36,42,92
+CUS-11434,Family,Cherylshire,WY,2022-02-16,Active,Email,Bronze,33,62,62
+CUS-11435,Individual,South Kara,MN,2020-10-30,Active,SMS,Platinum,16,93,95
+CUS-11436,Family,North Kaylamouth,MN,2022-12-04,Active,Phone,Silver,25,77,85
+CUS-11437,Individual,Wilkinschester,MP,2021-06-24,Active,Phone,Silver,54,58,63
+CUS-11438,Family,West Thomasville,UT,2020-06-02,Suspended,Email,Bronze,53,78,44
+CUS-11439,Individual,Markchester,NC,2020-08-02,Active,SMS,Platinum,22,84,85
+CUS-11440,Family,Lake Jason,AR,2023-09-04,Active,Phone,Platinum,24,96,90
+CUS-11441,Student,New Jessicahaven,CO,2024-11-12,Active,Email,Silver,24,39,83
+CUS-11442,Individual,Ramseyport,NE,2021-09-21,Suspended,Phone,Bronze,71,43,23
+CUS-11443,Individual,Jordanshire,RI,2025-01-05,Active,Email,Silver,53,55,72
+CUS-11444,Individual,Sarashire,NM,2025-03-13,Active,Email,Bronze,45,46,78
+CUS-11445,Individual,Vasquezburgh,FM,2020-04-18,Active,Email,Bronze,24,58,68
+CUS-11446,Individual,Lake Kelly,ID,2022-04-04,Active,Email,Gold,28,72,71
+CUS-11447,Family,North Andrewville,WA,2023-08-16,Active,Email,Bronze,77,56,81
+CUS-11448,Individual,Port Christina,MT,2020-05-14,Active,Email,Platinum,34,87,89
+CUS-11449,Individual,Williamsstad,OH,2021-03-26,Active,SMS,Silver,13,57,71
+CUS-11450,Individual,North Danielle,UT,2021-08-12,Active,Email,Bronze,13,57,97
+CUS-11451,Individual,Jonathanland,ME,2021-09-17,Active,Phone,Bronze,45,42,61
+CUS-11452,Individual,Williammouth,WI,2025-01-16,Active,SMS,Silver,47,50,52
+CUS-11453,Individual,North Ginamouth,MO,2021-06-24,Active,Email,Platinum,1,90,92
+CUS-11454,Student,Port Gregorymouth,MP,2023-04-09,Active,SMS,Silver,12,36,94
+CUS-11455,Family,Sandrafort,PW,2021-08-18,Active,Phone,Bronze,11,64,64
+CUS-11456,Individual,Roblesberg,NJ,2024-02-16,Active,Email,Bronze,54,41,81
+CUS-11457,Individual,Lake Steven,VI,2022-07-28,Active,Email,Gold,54,74,98
+CUS-11458,Individual,Stevenchester,WA,2021-07-06,Active,Phone,Bronze,27,48,64
+CUS-11459,Individual,Port Adrianashire,VA,2020-03-04,Active,Phone,Platinum,13,81,73
+CUS-11460,Individual,Angelatown,IL,2025-05-09,Active,Email,Bronze,60,47,76
+CUS-11461,Student,Laurenstad,CA,2024-11-29,Active,Email,Silver,76,41,70
+CUS-11462,Individual,West Mary,MA,2025-04-19,Suspended,Email,Bronze,93,40,51
+CUS-11463,Individual,Simsburgh,OK,2024-06-16,Active,SMS,Gold,28,55,65
+CUS-11464,Individual,Lopezville,VI,2023-11-04,Active,Phone,Silver,38,63,88
+CUS-11465,Family,Janetmouth,VT,2021-09-13,Active,Email,Silver,31,72,67
+CUS-11466,Individual,West Robertfort,FM,2023-04-29,Active,Email,Bronze,32,36,57
+CUS-11467,Individual,West Shannon,ME,2021-12-18,Active,Phone,Gold,42,77,71
+CUS-11468,Student,New Kevin,DE,2023-12-31,Active,SMS,Bronze,57,26,67
+CUS-11469,Individual,Kristenborough,PW,2022-08-27,Inactive,Email,Silver,61,61,73
+CUS-11470,Student,South Williamfort,MH,2020-07-19,Active,SMS,Gold,1,72,97
+CUS-11471,Family,East Matthew,NJ,2021-10-22,Active,Email,Platinum,9,94,95
+CUS-11472,Individual,Kimberlyberg,WI,2021-09-08,Active,Email,Platinum,21,88,77
+CUS-11473,Individual,Port Tonihaven,TX,2024-11-28,Active,Email,Silver,64,51,80
+CUS-11474,Premium,East Jenny,NH,2023-12-30,Active,Email,Gold,21,100,67
+CUS-11475,Premium,Reeveshaven,DE,2020-02-24,Suspended,Email,Platinum,54,100,45
+CUS-11476,Individual,West Sarahland,MA,2022-02-03,Active,Phone,Gold,12,60,93
+CUS-11477,Individual,Smallville,NC,2023-10-04,Active,SMS,Gold,39,55,68
+CUS-11478,Individual,Andrewport,SC,2024-08-26,Suspended,Email,Silver,100,51,46
+CUS-11479,Individual,West James,LA,2021-11-09,Active,Email,Gold,25,61,78
+CUS-11480,Individual,Amandamouth,TN,2023-02-25,Active,Email,Bronze,52,56,59
+CUS-11481,Individual,West Edwardview,DE,2021-09-28,Active,SMS,Platinum,31,76,71
+CUS-11482,Individual,New Anitaville,IL,2020-11-09,Active,Email,Bronze,13,46,88
+CUS-11483,Individual,Andreaview,FL,2022-11-01,Active,Email,Bronze,33,52,65
+CUS-11484,Family,Audreyburgh,CA,2024-09-19,Active,Email,Silver,48,80,58
+CUS-11485,Individual,Christinamouth,ND,2023-07-26,Active,Email,Gold,25,60,97
+CUS-11486,Family,Williamstown,NJ,2023-01-24,Active,Email,Bronze,15,74,88
+CUS-11487,Individual,North Patrickland,NE,2021-07-17,Active,Phone,Bronze,27,54,64
+CUS-11488,Individual,Whiteshire,SC,2022-07-25,Active,Email,Silver,8,68,98
+CUS-11489,Individual,Jensenport,MA,2025-02-02,Inactive,SMS,Silver,96,54,58
+CUS-11490,Individual,Lake Katherine,AS,2020-11-20,Active,SMS,Gold,12,79,92
+CUS-11491,Individual,Port Kathyshire,DC,2020-12-23,Active,Email,Platinum,11,87,76
+CUS-11492,Individual,Port Leahmouth,CT,2024-04-10,Active,SMS,Bronze,73,53,76
+CUS-11493,Individual,Collinsmouth,NJ,2022-08-24,Active,Email,Gold,29,74,81
+CUS-11494,Individual,East Douglas,MH,2021-10-25,Active,Phone,Gold,46,72,65
+CUS-11495,Individual,Robertafurt,HI,2024-10-10,Active,Email,Silver,51,56,70
+CUS-11496,Family,Kristinamouth,NH,2024-04-29,Active,Phone,Bronze,77,58,69
+CUS-11497,Family,Johnsonfort,DE,2022-05-10,Inactive,Email,Silver,37,71,81
+CUS-11498,Family,Timothyburgh,LA,2023-05-27,Active,Email,Bronze,26,69,79
+CUS-11499,Individual,Cassandraberg,NY,2023-07-29,Active,Email,Bronze,48,44,65
+CUS-11500,Individual,South Lisaville,MD,2020-11-27,Active,Phone,Platinum,1,91,71
