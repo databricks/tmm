@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=./bundle_config_schema.json
 
-# Gourmet-Pipe-Corp
+# Gourmet-Pipeline
 
 variables:
   prod_warehouse_id:
@@ -39,19 +39,15 @@ targets:
 
 
 
-
-
-
-
-  #The 'dev' target, for development purposes. This target is the default.
-  virtual:
-
-    mode: development
-    presets:
-      name_prefix: '[DAIWT-${workspace.current_user.short_name}]'
-      source_linked_deployment: true  
-    default: true
-    variables:
-      schema_name: virtual_event
-    run_as:
-      user_name: frank.munz@databricks.com
+# The 'dev' target, for development purposes. This target is the default.
+# dev:
+#   virtual:
+#     mode: development
+#     presets:
+#       name_prefix: '[DAIWT-${workspace.current_user.short_name}]'
+#       source_linked_deployment: true  
+#     default: true
+#     variables:
+#       schema_name: virtual_event
+#     run_as:
+#       user_name: frank.munz@databricks.com
