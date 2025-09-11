@@ -5,7 +5,7 @@
 variables:
   prod_warehouse_id:
     description: define prod warehouse id
-    default: e3f2fb23a8f0471a
+    default: 5834a7035a11c525
 
   catalog_name:
     description: "Catalog name for the pipeline"
@@ -44,16 +44,14 @@ targets:
 
 
   #The 'dev' target, for development purposes. This target is the default.
-  #virtual:#
-  #
-  #  mode: development
-  #  presets:
-  #    name_prefix: '[DAIWT-${workspace.current_user.short_name}]'
-  #    source_linked_deployment: true  
-  #  default: true
-    #workspace:
-    #  host: https://host.databricks.com/  
-  #  variables:
-   #   schema_name: virtual_event
-   # run_as:
-   #       user_name: frank.munz@databricks.com
+  virtual:
+
+    mode: development
+    presets:
+      name_prefix: '[DAIWT-${workspace.current_user.short_name}]'
+      source_linked_deployment: true  
+    default: true
+    variables:
+      schema_name: virtual_event
+    run_as:
+      user_name: frank.munz@databricks.com
