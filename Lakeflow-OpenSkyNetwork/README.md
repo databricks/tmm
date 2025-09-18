@@ -93,7 +93,7 @@ CREATE MATERIALIZED VIEW flights_stats AS
     MAX(velocity) AS max_speed,
     MAX(geo_altitude) AS max_altitude,
     TIMESTAMPDIFF(SECOND, MIN(time_ingest), MAX(time_ingest)) AS observation_duration
-  FROM STREAM(TABLE(ingest_flights));```
+  FROM ingest_flights;
 ```
 ---
 
