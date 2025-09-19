@@ -55,7 +55,7 @@ The first step is to create a pipeline and ingest live aircraft positions from t
 # use OSS pyspark package for declarative pipelines
 from pyspark import pipelines as dp
 
-# import and register the datasource
+# import and register the OpenSky datasource 
 from pyspark_datasources import OpenSkyDataSource
 spark.dataSource.register(OpenSkyDataSource)
 
