@@ -6,7 +6,7 @@
 
 This repository provides a small, self-contained Declarative Pipelines example that you can run on the Free Edition of the Databricks Platform. It demonstrates how to build a IoT pipeline using streaming tables, materialized views, and AI-powered queries. We use a custom PySpark data source that connects to real-time aircraft data from the OpenSky Network. 
 
-Learn how to use ingestion, aggregation, and interactive analytics—all with minimal setup and code. This tutorial is based on my Databrick blog about[Scalable Systems with Lakeflow Declarative Pipelines and PySpark Custom Data Sources](https://www.databricks.com/blog/processing-millions-events-thousands-aircraft-one-declarative-pipeline). 
+Learn how to use ingestion, aggregation, and interactive analytics—all with minimal setup and code. This tutorial is based on my Databrick blog about [Building Scalable Systems with Lakeflow Declarative Pipelines and PySpark Custom Data Sources](https://www.databricks.com/blog/processing-millions-events-thousands-aircraft-one-declarative-pipeline). 
 
 ---
 
