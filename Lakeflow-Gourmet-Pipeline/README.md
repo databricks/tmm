@@ -1,8 +1,8 @@
-![Gourmet Pipe Corp](https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-Gourmet-Pipeline/misc/gourmet_header.jpg)
+![Gourmet Pipeline](https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-Gourmet-Pipeline/misc/gourmet_header.jpg)
 
 
 
-# Gourmet-Pipeline: End-to-End Data Engineering with Lakeflow and Databricks Asset Bundle in the Workspace
+# Gourmet Pipeline: End-to-End Data Engineering with Lakeflow, AI, Databricks One and Databricks Asset Bundle in the Workspace
 
 Gourmet Pipeline is a global food company specializing in high-quality snacks. Their growth was hampered by a disconnected IT landscape and brittle data pipelines, making it difficult to analyze sales, supplier, and market data in real-time. Then their business problems got worse because they couldn't figure out how to drive new product innovation and create AI-driven, localized marketing campaigns. 
 
@@ -66,6 +66,7 @@ The core of this project is a multi-task job that orchestrates the following ste
 
 The workflow is designed with conditional branching. The `is_AI_enabled` task checks if the AI enrichment steps should be executed. If true, the workflow proceeds with the AI tasks; otherwise, it follows an alternative path.
 
+![Gourmet Pipeline Corp](https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-Gourmet-Pipeline/misc/animated.gif)
 
 
 ## Usage
