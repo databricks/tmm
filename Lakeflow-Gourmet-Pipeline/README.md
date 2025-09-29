@@ -8,7 +8,9 @@ Gourmet Pipeline is a global food company specializing in high-quality snacks. T
 
 The new Lakeflow application solves all of Gourmet Pipeline's issues! It provides an automated, end-to-end data pipeline that ingests disparate data sources with Lakeflow Connect, transforms them for analysis with Lakeflow Declarative Pipelines, enriches them using LLMs and AI functions, and visualizes the results on a real-time dashboard.
 
-This project demonstrates a complete data engineering workflow using Databricks Asset Bundles. It covers everything from initial data ingestion to the final business intelligence dashboard, providing a practical example of CI/CD and infrastructure-as-code for the Databricks Data Intelligence Platform.
+![Gourmet Pipe Corp](https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-Gourmet-Pipeline/misc/matcha.jpg)
+
+This project demonstrates a complete data engineering workflow using Databricks Asset Bundles. It covers everything from initial data ingestion to the final business intelligence dashboard served via Databricks One, providing a practical example of CI/CD and infrastructure-as-code for the Databricks Data Intelligence Platform.
 
 
 
@@ -30,7 +32,7 @@ The asset bundle is designed to be deployed and run entirely from the Databricks
       * Before deploying, you need to make sure you have the proper settings defined in the `databricks.yml` file.
          * `catalog_name` and `schema_name` defines the location where the pipeline tables will be created. 
          * the ID of the Databricks SQL Warehouse (`prod_warehouse_id`) that will power the dashboard
-         * Update the SQL for the dashboard to match the correct catalog and schema in `src/aibi_dashboard.json`
+         * Update the SQL for the dashboard to match the correct catalog and schema in `src/aibi_dashboard.json`. AI/BI dashboards cannot be parametrized currently, so you have to edit this manually. 
 
 3.  **Deploy the Asset Bundle**:
     *   Navigate to the newly cloned folder in your Workspace.
