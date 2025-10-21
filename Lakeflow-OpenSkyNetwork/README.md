@@ -1,12 +1,18 @@
 
 # Processing Millions of Events from Thousands of Aircraft with One Declarative Pipeline
 
-### Fast Track To Lakeflow Declarative Pipelines
+### Fast Track To Spark Declarative Pipelines
 ![Aviation Data Processing Header](misc/header.gif)
 
 This repository provides a small, self-contained Declarative Pipelines example that you can run on the Free Edition of the Databricks Platform. It demonstrates how to build a IoT pipeline using streaming tables, materialized views, and AI-powered queries. We use a custom PySpark data source that connects to real-time aircraft data from the OpenSky Network. 
 
+<<<<<<< Updated upstream
 Learn how to use ingestion, aggregation, and interactive analytics—all with minimal setup and code. This tutorial is based on my Databrick blog about [Building Scalable Systems with Lakeflow Declarative Pipelines and PySpark Custom Data Sources](https://www.databricks.com/blog/processing-millions-events-thousands-aircraft-one-declarative-pipeline). 
+=======
+The example uses the standard [open-source Spark Declarative Pipelines (SDP)](https://spark.apache.org/docs/4.1.0-preview1/declarative-pipelines-programming-guide.html) syntax that runs anywhere Spark runs and includes the steps to deploy with Lakeflow on Databricks Free Edition.
+
+Learn how to use ingestion, aggregation, and interactive analytics—all with minimal setup and code.
+>>>>>>> Stashed changes
 
 ---
 
@@ -143,15 +149,23 @@ For production use and higher rate limits, register for API credentials at [open
 
 ### Advanced Streaming Table Configuration
 
-This example adds data quality rules with `@dlt.expect` and configures the data source with a specific region and credentials.
+This example adds data quality rules and configures the data source with a specific region and credentials.
 
 ```python
+# use OSS Spark Declarative Pipelines (SDP)
+from pyspark import pipelines as dp
+
+# import and register the datasource
 from pyspark_datasources import OpenSkyDataSource
 spark.dataSource.register(OpenSkyDataSource)
 
-@dlt.expect("icao24_not_null", "icao24 IS NOT NULL")
-@dlt.expect_or_drop("coord_exist", "latitude IS NOT NULL AND longitude IS NOT NULL")
-@dlt.table
+@dp.expect("icao24_not_null", "icao24 IS NOT NULL")
+@dp.expect_or_drop("coord_exist", "latitude IS NOT NULL AND longitude IS NOT NULL")
+@dp.table
+
+
+# define CLIENT_ID and CLIENT_SECRET ...
+
 def ingest_flights():
     return (
         spark.readStream
@@ -169,7 +183,7 @@ def ingest_flights():
 ## Learn More
 
 -   [Blog: Bringing Declarative Pipelines to the Apache Spark™ Open Source Project](https://www.databricks.com/blog/bringing-declarative-pipelines-apache-spark-open-source-project)
--   [Documentation: Lakeflow Declarative Pipelines](https://docs.databricks.com/aws/en/dlt)
+-   [Documentation: Lakeflow SPD](https://docs.databricks.com/aws/en/ldp)
 -   [Documentation: PySpark Custom Data Sources](https://docs.databricks.com/aws/en/pyspark/datasources)
 -   [OpenSky Network](https://opensky-network.org/)
 -   [Feed your own data to OpenSky](https://opensky-network.org/feed)
