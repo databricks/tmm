@@ -6,11 +6,11 @@
 
 This repository provides a small, self-contained Declarative Pipelines example that you can run on the Free Edition of the Databricks Platform. It demonstrates how to build a IoT pipeline using streaming tables, materialized views, and AI-powered queries. We use a custom PySpark data source that connects to real-time aircraft data from the OpenSky Network. 
 
-Learn how to use ingestion, aggregation, and interactive analytics—all with minimal setup and code. This tutorial is based on my Databrick blog about [Building Scalable Systems with Lakeflow Declarative Pipelines and PySpark Custom Data Sources](https://www.databricks.com/blog/processing-millions-events-thousands-aircraft-one-declarative-pipeline). 
+Learn how to use ingestion, aggregation, and interactive analytics—all with minimal setup and code. 
 
 The example uses the standard [open-source Spark Declarative Pipelines (SDP)](https://spark.apache.org/docs/4.1.0-preview1/declarative-pipelines-programming-guide.html) syntax that runs anywhere Spark runs and includes the steps to deploy with Lakeflow on Databricks Free Edition.
 
-Learn how to use ingestion, aggregation, and interactive analytics—all with minimal setup and code.
+This tutorial is based on my Databrick blog about [Building Scalable Systems with Lakeflow Declarative Pipelines and PySpark Custom Data Sources](https://www.databricks.com/blog/processing-millions-events-thousands-aircraft-one-declarative-pipeline). 
 
 ---
 
@@ -198,10 +198,13 @@ This project focuses on Lakeflow Declarative Pipelines for data ingestion and tr
 </details>
 
 <details>
-<summary>What about Databricks DLT and Databricks Delta Live Tables?</summary>
+<summary>What is the difference between Spark Declarative Pipelines (SDP) and Delta Live Tables (DLT)</summary>
 
 **Answer:**
-At Data + AI Summit in June 2025, Databricks released Lakeflow. Lakeflow unifies Data Engineering with Lakeflow Connect, Lakeflow Declarative Pipelines (previously known as DLT), and Lakeflow Jobs (previously known as Workflows). DLT is now Lakeflow Declarative Pipelines. 
+At Data + AI Summit in June 2025, Databricks released Lakeflow. Lakeflow unifies Data Engineering with Lakeflow Connect, Lakeflow Spark Declarative Pipelines (previously known as DLT), and Lakeflow Jobs (previously known as Workflows). DLT is now Lakeflow Spark Declarative Pipelines. 
+
+Lakeflow SDP is fully revamped DLT that uses the open-source SDP syntax. You can run existing DLT pipelines in Lakeflow, there is zero migration required.  
+
 </details>
 
 <details>
