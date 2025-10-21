@@ -204,7 +204,7 @@ At Data + AI Summit in June 2025, Databricks released Lakeflow. Lakeflow unifies
 
 Lakeflow SDP is fully revamped and much more performant DLT that uses the open-source SDP syntax. You can run existing DLT pipelines in Lakeflow, there is zero migration required. 
 
-Lakeflow adds additional capabilities such as unified governance, serverless execution, a built-in pipeline editor, and incremental processing of materialized views to SDP. To distinguish this from the OSS Spark features, the term Lakeflow SDP is used.    
+Lakeflow adds additional capabilities to SDP, such as unified governance, serverless execution, a built-in pipeline editor, and incremental processing of materialized views. To distinguish this from the OSS Spark features, the term Lakeflow SDP is used.    
 </details>
 
 <details>
