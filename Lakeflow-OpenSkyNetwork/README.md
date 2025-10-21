@@ -32,7 +32,7 @@ This hands-on guide walks you through the entire process from data to dashboard 
 3.  **Run the Pipeline:** You'll execute the pipeline and watch as Lakeflow automatically manages dependencies and processes the data.
 4.  **Explore with Natural Language:** You'll connect your new tables to AI/BI Genie and ask questions in plain English to generate charts and maps instantly.
 
-![Aviation Data Processing Header](misc/ldp_animated.gif)
+![Aviation Data Processing Header](misc/sdp_animated.gif)
 
 ## Prerequisites
 
