@@ -187,15 +187,16 @@ def ingest_flights():
 
 ## FAQ
 
-### What about Lakeflow Connect and Jobs?
-<details id="lakeflow-connect">
 
+<details id="lakeflow-connect">
+<summary>What about Lakeflow Connect and Jobs?</summary>
 **Answer:**
 This project focuses on Lakeflow Declarative Pipelines for data ingestion and transformation. In this example, the custom connector is provided for you. Lakeflow Connect can orchestrate large-scale ingestion from databases, SaaS apps, and message queues--no custom code required. Lakeflow Jobs helps you schedule, orchestrate, and manage complex workflows that combine pipelines, ML models, and business processes across your data platform. For example, you could use Jobs to integrate these pipelines into a broader logistics workflow.
 </details>
 
-### What is the difference between Spark Declarative Pipelines (SDP) and Delta Live Tables (DLT)
+
 <details id="SDP vs DLT">
+<summary>What is the difference between Spark Declarative Pipelines (SDP) and Delta Live Tables (DLT)</summary>
 
 **Answer:**
 At Data + AI Summit in June 2025, Databricks released Lakeflow. Lakeflow unifies Data Engineering with Lakeflow Connect, Lakeflow Spark Declarative Pipelines (previously known as DLT), and Lakeflow Jobs (previously known as Workflows). DLT is now Lakeflow Spark Declarative Pipelines. 
