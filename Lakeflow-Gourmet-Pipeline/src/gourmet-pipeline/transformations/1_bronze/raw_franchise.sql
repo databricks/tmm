@@ -1,4 +1,4 @@
--- Create a Delta Live Tables pipeline
+-- Create a SDP Streamin Table in SQL
 
 CREATE STREAMING TABLE raw_franchises
 TBLPROPERTIES ("quality" = "bronze")

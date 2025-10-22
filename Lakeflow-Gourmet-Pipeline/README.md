@@ -78,7 +78,7 @@ The workflow is designed with conditional branching. The `is_AI_enabled` task ch
 
 ## Requirements
 
-- To run this you need a Datbricks account. This demo does not run on the Databricks Free Edition
+- To run this you need a Datbricks account. This demo does not run on the Databricks Free Edition.
 
 
 ## Troubleshooting

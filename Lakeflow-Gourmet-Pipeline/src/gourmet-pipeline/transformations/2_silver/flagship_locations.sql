@@ -1,4 +1,4 @@
-
+-- create a SDP Materialized View in SQL
 
 CREATE MATERIALIZED VIEW flagship_locations
 (
