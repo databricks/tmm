@@ -6,7 +6,7 @@
 
 Gourmet Pipeline is a global food company specializing in high-quality snacks. Their growth was hampered by a disconnected IT landscape and brittle data pipelines, making it difficult to analyze sales, supplier, and market data in real-time. Then their business problems got worse because they couldn't figure out how to drive new product innovation and create AI-driven, localized marketing campaigns. 
 
-The new Lakeflow application solves all of Gourmet Pipeline's issues! It provides an automated, end-to-end data pipeline that ingests disparate data sources with Lakeflow Connect, transforms them for analysis with Lakeflow Declarative Pipelines, enriches them using LLMs and AI functions, and visualizes the results on a real-time dashboard.
+The new Lakeflow application solves all of Gourmet Pipeline's issues! It provides an automated, end-to-end data pipeline that ingests disparate data sources with Lakeflow Connect, transforms them for analysis with Lakeflow Spark Declarative Pipelines, enriches them using LLMs and AI functions, and visualizes the results on a real-time dashboard.
 
 ![Gourmet Pipe Corp](https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-Gourmet-Pipeline/misc/matcha.jpg)
 
@@ -55,8 +55,8 @@ The core of this project is a multi-task job that orchestrates the following ste
     *   `lf-connect-franchises`: Ingests franchise data.
     *   `lf-connect-suppliers`: Ingests supplier data.
     *   `lf-connect-tx`: Ingests transaction data.
-*   **Data Transformation with Lakeflow Declarative Pipelines**:
-    *   `ingest-pipeline`: A Delta Live Tables pipeline that processes and transforms the raw data.
+*   **Data Transformation with Spark Declarative Pipelines (SDP)**:
+    *   `ingest-pipeline`: A SDP pipeline that processes and transforms the raw data.
 *   **AI Enrichment with LLMs and AI functions**:
     *   `new_recipe_claude_LLM`: A call to a large language model to generate new recipes based on the ingested data.
     *   `sentiment_translate_ai_funk`: A sentiment analysis and translation task.
@@ -74,7 +74,7 @@ The workflow is designed with conditional branching. The `is_AI_enabled` task ch
 - Run the workflow first
 - Explore the dashboard, note how it blends realtime data with AI generated localized marketing campaigns
 - Explore the workflow that orchestrates all the tasks without manual intervention
-- Explore the Lakeflow pipeline for the data transformation with the new pipeline editor
+- Explore SDP for the data transformation with the new Lakeflow pipeline editor
 - Use the asset bundle to delete and deploy again
 
 
@@ -89,5 +89,5 @@ The workflow is designed with conditional branching. The `is_AI_enabled` task ch
 - if you deploy to a different catalog/schema you need to adjust the SQL in the dashboard yml file for catalog and schema since this cannot be parametrized yet. 
 
 ---
-[Gourmet Pipeline Corp © 2025 :-) ](https://www.linkedin.com/in/frankmunz/)
+[contact Gourmet Pipeline Corp © 2025 for reservations :-) ](https://www.linkedin.com/in/frankmunz/)
 
