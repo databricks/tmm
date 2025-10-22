@@ -8,7 +8,7 @@ Gourmet Pipeline is a global food company specializing in high-quality snacks. T
 
 The new Lakeflow application solves all of Gourmet Pipeline's issues! It provides an automated, end-to-end data pipeline that ingests disparate data sources with Lakeflow Connect, transforms them for analysis with Lakeflow Spark Declarative Pipelines, enriches them using LLMs and AI functions, and visualizes the results on a real-time dashboard.
 
-![Gourmet Pipe Corp](https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-Gourmet-Pipeline/misc/matcha.jpg)
+![Gourmet Pipeline Corp](https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-Gourmet-Pipeline/misc/animated.gif)
 
 This project demonstrates a complete data engineering workflow using Databricks Asset Bundles. It covers everything from initial data ingestion to the final business intelligence dashboard served via Databricks One, providing a practical example of CI/CD and infrastructure-as-code for the Databricks Data Intelligence Platform.
 
@@ -65,8 +65,6 @@ The core of this project is a multi-task job that orchestrates the following ste
     *   `update_downstream`: A final task to update downstream systems.
 
 The workflow is designed with conditional branching. The `is_AI_enabled` task checks if the AI enrichment steps should be executed. If true, the workflow proceeds with the AI tasks; otherwise, it follows an alternative path.
-
-![Gourmet Pipeline Corp](https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-Gourmet-Pipeline/misc/animated.gif)
 
 
 ## Usage
