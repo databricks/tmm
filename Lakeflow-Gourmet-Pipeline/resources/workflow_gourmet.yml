@@ -29,7 +29,7 @@ resources:
             full_refresh: false 
             pipeline_id: ${resources.pipelines.lf-connect-tx.id}
           run_if: ALL_SUCCESS
-        - task_key: ingest-pipeline
+        - task_key: etl-pipeline
           depends_on:
             - task_key: lf-connect-tx
             - task_key: lf-connect-franchises
@@ -43,7 +43,7 @@ resources:
           email_notifications: {}
         - task_key: is_AI_enabled
           depends_on:
-            - task_key: ingest-pipeline
+            - task_key: etl-pipeline
           email_notifications: {}
           condition_task:
             op: NOT_EQUAL
