@@ -27,7 +27,7 @@ The asset bundle is designed to be deployed and run entirely from the Databricks
     *   Click **Create Git folder**. The repository will be cloned into your workspace.
 
 
-2.   **Check the configuration** 
+2.   **Verify/Update the configuration** 
 
       * Before deploying, you need to make sure you have the proper settings defined in the `databricks.yml` file.
          * `catalog_name` and `schema_name` defines the location where the pipeline tables will be created. 
@@ -49,23 +49,7 @@ The asset bundle is designed to be deployed and run entirely from the Databricks
 
 ### Workflow Tasks
 
-The core of this project is a multi-task job that orchestrates the following steps:
-
-*   **Data Ingestion with Lakeflow Connect**:
-    *   `lf-connect-franchises`: Ingests franchise data.
-    *   `lf-connect-suppliers`: Ingests supplier data.
-    *   `lf-connect-tx`: Ingests transaction data.
-*   **Data Transformation with Spark Declarative Pipelines (SDP)**:
-    *   `ingest-pipeline`: A SDP pipeline that processes and transforms the raw data.
-*   **AI Enrichment with LLMs and AI functions**:
-    *   `new_recipe_claude_LLM`: A call to a large language model to generate new recipes based on the ingested data.
-    *   `sentiment_translate_ai_funk`: A sentiment analysis and translation task.
-*   **Data Visualization with AI/BI Dashboards**:
-    *   `update_aibi_dashboard`: Updates a dashboard with the latest insights.
-    *   `update_downstream`: A final task to update downstream systems.
-
-The workflow is designed with conditional branching. The `is_AI_enabled` task checks if the AI enrichment steps should be executed. If true, the workflow proceeds with the AI tasks; otherwise, it follows an alternative path.
-
+The core of this project is a multi-task workflow that ingests franchise, supplier, and transaction data via Lakeflow Connect from XML volumes, SFDC and MS SQL, transforms it with Spark Declarative Pipelines, enriches it through LLM and AI-based functions such as recipe generation, sentiment and translation, and finally updates AI/BI dashboards and downstream systems.
 
 ## Usage
 
