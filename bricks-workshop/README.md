@@ -5,7 +5,6 @@ In this lab, you’ll learn how to create and refine AI agents using **Databrick
 ---
 
 ## Part 1: Build Your First Knowledge Assistant  
-##### Notebook: `01_knowledge_agent`
 
 ### 1.1 Create a Vector Search Index  
 - **Why Vector Search?**  
@@ -32,7 +31,6 @@ In this lab, you’ll learn how to create and refine AI agents using **Databrick
 ---
 
 ## Part 2: Expand with Genie for Structured Data  
-##### Notebook: `02_genie_agent`
 
 ### 2.1 Query Structured Data with Genie  
 - **Genie spaces** allow natural language queries over structured data (SQL tables).  
@@ -48,7 +46,6 @@ In this lab, you’ll learn how to create and refine AI agents using **Databrick
 ---
 
 ## Part 3: Orchestrate with a Multi-Agent Supervisor  
-##### Notebook: `03_multi_agent_supervisor`
 
 ### 3.1 Create a Multi-Agent Supervisor (MAS)  
 - Combines multiple agents to intelligently route queries.  
@@ -69,7 +66,6 @@ In this lab, you’ll learn how to create and refine AI agents using **Databrick
 ---
 
 ## Part 4: Improve Quality with Feedback  
-##### Notebook: `04_improve_quality`
 
 ### 4.1 Identify Response Issues  
 - Some answers may be too verbose or technical for end users.  
