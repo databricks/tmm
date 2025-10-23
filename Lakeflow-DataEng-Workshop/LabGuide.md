@@ -11,7 +11,7 @@ This lab guide is part of the Databricks Foundational Workshop "AI-Powered Data 
 
 ### Environment
 
-Databricks runs this course in Vocareum, but you can also run it in any standard workspace. This includes fully serverless workspaces like Databricks Express (but not the Databricks Free Edition). 
+Databricks runs this workshop in Vocareum, but you can also run it in any standard workspace. This includes fully serverless workspaces like Databricks Express (but not the Databricks Free Edition). 
 
 Note that the online transcation broker needs to be started by the instructor first. 
 
