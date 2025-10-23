@@ -1,5 +1,5 @@
 # AI-Powered Data Engineering with Lakeflow 
-# Lab Guide / Aug-7, 2025
+# Lab Guide / Oct-29, 2025
 
 <img src="https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-DataEng-Workshop/media/pl_graph.png" alt="pipeline graph" width="75%">
 
@@ -15,7 +15,7 @@ You can run this course in Vocareum, but also in any other workspace. This inclu
 
 ### What you will learn
 
-You will learn how to create a Lakeflow Declarative Pipeline for streaming data, run it, and use it in a workflow with Lakeflow Jobs. You will also learn how to use the AI-powered tools like Databricks Assistant and Genie.
+You will learn how to create a Lakeflow Spark Declarative Pipeline for streaming data, run it, and use it in a workflow with Lakeflow Jobs. You will also learn how to use the AI-powered tools like Databricks Assistant and Genie.
 
 
 ### This is your task
@@ -51,11 +51,11 @@ To kick it off, let's create a git folder in your workspace and clone the existi
   * Click **Create Repo** and the resources for this course will be cloned.
 * In the file browser, click on **Lakeflow-DataEng-Workshop**. This is the folder we will be working with in this lab.
 
-## 2. Declarative Pipelines
+## 2. Spark Declarative Pipelines (SDP)
 
-### Understand Declarative Pipelines in SQL
+### Understand SDP in SQL
 
-* Watch your instructor explaining how to get started with pipelines.Also check out the [core concepts in the documentation](https://docs.databricks.com/workflows/delta-live-tables/delta-live-tables-concepts.html)
+* Watch your instructor explaining how to get started with pipelines.Also check out the [core concepts in the documentation](https://docs.databricks.com/aws/en/ldp/concepts#gsc.tab=0)
 
 After this module, you should be able to work with the pipelines editor and answer the following questions:
 
@@ -129,7 +129,7 @@ and click on **Add**.
 ### Run your first pipeline
 
 1. Drill down to the notebook that defines the bronze layer. 
-* Explore the the SQL and make sure you can identify the declaration of streaming tables. 
+* Explore the the SQL and make sure you can identify streaming tables. 
 * Do the same for the silver and gold layer. 
   * The silver layer is implemented in a single file 
   * The gold layer is using a file per table approach. 
@@ -188,7 +188,7 @@ Watch your instructor explaining UC lineage.
 
 (Instructor Demo)
 
-Declarative Pipelines are an abstraction for Spark Structured Streaming built on Delta tables. Delta tables unify DWH, data engineering, streaming, and DS/ML.
+Spark Declarative Pipelines (SDP) are an abstraction for Spark Structured Streaming built on Delta tables. Delta tables unify DWH, data engineering, streaming, and DS/ML.
 * At the navigation bar on the left, select **Catalog** and navigate to your catalog and schema. Then check out the table details of one of your pipelineline tables:
   * Click on "Data"
   * Select your catalog / schema. The name of your schema is the `user_id` parameter of your pipeline setting.
@@ -245,7 +245,7 @@ The Lakehouse unifies classic data lakes and DWHs. This lab will teach you how t
   * run the query by clicking Shift-RETURN
   * Save the query using your ID as a query name
 
-## 4. Databricks Workflows with Declarative Pipelines
+## 4. Databricks Workflows with SDP
 
 ### Create a Workflow
 
