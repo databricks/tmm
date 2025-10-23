@@ -51,6 +51,7 @@ The asset bundle is designed to be deployed and run entirely from the Databricks
 
 The core of this project is a multi-task workflow that ingests franchise, supplier, and transaction data via Lakeflow Connect from XML volumes, SFDC and MS SQL, transforms it with Spark Declarative Pipelines, enriches it through LLM and AI-based functions such as recipe generation, sentiment and translation, and finally updates AI/BI dashboards and downstream systems.
 
+
 ## Usage
 
 - Run the workflow first
@@ -69,6 +70,8 @@ The core of this project is a multi-task workflow that ingests franchise, suppli
 
 - make sure you have the right parameters set in ```databricks.yml``` in particular DWH ID, catalog and schema name.
 - if you deploy to a different catalog/schema you need to adjust the SQL in the dashboard yml file for catalog and schema since this cannot be parametrized yet. 
+- Note, to keep the demo as flexible as possible and remove the requirement to have connection details for SFDC and MS SQL we use endpoint stubs for the data providers. 
+
 
 ---
 [contact Gourmet Pipeline Corp © 2025 for reservations :-) ](https://www.linkedin.com/in/frankmunz/)
