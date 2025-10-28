@@ -2,7 +2,7 @@ from pyspark import pipelines as dp
 from pyspark.sql.functions import sum
 
 #create a SDP streaming table for loan balances by cost center
-@dp.table(
+@dp.materialized_view(
     comment="loan balances for consumption by different cost centers"
 )
 def new_loan_balances_by_cost_center():
