@@ -1,0 +1,54 @@
+bundle:
+  name: dais-2025-rtm-demo
+
+targets:
+  dev:
+    default: true
+    mode: development
+    workspace:
+      host: https://e2-demo-field-eng.cloud.databricks.com
+
+cluster_configs:
+  rtm_demo_cluster: &rtm_demo_cluster
+    spark_version: 17.3.x-scala2.13
+    node_type_id: c6id.4xlarge
+    driver_node_type_id: c6id.xlarge
+    num_workers: 1
+    spark_conf:
+      spark.databricks.streaming.realTimeMode.enabled: "true"
+    aws_attributes:
+      first_on_demand: 2
+      availability: SPOT_WITH_FALLBACK
+      zone_id: auto
+      spot_bid_price_percent: 100
+      ebs_volume_count: 0
+    cluster_log_conf:
+      dbfs:
+        destination: dbfs:/cluster-logs
+    enable_elastic_disk: false
+    data_security_mode: SINGLE_USER
+    runtime_engine: STANDARD
+
+resources:
+  jobs:
+    dais-2025-rtm-demo:
+      name: dais-2025-rtm-demo
+      parameters:
+        - name: checkpointLocation
+          default: "/Volumes/main/default/spark-rtm-demo"
+        - name: rowsPerSecond
+          default: "200"
+      tasks:
+        - task_key: dais-2025-rtm-demo
+          notebook_task:
+            notebook_path: ./DAIS 2025 RTM Demo.ipynb
+            base_parameters:
+              checkpointLocation: "{{job.parameters.checkpointLocation}}"
+              rowsPerSecond: "{{job.parameters.rowsPerSecond}}"
+          job_cluster_key: rtm-demo-cluster
+          libraries:
+            - maven:
+                coordinates: org.playframework:play-json_2.13:3.1.0-M3
+      job_clusters:
+        - job_cluster_key: rtm-demo-cluster
+          new_cluster: *rtm_demo_cluster
