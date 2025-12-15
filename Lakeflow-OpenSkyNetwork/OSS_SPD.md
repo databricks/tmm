@@ -1,7 +1,7 @@
 
 # Spark Declarative Pipelines: Installation & Tutorial
 
-This guide outlines the steps to set up and run **Apache Spark Declarative Pipelines (SDP)** with PySpark on a local MacBook Pro and create a functional pipeline using only open-source tools. It utilizes `uv` for high-performance Python package management. At the time of this writing I was using the **Spark 4.0 Preview** build.
+This guide outlines the steps to set up and run SDP with PySpark on a local machine (specifically targeting macOS/Silicon). We will build a functional pipeline using Spark 4.1 Preview4, Java 17, and uv for high-performance Python package management, **relying entirely on open-source tools**.
 
 <details>
 <summary><strong>Click to expand: Part 1 - Installation Guide</strong></summary>
@@ -32,8 +32,8 @@ Create and activate a clean, isolated virtual environment using `uv`. By running
 
 ```bash
 
-# install latest python e.g. python 3.14 here
-brew install python@3.14 
+# install python 3.12 here
+brew install python@3.12 
 
 
 # Create a virtual environment (defaults to .venv)
@@ -101,7 +101,7 @@ This YAML file acts as the manifest for your pipeline. It defines the pipeline n
 ```yaml
 name: avionics-pl
 # UPDATE THE PATH BELOW to your local absolute path
-storage: file:///Users/frank/dev/oss_avionics/pipeline-storage
+storage: file:///Users/<YOUR_USERNAME>/dev/oss_avionics/pipeline-storage
 libraries:
   - glob:
       include: transformations/**
@@ -150,7 +150,7 @@ CREATE MATERIALIZED VIEW flights_stats AS
 
 Once your files are in place and your virtual environment is active (from Part 1), use the `spark-pipelines` CLI to execute the pipeline.
 
-We pass the `spark.sql.catalogImplementation=hive` so the pipeline can be run repeatedly without removing existing storage files. 
+We pass the `spark.sql.catalogImplementation=hive`. This enables Spark to persist data locally between runs and your pipeline can be run repeatedly without removing existing storage files. 
 
 ```bash
 spark-pipelines run \
@@ -160,12 +160,56 @@ spark-pipelines run \
 
 ### 6. Inspecting the Output
 
-After the pipeline runs, you can inspect the resulting Parquet files directly using `parquet-tools`. Here we look at the materialized view which provides a summary of all avionics data. 
+
+### Inspecting the Streaming Table
+
+You can run another Spark program that reads the datasets and outputs them. Here I'm using a command line tool for simplicity. After the pipeline runs, you can inspect the resulting Parquet files directly using `parquet-tools`. First, let's look at the raw data flowing into the system. It's captured in the **Streaming Table** (`ingest_flights`), which acts as an append-only log of all avionics data received. 
+
+**Note:** The filename hash (the part starting with `part-00000-...`) will differ on your machine, so use tab-completion to select the correct file. Change the ```head -n XXX``` setting to see more data. 
+
+```bash
+parquet-tools cat spark-warehouse/ingest_flights/part-00000-0f904c51-3009-4a70-8e21-7bee16afb64f-c000.snappy.parquet | jq | head -n 24
+```
+
+**Example Output:**
+
+```json
+[
+  {
+    "baro_altitude": 1249.68,
+    "callsign": "N6545H  ",
+    "category": 0,
+    "geo_altitude": 1203.96,
+    "icao24": "a89ea5",
+    "last_contact": "2025-12-08T14:57:15.000000000Z",
+    "latitude": 33.183,
+    "longitude": -102.6769,
+    "on_ground": false,
+    "origin_country": "United States",
+    "sensors": null,
+    "spi": false,
+    "squawk": null,
+    "time_ingest": "2025-12-08T14:57:15.000000000Z",
+    "time_position": "2025-12-08T14:57:15.000000000Z",
+    "true_track": 203.2,
+    "velocity": 35.26,
+    "vertical_rate": -0.33
+  },
+  {
+    "baro_altitude": 10957.56,
+    "callsign": "VIR3N   "
+    ..
+  
+```
+
+### Inspecting the Materialized View
+
+Here we look at the materialized view which provides summary stats for all avionics data. 
 
 **Note:** You will need to locate the specific Parquet file generated in your storage directory (e.g., `spark-warehouse/flights_stats/`). The filename hash (the part starting with `part-00000-...`) will differ on your machine, so use tab-completion to select the correct file.
 
 ```bash
-parquet-tools cat spark-warehouse/flights_stats/part-00000-5a85e65d-ba84-478a-a29a-fa0358734899-c000.snappy.parquet | jq | head -50
+parquet-tools cat spark-warehouse/flights_stats/part-00000-5a85e65d-ba84-478a-a29a-fa0358734899-c000.snappy.parquet 
 ```
 
 **Example Output:**
