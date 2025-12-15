@@ -150,7 +150,7 @@ CREATE MATERIALIZED VIEW flights_stats AS
 
 ### 5. Running the Pipeline
 
-Once your files are in place and your virtual environment is active (from Part 1), use the `spark-pipelines` CLI to execute the pipeline.
+Once your files with the transformation logic and the pipeline defintion are in place and your virtual environment is active (see part 1), use the `spark-pipelines` CLI to execute the pipeline.
 
 We pass the `spark.sql.catalogImplementation=hive`. This enables Spark to persist data locally between runs, allowing you to run the pipeline repeatedly without removing the existing storage files. 
 
