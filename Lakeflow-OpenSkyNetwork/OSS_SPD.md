@@ -90,7 +90,7 @@ Create a new directory for your project and organize your files according to the
 .
 ├── spark-pipeline.yml
 └── transformations
-    ├── flights_analytics.sql
+    ├── flights_stats.sql
     └── ingest_flights.py
 ```
 
@@ -131,7 +131,7 @@ def ingest_flights():
     return spark.readStream.format("opensky").load()
 ```
 
-### 4. SDP Materialized View: Analytics Logic (`transformations/flights_analytics.sql`)
+### 4. SDP Materialized View: Analytics Logic (`transformations/flights_stats.sql`)
 
 This SQL file defines a **Materialized View**. It aggregates the raw streaming data from `ingest_flights` to calculate statistics such as unique aircraft counts, vertical rates, and observation duration.
 
