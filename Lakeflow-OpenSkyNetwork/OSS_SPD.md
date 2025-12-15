@@ -45,10 +45,10 @@ source .venv/bin/activate
 
 ## 3. Install PySpark (Preview Build)
 
-Declarative Pipelines require specific development builds of Spark 4.0.
+Declarative Pipelines require specific development builds of Spark 4.1.
 
 ```bash
-# Install Spark 4.0 Preview (Dev build)
+# Install Spark 4.1 Preview4 (Dev build)
 uv pip install pyspark==4.1.0.dev4
 ```
 
@@ -109,7 +109,7 @@ libraries:
 
 ### 3. Streaming Table: Data Ingestion (`transformations/ingest_flights.py`)
 
-This Python file defines the ingestion logic. It utilizes the `OpenSkyDataSource` custom PySpark datasource to pull live avionics data. The **Streaming Table** is created with using the `@dp.table` decorator.
+This Python file defines the ingestion logic. It utilizes the `OpenSkyDataSource` custom PySpark datasource to pull live avionics data. The **Streaming Table** is created using the `@dp.table` decorator.
 
 ```python
 from pyspark.sql import SparkSession
@@ -150,7 +150,7 @@ CREATE MATERIALIZED VIEW flights_stats AS
 
 Once your files are in place and your virtual environment is active (from Part 1), use the `spark-pipelines` CLI to execute the pipeline.
 
-We pass the `spark.sql.catalogImplementation=hive`. This enables Spark to persist data locally between runs and your pipeline can be run repeatedly without removing existing storage files. 
+We pass the `spark.sql.catalogImplementation=hive`. This enables Spark to persist data locally between runs, allowing you to run the pipeline repeatedly without removing the existing storage files. 
 
 ```bash
 spark-pipelines run \
