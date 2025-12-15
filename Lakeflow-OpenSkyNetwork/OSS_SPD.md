@@ -117,7 +117,7 @@ This Python file defines the ingestion logic. It utilizes the `OpenSkyDataSource
 from pyspark.sql import SparkSession
 from pyspark import pipelines as dp
 
-# Get or create SparkSession for standalone OSS programs
+# Get or create SparkSession for standalone Spark programs
 spark = SparkSession.builder.appName("Avionics-Ingest").getOrCreate()
 
 # Import and register the OpenSky datasource 
