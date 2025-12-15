@@ -5,6 +5,8 @@ This project builds a simple and fun Spark Declarative Pipeline consisting of ju
 
 This guide outlines the steps to set up and run SDP with PySpark on a local machine (specifically targeting macOS/Silicon). We will build a functional pipeline using Spark 4.1 Preview4, Java 17, and uv for high-performance Python package management, **relying entirely on open-source tools**.
 
+![Aviation Data Processing Header](misc/SDP_anim.gif)
+
 <details>
 <summary><strong>Click to expand: Part 1 - Local Installation of OSS Spark Declarative Pipelines</strong></summary>
 
