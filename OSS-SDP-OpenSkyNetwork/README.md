@@ -1,7 +1,7 @@
 
-# Gettin Started with Open Source Spark Declarative Pipelines (SDP) Tutorial 
+# Getting Started with Open Source Spark Declarative Pipelines (SDP) Tutorial 
 
-This project builds a simple and fun Spark Declarative Pipeline consisting of just two powerful components: a Streaming Table and a Materialized View. First, the Streaming Table uses a Custom PySpark Datasource to continuously fetch live flight data from the OpenSky API, building a permanent history of every aircraft position, altitude and velocity. Then, the Materialized View reads that stream to create a "current state" board of the global airspace.
+This project builds a simple and fun Spark Declarative Pipeline consisting of just two powerful components: a streaming table and a materialized View. First, the streaming table uses a Custom PySpark Datasource to continuously fetch live flight data from the OpenSky API, building a permanent history of every aircraft position, altitude and velocity. Then, the Materialized View reads that stream to create a "current state" board of the global airspace.
 
 This guide outlines the steps to set up and run SDP with PySpark on a local machine (specifically targeting macOS/Silicon). We will build a functional pipeline using Spark 4.1 Preview4, Java 17, and uv for high-performance Python package management, **relying entirely on open-source tools**.
 
