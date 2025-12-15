@@ -107,9 +107,9 @@ libraries:
       include: transformations/**
 ```
 
-### 3. Data Ingestion (`transformations/ingest_flights.py`)
+### 3. Streaming Table: Data Ingestion (`transformations/ingest_flights.py`)
 
-This Python file defines the ingestion logic. It utilizes the `OpenSkyDataSource` to pull data. The streaming table is created with using the `@dp.table` decorator.
+This Python file defines the ingestion logic. It utilizes the `OpenSkyDataSource` custom PySpark datasource to pull live avionics data. The **Streaming Table** is created with using the `@dp.table` decorator.
 
 ```python
 from pyspark.sql import SparkSession
@@ -129,7 +129,7 @@ def ingest_flights():
     return spark.readStream.format("opensky").load()
 ```
 
-### 4. Analytics Logic (`transformations/flights_analytics.sql`)
+### 4. Materialized View: Analytics Logic (`transformations/flights_analytics.sql`)
 
 This SQL file defines a **Materialized View**. It aggregates the raw streaming data from `ingest_flights` to calculate statistics such as unique aircraft counts, vertical rates, and observation duration.
 
