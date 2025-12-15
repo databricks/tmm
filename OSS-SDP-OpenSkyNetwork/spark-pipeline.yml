@@ -1,0 +1,6 @@
+name: avionics-pl
+storage: file:///Users/frank.munz/dev/oss_avionics/orders-pl/pipeline-storage
+libraries:
+  - glob:
+      include: transformations/**
+
