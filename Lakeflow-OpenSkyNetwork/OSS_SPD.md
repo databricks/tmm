@@ -23,7 +23,7 @@ sudo ln -sfn /opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk /Library/Java/Java
 brew install uv
 
 # 4. Install Parquet tools (Useful for inspecting pipeline output files later)
-brew install parquet-tools
+brew install go-parquet-tools
 ```
 
 ## 2. Environment Setup
@@ -31,6 +31,11 @@ brew install parquet-tools
 Create and activate a clean, isolated virtual environment using `uv`. By running the command without a name, `uv` defaults to creating a directory named `.venv`.
 
 ```bash
+
+# install latest python e.g. python 3.14 here
+brew install python@3.14 
+
+
 # Create a virtual environment (defaults to .venv)
 uv venv
 
@@ -89,14 +94,14 @@ Create a new directory for your project and organize your files according to the
 
 ### 2. Pipeline Definition (`spark-pipeline.yml`)
 
-This YAML file acts as the manifest for your pipeline. It defines the pipeline name, the storage location for checkpoints and data, and includes the Python and SQL files with transformation logic.
+This YAML file acts as the manifest for your pipeline. It defines the pipeline name, the storage location for checkpoints and data, and references the Python and SQL files with transformation logic.
 
 **Note:** Update the `storage` path to a valid absolute path on your local machine.
 
 ```yaml
 name: avionics-pl
 # UPDATE THE PATH BELOW to your local absolute path
-storage: file:///Users/frank.munz/dev/oss_avionics/orders-pl/pipeline-storage
+storage: file:///Users/frank/dev/oss_avionics/pipeline-storage
 libraries:
   - glob:
       include: transformations/**
@@ -104,7 +109,7 @@ libraries:
 
 ### 3. Data Ingestion (`transformations/ingest_flights.py`)
 
-This Python file defines the ingestion logic. It utilizes the `OpenSkyDataSource` to pull data and registers it as a streaming table using the `@dp.table` decorator.
+This Python file defines the ingestion logic. It utilizes the `OpenSkyDataSource` to pull data. The streaming table is created with using the `@dp.table` decorator.
 
 ```python
 from pyspark.sql import SparkSession
@@ -145,7 +150,7 @@ CREATE MATERIALIZED VIEW flights_stats AS
 
 Once your files are in place and your virtual environment is active (from Part 1), use the `spark-pipelines` CLI to execute the pipeline.
 
-We pass the `spark.sql.catalogImplementation=hive` configuration to ensure proper metadata handling during execution.
+We pass the `spark.sql.catalogImplementation=hive` so the pipeline can be run repeatedly without removing existing storage files. 
 
 ```bash
 spark-pipelines run \
@@ -155,7 +160,7 @@ spark-pipelines run \
 
 ### 6. Inspecting the Output
 
-After the pipeline runs, you can inspect the resulting Parquet files directly using `parquet-tools`.
+After the pipeline runs, you can inspect the resulting Parquet files directly using `parquet-tools`. Here we look at the materialized view which provides a summary of all avionics data. 
 
 **Note:** You will need to locate the specific Parquet file generated in your storage directory (e.g., `spark-warehouse/flights_stats/`). The filename hash (the part starting with `part-00000-...`) will differ on your machine, so use tab-completion to select the correct file.
 
