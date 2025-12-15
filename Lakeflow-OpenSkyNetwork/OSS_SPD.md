@@ -1,12 +1,14 @@
 
-# Spark Declarative Pipelines: Installation & Tutorial
+# Gettin Started with Open Source Spark Declarative Pipelines (SDP) Tutorial 
+
+This project builds a simple and fun Spark Declarative Pipeline consisting of just two powerful components: a Streaming Table and a Materialized View. First, the Streaming Table uses a Custom PySpark Datasource to continuously fetch live flight data from the OpenSky API, building a permanent history of every aircraft position, altitude and velocity. Then, the Materialized View reads that stream to create a "current state" board of the global airspace.
 
 This guide outlines the steps to set up and run SDP with PySpark on a local machine (specifically targeting macOS/Silicon). We will build a functional pipeline using Spark 4.1 Preview4, Java 17, and uv for high-performance Python package management, **relying entirely on open-source tools**.
 
 <details>
-<summary><strong>Click to expand: Part 1 - Installation Guide</strong></summary>
+<summary><strong>Click to expand: Part 1 - Local Installation of OSS Spark Declarative Pipelines</strong></summary>
 
-## 1. Prerequisites & System Tools
+## 1. Prerequisites & System Tools for SDP
 
 Before setting up the Python environment, ensure you have the necessary system-level dependencies.
 
@@ -52,7 +54,7 @@ Declarative Pipelines require specific development builds of Spark 4.1.
 uv pip install pyspark==4.1.0.dev4
 ```
 
-## 4. Install Pipeline Dependencies
+## 4. Install Dependencies
 
 Install the required libraries to support Spark Connect, gRPC communication, and YAML configuration parsing.
 
@@ -76,11 +78,11 @@ python -c "import pyspark; print(f'Spark Version: {pyspark.__version__}')"
 
 ---
 
-## Part 2: Creating the Pipeline
+## Part 2: Creating your first Spark Declarative Pipeline
 
-To build the pipeline, you will need a code editor. You can use any editor you prefer, though **Visual Studio Code** or **Cursor** are highly recommended for their Python support.
+To build the pipeline, you will need a code editor. You can use any editor you prefer, e.g. **Visual Studio Code** (or **Cursor**) are  recommended for their Python support.
 
-### 1. Project Structure
+### 1. SDP Project Structure
 
 Create a new directory for your project and organize your files according to the structure below. We will use a `transformations` subdirectory to keep our logic modular.
 
@@ -107,7 +109,7 @@ libraries:
       include: transformations/**
 ```
 
-### 3. Streaming Table: Data Ingestion (`transformations/ingest_flights.py`)
+### 3. SDP Streaming Table: Data Ingestion (`transformations/ingest_flights.py`)
 
 This Python file defines the ingestion logic. It utilizes the `OpenSkyDataSource` custom PySpark datasource to pull live avionics data. The **Streaming Table** is created using the `@dp.table` decorator.
 
@@ -129,7 +131,7 @@ def ingest_flights():
     return spark.readStream.format("opensky").load()
 ```
 
-### 4. Materialized View: Analytics Logic (`transformations/flights_analytics.sql`)
+### 4. SDP Materialized View: Analytics Logic (`transformations/flights_analytics.sql`)
 
 This SQL file defines a **Materialized View**. It aggregates the raw streaming data from `ingest_flights` to calculate statistics such as unique aircraft counts, vertical rates, and observation duration.
 
