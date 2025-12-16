@@ -1,7 +1,7 @@
 
-# Getting Started with Open Source Spark Declarative Pipelines (SDP) Tutorial 
+# Getting Started with Open Source Spark Declarative Pipelines (SDP)  
 
-This project builds a simple and fun Spark Declarative Pipeline consisting of just two powerful components: a streaming table and a materialized View. First, the streaming table uses a Custom PySpark Datasource to continuously fetch live flight data from the OpenSky API, building a permanent history of every aircraft position, altitude and velocity. Then, the Materialized View reads that stream to create a "current state" board of the global airspace.
+This project builds a simple and fun Spark Declarative Pipeline consisting of just two powerful components: a streaming table and a materialized view. First, the streaming table uses a Custom PySpark Datasource to continuously fetch live flight data from the OpenSky API, building a permanent history of every aircraft position, altitude and velocity. Then, the materialized view reads that stream to create a "current state" board of the global airspace.
 
 This guide outlines the steps to set up and run SDP with PySpark on a local machine (specifically targeting macOS/Silicon). We will build a functional pipeline using Spark 4.1 Preview4, Java 17, and uv for high-performance Python package management, **relying entirely on open-source tools**.
 
@@ -231,3 +231,9 @@ parquet-tools cat spark-warehouse/flights_stats/part-00000-5a85e65d-ba84-478a-a2
   }
 ]
 ```
+
+
+## Resources
+
+* Did you like the OSS Apache SDP example above? If you are interested, you can run the same [streaming aviation data SDP tutorial on Databricks Free Edition](https://github.com/databricks/tmm/blob/main/Lakeflow-OpenSkyNetwork/README.md) which comes with the built-in pipeline editor and includes serverless compute, dashboards, natural language queries on streaming data, and governance.
+* [This blog](https://www.databricks.com/blog/processing-millions-events-thousands-aircraft-one-declarative-pipeline) provides more details about Databricks and the OpenSky Network.  
