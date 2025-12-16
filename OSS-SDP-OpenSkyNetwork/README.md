@@ -3,7 +3,7 @@
 
 This project builds a simple and fun Spark Declarative Pipeline consisting of just two powerful components: a streaming table and a materialized view. First, the streaming table uses a Custom PySpark Datasource to continuously fetch live flight data from the OpenSky API, building a permanent history of every aircraft position, altitude and velocity. Then, the materialized view reads that stream to create a "current state" board of the global airspace.
 
-This guide outlines the steps to set up and run SDP with PySpark on a local machine (specifically targeting macOS/Silicon). We will build a functional pipeline using Spark 4.1 Preview4, Java 17, and uv for high-performance Python package management, **relying entirely on open-source tools**.
+This guide outlines the steps to set up and run SDP with PySpark on a local machine. We will build a functional pipeline using Spark 4.1 Preview4, Java 17, and uv for high-performance Python package management, **relying entirely on open-source tools**.
 
 ![Aviation Data Processing Header](misc/SDP_anim.gif)
 
@@ -12,9 +12,11 @@ This guide outlines the steps to set up and run SDP with PySpark on a local mach
 
 ## 1. Prerequisites & System Tools for SDP
 
-Before setting up the Python environment, ensure you have the necessary system-level dependencies.
+I'm describing the steps here for my MacBook Pro with MacOS with homebrew. Depending on your operating system, the commands might be slightly different for you.
 
-**Important Note on Java:** Spark 4.x requires **Java 17**. It is strongly recommended to use exactly Java 17; higher versions (such as Java 21 or newer) are known to cause compatibility issues with this preview build.
+Before setting up the Python environment, ensure you have the necessary system-level dependencies:
+
+**Important Note on Java:** Spark 4.x requires **Java 17**. It is recommended to use Java 17; higher versions (such as Java 21 or newer) are known to cause compatibility issues with this preview build.
 
 ```bash
 # 1. Install Java 17
@@ -82,11 +84,11 @@ python -c "import pyspark; print(f'Spark Version: {pyspark.__version__}')"
 
 ## Part 2: Creating your first Spark Declarative Pipeline
 
-To build the pipeline, you will need a code editor. You can use any editor you prefer, e.g. **Visual Studio Code** (or **Cursor**) are  recommended for their Python support.
+To build the pipeline, you will need a code editor. You can use any editor you prefer such as vim, zed, or Sublime Text, however I recommend **Visual Studio Code** (or **Cursor**) for their Python support.
 
 ### 1. SDP Project Structure
 
-Create a new directory for your project and organize your files according to the structure below. We will use a `transformations` subdirectory to keep our logic modular.
+Create a new directory for your project and organize your files according to the structure below. We will use a `transformations` subdirectory to keep our transformation logic organized.
 
 ```text
 .
