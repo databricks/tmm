@@ -22,14 +22,12 @@ Before setting up the Python environment, ensure you have the necessary system-l
 # 1. Install Java 17
 brew install openjdk@17
 
-# 2. Link Java so the system finds it (Optional but recommended)
+# 2. Link Java so the system finds it (Optional but recommended, make sure JDK17 is used)
 sudo ln -sfn /opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-17.jdk
 
 # 3. Install uv (An extremely fast Python package installer and resolver)
 brew install uv
 
-# 4. Install Parquet tools (Useful for inspecting pipeline output files later)
-brew install go-parquet-tools
 ```
 
 ## 2. Environment Setup
