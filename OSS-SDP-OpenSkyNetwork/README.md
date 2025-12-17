@@ -166,74 +166,45 @@ spark-pipelines run \
 
 ### 6. Inspecting the Output
 
+After the pipeline runs, you can query the streaming table and materialized view directly using PySpark to verify the data. Start a PySpark shell or create a simple Python script to inspect the results.
 
-### Inspecting the Streaming Table
+#### Inspecting the Streaming Table
 
-You can run another Spark program that reads the datasets and outputs them. Here I'm using a command line tool for simplicity. After the pipeline runs, you can inspect the resulting Parquet files directly using `parquet-tools`. First, let's look at the raw data flowing into the system. It's captured in the **Streaming Table** (`ingest_flights`), which acts as an append-only log of all avionics data received. 
+The **Streaming Table** (`ingest_flights`) contains the raw avionics data, acting as an append-only log of all flight events received from the OpenSky Network.
 
-**Note:** The filename hash (the part starting with `part-00000-...`) will differ on your machine, so use tab-completion to select the correct file. Change the ```head -n XXX``` setting to see more data. 
-
-```bash
-parquet-tools cat spark-warehouse/ingest_flights/part-00000-0f904c51-3009-4a70-8e21-7bee16afb64f-c000.snappy.parquet | jq | head -n 24
+```python
+spark.read.table("ingest_flights").limit(3).show(truncate=False)
 ```
 
 **Example Output:**
 
-```json
-[
-  {
-    "baro_altitude": 1249.68,
-    "callsign": "N6545H  ",
-    "category": 0,
-    "geo_altitude": 1203.96,
-    "icao24": "a89ea5",
-    "last_contact": "2025-12-08T14:57:15.000000000Z",
-    "latitude": 33.183,
-    "longitude": -102.6769,
-    "on_ground": false,
-    "origin_country": "United States",
-    "sensors": null,
-    "spi": false,
-    "squawk": null,
-    "time_ingest": "2025-12-08T14:57:15.000000000Z",
-    "time_position": "2025-12-08T14:57:15.000000000Z",
-    "true_track": 203.2,
-    "velocity": 35.26,
-    "vertical_rate": -0.33
-  },
-  {
-    "baro_altitude": 10957.56,
-    "callsign": "VIR3N   "
-    ..
-  
+```
++-------------------+------+--------+--------------+-------------------+-------------------+---------+--------+------------+---------+--------+----------+-------------+-------+-------------+------+-----+--------+
+|time_ingest        |icao24|callsign|origin_country|time_position      |last_contact       |longitude|latitude|geo_altitude|on_ground|velocity|true_track|vertical_rate|sensors|baro_altitude|squawk|spi  |category|
++-------------------+------+--------+--------------+-------------------+-------------------+---------+--------+------------+---------+--------+----------+-------------+-------+-------------+------+-----+--------+
+|2025-12-15 17:36:07|a5f852|RTY484  |United States |2025-12-15 17:36:06|2025-12-15 17:36:06|-105.0557|40.4841 |1752.6      |false    |46.2    |37.76     |0.0          |NULL   |1813.56      |NULL  |false|0       |
+|2025-12-15 17:36:07|ac1c12|N88G    |United States |2025-12-15 17:36:06|2025-12-15 17:36:06|-81.0734 |29.5859 |7924.8      |false    |149.2   |149.54    |0.0          |NULL   |8206.74      |1625  |false|0       |
+|2025-12-15 17:36:07|ac96b8|AAL2192 |United States |2025-12-15 17:36:06|2025-12-15 17:36:06|-107.663 |36.5943 |10363.2     |false    |233.33  |293.8     |0.0          |NULL   |10713.72     |NULL  |false|0       |
++-------------------+------+--------+--------------+-------------------+-------------------+---------+--------+------------+---------+--------+----------+-------------+-------+-------------+------+-----+--------+
 ```
 
-### Inspecting the Materialized View
+#### Inspecting the Materialized View
 
-Here we look at the materialized view which provides summary stats for all avionics data. 
+The **Materialized View** (`flights_stats`) provides aggregated statistics computed from the streaming table, including counts of events and aircraft, maximum speeds, altitudes, and observation duration.
 
-**Note:** You will need to locate the specific Parquet file generated in your storage directory (e.g., `spark-warehouse/flights_stats/`). The filename hash (the part starting with `part-00000-...`) will differ on your machine, so use tab-completion to select the correct file.
-
-```bash
-parquet-tools cat spark-warehouse/flights_stats/part-00000-5a85e65d-ba84-478a-a29a-fa0358734899-c000.snappy.parquet 
+```python
+spark.read.table("flights_stats").limit(3).show(truncate=False)
 ```
 
 **Example Output:**
 
-```json
-[
-  {
-    "max_altitude": 16855.44,
-    "max_asc_rate": 73.8,
-    "max_desc_rate": -165.81,
-    "max_speed": 320.44,
-    "num_events": 20574,
-    "observation_duration": 261431,
-    "unique_aircraft": 8939
-  }
-]
 ```
-
++----------+---------------+------------+-------------+---------+------------+--------------------+
+|num_events|unique_aircraft|max_asc_rate|max_desc_rate|max_speed|max_altitude|observation_duration|
++----------+---------------+------------+-------------+---------+------------+--------------------+
+|39750     |9276           |101.44      |-125.5       |430.07   |38191.44    |1803                |
++----------+---------------+------------+-------------+---------+------------+--------------------+
+```
 
 ## Resources
 
