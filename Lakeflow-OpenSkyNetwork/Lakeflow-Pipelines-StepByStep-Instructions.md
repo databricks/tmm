@@ -11,10 +11,10 @@ First, we need to set up the pipeline and define a schema where our tables will 
 
 1.  In the Databricks workspace, click the **+ New** button in the left sidebar.
 2.  From the menu, select **ETL pipeline**.
-3.  **Name your pipeline**. For this guide, we'll use `flights`.
-4.  Next, we need to create a schema (a database) to hold our tables. Click on the default schema dropdown and select **Create new schema**.
-5.  Enter `flights` as the **Schema name** and click **Create**.
-6.  Your pipeline is now configured to use the `workspace.flights` schema.
+3.  Click on the field where it says "New Pipeline ...". And provide a **Name for your pipeline**. For this guide, we'll use `flights`.
+4.  Next, we need to create a schema to hold our tables. Click on "default", then in the schema dropdown and select **+ Create new schema**. 
+5.  Enter `flights` as the **Schema name** and click **Create**. If an error shows that the schema alread exists, use the existing flights schema and close this popup. 
+6.  Your pipeline is now configured to use the `flights` schema.
 
 
 
