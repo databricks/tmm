@@ -3,7 +3,7 @@
 
 This project builds a simple and fun Spark Declarative Pipeline consisting of just two powerful components: a streaming table and a materialized view. First, the streaming table uses a Custom PySpark Datasource to continuously fetch live flight data from the OpenSky API, building a permanent history of every aircraft position, altitude and velocity. Then, the materialized view reads that stream to create a "current state" board of the global airspace.
 
-This guide outlines the steps to set up and run SDP with PySpark on a local machine. We will build a functional pipeline using Spark 4.1 Preview4, Java 17, and uv for high-performance Python package management, **relying entirely on open-source tools**.
+This guide outlines the steps to set up and run SDP with PySpark on a local machine. We will build a functional pipeline using Spark 4.1.0, Java 17, and uv for high-performance Python package management, **relying entirely on open-source tools**.
 
 ![Aviation Data Processing Header](misc/SDP_anim.gif)
 
@@ -16,7 +16,7 @@ I'm describing the steps here for my MacBook Pro with MacOS with homebrew. Depen
 
 Before setting up the Python environment, ensure you have the necessary system-level dependencies:
 
-**Important Note on Java:** Spark 4.x requires **Java 17**. It is recommended to use Java 17; higher versions (such as Java 21 or newer) are known to cause compatibility issues with this preview build.
+**Important Note on Java:** Spark 4.x requires **Java 17**. 
 
 ```bash
 # 1. Install Java 17
@@ -47,9 +47,9 @@ uv venv --python 3.12 --seed
 source .venv/bin/activate
 ```
 
-## 3. Install PySpark (Preview Build)
+## 3. Install PySpark 4.10
 
-Declarative Pipelines require specific development builds of Spark 4.1.
+Declarative Pipelines require specific development builds of Spark 4.10.
 
 ```bash
 # Install Spark 4.1 
