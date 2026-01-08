@@ -41,7 +41,7 @@ brew install python@3.12
 
 
 # Create a virtual environment (defaults to .venv)
-uv venv
+uv venv --python 3.12 --seed
 
 # Activate the environment
 source .venv/bin/activate
@@ -52,23 +52,13 @@ source .venv/bin/activate
 Declarative Pipelines require specific development builds of Spark 4.1.
 
 ```bash
-# Install Spark 4.1 Preview4 (Dev build)
-uv pip install pyspark==4.1.0.dev4
+# Install Spark 4.1 
+uv pip install pyspark[pipelines]
 ```
 
-## 4. Install Dependencies
 
-Install the required libraries to support Spark Connect, gRPC communication, and YAML configuration parsing.
 
-```bash
-# Core dependencies for Spark Connect and Pipelines
-uv pip install grpcio grpcio-status protobuf pyarrow pandas
-
-# Configuration, compression, and data source utilities
-uv pip install PyYAML zstandard pyspark_data_sources
-```
-
-## 5. Verification
+## 4. Verification
 
 Verify that the installation was successful by checking the PySpark version inside your Python environment.
 
@@ -158,7 +148,6 @@ We pass the `spark.sql.catalogImplementation=hive`. This enables Spark to persis
 
 ```bash
 spark-pipelines run \
-  --spec spark-pipeline.yml \
   --conf spark.sql.catalogImplementation=hive
 ```
 
