@@ -1,4 +1,11 @@
 # Databricks notebook source
+# MAGIC %load_ext autoreload
+# MAGIC %autoreload 2
+# MAGIC # Enables autoreload; learn more at https://docs.databricks.com/en/files/workspace-modules.html#autoreload-for-python-modules
+# MAGIC # To disable autoreload; run %autoreload 0
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC # Hands-On Lab: Building Agent Systems with Databricks
 # MAGIC
@@ -15,7 +22,7 @@
 # MAGIC ### 2.2 Create Evaluation Dataset
 # MAGIC - We've provided an example evaluation dataset - though you can also generate this [synthetically](https://www.databricks.com/blog/streamline-ai-agent-evaluation-with-new-synthetic-data-capabilities).
 # MAGIC
-# MAGIC ### 2.3 Run MLflow.evaluate() 
+# MAGIC ### 2.3 Run MLflow.genai.evaluate() 
 # MAGIC - MLflow will take your evaluation dataset and test your agent's responses against it
 # MAGIC - LLM Judges will score the outputs and collect everything in a nice UI for review
 # MAGIC
@@ -25,15 +32,43 @@
 
 # COMMAND ----------
 
-# MAGIC %pip install -U -qqqq mlflow-skinny[databricks] langgraph==0.3.4 databricks-langchain databricks-agents uv
-# MAGIC dbutils.library.restartPython()
+# DBTITLE 1,Install Libraries
+# MAGIC %pip install -U -qqqq backoff databricks-openai uv databricks-agents mlflow-skinny[databricks] unitycatalog-langchain[databricks] databricks-langchain
+
+# COMMAND ----------
+
+# DBTITLE 1,Restart Python
+dbutils.library.restartPython()
+
+# COMMAND ----------
+
+# DBTITLE 1,Warning Suppression
+# --- Lab hygiene: suppress known non-actionable warnings ---
+import warnings, logging
+
+# Pydantic v2 serializer warnings (safe to ignore for this lab)
+warnings.filterwarnings(
+    "ignore",
+    message=r"^Pydantic serializer warnings:",
+    category=UserWarning,
+    module=r"pydantic\..*",
+)
+
+# MLflow tracing warnings (otel not fully enabled in this runtime)
+logging.getLogger("mlflow.tracing").setLevel(logging.ERROR)
+logging.getLogger("mlflow.tracing.fluent").setLevel(logging.ERROR)
+
+# COMMAND ----------
+
+# DBTITLE 1,Ensure Latest Agent Definition
+# MAGIC %reload_ext autoreload
 
 # COMMAND ----------
 
 # DBTITLE 1,Quick test to see if Agent works
 from agent import AGENT
 
-AGENT.predict({"messages": [{"role": "user", "content": "Hello, what do you do?"}]})
+AGENT.predict({"input": [{"role": "user", "content": "Hello, what do you do?"}]})
 
 # COMMAND ----------
 
@@ -43,56 +78,69 @@ AGENT.predict({"messages": [{"role": "user", "content": "Hello, what do you do?"
 
 # COMMAND ----------
 
+# DBTITLE 1,Log Agent in MLflow
 # Determine Databricks resources to specify for automatic auth passthrough at deployment time
 import mlflow
-from agent import tools, LLM_ENDPOINT_NAME
-from databricks_langchain import VectorSearchRetrieverTool
+from agent import VECTOR_SEARCH_TOOLS, LLM_ENDPOINT_NAME
+from databricks_openai import UCFunctionToolkit, VectorSearchRetrieverTool
 from mlflow.models.resources import DatabricksFunction, DatabricksServingEndpoint
 from unitycatalog.ai.langchain.toolkit import UnityCatalogTool
 
+
 resources = [DatabricksServingEndpoint(endpoint_name=LLM_ENDPOINT_NAME)]
-for tool in tools:
+for tool in VECTOR_SEARCH_TOOLS:
     if isinstance(tool, VectorSearchRetrieverTool):
         resources.extend(tool.resources)
     elif isinstance(tool, UnityCatalogTool):
         resources.append(DatabricksFunction(function_name=tool.uc_function_name))
 
 input_example = {
-    "messages": [
-        {
-            "role": "user",
-            "content": "What color options are available for the Aria Modern Bookshelf?"
-        }
-    ]
+    "input": [
+        {"role": "user", "content": "What color options are available for the Aria Modern Bookshelf?"}
+    ],
 }
 
 with mlflow.start_run():
     logged_agent_info = mlflow.pyfunc.log_model(
         artifact_path="agent",
-        python_model="agent.py",
+        python_model="agent.py",  
         input_example=input_example,
         resources=resources,
         extra_pip_requirements=[
-            "databricks-connect"
-        ]
+            "mlflow>=3.1.3",
+            "databricks-agents>=1.1.0",
+            "databricks-openai",
+        ],
     )
 
 # COMMAND ----------
 
+# DBTITLE 1,Define Agent Wrapper
 # Load the model and create a prediction function
 logged_model_uri = f"runs:/{logged_agent_info.run_id}/agent"
 loaded_model = mlflow.pyfunc.load_model(logged_model_uri)
 
 def predict_wrapper(query):
-    # Format for chat-style models
-    
     model_input = {
-        "messages": [{"role": "user", "content": query}]
+        "input": [
+            {"role": "user", "content": query}
+        ]
     }
     response = loaded_model.predict(model_input)
-    
-    messages = response['messages']
-    return messages[-1]['content']
+    # Find the last output item of type "message"
+    message = next(
+        (item for item in reversed(response["output"]) if item.get("type") == "message"),
+        None
+    )
+    if message and "content" in message:
+        # Find the first content item of type "output_text"
+        content_item = next(
+            (c for c in message["content"] if c.get("type") == "output_text"),
+            None
+        )
+        if content_item:
+            return content_item["text"]
+    return None
 
 # COMMAND ----------
 
@@ -103,6 +151,7 @@ def predict_wrapper(query):
 
 # COMMAND ----------
 
+# DBTITLE 1,Evaluation Dataset
 import pandas as pd
 
 data = {
@@ -131,6 +180,7 @@ eval_dataset = pd.DataFrame(data)
 
 # COMMAND ----------
 
+# DBTITLE 1,Define our Scorers
 from mlflow.genai.scorers import RetrievalGroundedness, RelevanceToQuery, Safety, Guidelines
 import mlflow.genai
 
@@ -147,7 +197,7 @@ for request, facts in zip(data["request"], data["expected_facts"]):
 scorers = [
     #RetrievalGroundedness(),  # Pre-defined judge that checks against retrieval results
     RelevanceToQuery(),  # Checks if answer is relevant to the question
-    #Safety(),  # Checks for harmful or inappropriate content
+    Safety(),  # Checks for harmful or inappropriate content
     Guidelines(
         guidelines="""Response must be clear and direct:
         - Answers the exact question asked
@@ -169,6 +219,7 @@ scorers = [
 
 # COMMAND ----------
 
+# DBTITLE 1,Run MLflow Evals
 print("Running evaluation...")
 with mlflow.start_run():
     results = mlflow.genai.evaluate(
@@ -180,7 +231,7 @@ with mlflow.start_run():
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Lets go back to the [agent.py]($./agent.py) file and change our prompt to reduce marketing fluff.
+# MAGIC ## Lets go back to the [agent.py]($./agent.py) file and change our prompt to better fit how we'd like it to respond and re-evaluate.
 
 # COMMAND ----------
 
@@ -191,6 +242,7 @@ with mlflow.start_run():
 
 # COMMAND ----------
 
+# DBTITLE 1,Register Agent to UC
 from databricks.sdk import WorkspaceClient
 import os
 
@@ -214,6 +266,7 @@ uc_registered_model_info = mlflow.register_model(model_uri=logged_agent_info.mod
 
 # COMMAND ----------
 
+# DBTITLE 1,Easy link to UC Reg
 from IPython.display import display, HTML
 
 # Retrieve the Databricks host URL
@@ -232,6 +285,7 @@ display(HTML(html_link))
 
 # COMMAND ----------
 
+# DBTITLE 1,Deploy Agent
 from databricks import agents
 
 # Deploy the model to the review app and a model serving endpoint

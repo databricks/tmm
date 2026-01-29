@@ -238,7 +238,7 @@ display(HTML(html_link))
 # MAGIC %md
 # MAGIC ## Now lets go over to the AI Playground to see how we can use these functions and assemble our first Agent!
 # MAGIC
-# MAGIC ### The AI Playground can be found on the left navigation bar under 'AI/ML' or you can use the link created below
+# MAGIC ### The AI Playground can be found on the left navigation bar under 'Machine Learning' or you can use the link created below
 
 # COMMAND ----------
 
