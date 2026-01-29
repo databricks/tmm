@@ -20,7 +20,7 @@ This lab is split into two parts. In **Part 1**, you will build and test a Datab
 #### 1.2 Integrate with an LLM [AI Playground]
 - **Combine Tools & LLM**  
   - Use the Databricks AI Playground to bring together your SQL/Python tools and the Language Model (LLM).  
-  - Model: Claude Sonnet 3-7
+  - Model: databricks-gpt-oss-120b
   - Tools: labuser##_##.agents.*
   - Backup Tools: agents_lab.product.* (Use this if you can't find your tools)
 
