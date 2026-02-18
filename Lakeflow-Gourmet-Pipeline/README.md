@@ -29,10 +29,10 @@ The asset bundle is designed to be deployed and run entirely from the Databricks
 
 2.   **Verify/Update the configuration** 
 
-      * Before deploying, you need to make sure you have the proper settings defined in the `databricks.yml` file.
-         * `catalog_name` and `schema_name` defines the location where the pipeline tables will be created. 
-         * the ID of the Databricks SQL Warehouse (`prod_warehouse_id`) that will power the dashboard
-         * Update the SQL for the dashboard to match the correct catalog and schema in `src/aibi_dashboard.json`. AI/BI dashboards cannot be parametrized currently, so you have to edit this manually. 
+        * Before deploying, you need to make sure you have the proper settings defined in the `databricks.yml` file.
+            * `catalog_name` and `schema_name` define the location where the pipeline tables will be created.
+            * The ID of the Databricks SQL Warehouse (`prod_warehouse_id`) that will power the dashboard.
+            * The dashboard is automatically parameterized from the bundle. This requires CLI / bundle tooling >= 0.283.0 which added `dataset_catalog`/`dataset_schema` support.
 
 3.  **Deploy the Asset Bundle**:
     *   Navigate to the newly cloned folder in your Workspace.

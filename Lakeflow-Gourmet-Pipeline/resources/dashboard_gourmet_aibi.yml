@@ -6,4 +6,6 @@ resources:
       display_name: "Gourmet-Pipeline: Realtime Data + genAI + yummy food"
       file_path: ../src/aibi_dashboard.json
       warehouse_id: ${var.prod_warehouse_id}
+      dataset_catalog: ${var.catalog_name}
+      dataset_schema: ${var.schema_name}
       
