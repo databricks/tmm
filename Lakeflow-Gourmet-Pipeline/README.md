@@ -13,6 +13,29 @@ The new Lakeflow application solves all of Gourmet Pipeline's issues! It provide
 This project demonstrates a complete data engineering workflow using Databricks Asset Bundles. It covers everything from initial data ingestion to the final business intelligence dashboard served via Databricks One, providing a practical example of CI/CD and infrastructure-as-code for the Databricks Data Intelligence Platform.
 
 
+## SQL-First ETL with Spark Declarative Pipelines
+
+This project showcases a **SQL implementation** of data engineering workflows using Spark Declarative Pipelines. The entire ETL process—from data ingestion to final transformations—is written entirely in SQL, making it accessible for everyone who knows SQL, maintainable, and performant.
+
+The pipeline implements a **Bronze → Silver → Gold** medallion architecture using SQL constructs: streaming tables for raw ingestion ([raw_franchise.sql](src/gourmet-pipeline/transformations/1_bronze/raw_franchise.sql), [raw_sales_tx.sql](src/gourmet-pipeline/transformations/1_bronze/raw_sales_tx.sql)), materialized views for cleansed data ([flagship_locations.sql](src/gourmet-pipeline/transformations/2_silver/flagship_locations.sql)), and business-ready aggregations for analytics ([top_5.sql.sql](src/gourmet-pipeline/transformations/3_gold/top_5.sql.sql)).
+
+### Data Quality in SQL
+
+Data quality rules are declared directly in SQL using `EXPECT` constraints with configurable violation policies:
+
+```sql
+CONSTRAINT reasonable_totalPrice EXPECT (totalPrice > 0 AND totalPrice < 1000)
+CONSTRAINT supplierId_set EXPECT (f.supplierId IS NOT NULL) ON VIOLATION FAIL UPDATE
+```
+
+This declarative approach eliminates custom validation code, making quality rules transparent and maintainable.
+
+---
+
+**Watch the [video walkthrough](https://www.databricks.com/resources/demos/videos/lakeflow-action-gourmet-pipeline-demo-daiwt) for a complete demonstration of this project.**
+
+---
+
 
 ### Running the Project from the Databricks Workspace
 
