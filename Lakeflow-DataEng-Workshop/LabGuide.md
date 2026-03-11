@@ -1,5 +1,5 @@
 # AI-Powered Data Engineering with Lakeflow 
-# Lab Guide / Oct-29, 2025
+# Lab Guide / March-13, 2026
 
 <img src="https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-DataEng-Workshop/media/pl_graph.png" alt="pipeline graph" width="75%">
 
@@ -65,30 +65,12 @@ After this module, you should be able to work with the pipelines editor and answ
 * What is the CTAS pattern?
 
 
-
-
-
-
 ## 3. Explore the new Pipeline Editor
 
-### Enable Editor
+### Pipeline Editor
 
-Click on **Pipelines**, then click **Create** and select **ETL Pipeline**. There should be a popup asking you to enable the new editor. Enable it. If this succeeds, skip the two steps below.
+We will work with the new pipeline editor in this module
 
-
-Otherwise, follow those steps below (note, this is only necessary since the new editor is still in beta) 
-
-Under your username / Settings / Developer (see screenshot) enable
-* Lakeflow Pipelines Editor
-* Tabs for Notebooks and Files
-
-<img src="https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-DataEng-Workshop/media/enable_editor.png" alt="enable editor" width="75%">
-
-
-### Explore 
-
-
-Note that the new editor is still in beta, so you the exact layout might be slightly different than on the screenshot below. 
 
 <img src="https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-DataEng-Workshop/media/pl_details.png" alt="run your first delcarative pipeline" width="75%">
 
@@ -107,7 +89,7 @@ The new pipeline editor introduces several enhanced capabilities. Please familia
 
 ### Define your first pipeline
 
-Pipelines are more than just code. Pipelines write data to schemas, they get triggered or run continuously, and they either run on serverless compute or not. All these settings can be defined when you create a new pipeline. Here we keep it short. Always leave the default values unless told otherwise.  
+Pipelines are more than just code. Pipelines write data to schemas, they get triggered or run continuously, and they either run on serverless compute or not. All these settings can be defined when you create a new pipeline. Here we keep it short. For the context of this lab: always leave the default values unless told otherwise.  
 
 1. In your workspace, select **Data Engineering / Job Runs (or Pipelines previously)**. 
 2. Top right, select **Create / ETL Pipeline**
@@ -210,7 +192,7 @@ Go and try using this feature and put the three gold tables into the `USER_ID_da
 Watch your instructor explaining how to retrieve pipeline events, lineage, and runtime data from expectations.
 
 
-## 3. Notebooks and Spark with Serverless Compute
+## 3 Notebooks and Spark with Serverless Compute
 
 You can now run Notebooks with Spark on serverless compute
 
@@ -234,7 +216,7 @@ Click on the Assistant toggle (the blueish/redish star) and try to fix the probl
 
 Note that the Assistant is context-aware and knows about table names and schemas from Unity Catalog.
 
-## 3. DWH View / SQL Persona
+## 3. DWH View / SQL Persona (Optional Module)
 
 The Lakehouse unifies classic data lakes and DWHs. This lab will teach you how to access Delta tables generated with a data pipeline from the DWH.
 
@@ -246,6 +228,9 @@ The Lakehouse unifies classic data lakes and DWHs. This lab will teach you how t
   * `SELECT * FROM demo.USER_ID.ref_accounting_treatment` (make sure to use **your schema and table name**)
   * run the query by clicking Shift-RETURN
   * Save the query using your ID as a query name
+
+
+
 
 ## 4. Databricks Workflows with SDP
 
@@ -286,6 +271,55 @@ The Lakehouse unifies classic data lakes and DWHs. This lab will teach you how t
   * Use the **Repair and Rerun** Feature to rerun the workflow
     * It should successfully run now.
   * You can delete the other failed run.
+
+
+## 5. ETL Pipeline Generation with Genie Code
+
+Now that our raw data is staged, we will use Databricks Genie Code to generate our Medallion architecture automatically from natural language.
+
+### Launch Genie Code
+* In the left-hand navigation sidebar, click **+ New** > **ETL pipeline**.
+* Click the **Create pipeline with AI** button to open the Genie Code interface on the right side of your screen.
+
+
+### Prompt the Agent
+* In the chat box, enter the following prompt (make sure to replace `USER_ID` with your actual user ID): 
+  > *"Create a data pipeline with the name `USER_ID_tier_analytics` with datasets stored in catalog demo and in schema `USER_ID`. The pipeline ingests data from the volume customer_tiers. The pipeline should analyze the different customer tiers."*
+* Press **Enter** to submit.
+
+### Review Architecture & Generate Code
+* Genie Code will analyze the source data and propose a Medallion Architecture (Bronze, Silver, Gold).
+* If asked, click **Proceed** to approve the plan.
+* Genie will write the PySpark transformation files in parallel (`bronze_customers.py`, `silver_customers.py`, `gold_tier_analytics.py`).
+* Click **Accept All** to lock in the generated code.
+
+### Execute the Pipeline
+* Genie automatically initiates a **Dry-running pipeline** check. *(Note: Check "Always allow in current thread" if prompted).*
+* Once the dry run passes, click **Start pipeline update** (or **Run pipeline**).
+* Wait for the visual pipeline graph to show all nodes as successfully completed.
+
+
+---
+
+## 5b AI-Generated BI & Analytics with Genie
+
+Once your pipeline has successfully populated the Gold table, you can move directly into analyzing that data using Genie Data Rooms.
+
+### Access the Gold Data
+* On your completed pipeline graph, click the final **Gold table** node (e.g., `gold_tier_analytics`).
+* Select **View data preview** to confirm your aggregated customer tier data is clean.
+* Click the **Ask AI** (or **Open in Genie**) button to launch a new Genie Data Room for that specific table.
+
+### Generate Insights
+* In the Genie Data Room chat interface, prompt Genie with an analytical question: 
+  > *"Show me the distribution of customer tiers by revenue."*
+* Genie will automatically generate the SQL query and output a visualization.
+
+
+### Build the Dashboard
+* Click **Pin to dashboard** directly on the generated chart.
+* Ask follow-up questions (e.g., *"How have these tiers grown over the last 6 months?"*) and pin those results as well.
+* Open your newly created **AI/BI Dashboard** to view the finalized, shareable report.
 
 
 

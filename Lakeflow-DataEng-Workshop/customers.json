@@ -1,0 +1,454 @@
+{
+  "customers": [
+    {
+      "customer_id": "CUST-001",
+      "first_name": "Albert",
+      "last_name": "Einstein",
+      "email": "albert.einstein@relativity.io",
+      "phone": "+1-415-555-0101",
+      "address": {
+        "street": "42 Haight Street",
+        "city": "San Francisco",
+        "neighborhood": "Mission District",
+        "state": "CA",
+        "postal_code": "94102",
+        "country": "USA"
+      },
+      "created_at": "2024-03-15T09:30:00Z",
+      "loyalty_tier": "Platinum",
+      "total_spent": 15420.50
+    },
+    {
+      "customer_id": "CUST-002",
+      "first_name": "Marie",
+      "last_name": "Curie",
+      "email": "marie.curie@radium.fr",
+      "phone": "+61-2-5555-0202",
+      "address": {
+        "street": "88 Campbell Parade",
+        "city": "Sydney",
+        "neighborhood": "Bondi Beach",
+        "state": "NSW",
+        "postal_code": "2026",
+        "country": "Australia"
+      },
+      "created_at": "2024-01-22T14:15:00Z",
+      "loyalty_tier": "Gold",
+      "total_spent": 8930.25
+    },
+    {
+      "customer_id": "CUST-003",
+      "first_name": "Isaac",
+      "last_name": "Newton",
+      "email": "isaac.newton@gravity.co.uk",
+      "phone": "+44-20-5555-0303",
+      "address": {
+        "street": "17 King's Road",
+        "city": "London",
+        "neighborhood": "Chelsea",
+        "state": "England",
+        "postal_code": "SW3 4RP",
+        "country": "United Kingdom"
+      },
+      "created_at": "2023-11-08T11:45:00Z",
+      "loyalty_tier": "Platinum",
+      "total_spent": 22150.00
+    },
+    {
+      "customer_id": "CUST-004",
+      "first_name": "Nikola",
+      "last_name": "Tesla",
+      "email": "nikola.tesla@alternating.current",
+      "phone": "+44-20-555-0404",
+      "address": {
+        "street": "221B Baker Street",
+        "city": "London",
+        "neighborhood": "Marylebone",
+        "state": "England",
+        "postal_code": "NW1 6XE",
+        "country": "United Kingdom"
+      },
+      "created_at": "2024-02-14T16:20:00Z",
+      "loyalty_tier": "Silver",
+      "total_spent": 4560.75
+    },
+    {
+      "customer_id": "CUST-005",
+      "first_name": "Ada",
+      "last_name": "Lovelace",
+      "email": "ada.lovelace@algorithm.dev",
+      "phone": "+49-89-555-0505",
+      "address": {
+        "street": "15 Maximilianstraße",
+        "city": "Munich",
+        "neighborhood": "Altstadt",
+        "state": "Bavaria",
+        "postal_code": "80539",
+        "country": "Germany"
+      },
+      "created_at": "2024-04-01T08:00:00Z",
+      "loyalty_tier": "Platinum",
+      "total_spent": 48920.00
+    },
+    {
+      "customer_id": "CUST-006",
+      "first_name": "Richard",
+      "last_name": "Feynman",
+      "email": "richard.feynman@quantum.edu",
+      "phone": "+1-310-555-0606",
+      "address": {
+        "street": "2100 Pacific Coast Highway",
+        "city": "Malibu",
+        "neighborhood": "Carbon Beach",
+        "state": "CA",
+        "postal_code": "90265",
+        "country": "USA"
+      },
+      "created_at": "2023-09-30T13:10:00Z",
+      "loyalty_tier": "Gold",
+      "total_spent": 11200.80
+    },
+    {
+      "customer_id": "CUST-007",
+      "first_name": "Rosalind",
+      "last_name": "Franklin",
+      "email": "rosalind.franklin@dna.helix",
+      "phone": "+33-1-5555-0707",
+      "address": {
+        "street": "31 Avenue Montaigne",
+        "city": "Paris",
+        "neighborhood": "Champs-Élysées",
+        "state": "Île-de-France",
+        "postal_code": "75008",
+        "country": "France"
+      },
+      "created_at": "2024-05-18T10:30:00Z",
+      "loyalty_tier": "Gold",
+      "total_spent": 9875.50
+    },
+    {
+      "customer_id": "CUST-008",
+      "first_name": "Stephen",
+      "last_name": "Hawking",
+      "email": "stephen.hawking@blackhole.space",
+      "phone": "+44-1223-555-0808",
+      "address": {
+        "street": "10 King's Parade",
+        "city": "Cambridge",
+        "neighborhood": "City Centre",
+        "state": "England",
+        "postal_code": "CB2 1SJ",
+        "country": "United Kingdom"
+      },
+      "created_at": "2024-06-25T17:45:00Z",
+      "loyalty_tier": "Platinum",
+      "total_spent": 67300.00
+    },
+    {
+      "customer_id": "CUST-009",
+      "first_name": "Carl",
+      "last_name": "Sagan",
+      "email": "carl.sagan@cosmos.org",
+      "phone": "+1-808-555-0909",
+      "address": {
+        "street": "456 Kalakaua Avenue",
+        "city": "Honolulu",
+        "neighborhood": "Waikiki",
+        "state": "HI",
+        "postal_code": "96815",
+        "country": "USA"
+      },
+      "created_at": "2023-12-12T12:00:00Z",
+      "loyalty_tier": "Silver",
+      "total_spent": 3240.90
+    },
+    {
+      "customer_id": "CUST-010",
+      "first_name": "Katherine",
+      "last_name": "Johnson",
+      "email": "katherine.johnson@trajectory.nasa",
+      "phone": "+61-3-5555-1010",
+      "address": {
+        "street": "123 Collins Street",
+        "city": "Melbourne",
+        "neighborhood": "CBD",
+        "state": "Victoria",
+        "postal_code": "3000",
+        "country": "Australia"
+      },
+      "created_at": "2024-07-04T15:30:00Z",
+      "loyalty_tier": "Gold",
+      "total_spent": 14680.25
+    },
+    {
+      "customer_id": "CUST-011",
+      "first_name": "Alan",
+      "last_name": "Turing",
+      "email": "alan.turing@enigma.codes",
+      "phone": "+49-69-555-1111",
+      "address": {
+        "street": "45 Zeil",
+        "city": "Frankfurt",
+        "neighborhood": "Innenstadt",
+        "state": "Hesse",
+        "postal_code": "60313",
+        "country": "Germany"
+      },
+      "created_at": "2024-08-14T09:15:00Z",
+      "loyalty_tier": "Gold",
+      "total_spent": 12580.50
+    },
+    {
+      "customer_id": "CUST-012",
+      "first_name": "Jane",
+      "last_name": "Goodall",
+      "email": "jane.goodall@primate.study",
+      "phone": "+1-604-555-1212",
+      "address": {
+        "street": "789 Robson Street",
+        "city": "Vancouver",
+        "neighborhood": "Downtown",
+        "state": "British Columbia",
+        "postal_code": "V6B 2E7",
+        "country": "Canada"
+      },
+      "created_at": "2024-01-09T11:20:00Z",
+      "loyalty_tier": "Silver",
+      "total_spent": 2890.40
+    },
+    {
+      "customer_id": "CUST-013",
+      "first_name": "Galileo",
+      "last_name": "Galilei",
+      "email": "galileo.galilei@telescope.obs",
+      "phone": "+33-4-5555-1313",
+      "address": {
+        "street": "12 Rue de la République",
+        "city": "Lyon",
+        "neighborhood": "Presqu'île",
+        "state": "Auvergne-Rhône-Alpes",
+        "postal_code": "69002",
+        "country": "France"
+      },
+      "created_at": "2023-10-22T14:40:00Z",
+      "loyalty_tier": "Gold",
+      "total_spent": 12340.60
+    },
+    {
+      "customer_id": "CUST-014",
+      "first_name": "Emmy",
+      "last_name": "Noether",
+      "email": "emmy.noether@theorem.math",
+      "phone": "+49-30-555-1414",
+      "address": {
+        "street": "67 Kurfürstendamm",
+        "city": "Berlin",
+        "neighborhood": "Charlottenburg",
+        "state": "Berlin",
+        "postal_code": "10707",
+        "country": "Germany"
+      },
+      "created_at": "2024-03-28T16:50:00Z",
+      "loyalty_tier": "Gold",
+      "total_spent": 10125.90
+    },
+    {
+      "customer_id": "CUST-015",
+      "first_name": "Neil",
+      "last_name": "Armstrong",
+      "email": "neil.armstrong@moon.landing",
+      "phone": "+1-305-555-1515",
+      "address": {
+        "street": "7900 Collins Avenue",
+        "city": "Miami Beach",
+        "neighborhood": "North Beach",
+        "state": "FL",
+        "postal_code": "33141",
+        "country": "USA"
+      },
+      "created_at": "2024-09-11T10:05:00Z",
+      "loyalty_tier": "Gold",
+      "total_spent": 13240.80
+    },
+    {
+      "customer_id": "CUST-016",
+      "first_name": "Margaret",
+      "last_name": "Hamilton",
+      "email": "margaret.hamilton@apollo.software",
+      "phone": "+44-131-555-1616",
+      "address": {
+        "street": "88 Princes Street",
+        "city": "Edinburgh",
+        "neighborhood": "New Town",
+        "state": "Scotland",
+        "postal_code": "EH2 2ER",
+        "country": "United Kingdom"
+      },
+      "created_at": "2024-02-18T13:25:00Z",
+      "loyalty_tier": "Gold",
+      "total_spent": 9830.60
+    },
+    {
+      "customer_id": "CUST-017",
+      "first_name": "Linus",
+      "last_name": "Pauling",
+      "email": "linus.pauling@chemistry.bond",
+      "phone": "+33-5-5555-1717",
+      "address": {
+        "street": "56 Cours de l'Intendance",
+        "city": "Bordeaux",
+        "neighborhood": "Centre-Ville",
+        "state": "Nouvelle-Aquitaine",
+        "postal_code": "33000",
+        "country": "France"
+      },
+      "created_at": "2023-11-30T08:45:00Z",
+      "loyalty_tier": "Gold",
+      "total_spent": 13890.80
+    },
+    {
+      "customer_id": "CUST-018",
+      "first_name": "Chien-Shiung",
+      "last_name": "Wu",
+      "email": "chien.wu@beta.decay",
+      "phone": "+81-3-5555-1818",
+      "address": {
+        "street": "1-1-2 Oshiage",
+        "city": "Tokyo",
+        "neighborhood": "Sumida",
+        "state": "Tokyo",
+        "postal_code": "131-0045",
+        "country": "Japan"
+      },
+      "created_at": "2024-05-07T15:10:00Z",
+      "loyalty_tier": "Platinum",
+      "total_spent": 41230.50
+    },
+    {
+      "customer_id": "CUST-019",
+      "first_name": "Johannes",
+      "last_name": "Kepler",
+      "email": "johannes.kepler@planetary.motion",
+      "phone": "+43-1-555-1919",
+      "address": {
+        "street": "9 Graben",
+        "city": "Vienna",
+        "neighborhood": "Innere Stadt",
+        "state": "Vienna",
+        "postal_code": "1010",
+        "country": "Austria"
+      },
+      "created_at": "2024-04-16T12:30:00Z",
+      "loyalty_tier": "Silver",
+      "total_spent": 3675.20
+    },
+    {
+      "customer_id": "CUST-020",
+      "first_name": "Dorothy",
+      "last_name": "Hodgkin",
+      "email": "dorothy.hodgkin@crystallography.org",
+      "phone": "+1-416-555-2020",
+      "address": {
+        "street": "250 Yonge Street",
+        "city": "Toronto",
+        "neighborhood": "Downtown",
+        "state": "Ontario",
+        "postal_code": "M5B 2L7",
+        "country": "Canada"
+      },
+      "created_at": "2024-06-03T09:55:00Z",
+      "loyalty_tier": "Gold",
+      "total_spent": 9450.75
+    },
+    {
+      "customer_id": "CUST-021",
+      "first_name": "Enrico",
+      "last_name": "Fermi",
+      "email": "enrico.fermi@nuclear.chain",
+      "phone": "+39-06-555-2121",
+      "address": {
+        "street": "78 Via del Corso",
+        "city": "Rome",
+        "neighborhood": "Centro Storico",
+        "state": "Lazio",
+        "postal_code": "00186",
+        "country": "Italy"
+      },
+      "created_at": "2023-12-20T14:20:00Z",
+      "loyalty_tier": "Gold",
+      "total_spent": 11780.40
+    },
+    {
+      "customer_id": "CUST-022",
+      "first_name": "Barbara",
+      "last_name": "McClintock",
+      "email": "barbara.mcclintock@jumping.genes",
+      "phone": "+34-93-555-2222",
+      "address": {
+        "street": "99 Passeig de Gràcia",
+        "city": "Barcelona",
+        "neighborhood": "Eixample",
+        "state": "Catalonia",
+        "postal_code": "08008",
+        "country": "Spain"
+      },
+      "created_at": "2024-07-22T11:40:00Z",
+      "loyalty_tier": "Gold",
+      "total_spent": 10560.75
+    },
+    {
+      "customer_id": "CUST-023",
+      "first_name": "Niels",
+      "last_name": "Bohr",
+      "email": "niels.bohr@atomic.model",
+      "phone": "+81-75-555-2323",
+      "address": {
+        "street": "56 Shijo-dori",
+        "city": "Kyoto",
+        "neighborhood": "Shimogyo",
+        "state": "Kyoto",
+        "postal_code": "600-8001",
+        "country": "Japan"
+      },
+      "created_at": "2024-08-30T10:15:00Z",
+      "loyalty_tier": "Gold",
+      "total_spent": 14120.40
+    },
+    {
+      "customer_id": "CUST-024",
+      "first_name": "Rachel",
+      "last_name": "Carson",
+      "email": "rachel.carson@silent.spring",
+      "phone": "+1-206-555-2424",
+      "address": {
+        "street": "1200 1st Avenue",
+        "city": "Seattle",
+        "neighborhood": "Downtown",
+        "state": "WA",
+        "postal_code": "98101",
+        "country": "USA"
+      },
+      "created_at": "2024-01-15T13:50:00Z",
+      "loyalty_tier": "Silver",
+      "total_spent": 2340.60
+    },
+    {
+      "customer_id": "CUST-025",
+      "first_name": "Subrahmanyan",
+      "last_name": "Chandrasekhar",
+      "email": "subrahmanyan.c@stellar.limit",
+      "phone": "+91-80-555-2525",
+      "address": {
+        "street": "100 MG Road",
+        "city": "Bangalore",
+        "neighborhood": "Central Business District",
+        "state": "Karnataka",
+        "postal_code": "560001",
+        "country": "India"
+      },
+      "created_at": "2024-10-05T16:30:00Z",
+      "loyalty_tier": "Gold",
+      "total_spent": 8765.30
+    }
+  ]
+}

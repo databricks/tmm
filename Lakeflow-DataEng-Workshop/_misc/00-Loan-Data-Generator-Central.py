@@ -20,9 +20,12 @@
 # MAGIC DROP VOLUME IF EXISTS historical_loans;
 # MAGIC DROP VOLUME IF EXISTS raw_transactions;
 # MAGIC DROP VOLUME IF EXISTS ref_accounting;
+# MAGIC DROP VOLUME IF EXISTS customer_tiers;
+# MAGIC
 # MAGIC CREATE VOLUME historical_loans;
 # MAGIC CREATE VOLUME raw_transactions;
 # MAGIC CREATE VOLUME ref_accounting;
+# MAGIC CREATE VOLUME customer_tiers;
 # MAGIC
 # MAGIC
 # MAGIC USE CATALOG demo;
@@ -31,6 +34,7 @@
 # MAGIC GRANT READ VOLUME ON VOLUME historical_loans TO `account users`;
 # MAGIC GRANT READ VOLUME ON VOLUME raw_transactions TO `account users`;
 # MAGIC GRANT READ VOLUME ON VOLUME ref_accounting TO `account users`;
+# MAGIC GRANT READ VOLUME ON VOLUME customer_tiers TO `account users`;
 
 # COMMAND ----------
 
@@ -56,8 +60,15 @@ output_path =     '/Volumes/demo/loan_io/'
 hist_loans =      output_path+'historical_loans'
 raw_tx =          output_path+'raw_transactions'
 ref_accounting =  output_path+'ref_accounting'
+customer_tiers =  output_path+'customer_tiers'
 
 
+# COMMAND ----------
+
+import os, shutil
+nb = dbutils.notebook.entry_point.getDbutils().notebook().getContext().notebookPath().get()
+src = os.path.join(os.path.dirname(f"/Workspace{nb}"), "..", "customers.json")
+shutil.copy(src, f"{customer_tiers}/customers.json")
 
 # COMMAND ----------
 
