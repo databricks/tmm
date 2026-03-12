@@ -91,12 +91,11 @@ The new pipeline editor introduces several enhanced capabilities. Please familia
 
 Pipelines are more than just code. Pipelines write data to schemas, they get triggered or run continuously, and they either run on serverless compute or not. All these settings can be defined when you create a new pipeline. Here we keep it short. For the context of this lab: always leave the default values unless told otherwise.  
 
-1. In your workspace, select **Data Engineering / Job Runs (or Pipelines previously)**. 
-2. Top right, select **Create / ETL Pipeline**
-3. Then define the name of the pipeline. Make sure to use your own `user_id` from above as the name of the pipeline
-4. For **Unity Catalog**, change the settings for **catalog.schema** to  
+1. In your workspace, select **+New -> ETL Pipeline**. 
+2. Then define the name of the pipeline. Make sure to use your own `user_id` from above as the name of the pipeline
+3. For **Unity Catalog**, change the settings for **catalog.schema** to  
     - Catalog: `demo`
-    - Target Schema: Your `user_id`. Note, you will **work with your own schema** to separate your data from others. Depending on the training environment, the schema with your user_id is already created for you. Make sure to select the correct schema name. 
+    - Target Schema: Your `user_id`. Note, you will **work with your own schema** to separate your data from others. Depending on the training environment, the schema with your user_id is already created for you. Make sure to select the correct schema name (you won't be able to write to other schemas). 
 
 
 ### Add existing assets
@@ -229,10 +228,57 @@ The Lakehouse unifies classic data lakes and DWHs. This lab will teach you how t
   * run the query by clicking Shift-RETURN
   * Save the query using your ID as a query name
 
+## 4a. ETL Pipeline Generation with Genie Code
+
+Now that our raw data is staged, we will use Databricks Genie Code to generate our Medallion architecture automatically from natural language.
+
+### Launch Genie Code
+* In the left-hand navigation sidebar, click **+ New** > **ETL pipeline**.
+* Click the **Create pipeline with AI** button to open the Genie Code interface on the right side of your screen.
+
+
+### Prompt the Agent
+* In the chat box, enter the following prompt (make sure to replace `USER_ID` with your actual user ID): 
+  > *"Create a data pipeline with the name `USER_ID_tier_analytics` with datasets stored in catalog demo and in schema `USER_ID`. The pipeline ingests data from the volume customer_tiers. The pipeline should analyze the different customer tiers."*
+* Press **Enter** to submit.
+
+### Review Architecture & Generate Code
+* Genie Code will analyze the source data and propose a Medallion Architecture (Bronze, Silver, Gold).
+* If asked, click **Proceed** to approve the plan.
+* Genie will write the PySpark transformation files in parallel (`bronze_customers.py`, `silver_customers.py`, `gold_tier_analytics.py`).
+* Click **Accept All** to lock in the generated code.
+
+### Execute the Pipeline
+* Genie automatically initiates a **Dry-running pipeline** check. *(Note: Check "Always allow in current thread" if prompted).*
+* Once the dry run passes, click **Start pipeline update** (or **Run pipeline**).
+* Wait for the visual pipeline graph to show all nodes as successfully completed.
+
+
+---
+
+## 4b AI-Generated BI & Analytics with Genie
+
+Once your pipeline has successfully populated the Gold table, you can move directly into analyzing that data using Genie Data Rooms.
+
+### Access the Gold Data
+* On your completed pipeline graph, click the final **Gold table** node (e.g., `gold_tier_analytics`).
+* Select **View data preview** to confirm your aggregated customer tier data is clean.
+* Click the **Ask AI** (or **Open in Genie**) button to launch a new Genie Data Room for that specific table.
+
+### Generate Insights
+* In the Genie Data Room chat interface, prompt Genie with an analytical question: 
+  > *"Show me the distribution of customer tiers by revenue."*
+* Genie will automatically generate the SQL query and output a visualization.
+
+
+### Build the Dashboard
+* Click **Pin to dashboard** directly on the generated chart.
+* Ask follow-up questions (e.g., *"How have these tiers grown over the last 6 months?"*) and pin those results as well.
+* Open your newly created **AI/BI Dashboard** to view the finalized, shareable report.
 
 
 
-## 4. Databricks Workflows with SDP
+## 5. Databricks Workflows with SDP
 
 ### Create a Workflow
 
@@ -273,53 +319,6 @@ The Lakehouse unifies classic data lakes and DWHs. This lab will teach you how t
   * You can delete the other failed run.
 
 
-## 5. ETL Pipeline Generation with Genie Code
-
-Now that our raw data is staged, we will use Databricks Genie Code to generate our Medallion architecture automatically from natural language.
-
-### Launch Genie Code
-* In the left-hand navigation sidebar, click **+ New** > **ETL pipeline**.
-* Click the **Create pipeline with AI** button to open the Genie Code interface on the right side of your screen.
-
-
-### Prompt the Agent
-* In the chat box, enter the following prompt (make sure to replace `USER_ID` with your actual user ID): 
-  > *"Create a data pipeline with the name `USER_ID_tier_analytics` with datasets stored in catalog demo and in schema `USER_ID`. The pipeline ingests data from the volume customer_tiers. The pipeline should analyze the different customer tiers."*
-* Press **Enter** to submit.
-
-### Review Architecture & Generate Code
-* Genie Code will analyze the source data and propose a Medallion Architecture (Bronze, Silver, Gold).
-* If asked, click **Proceed** to approve the plan.
-* Genie will write the PySpark transformation files in parallel (`bronze_customers.py`, `silver_customers.py`, `gold_tier_analytics.py`).
-* Click **Accept All** to lock in the generated code.
-
-### Execute the Pipeline
-* Genie automatically initiates a **Dry-running pipeline** check. *(Note: Check "Always allow in current thread" if prompted).*
-* Once the dry run passes, click **Start pipeline update** (or **Run pipeline**).
-* Wait for the visual pipeline graph to show all nodes as successfully completed.
-
-
----
-
-## 5b AI-Generated BI & Analytics with Genie
-
-Once your pipeline has successfully populated the Gold table, you can move directly into analyzing that data using Genie Data Rooms.
-
-### Access the Gold Data
-* On your completed pipeline graph, click the final **Gold table** node (e.g., `gold_tier_analytics`).
-* Select **View data preview** to confirm your aggregated customer tier data is clean.
-* Click the **Ask AI** (or **Open in Genie**) button to launch a new Genie Data Room for that specific table.
-
-### Generate Insights
-* In the Genie Data Room chat interface, prompt Genie with an analytical question: 
-  > *"Show me the distribution of customer tiers by revenue."*
-* Genie will automatically generate the SQL query and output a visualization.
-
-
-### Build the Dashboard
-* Click **Pin to dashboard** directly on the generated chart.
-* Ask follow-up questions (e.g., *"How have these tiers grown over the last 6 months?"*) and pin those results as well.
-* Open your newly created **AI/BI Dashboard** to view the finalized, shareable report.
 
 
 
