@@ -322,11 +322,11 @@ Once your pipeline has successfully populated the Gold table, you can move direc
 
 
 
-## 6. Outlook (optional topics in preview)
+## 6. References and demo you should know: 
 
-Follow your instructor for capabilities such as Genie Data Rooms. Time permitting.
-
-
-A full end-to-end demo of this section is available as a video in the [Databricks Demo Center](https://www.databricks.com/resources/demos/videos/data-engineering/databricks-data-intelligence-platform?itm_data=demo_center)
+* [Get to know Genie Code: Lakeflow and Analytics](https://www.databricks.com/resources/demos/videos/get-know-genie-code)
+* Complete [Lakeflow Demo: From messy sales data to AI insights](https://www.databricks.com/resources/demos/videos/lakeflow-action-gourmet-pipeline-demo-daiwt)
+* Getting Started with [OSS Apache SDP, VSCode](https://github.com/databricks/tmm/tree/main/OSS-SDP-OpenSkyNetwork)
+* Other [Databricks workshops](https://www.databricks.com/events?event_type=workshop&region=all) for DBSQL, AI, Unity Catalog
 
 # Congratulations for completing this workshop!
