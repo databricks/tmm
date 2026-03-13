@@ -239,7 +239,7 @@ Now that our raw data is staged, we will use Databricks Genie Code to generate o
 
 ### Prompt the Agent
 * In the chat box, enter the following prompt (make sure to replace `USER_ID` with your actual user ID): 
-  > *"Create a data pipeline with the name `USER_ID_tier_analytics` with datasets stored in catalog demo and in schema `USER_ID`. The pipeline ingests data from the volume customer_tiers. The pipeline should analyze the different customer tiers."*
+  > *"Create a SDP pipeline with the name `USER_ID_tier_analytics` with datasets stored in catalog demo and in schema `USER_ID`. The pipeline is ingesting data from the volumne /Volumes/demo/loan_io/customer_tiers. The purpose of the pipeline is to analyze the different customer tiers."*
 * Press **Enter** to submit.
 
 ### Review Architecture & Generate Code
