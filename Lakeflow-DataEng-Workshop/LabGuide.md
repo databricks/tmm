@@ -322,7 +322,7 @@ Once your pipeline has successfully populated the Gold table, you can move direc
 
 
 
-## 6. References and demo you should know: 
+## 6. References and other demos: 
 
 * [Get to know Genie Code: Lakeflow and Analytics](https://www.databricks.com/resources/demos/videos/get-know-genie-code)
 * Complete [Lakeflow Demo: From messy sales data to AI insights](https://www.databricks.com/resources/demos/videos/lakeflow-action-gourmet-pipeline-demo-daiwt)
