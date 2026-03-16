@@ -5,7 +5,7 @@ Welcome to this mini-tutorial! This guide demonstrates how to rapidly build a da
 ## 📋 Prerequisites
 * Access to a Databricks Workspace.
 * Proper compute resources and permissions to create pipelines.
-* The source data is always available under  `samples.wanderbricks`
+* The source data is available as a Databricks sample data set under `samples.wanderbricks`
 
 ---
 
