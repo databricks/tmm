@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>European Flights at Sunrise</title>
+  <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+  <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/deck.gl@8.9.33/dist.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { overflow: hidden; font-family: -apple-system, sans-serif; }
+    #container { width: 100vw; height: 100vh; position: relative; }
+
+    /* Sunrise gradient overlay */
+    .sunrise-overlay {
+      position: absolute; inset: 0; z-index: 5; pointer-events: none;
+      background: linear-gradient(
+        to bottom,
+        rgba(10, 15, 35, 0.3) 0%,
+        rgba(40, 20, 50, 0.2) 30%,
+        rgba(80, 40, 60, 0.15) 50%,
+        rgba(150, 80, 60, 0.1) 70%,
+        rgba(200, 120, 80, 0.15) 85%,
+        rgba(255, 180, 120, 0.2) 100%
+      );
+    }
+
+    /* Sun glow on right side */
+    .sun-glow {
+      position: absolute; right: -100px; top: 35%; z-index: 6; pointer-events: none;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(255,250,240,0.4) 0%, rgba(255,200,150,0.2) 30%, rgba(255,150,100,0.1) 50%, transparent 70%);
+      border-radius: 50%;
+    }
+    .sun-core {
+      position: absolute; right: 30px; top: calc(35% + 160px); z-index: 7; pointer-events: none;
+      width: 80px; height: 80px;
+      background: radial-gradient(circle, #fffef8 0%, #fff5dc 40%, #ffe8b8 70%, transparent 100%);
+      border-radius: 50%;
+      box-shadow: 0 0 40px 15px rgba(255,250,220,0.8), 0 0 80px 30px rgba(255,200,150,0.5), 0 0 120px 50px rgba(255,150,100,0.3);
+    }
+
+    #map { position: absolute; inset: 0; z-index: 1; }
+
+    .panel {
+      position: absolute; top: 20px; left: 20px;
+      background: rgba(10, 20, 40, 0.88); backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 180, 120, 0.2); border-radius: 14px;
+      padding: 20px; color: #fff; min-width: 220px; z-index: 100;
+    }
+    .panel h1 { font-size: 1.2rem; font-weight: 500; color: #ffd8b0; margin-bottom: 3px; }
+    .panel .sub { font-size: 0.65rem; color: rgba(255,200,150,0.6); letter-spacing: 1.5px; margin-bottom: 16px; }
+    .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .stat { background: rgba(255,180,120,0.1); border-radius: 10px; padding: 12px 8px; text-align: center; }
+    .stat-val { font-size: 1.4rem; font-weight: 600; color: #ffcc99; }
+    .stat-lbl { font-size: 0.55rem; color: rgba(255,200,150,0.5); text-transform: uppercase; letter-spacing: 1px; margin-top: 3px; }
+
+    .tooltip {
+      position: absolute; background: rgba(10,20,40,0.95); backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,180,120,0.3); border-radius: 12px;
+      padding: 16px 20px; color: #fff; font-size: 0.8rem;
+      pointer-events: none; z-index: 200; display: none;
+    }
+    .tooltip-title { font-weight: 600; font-size: 1.05rem; color: #ffcc99; margin-bottom: 12px; }
+    .tooltip-row { display: flex; justify-content: space-between; margin: 5px 0; gap: 24px; }
+    .tooltip-lbl { color: rgba(255,200,150,0.5); }
+    .tooltip-val { color: #fff; font-weight: 500; }
+
+    .legend {
+      position: absolute; bottom: 24px; left: 24px;
+      background: rgba(10,20,40,0.85); border-radius: 12px;
+      padding: 14px 18px; color: #fff; font-size: 0.7rem; z-index: 100;
+    }
+    .legend-title { font-weight: 500; margin-bottom: 8px; color: rgba(255,200,150,0.8); }
+    .legend-item { display: flex; align-items: center; margin: 5px 0; }
+    .legend-dot { width: 20px; height: 5px; border-radius: 3px; margin-right: 10px; }
+    .legend-item span { color: rgba(255,220,180,0.7); }
+
+    .status {
+      position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: rgba(10,20,40,0.8); border-radius: 8px;
+      padding: 8px 16px; color: rgba(255,200,150,0.7); font-size: 0.65rem; z-index: 100;
+    }
+    .credit {
+      position: absolute; bottom: 24px; right: 24px;
+      color: rgba(255,200,150,0.4); font-size: 0.6rem; z-index: 100;
+    }
+    .credit a { color: rgba(255,200,150,0.6); text-decoration: none; }
+    .controls {
+      position: absolute; top: 20px; right: 20px;
+      background: rgba(10,20,40,0.85); backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,180,120,0.2); border-radius: 12px;
+      padding: 14px 18px; color: rgba(255,220,180,0.8); font-size: 0.7rem; z-index: 100;
+    }
+    .controls label {
+      display: block; margin-bottom: 8px; font-size: 0.6rem;
+      color: rgba(255,200,150,0.6); text-transform: uppercase; letter-spacing: 1px;
+    }
+    .controls select {
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,180,120,0.3);
+      color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 0.75rem;
+      cursor: pointer; width: 100%; outline: none;
+    }
+    .controls select:hover { background: rgba(255,255,255,0.15); }
+    .controls select option { background: #1a2a40; color: #fff; }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div id="map"></div>
+    <div class="sunrise-overlay"></div>
+    <div class="sun-glow"></div>
+    <div class="sun-core"></div>
+
+    <div class="panel">
+      <h1>✈ European Skies</h1>
+      <div class="sub">LIVE AIRCRAFT AT SUNRISE</div>
+      <div class="stats">
+        <div class="stat"><div class="stat-val" id="cnt">—</div><div class="stat-lbl">Aircraft</div></div>
+        <div class="stat"><div class="stat-val" id="alt">—</div><div class="stat-lbl">Avg Altitude</div></div>
+        <div class="stat"><div class="stat-val" id="spd">—</div><div class="stat-lbl">Max Speed</div></div>
+        <div class="stat"><div class="stat-val" id="ctry">—</div><div class="stat-lbl">Countries</div></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <label>Map Style</label>
+      <select id="mapStyle">
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </div>
+
+    <div class="legend">
+      <div class="legend-title">Altitude</div>
+      <div class="legend-item"><div class="legend-dot" style="background:linear-gradient(90deg,#ff6b6b,#ff8866);"></div><span>&lt; 15,000 ft</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:linear-gradient(90deg,#ffaa55,#ffd93d);"></div><span>15k - 30k ft</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:linear-gradient(90deg,#fff8e0,#ffffff);"></div><span>&gt; 30,000 ft</span></div>
+    </div>
+
+    <div class="status" id="status">Loading flight data...</div>
+    <div class="credit">Data: <a href="https://opensky-network.org">OpenSky Network</a></div>
+    <div class="tooltip" id="tooltip"></div>
+  </div>
+
+  <script>
+    let flights = [];
+    let deckOverlay = null;
+    const tip = document.getElementById('tooltip');
+    const status = document.getElementById('status');
+
+    const MAP_STYLES = {
+      light: 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png',
+      dark: 'https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png'
+    };
+
+    // Initialize MapLibre map with dark style
+    const map = new maplibregl.Map({
+      container: 'map',
+      style: {
+        version: 8,
+        sources: {
+          'carto': {
+            type: 'raster',
+            tiles: ['https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png'],
+            tileSize: 256,
+            attribution: '© CartoDB © OpenStreetMap'
+          }
+        },
+        layers: [{
+          id: 'carto-layer',
+          type: 'raster',
+          source: 'carto',
+          minzoom: 0,
+          maxzoom: 19
+        }]
+      },
+      center: [15, 50],
+      zoom: 4,
+      pitch: 45,
+      bearing: 20
+    });
+
+    function altColor(alt) {
+      const ft = (alt || 0) * 3.28084;
+      if (ft < 15000) return [255, 107, 107, 240];
+      if (ft < 30000) {
+        const t = (ft - 15000) / 15000;
+        return [255, Math.round(107 + t * 110), Math.round(107 + t * 50), 240];
+      }
+      const t = Math.min((ft - 30000) / 15000, 1);
+      return [255, Math.round(217 + t * 38), Math.round(157 + t * 98), 240];
+    }
+
+    function trajectoryEnd(d) {
+      const dist = ((d.vel || 200) / 200) * 1.8;
+      const rad = (90 - (d.hdg || 0)) * Math.PI / 180;
+      return [d.lon + Math.cos(rad) * dist, d.lat + Math.sin(rad) * dist];
+    }
+
+    function updateStats() {
+      const n = flights.length;
+      document.getElementById('cnt').textContent = n.toLocaleString();
+      document.getElementById('alt').textContent = n ? Math.round(flights.reduce((s, d) => s + d.alt, 0) / n * 3.28084).toLocaleString() + ' ft' : '—';
+      document.getElementById('spd').textContent = n ? Math.round(Math.max(...flights.map(d => d.vel)) * 1.944) + ' kt' : '—';
+      document.getElementById('ctry').textContent = new Set(flights.map(d => d.country)).size;
+    }
+
+    function showTip({ object: o, x, y }) {
+      if (o) {
+        const ft = Math.round(o.alt * 3.28084);
+        const kt = Math.round(o.vel * 1.944);
+        const vr = Math.round((o.vr || 0) * 196.85);
+        tip.style.display = 'block';
+        tip.style.left = (x + 15) + 'px';
+        tip.style.top = (y + 15) + 'px';
+        tip.innerHTML = `
+          <div class="tooltip-title">✈ ${o.call || 'Unknown'}</div>
+          <div class="tooltip-row"><span class="tooltip-lbl">Country</span><span class="tooltip-val">${o.country}</span></div>
+          <div class="tooltip-row"><span class="tooltip-lbl">Altitude</span><span class="tooltip-val">${ft.toLocaleString()} ft</span></div>
+          <div class="tooltip-row"><span class="tooltip-lbl">Speed</span><span class="tooltip-val">${kt} kt</span></div>
+          <div class="tooltip-row"><span class="tooltip-lbl">Heading</span><span class="tooltip-val">${Math.round(o.hdg)}°</span></div>
+          <div class="tooltip-row"><span class="tooltip-lbl">V/S</span><span class="tooltip-val">${vr > 0 ? '+' : ''}${vr} fpm</span></div>
+        `;
+      } else {
+        tip.style.display = 'none';
+      }
+    }
+
+    function createLayers() {
+      return [
+        // Trajectory lines
+        new deck.ArcLayer({
+          id: 'trajectories',
+          data: flights,
+          getSourcePosition: d => [d.lon, d.lat],
+          getTargetPosition: trajectoryEnd,
+          getSourceColor: d => altColor(d.alt),
+          getTargetColor: d => [...altColor(d.alt).slice(0, 3), 40],
+          getWidth: 3,
+          widthMinPixels: 1.5,
+          widthMaxPixels: 5
+        }),
+
+        // Aircraft glow
+        new deck.ScatterplotLayer({
+          id: 'glow',
+          data: flights,
+          getPosition: d => [d.lon, d.lat],
+          getRadius: 8000,
+          getFillColor: d => [...altColor(d.alt).slice(0, 3), 50],
+          radiusMinPixels: 8,
+          radiusMaxPixels: 25
+        }),
+
+        // Aircraft points
+        new deck.ScatterplotLayer({
+          id: 'aircraft',
+          data: flights,
+          pickable: true,
+          getPosition: d => [d.lon, d.lat],
+          getRadius: 3500,
+          getFillColor: d => altColor(d.alt),
+          radiusMinPixels: 4,
+          radiusMaxPixels: 12,
+          onHover: showTip
+        }),
+
+        // Heading indicator
+        new deck.LineLayer({
+          id: 'heading',
+          data: flights,
+          getSourcePosition: d => [d.lon, d.lat],
+          getTargetPosition: d => {
+            const rad = (90 - d.hdg) * Math.PI / 180;
+            return [d.lon + Math.cos(rad) * 0.4, d.lat + Math.sin(rad) * 0.4];
+          },
+          getColor: d => altColor(d.alt),
+          getWidth: 2,
+          widthMinPixels: 1.5
+        })
+      ];
+    }
+
+    map.on('load', () => {
+      deckOverlay = new deck.MapboxOverlay({
+        layers: createLayers()
+      });
+      map.addControl(deckOverlay);
+      loadFlights();
+
+      // Map style switcher
+      document.getElementById('mapStyle').addEventListener('change', (e) => {
+        const style = e.target.value;
+        map.getSource('carto').tiles = [MAP_STYLES[style]];
+        map.style.sourceCaches['carto'].clearTiles();
+        map.style.sourceCaches['carto'].update(map.transform);
+        map.triggerRepaint();
+      });
+    });
+
+    async function loadFlights() {
+      status.textContent = '📡 Fetching from OpenSky...';
+      try {
+        const res = await fetch('https://opensky-network.org/api/states/all?lamin=35&lomin=-15&lamax=72&lomax=45');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+
+        if (data.states?.length > 0) {
+          flights = data.states
+            .filter(s => s[5] != null && s[6] != null && !s[8])
+            .map(s => ({
+              icao: s[0],
+              call: (s[1] || '').trim(),
+              country: s[2],
+              lon: s[5],
+              lat: s[6],
+              alt: s[7] || s[13] || 0,
+              vel: s[9] || 0,
+              hdg: s[10] || 0,
+              vr: s[11] || 0
+            }));
+          status.textContent = `✅ ${flights.length} aircraft`;
+          updateStats();
+          deckOverlay.setProps({ layers: createLayers() });
+        }
+      } catch (e) {
+        status.textContent = `❌ ${e.message}`;
+        console.error(e);
+      }
+    }
+  </script>
+</body>
+</html>

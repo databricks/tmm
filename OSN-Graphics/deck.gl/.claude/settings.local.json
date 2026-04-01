@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(open:*)",
+      "Bash(curl -s \"https://opensky-network.org/api/states/all?lamin=35&lomin=-15&lamax=72&lomax=45\")",
+      "Bash(curl -sI \"https://opensky-network.org/api/states/all?lamin=50&lomin=10&lamax=51&lomax=11\")"
+    ]
+  }
+}

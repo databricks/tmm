@@ -1,0 +1,374 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.app {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+}
+
+/* Control Panel */
+.control-panel {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: rgba(10, 15, 30, 0.9);
+  border: 1px solid rgba(100, 150, 255, 0.3);
+  border-radius: 12px;
+  padding: 20px;
+  color: #e0e8ff;
+  min-width: 240px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+}
+
+.control-panel h1 {
+  font-size: 1.4rem;
+  margin-bottom: 16px;
+  color: #4fa8ff;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.error {
+  background: rgba(255, 80, 80, 0.2);
+  border: 1px solid rgba(255, 80, 80, 0.5);
+  color: #ff8080;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 0.85rem;
+}
+
+.stats {
+  margin-bottom: 16px;
+}
+
+.stat {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(100, 150, 255, 0.15);
+}
+
+.stat:last-child {
+  border-bottom: none;
+}
+
+.stat .label {
+  color: #8090b0;
+  font-size: 0.85rem;
+}
+
+.stat .value {
+  font-weight: 500;
+  color: #c0d0ff;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.refresh-btn {
+  background: linear-gradient(135deg, #2060a0, #3080c0);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.refresh-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #3080c0, #40a0e0);
+  transform: translateY(-1px);
+}
+
+.refresh-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.slider-group label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #8090b0;
+}
+
+.slider-group input[type="range"] {
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(100, 150, 255, 0.3);
+  appearance: none;
+  cursor: pointer;
+}
+
+.slider-group input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #4fa8ff;
+  cursor: pointer;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #8090b0;
+  cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #4fa8ff;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.radio-group .radio-label {
+  font-size: 0.85rem;
+  color: #8090b0;
+  margin-bottom: 2px;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #a0b0c8;
+  cursor: pointer;
+  padding-left: 4px;
+}
+
+.radio-group input[type="radio"] {
+  width: 14px;
+  height: 14px;
+  accent-color: #4fa8ff;
+}
+
+.legend {
+  margin-bottom: 12px;
+}
+
+.legend h3 {
+  font-size: 0.8rem;
+  color: #6080a0;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 0.85rem;
+}
+
+.altitude-scale {
+  margin-bottom: 12px;
+}
+
+.scale-bar {
+  height: 14px;
+  border-radius: 6px;
+  background: linear-gradient(to right,
+    hsl(0, 100%, 50%),
+    hsl(45, 100%, 50%),
+    hsl(90, 100%, 50%),
+    hsl(135, 100%, 50%),
+    hsl(180, 100%, 50%),
+    hsl(225, 100%, 50%),
+    hsl(270, 100%, 50%)
+  );
+  margin-bottom: 4px;
+}
+
+.scale-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: #8090b0;
+}
+
+.color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.color-dot.ground {
+  background: #ffffff;
+}
+
+.color-dot.selected {
+  background: #00ff00;
+}
+
+.color-dot.vector {
+  background: #00ffff;
+}
+
+.color-dot.origin {
+  background: #ff8800;
+}
+
+.instructions {
+  font-size: 0.75rem;
+  color: #6080a0;
+  font-style: italic;
+}
+
+/* Aircraft Info Panel */
+.aircraft-info {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(10, 15, 30, 0.95);
+  border: 1px solid rgba(255, 68, 136, 0.5);
+  border-radius: 12px;
+  padding: 20px;
+  color: #e0e8ff;
+  min-width: 280px;
+  max-width: 320px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+}
+
+.aircraft-info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 68, 136, 0.3);
+}
+
+.aircraft-info-header h2 {
+  font-size: 1.2rem;
+  color: #ff4488;
+  font-weight: 600;
+  font-family: 'Monaco', 'Consolas', monospace;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #8090b0;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: #ff4488;
+}
+
+.info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.info-section {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(100, 150, 255, 0.2);
+}
+
+.info-section h3 {
+  font-size: 0.75rem;
+  color: #6080a0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 4px 0;
+}
+
+.info-item .label {
+  color: #8090b0;
+  font-size: 0.8rem;
+}
+
+.info-item .value {
+  color: #c0d0ff;
+  font-size: 0.9rem;
+  text-align: right;
+  font-family: 'Monaco', 'Consolas', monospace;
+}
+
+.info-item .value .secondary {
+  color: #6080a0;
+  font-size: 0.8rem;
+}
+
+.info-item .value.status.airborne {
+  color: #00ff88;
+}
+
+.info-item .value.status.ground {
+  color: #ffaa00;
+}
+
+/* Hover Tooltip */
+.hover-tooltip {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(10, 15, 30, 0.95);
+  border: 1px solid rgba(100, 150, 255, 0.4);
+  border-radius: 8px;
+  padding: 10px 16px;
+  color: #e0e8ff;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  backdrop-filter: blur(10px);
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+
+.hover-tooltip strong {
+  color: #4fa8ff;
+  font-family: 'Monaco', 'Consolas', monospace;
+}
+
+.hover-tooltip span {
+  color: #8090b0;
+}
