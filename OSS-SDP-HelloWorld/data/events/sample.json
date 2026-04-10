@@ -1,0 +1,6 @@
+{"event_type": "click", "user_id": "u1", "ts": "2025-01-01T10:00:00"}
+{"event_type": "view",  "user_id": "u2", "ts": "2025-01-01T10:01:00"}
+{"event_type": "click", "user_id": "u3", "ts": "2025-01-01T10:02:00"}
+{"event_type": "purchase", "user_id": "u1", "ts": "2025-01-01T10:03:00"}
+{"event_type": "view",  "user_id": "u4", "ts": "2025-01-01T10:04:00"}
+{"event_type": "click", "user_id": "u2", "ts": "2025-01-01T10:05:00"}

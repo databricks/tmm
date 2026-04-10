@@ -1,0 +1,12 @@
+name: sdp_example
+
+libraries:
+  - glob:
+      include: transformations/**
+
+storage: file:///tmp/sdp_example/pipeline-storage
+
+# Note: no catalog/database specified — workaround for PySpark 4.1.0 local mode.
+# Spark Connect validates that catalog+schema exist before running; on a fresh
+# local install they don't. Tables land in spark_catalog.default (always present).
+# See CLAUDE.md for details.
