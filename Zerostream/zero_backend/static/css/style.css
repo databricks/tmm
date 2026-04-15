@@ -1,0 +1,1088 @@
+/**
+ * ZeroStream Dashboard - Custom Styles
+ * Bootstrap 5 overrides and custom components
+ */
+
+/* =============================================================================
+   CSS Variables (Bootstrap 5 Light Theme)
+   ============================================================================= */
+
+:root {
+    /* Bootstrap 5 Primary Colors */
+    --color-primary: #0d6efd;
+    --color-primary-dark: #0b5ed7;
+    --color-primary-light: #cfe2ff;
+    --color-success: #198754;
+    --color-success-light: #d1e7dd;
+    --color-warning: #ffc107;
+    --color-warning-light: #fff3cd;
+    --color-danger: #dc3545;
+    --color-info: #0dcaf0;
+
+    /* Bootstrap 5 Light Theme Backgrounds */
+    --color-bg-page: #e9ecef;
+    --color-bg-card: #ffffff;
+    --color-bg-elevated: #f8f9fa;
+    --color-border: #dee2e6;
+    --color-border-light: #e9ecef;
+
+    /* Bootstrap 5 Text Colors */
+    --color-text: #212529;
+    --color-text-secondary: #6c757d;
+    --color-text-muted: #adb5bd;
+
+    /* Shadows */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.075);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.12);
+
+    /* Radius */
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.5rem;
+}
+
+/* =============================================================================
+   Page Management
+   ============================================================================= */
+
+.page {
+    display: none;
+    min-height: 100vh;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.page.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* =============================================================================
+   Landing Page
+   ============================================================================= */
+
+.landing-wrapper {
+    min-height: 100vh;
+    background: var(--color-bg-page);
+    padding: 3rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Main Landing Card - Contains Everything */
+.landing-card {
+    max-width: 1400px;
+    width: 100%;
+    background: var(--color-bg-card);
+    border-radius: var(--radius-xl);
+    padding: 2.5rem 2rem;
+    box-shadow: var(--shadow-lg);
+}
+
+.landing-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.landing-title {
+    font-size: 4rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    color: var(--color-text);
+}
+
+.landing-subtitle {
+    font-size: 1.25rem;
+    color: var(--color-text-secondary);
+}
+
+.gradient-text {
+    color: var(--color-text);
+}
+
+.app-version {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--color-text-secondary);
+    vertical-align: super;
+    margin-left: 4px;
+}
+
+/* Steps Container */
+.steps-container {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    gap: 0;
+}
+
+.step-card {
+    flex: 1 1 0;
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 420px;
+    max-width: 420px;
+    box-shadow: var(--shadow-sm);
+}
+
+.step-number {
+    width: 56px;
+    height: 56px;
+    background: var(--color-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 1.25rem;
+}
+
+.step-card:last-child .step-number {
+    background: var(--color-primary);
+}
+
+.step-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 0.75rem;
+}
+
+.step-description {
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    max-width: 280px;
+    line-height: 1.5;
+}
+
+/* Push buttons to bottom of step cards */
+.step-card > .btn {
+    margin-top: auto;
+}
+
+.step-icon {
+    font-size: 8rem;
+    color: var(--color-primary);
+    line-height: 1;
+    margin: 1rem 0;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Arrow Between Steps */
+.step-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 2rem;
+    font-size: 2.5rem;
+    color: var(--color-text-muted);
+}
+
+/* QR Code */
+.qr-container {
+    background: var(--color-bg-card);
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-border);
+    margin-bottom: 1rem;
+}
+
+.qr-image {
+    width: 200px;
+    height: 200px;
+    display: block;
+    background: #fff;
+}
+
+.qr-fallback-text {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+/* Screenshot Container */
+.screenshot-container {
+    background: var(--color-bg-card);
+    padding: 0.5rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    margin-bottom: 1rem;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.app-screenshot {
+    width: 160px;
+    height: auto;
+    display: block;
+    border-radius: var(--radius-sm);
+}
+
+/* Buttons - Bootstrap Style */
+.btn-primary {
+    background: var(--color-primary);
+    border: none;
+    box-shadow: none;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:hover {
+    background: var(--color-primary-dark);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-outline-primary {
+    color: var(--color-primary);
+    border-color: var(--color-border);
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background: var(--color-primary-light);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+/* =============================================================================
+   Dashboard Layout
+   ============================================================================= */
+
+.dashboard-wrapper {
+    background: #80868b;
+    padding: 3rem;
+    min-height: 100vh;
+}
+
+.dashboard-wrapper.active {
+    display: block;
+}
+
+.dashboard-container {
+    background: var(--color-bg-card);
+    border: none;
+    border-radius: var(--radius-xl);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 6rem);
+    overflow: hidden;
+}
+
+/* =============================================================================
+   Dashboard Header
+   ============================================================================= */
+
+.dashboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem 1.25rem;
+    background: #1a73e8;
+    border-bottom: none;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    transition: background-color 0.3s ease;
+}
+
+/* Lakebase mode - green header */
+.dashboard-header.lakebase {
+    background: #198754;
+}
+
+.dashboard-title {
+    font-size: 2.25rem;
+    font-weight: 500;
+    margin: 0;
+    color: #ffffff;
+}
+
+.dashboard-header .btn-outline-secondary {
+    color: #ffffff;
+    border-color: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.15);
+}
+
+.dashboard-header .btn-outline-secondary:hover {
+    background: rgba(255,255,255,0.25);
+    border-color: rgba(255,255,255,0.4);
+    color: #ffffff;
+}
+
+/* View Switch Button - Large prominent button */
+.view-switch-btn {
+    font-size: 1.1rem !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.view-switch-btn i {
+    font-size: 1.2rem;
+}
+
+/* Header Toggle Buttons */
+.header-toggle {
+    display: flex;
+    align-items: center;
+}
+
+/* Header Label - Lakebase/Zerobus */
+.header-label {
+    font-size: 3rem;
+    font-weight: 600;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+}
+
+.header-label i {
+    font-size: 3rem;
+}
+
+.header-toggle .btn-group {
+    background: rgba(255,255,255,0.15);
+    border-radius: 0.5rem;
+    padding: 0.25rem;
+}
+
+.header-toggle .btn-header-toggle {
+    color: rgba(255,255,255,0.8);
+    border: none;
+    background: transparent;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 0.375rem;
+    transition: all 0.2s ease;
+}
+
+.header-toggle .btn-header-toggle:hover {
+    color: #ffffff;
+    background: rgba(255,255,255,0.1);
+}
+
+.header-toggle .btn-check:checked + .btn-header-toggle {
+    color: #1a73e8;
+    background: #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Green mode toggle active state */
+.dashboard-header.lakebase .header-toggle .btn-check:checked + .btn-header-toggle {
+    color: #198754;
+}
+
+/* =============================================================================
+   Stats Row
+   ============================================================================= */
+
+.stats-row {
+    display: flex;
+    background: var(--color-bg-elevated);
+    border-bottom: 1px solid var(--color-border);
+    position: relative;
+    z-index: 10;
+}
+
+.stat-box {
+    flex: 1;
+    padding: 1.25rem 0.75rem;
+    text-align: center;
+    border-right: 1px solid var(--color-border-light);
+}
+
+.stat-box:last-child {
+    border-right: none;
+}
+
+.stat-box-large {
+    flex: 1.2;
+}
+
+.stat-box-timestamps {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--color-bg-card);
+}
+
+.timestamp-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.timestamp-row .stat-label {
+    margin-bottom: 0;
+    text-align: left;
+}
+
+.stat-label {
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: var(--color-text-muted);
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+}
+
+.stat-value.primary {
+    color: var(--color-primary);
+    font-size: 2.5rem;
+}
+
+.stat-value-timestamp {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    font-variant-numeric: tabular-nums;
+    font-family: monospace;
+}
+
+/* =============================================================================
+   Main Content Area (Map + Client List)
+   ============================================================================= */
+
+.main-content-area {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* =============================================================================
+   Map Container
+   ============================================================================= */
+
+.map-container {
+    flex: 1;
+    position: relative;
+    min-height: 300px;
+    overflow: hidden;
+    border-radius: 0 0 0 var(--radius-xl);
+}
+
+.map-view {
+    width: 100%;
+    height: 100%;
+    /* Hardware acceleration for smooth rendering */
+    will-change: transform;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+}
+
+/* Smooth transitions for OpenLayers canvas */
+.map-view canvas {
+    image-rendering: optimizeSpeed;
+}
+
+/* Hide OpenLayers default controls that escape container */
+.ol-control {
+    position: absolute;
+}
+
+/* Hide attribution button (info icon) */
+.ol-attribution {
+    display: none !important;
+}
+
+/* Ensure zoom controls stay inside map */
+.ol-zoom {
+    top: auto !important;
+    bottom: 1rem !important;
+    left: 1rem !important;
+}
+
+/* Contain all OpenLayers overlays within map */
+.map-view .ol-overlaycontainer,
+.map-view .ol-overlaycontainer-stopevent {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Map Controls Panel */
+.map-controls {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
+    box-shadow: var(--shadow-md);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.map-controls .form-check {
+    margin: 0;
+}
+
+.map-controls .form-check-label {
+    color: var(--color-text-secondary);
+}
+
+.map-controls .form-check-input:checked {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.map-controls .map-layer-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.map-controls .form-select-sm {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
+}
+
+/* Data Source Toggle */
+.map-controls .btn-group {
+    display: flex;
+}
+
+.map-controls .btn-group .btn {
+    flex: 1;
+    font-size: 0.75rem;
+    padding: 0.35rem 0.5rem;
+}
+
+.map-controls .btn-group .btn-check:checked + .btn-outline-primary {
+    background-color: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+#datasource-status {
+    text-align: center;
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+}
+
+#datasource-status i {
+    color: var(--color-primary);
+}
+
+/* Map Legend */
+.map-legend {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 0.5rem 0.75rem;
+    box-shadow: var(--shadow-md);
+    z-index: 100;
+    font-size: 0.8rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-text-secondary);
+    padding: 0.15rem 0;
+}
+
+.legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.legend-dot.active {
+    background: var(--color-primary);
+}
+
+.legend-dot.inactive {
+    background: var(--color-warning);
+}
+
+/* =============================================================================
+   Clients Panel (Right Sidebar)
+   ============================================================================= */
+
+.clients-panel {
+    width: 280px;
+    min-width: 280px;
+    background: var(--color-bg-elevated);
+    border-left: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    border-radius: 0 0 var(--radius-xl) 0;
+}
+
+.clients-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    color: var(--color-primary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    user-select: none;
+    background: var(--color-bg-card);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.clients-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.5rem;
+}
+
+.client-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.375rem;
+    background: var(--color-bg-card);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border-light);
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+    text-align: left;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+.client-item:hover {
+    border-color: var(--color-border);
+    box-shadow: var(--shadow-sm);
+}
+
+.client-item.loading {
+    justify-content: center;
+    color: var(--color-text-muted);
+}
+
+.client-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.client-id-row {
+    display: flex;
+    align-items: center;
+}
+
+.client-color-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+    flex-shrink: 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.client-id {
+    font-family: monospace;
+    font-weight: 600;
+    color: var(--color-primary);
+    font-size: 0.9rem;
+}
+
+.client-meta {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+}
+
+.client-status {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 1rem;
+    font-weight: 500;
+}
+
+.client-status.active {
+    background: var(--color-success-light);
+    color: var(--color-success);
+}
+
+.client-status.inactive {
+    background: var(--color-bg-elevated);
+    color: var(--color-text-muted);
+}
+
+/* Selectable client items - button-like appearance */
+.client-item.selectable {
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    border: 2px solid var(--color-border);
+    transition: all 0.15s ease;
+}
+
+.client-item.selectable:hover {
+    border-color: var(--color-primary);
+    background: var(--color-primary-light);
+    transform: translateX(2px);
+}
+
+.client-item.selectable:active {
+    transform: scale(0.98);
+    background: var(--color-primary-light);
+}
+
+.client-item.selected {
+    border-color: var(--color-primary);
+    border-width: 2px;
+    background: var(--color-primary-light);
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2);
+}
+
+.client-item.selected .client-id {
+    color: var(--color-primary-dark);
+}
+
+/* Button-like focus state */
+.client-item.selectable:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+}
+
+/* Client selection prompt - hidden (using inline trace indicator instead) */
+.client-select-prompt {
+    display: none;
+}
+
+/* Inline trace indicator - replaces clicked client button */
+.client-item.selected-trace {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    border: 2px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    color: white;
+}
+
+.client-item.selected-trace:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-md);
+    transform: none;
+}
+
+.trace-indicator {
+    display: flex;
+    align-items: center;
+    color: white;
+    font-size: 0.85rem;
+}
+
+.trace-indicator i {
+    font-size: 1rem;
+}
+
+.trace-indicator strong {
+    color: white;
+}
+
+.client-item.selected-trace .back-to-overview {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+    color: white;
+    font-size: 0.8rem;
+}
+
+.client-item.selected-trace .back-to-overview:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+/* Loading pulse animation */
+.loading-pulse {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Refresh flash indicator - subtle feedback that data refreshed */
+.refresh-flash {
+    animation: refreshFlash 0.3s ease-out;
+}
+
+@keyframes refreshFlash {
+    0% {
+        color: var(--color-success);
+        transform: scale(1.05);
+    }
+    100% {
+        color: inherit;
+        transform: scale(1);
+    }
+}
+
+/* =============================================================================
+   OpenLayers Popup & Tooltip
+   ============================================================================= */
+
+.ol-popup {
+    position: absolute;
+    background: var(--color-bg-card);
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-primary);
+    box-shadow: var(--shadow-lg);
+    min-width: 200px;
+    display: none;
+    z-index: 1000;
+}
+
+.popup-content {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--color-text);
+}
+
+.popup-content strong {
+    color: var(--color-primary);
+}
+
+.map-tooltip {
+    background: var(--color-bg-card);
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-primary);
+    box-shadow: var(--shadow-md);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    display: none;
+    z-index: 999;
+    pointer-events: none;
+    white-space: nowrap;
+    color: var(--color-text);
+    min-width: 280px;
+}
+
+.map-tooltip strong {
+    color: var(--color-primary);
+    font-size: 1rem;
+}
+
+.map-tooltip .tooltip-label {
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+}
+
+/* =============================================================================
+   Responsive Design
+   ============================================================================= */
+
+@media (max-width: 900px) {
+    /* Landing page responsive */
+    .landing-wrapper {
+        padding: 1.5rem 1rem;
+    }
+
+    .landing-card {
+        padding: 1.5rem 1rem;
+        border-radius: var(--radius-lg);
+    }
+
+    .landing-title {
+        font-size: 2.5rem;
+    }
+
+    .steps-container {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .step-arrow {
+        transform: rotate(90deg);
+        padding: 0.5rem 0;
+    }
+
+    .step-card {
+        min-height: auto;
+        padding: 1.5rem;
+    }
+
+    .step-icon {
+        font-size: 4rem;
+    }
+
+    .qr-image {
+        width: 160px;
+        height: 160px;
+    }
+
+    .alt-url-box {
+        padding: 0.75rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-wrapper {
+        padding: 1.5rem;
+    }
+
+    .dashboard-container {
+        height: calc(100vh - 3rem);
+        border-radius: var(--radius-md);
+    }
+
+    .dashboard-header {
+        border-radius: var(--radius-md) var(--radius-md) 0 0;
+        padding: 0.75rem 1rem;
+    }
+
+    .dashboard-title {
+        font-size: 1.25rem;
+        color: #ffffff;
+    }
+
+    /* Stack map and client list vertically on mobile */
+    .main-content-area {
+        flex-direction: column;
+    }
+
+    .clients-panel {
+        width: 100%;
+        min-width: 100%;
+        max-height: 200px;
+        border-left: none;
+        border-top: 1px solid var(--color-border);
+        border-radius: 0 0 var(--radius-md) var(--radius-md);
+    }
+
+    .stats-row {
+        flex-wrap: wrap;
+    }
+
+    .stat-box {
+        flex: 1 1 33.33%;
+        min-width: 33.33%;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 0.75rem 0.5rem;
+    }
+
+    .stat-box-large {
+        flex: 1 1 33.33%;
+    }
+
+    .stat-box-timestamps {
+        flex: 1 1 100%;
+        flex-direction: row;
+        justify-content: space-around;
+        border-bottom: none;
+    }
+
+    .timestamp-row {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .stat-value.primary {
+        font-size: 1.75rem;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+    }
+
+    .map-controls {
+        top: 0.5rem;
+        left: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+
+    .map-legend {
+        top: 0.5rem;
+        right: 0.5rem;
+    }
+}
+
+/* =============================================================================
+   Scrollbar Styling
+   ============================================================================= */
+
+.clients-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.clients-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.clients-list::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 3px;
+}
+
+.clients-list::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-muted);
+}
+
+/* =============================================================================
+   Hide Databricks Apps Watermarks/Branding
+   ============================================================================= */
+
+/* Hide any Databricks branding elements that may be injected */
+[class*="databricks-watermark"],
+[class*="databricks-logo"],
+[class*="databricks-badge"],
+[id*="databricks-watermark"],
+[id*="databricks-logo"],
+.db-watermark,
+.db-logo {
+    display: none !important;
+    visibility: hidden !important;
+}

@@ -1,0 +1,45 @@
+command:
+  - uvicorn
+  - app:app
+  - --host
+  - "0.0.0.0"
+  - --port
+  - "8000"
+
+# Cache-busting: Disable caching for static files to ensure latest version is served
+http_headers:
+  - name: "Cache-Control"
+    value: "no-cache, no-store, must-revalidate"
+  - name: "Pragma"
+    value: "no-cache"
+  - name: "Expires"
+    value: "0"
+
+# Make app publicly accessible (no authentication required)
+permissions:
+  - level: CAN_VIEW
+    user_name: users
+
+env:
+  # Databricks workspace (shared)
+  - name: DATABRICKS_HOST
+    value: "https://YOUR_WORKSPACE.cloud.databricks.com"
+
+  # Service Principal for ZeroBus authentication
+  - name: FRONTEND_SERVICE_PRINCIPAL_ID
+    value: "YOUR_SERVICE_PRINCIPAL_UUID"
+  - name: FRONTEND_SERVICE_PRINCIPAL_SECRET
+    value: "YOUR_SERVICE_PRINCIPAL_SECRET"
+
+  # ZeroBus streaming endpoint
+  # Format: <workspace_id>.zerobus.<region>.cloud.databricks.com
+  - name: FRONTEND_ZEROBUS_ENDPOINT
+    value: "YOUR_WORKSPACE_ID.zerobus.us-west-2.cloud.databricks.com"
+
+  # Unity Catalog target table (shared)
+  - name: ZEROBUS_CATALOG
+    value: "YOUR_CATALOG"
+  - name: ZEROBUS_SCHEMA
+    value: "YOUR_SCHEMA"
+  - name: ZEROBUS_TABLE
+    value: "sensor_data"

@@ -1,0 +1,35 @@
+# Secrets and configuration
+config.env
+CLAUDE.local.md
+**/app.yaml
+setup/FIELD_EVENTS_SETUP.sql
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# macOS
+.DS_Store
+
+# Claude Code
+.claude/
+
+# Databricks
+.databricks/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# QR codes (generated)
+*-qr.png

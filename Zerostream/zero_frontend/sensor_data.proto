@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package zerostream;
+
+// Mobile sensor data message
+message sensor_data {
+    // Metadata fields
+    string id = 1;                      // Unique record ID (UUID)
+    string client_id = 2;               // 12-char readable client identifier
+    string timestamp = 3;               // When sensor reading was taken (ISO format)
+
+    // Motion sensors (from DeviceMotionEvent)
+    double acceleration_x = 4;          // Linear acceleration (m/s²) excluding gravity
+    double acceleration_y = 5;          // Positive: right, up, towards user
+    double acceleration_z = 6;          // Device coordinate system
+    double rotation_alpha = 7;          // Rotation rate (deg/s) around Z-axis
+    double rotation_beta = 8;           // Rotation rate around X-axis
+    double rotation_gamma = 9;          // Rotation rate around Y-axis
+
+    // GPS Location (from Geolocation API)
+    double latitude = 10;               // GPS latitude in degrees
+    double longitude = 11;              // GPS longitude in degrees
+    double altitude = 12;               // Altitude in meters above sea level
+    double accuracy = 13;               // Horizontal accuracy in meters
+    double speed = 14;                  // Speed in meters/second
+    double heading = 15;                // Direction of travel (0-360 degrees)
+
+    // Magnetometer (from DeviceOrientationEvent)
+    double magnetic_x = 16;             // Magnetic field strength (μT)
+    double magnetic_y = 17;             // Device coordinate system
+    double magnetic_z = 18;             // Includes Earth's field + interference
+
+    // Processing metadata
+    string received_at = 19;            // When backend received the data (ISO format)
+    int64 processing_time_ms = 20;      // Backend processing duration
+}

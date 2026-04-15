@@ -1,0 +1,6 @@
+fastapi>=0.115.0
+uvicorn[standard]>=0.34.0
+pydantic>=2.0.0
+databricks-sql-connector>=3.0.0
+databricks-sdk>=0.50.0  # Lakebase database API requires newer SDK
+psycopg[binary]>=3.0.0  # Lakebase (PostgreSQL) support

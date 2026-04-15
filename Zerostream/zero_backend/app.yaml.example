@@ -1,0 +1,69 @@
+command:
+  - uvicorn
+  - app:app
+  - --host
+  - "0.0.0.0"
+  - --port
+  - "8000"
+
+# Cache-busting: Disable caching for static files to ensure latest version is served
+http_headers:
+  - name: "Cache-Control"
+    value: "no-cache, no-store, must-revalidate"
+  - name: "Pragma"
+    value: "no-cache"
+  - name: "Expires"
+    value: "0"
+
+# Make app publicly accessible (no authentication required)
+permissions:
+  - level: CAN_VIEW
+    user_name: users
+
+env:
+  # Databricks workspace (shared)
+  - name: DATABRICKS_HOST
+    value: "https://YOUR_WORKSPACE.cloud.databricks.com"
+  - name: BACKEND_DATABRICKS_TOKEN
+    value: "YOUR_DATABRICKS_TOKEN"
+
+  # SQL Warehouse settings (for ZeroBus view)
+  - name: BACKEND_SQL_WAREHOUSE_ID
+    value: "YOUR_WAREHOUSE_ID"
+  - name: BACKEND_SQL_WAREHOUSE_HTTP_PATH
+    value: "/sql/1.0/warehouses/YOUR_WAREHOUSE_ID"
+
+  # Unity Catalog table (shared)
+  - name: ZEROBUS_CATALOG
+    value: "YOUR_CATALOG"
+  - name: ZEROBUS_SCHEMA
+    value: "YOUR_SCHEMA"
+  - name: ZEROBUS_TABLE
+    value: "sensor_data"
+
+  # Lakebase Autoscaling settings (for Lakebase view)
+  # Uses OAuth via w.postgres.generate_database_credential() API
+  # Note: No prefix - Lakebase is backend-only
+  - name: LAKEBASE_HOST
+    value: "ep-YOUR_ENDPOINT.database.us-west-2.cloud.databricks.com"
+  # CRITICAL: Must be project UUID, NOT display name
+  # Find via: w.postgres.list_projects() -> project.uid
+  - name: LAKEBASE_PROJECT
+    value: "12345678-1234-1234-1234-123456789abc"
+  - name: LAKEBASE_BRANCH
+    value: "br-YOUR_BRANCH_NAME"
+  - name: LAKEBASE_ENDPOINT
+    value: "ep-YOUR_ENDPOINT_NAME"
+  # Table mapping (falls back to ZEROBUS_* if not set)
+  - name: LAKEBASE_SCHEMA
+    value: "YOUR_SCHEMA"
+  - name: LAKEBASE_TABLE
+    value: "sensor_data"
+
+  # Default data source: "zerobus" or "lakebase"
+  - name: BACKEND_DEFAULT_DATA_SOURCE
+    value: "zerobus"
+
+  # Frontend URL for QR code and mobile app link
+  - name: BACKEND_FRONTEND_URL
+    value: "https://YOUR_FRONTEND_APP_URL.aws.databricksapps.com"

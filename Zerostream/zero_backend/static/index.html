@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZeroStream Dashboard</title>
+    <!-- Injected Configuration -->
+    <script>
+        window.FRONTEND_URL = '__FRONTEND_URL__';
+        window.INITIAL_SOURCE = '__INITIAL_SOURCE__';
+    </script>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- OpenLayers CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v9.0.0/ol.css">
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="css/style.css?v=__VERSION__">
+</head>
+<body>
+    <!-- Landing Page: QR Code Display -->
+    <div id="landing-page" class="page active">
+        <div class="landing-wrapper">
+            <div class="landing-card">
+                <header class="landing-header">
+                    <h1 class="landing-title gradient-text">ZeroStream <span class="app-version">v__VERSION__</span></h1>
+                    <p class="landing-subtitle">Real-Time Sensor Streaming to Databricks Zerobus</p>
+                </header>
+
+                <!-- Steps Container -->
+                <div class="steps-container">
+                    <!-- Step 1: Collect Data -->
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <h2 class="step-title">Collect Sensor Data</h2>
+                        <p class="step-description">Scan the QR code with your mobile device to start streaming sensor data</p>
+                        <div class="qr-container">
+                            <img id="qr-code" src="images/zerostream-qr.png" alt="QR Code" class="qr-image">
+                        </div>
+                        <p class="qr-fallback-text">If you cannot scan the QR code, get the link here. Note: Run this on your mobile device.</p>
+                        <a id="frontend-link" href="" target="_blank" class="btn btn-outline-primary btn-lg">
+                            <i class="bi bi-phone me-2"></i>Mobile App Link
+                        </a>
+                    </div>
+
+                    <!-- Arrow Between Steps -->
+                    <div class="step-arrow">
+                        <i class="bi bi-arrow-right"></i>
+                    </div>
+
+                    <!-- Step 2: Mobile App Info -->
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <h2 class="step-title">Mobile App</h2>
+                        <p class="step-description">Familiarize yourself with the mobile app which continuously streams sensor data to Zerobus. This scales to tens of thousands of clients.</p>
+                        <div class="screenshot-container">
+                            <img src="images/mobile-app-screenshot.png" alt="Mobile App Screenshot" class="app-screenshot">
+                        </div>
+                    </div>
+
+                    <!-- Arrow Between Steps -->
+                    <div class="step-arrow">
+                        <i class="bi bi-arrow-right"></i>
+                    </div>
+
+                    <!-- Step 3: View Dashboard -->
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <h2 class="step-title">View Dashboard</h2>
+                        <p class="step-description">Monitor your streaming sensor data in real-time on the dashboard</p>
+                        <div class="step-icon">
+                            <i class="bi bi-speedometer2"></i>
+                        </div>
+                        <button class="btn btn-primary btn-lg" onclick="navigateTo('dashboard')">
+                            <i class="bi bi-arrow-right-circle me-2"></i>Go to Dashboard
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Page: Map + Counter -->
+    <div id="dashboard-page" class="page dashboard-wrapper">
+        <!-- Outer Container Frame -->
+        <div class="dashboard-container">
+            <!-- Header Bar (default: lakebase = green) -->
+            <div id="dashboard-header" class="dashboard-header lakebase">
+                <!-- Left side: Back + Map selector -->
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn btn-outline-secondary btn-sm" onclick="navigateTo('landing')">
+                        <i class="bi bi-arrow-left me-1"></i>Back
+                    </button>
+                    <select class="form-select form-select-sm" id="map-layer-select" onchange="changeMapLayer()" style="width: auto; background: rgba(255,255,255,0.95); border: 1px solid rgba(255,255,255,0.3);">
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                        <option value="satellite">Satellite</option>
+                        <option value="terrain">Terrain</option>
+                    </select>
+                </div>
+
+                <!-- Data Source Label (center) -->
+                <div class="header-toggle d-flex align-items-center gap-2">
+                    <span id="datasource-label" class="header-label">
+                        <i class="bi bi-lightning me-1"></i>Lakebase
+                    </span>
+                </div>
+
+                <!-- Right side: View switch + Settings -->
+                <div class="d-flex align-items-center gap-2">
+                    <a id="view-switch-btn" href="/zerobus" class="btn btn-primary btn-lg px-4 py-2 fw-bold shadow view-switch-btn">
+                        <i class="bi bi-table me-2"></i>Show data served by Zerobus
+                    </a>
+                    <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#settingsOffcanvas">
+                        <i class="bi bi-gear"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Cards Row -->
+            <div class="stats-row">
+                <div class="stat-box stat-box-large">
+                    <div class="stat-label">TOTAL SENSOR EVENTS</div>
+                    <div id="event-counter" class="stat-value primary">0</div>
+                </div>
+                <div class="stat-box stat-box-large">
+                    <div class="stat-label">UNIQUE CLIENTS</div>
+                    <div id="unique-clients" class="stat-value">0</div>
+                </div>
+                <div class="stat-box stat-box-large">
+                    <div class="stat-label">DATA INGESTED</div>
+                    <div id="data-size" class="stat-value">0 MB</div>
+                </div>
+                <div class="stat-box stat-box-timestamps">
+                    <div class="timestamp-row">
+                        <span class="stat-label">DISPLAY UPDATED</span>
+                        <span id="display-updated" class="stat-value-timestamp">--:--:--</span>
+                    </div>
+                    <div class="timestamp-row">
+                        <span class="stat-label">LAST DATA</span>
+                        <span id="last-data" class="stat-value-timestamp">--:--:--</span>
+                    </div>
+                    <div class="timestamp-row">
+                        <span class="stat-label">ACCESS TIME</span>
+                        <span id="access-time" class="stat-value-timestamp">-- ms</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Area: Map + Client List -->
+            <div class="main-content-area">
+                <!-- Map Container -->
+                <div class="map-container">
+                    <div id="map" class="map-view"></div>
+
+                    <!-- Map Controls Panel (top-left) -->
+                    <div class="map-controls">
+                        <!-- Client Selector (hidden - using client list for selection) -->
+                        <div id="client-selector-container" style="display: none;">
+                            <label class="form-label map-layer-label">Select Client</label>
+                            <select class="form-select form-select-sm" id="client-trace-select" onchange="loadClientTrace()">
+                                <option value="">Loading clients...</option>
+                            </select>
+                            <div class="small text-muted mt-1">
+                                <i class="bi bi-info-circle me-1"></i>Most recent first
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Client List Panel (right side) -->
+                <div class="clients-panel">
+                    <div class="clients-header">
+                        <span><i class="bi bi-people-fill me-2"></i>Connected Clients</span>
+                        <button id="show-all-traces-btn" class="btn btn-sm btn-warning" onclick="clearClientSelection()" style="display: none;">
+                            Show all traces
+                        </button>
+                    </div>
+                    <!-- Fixed instruction banner for trace view -->
+                    <div id="client-select-prompt" class="client-select-prompt" style="display: none;">
+                        <i class="bi bi-hand-index-thumb me-2"></i>
+                        <span>Select a client below to view trace</span>
+                    </div>
+                    <div id="client-list" class="clients-list">
+                        <div class="client-item loading">
+                            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                            Loading clients...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Offcanvas -->
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="settingsOffcanvas" aria-labelledby="settingsOffcanvasLabel">
+            <div class="offcanvas-header border-bottom">
+                <h5 class="offcanvas-title" id="settingsOffcanvasLabel">
+                    <i class="bi bi-gear me-2"></i>Settings
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <div class="mb-4">
+                    <label for="refresh-interval" class="form-label">Refresh Interval (seconds)</label>
+                    <input type="number" class="form-control" id="refresh-interval" min="1" max="60" value="5">
+                </div>
+                <div class="mb-4">
+                    <label for="activity-threshold" class="form-label">Activity Threshold (minutes)</label>
+                    <input type="number" class="form-control" id="activity-threshold" min="1" max="60" value="5">
+                    <div class="form-text">Users inactive for longer are shown in grey</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OpenLayers JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/ol@v9.0.0/dist/ol.js"></script>
+    <!-- Bootstrap 5 JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Dashboard JavaScript -->
+    <script src="js/app.js?v=__VERSION__"></script>
+</body>
+</html>

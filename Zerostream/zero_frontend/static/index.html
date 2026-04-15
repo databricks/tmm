@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>ZeroStream</title>
+
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+
+    <!-- Leaflet for maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- App styles -->
+    <link rel="stylesheet" href="/css/style.css?v=__VERSION__">
+</head>
+<body>
+    <div id="app">
+        <!-- Header with controls -->
+        <header class="app-header">
+            <div class="header-left">
+                <h1>ZeroStream</h1>
+                <span class="client-id">{{ clientId }}-v__VERSION__</span>
+            </div>
+            <div class="header-center">
+                <!-- Start/Stop button only shown after permissions granted -->
+                <button
+                    v-if="permissionsGranted"
+                    @click="toggleSensors"
+                    :class="['btn-header', sensorsActive ? 'btn-stop' : 'btn-start']">
+                    {{ sensorsActive ? 'Stop' : 'Start' }}
+                </button>
+                <!-- Grayed out placeholder when permissions not yet granted -->
+                <button
+                    v-else
+                    class="btn-header btn-disabled"
+                    disabled
+                    title="Grant sensor permissions first">
+                    Start
+                </button>
+                <span :class="['data-dot', dataSent ? 'flash' : '']"></span>
+                <!-- Page toggle button - single button that switches between views -->
+                <button
+                    v-if="permissionsGranted"
+                    class="page-toggle-btn"
+                    @click="nextPage"
+                    :title="currentPage === 0 ? 'Switch to Stats' : 'Switch to Sensors'">
+                    <!-- Show Stats icon when on Sensors page (switch to stats) -->
+                    <svg v-if="currentPage === 0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                    <!-- Show Sensors icon when on Stats page (switch to sensors) -->
+                    <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="currentColor"></polygon>
+                    </svg>
+                </button>
+            </div>
+            <div class="header-right">
+                <!-- Settings (Cogwheel) -->
+                <button class="config-btn" @click="showConfig = true" title="Settings">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Config Panel -->
+        <config-panel
+            :show="showConfig"
+            :frequency="frequency"
+            :display-mode="displayMode"
+            :theme="theme"
+            @close="showConfig = false"
+            @update:frequency="updateFrequency"
+            @update:display-mode="updateDisplayMode"
+            @update:theme="updateTheme"
+            @regenerate-client-id="onRegenerateClientId">
+        </config-panel>
+
+        <!-- Permission Request -->
+        <div v-if="!permissionsGranted" class="main-content">
+            <permission-request
+                @permissions-granted="onPermissionsGranted">
+            </permission-request>
+        </div>
+
+        <!-- Main Dashboard -->
+        <main v-else class="main-content">
+            <!-- Page 0: Sensors -->
+            <template v-if="currentPage === 0">
+                <!-- Sensor Display -->
+                <div class="sensor-area">
+                    <combined-display
+                        v-if="displayMode === 'combined'"
+                        :sensor-data="sensorData"
+                        :active="sensorsActive">
+                    </combined-display>
+                    <sensor-display
+                        v-else-if="displayMode === 'numerical'"
+                        :sensor-data="sensorData"
+                        :active="sensorsActive">
+                    </sensor-display>
+                    <graphical-display
+                        v-else
+                        :sensor-data="sensorData"
+                        :active="sensorsActive">
+                    </graphical-display>
+                </div>
+
+                <!-- Map Area -->
+                <div class="map-area">
+                    <mini-map
+                        :latitude="sensorData.location.latitude"
+                        :longitude="sensorData.location.longitude"
+                        :accuracy="sensorData.location.accuracy"
+                        :altitude="sensorData.location.altitude">
+                    </mini-map>
+                </div>
+            </template>
+
+            <!-- Page 1: Stats -->
+            <template v-else-if="currentPage === 1">
+                <div class="sensor-area">
+                    <stats-display
+                        :event-count="eventCount"
+                        :active="sensorsActive">
+                    </stats-display>
+                </div>
+            </template>
+        </main>
+    </div>
+
+    <!-- Services -->
+    <script src="/js/services/uidGenerator.js?v=__VERSION__"></script>
+    <script src="/js/services/zerobus.js?v=__VERSION__"></script>
+    <script src="/js/services/sensorService.js?v=__VERSION__"></script>
+
+    <!-- Components -->
+    <script src="/js/components/PermissionRequest.js?v=__VERSION__"></script>
+    <script src="/js/components/SensorDisplay.js?v=__VERSION__"></script>
+    <script src="/js/components/GraphicalDisplay.js?v=__VERSION__"></script>
+    <script src="/js/components/CombinedDisplay.js?v=__VERSION__"></script>
+    <script src="/js/components/MiniMap.js?v=__VERSION__"></script>
+    <script src="/js/components/ConfigPanel.js?v=__VERSION__"></script>
+    <script src="/js/components/StatsDisplay.js?v=__VERSION__"></script>
+
+    <!-- Main App -->
+    <script src="/js/app.js?v=__VERSION__"></script>
+</body>
+</html>
