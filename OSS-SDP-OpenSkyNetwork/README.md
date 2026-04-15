@@ -65,6 +65,14 @@ Verify that the installation was successful by checking the PySpark version insi
 ```bash
 python -c "import pyspark; print(f'Spark Version: {pyspark.__version__}')"
 ```
+## 5. Install the OpenSky Datasource
+
+The SDP example uses the OpenSky Network custom PySpark datasource 
+
+```bash
+# Install Spark 4.1 
+uv pip install pyspark-data-sources
+```
 
 </details>
 
