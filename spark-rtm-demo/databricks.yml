@@ -7,12 +7,13 @@ targets:
     mode: development
     workspace:
       host: https://e2-demo-field-eng.cloud.databricks.com
+      profile: e2-demo-west
 
 cluster_configs:
   rtm_demo_cluster: &rtm_demo_cluster
-    spark_version: 17.3.x-scala2.13
-    node_type_id: c6id.4xlarge
-    driver_node_type_id: c6id.xlarge
+    spark_version: 18.1.x-scala2.13
+    node_type_id: m6id.4xlarge
+    driver_node_type_id: m6id.xlarge
     num_workers: 1
     spark_conf:
       spark.databricks.streaming.realTimeMode.enabled: "true"
