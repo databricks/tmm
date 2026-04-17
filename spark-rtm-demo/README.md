@@ -46,7 +46,7 @@ databricks bundle deploy
 databricks bundle run dais-2025-rtm-demo
 ```
 
-Or run the deployed job directly from the Databricks Jobs UI.
+Or run the deployed job directly from the Databricks Jobs UI. Make sure to run the job, because it will spin up the required cluster with the correct settings. 
 
 ## Configuration
 
