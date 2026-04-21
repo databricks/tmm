@@ -1,6 +1,8 @@
 # DAIS 2025 RTM Demo
 
-A demonstration of **Real-Time Mode (RTM)** in Databricks Structured Streaming, comparing latencies between MicroBatch Mode and Real-Time Mode while applying stateful operations using `transformWithState`.
+A demonstration of **Real-Time Mode (RTM)** in Databricks Structured Streaming, comparing latencies between MicroBatch Mode and Real-Time Mode while applying stateful operations using `transformWithState`. 
+
+Note that this demo is self-contained. While RTM in production works with a messaging bus like Apache Kafka or Kinesis, this demo generates data internally and you can use it without installing any other dedendencies. It will still show the latency differences you can achieve with RTM streaming. Give it a try!
 
 ## What is Real-Time Mode?
 
