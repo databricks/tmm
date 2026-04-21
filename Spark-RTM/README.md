@@ -1,4 +1,4 @@
-# DAIS 2025 RTM Demo
+# In memory RTM Demo
 
 A demonstration of **Real-Time Mode (RTM)** in Databricks Structured Streaming, comparing latencies between MicroBatch Mode and Real-Time Mode while applying stateful operations using `transformWithState`. 
 
