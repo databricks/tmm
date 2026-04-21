@@ -1,5 +1,5 @@
 bundle:
-  name: dais-2025-rtm-demo
+  name: rtm-demo
 
 variables:
   catalog_volume:
@@ -23,16 +23,16 @@ resources:
       volume_type: MANAGED
   jobs:
     dais-2025-rtm-demo:
-      name: dais-2025-rtm-demo
+      name: rtm-demo
       parameters:
         - name: checkpointLocation
           default: "/Volumes/${var.catalog_volume}/default/spark-rtm-demo"
         - name: rowsPerSecond
           default: "200"
       tasks:
-        - task_key: dais-2025-rtm-demo
+        - task_key: rtm-demo
           notebook_task:
-            notebook_path: ./DAIS 2025 RTM Demo.ipynb
+            notebook_path: ./RTM Demo.ipynb
             base_parameters:
               checkpointLocation: "{{job.parameters.checkpointLocation}}"
               rowsPerSecond: "{{job.parameters.rowsPerSecond}}"
