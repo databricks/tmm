@@ -9,8 +9,6 @@ In Chrome or Edge, go to https://dbm.vocareum.com/, then click on `Sign up` if y
 
 > If you get an error which says `Security verification failed`, use Chrome or Edge, and do NOT use incognito.
 
-![alt text](images/0-agent-bricks-lab.png)
-
 Click on `Agent Bricks Lab[April23]` to start the lab.
 
 Enter the access code given by the instructor.
