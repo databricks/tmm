@@ -22,7 +22,7 @@ resources:
       name: spark-rtm-demo
       volume_type: MANAGED
   jobs:
-    dais-2025-rtm-demo:
+    rtm-demo:
       name: rtm-demo
       parameters:
         - name: checkpointLocation

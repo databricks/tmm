@@ -1,94 +1,68 @@
-# Self contained RTM Demo
+# Real-Time Mode Latency Demo (no message bus required)
 
-A demonstration of **Real-Time Mode (RTM)** in Databricks Structured Streaming, comparing latencies between MicroBatch Mode and Real-Time Mode while applying stateful operations using `transformWithState`. 
+A Databricks Asset Bundle that compares **Real-Time Mode (RTM)** and **MicroBatch Mode** on the same Spark Structured Streaming pipeline, using `transformWithState` for stateful per-city aggregations over synthetic sensor data. The whole demo runs on a single Databricks cluster — no Kafka, Kinesis, or external data source required.
 
-Note that this demo is self-contained. While RTM in production works with a messaging bus like Apache Kafka or Kinesis, this demo generates data internally and you can use it without installing any other dedendencies. It will still show the latency differences you can achieve with RTM streaming. Give it a try!
+> [!NOTE]
+> Production RTM pipelines typically read from a messaging bus (Kafka, Kinesis). This demo uses Spark's `rate` source so you can observe RTM's latency characteristics depending on the trigger settings without provisioning infrastructure.
 
-## What is Real-Time Mode?
+## What you'll see
 
-**Real-Time Mode (RTM)** is a streaming execution mode in Databricks that enables sub-second end-to-end latency by continuously processing records as they arrive, rather than waiting for micro-batches to accumulate.
+The notebook runs the same stateful pipeline twice — once in MicroBatch Mode, once in Real-Time Mode — then prints a side-by-side **P50, P95, P99 end-to-end latency** comparison, averaged across all batches except the first two (which are skewed by warm-up). On a cluster configured as in `databricks.yml`, RTM typically lands roughly an order of magnitude below MicroBatch for this workload.
 
-## What is transformWithState?
+## Prerequisites
 
-**transformWithState** is a stateful streaming operator that allows you to maintain and update custom state across streaming records, enabling complex event processing like aggregations, sessionization, and pattern detection.
+- A Databricks workspace (AWS) with Unity Catalog enabled
+- Cluster runtime: **DBR 18.1** (pinned by `databricks.yml`; the bundle provisions the cluster for you)
+- Databricks CLI authenticated to your workspace (`databricks auth login`)
+- Write access to the target catalog — defaults to `main`, override via bundle variable if needed
 
-## What This Demo Does
-
-1. Uses Spark's rate source to generate synthetic environmental sensor data (temperature, humidity, CO2, PM2.5) for 64 cities at 200 rows/second
-2. Applies `transformWithState` to calculate running averages, detect temperature trends, and generate threshold-based alerts
-3. Writes output to a memory sink using both MicroBatch Mode (20 batches) and Real-Time Mode (5 batches with 60-second checkpoint intervals), resulting in comparable total runtime for fair latency comparison
-4. Compares P99 latency metrics to demonstrate RTM's sub-second latency advantage
-
-## Resources
-
-- [DAIS 2025 Talk on Real-Time Mode](https://youtu.be/zGJvbV80FdU?si=fSjHpF7mfnf1UZh9)
-- [Real-Time Mode Documentation](https://docs.databricks.com/aws/en/structured-streaming/real-time)
-- [transformWithState Documentation](https://docs.databricks.com/aws/en/stateful-applications/)
+The cluster config in this bundle sets `spark.databricks.streaming.realTimeMode.enabled=true`. 
 
 ## Quick Start
 
-### Prerequisites
+### Option 1 — Deploy from the workspace UI
 
-- Access to workspace `e2-demo-field-eng` (default configuration)
-- For CLI deployment: Databricks Bundle CLI installed
+This project is a **Databricks Asset Bundle (DAB)**. Clone or sync the repository to a Databricks Git folder and click the **Deploy** button (rocket icon) in the bundle view. The job, cluster, and Unity Catalog volume are created automatically — no CLI required.
 
-### Option 1: Deploy from Workspace UI
-
-This project is a **Declarative Automation Bundle (DAB)** and can be deployed directly from the workspace. Clone or sync the repository to a Databricks Git folder, then click the **Deploy** button (rocket icon) in the workspace UI to deploy the bundle without needing the CLI.
-
-### Option 2: Deploy via CLI
+### Option 2 — Deploy via CLI
 
 ```bash
 databricks bundle deploy
+databricks bundle run rtm-demo
 ```
 
-### Run
-
-```bash
-databricks bundle run dais-2025-rtm-demo
-```
-
-Or run the deployed job directly from the Databricks Jobs UI. Make sure to run the job, because it will spin up the required cluster with the correct settings. 
+You can also trigger the deployed job from the Databricks Jobs UI. Running the job (rather than attaching to an existing cluster) is what provisions a cluster with the correct RTM configuration.
 
 ## Configuration
 
-### Catalog and Schema
-
-The demo uses Unity Catalog for checkpoint storage with the following defaults:
-
-- **Catalog:** `main`
-- **Schema:** `default`
-
-```bash
-databricks bundle deploy [-var="catalog_volume=your_catalog"]
-```
-
-**Note:** If you do not have write access to `main.default`, use the command above to specify a catalog you can write to.
-
-### Checkpoint Location
-
-Specify a custom checkpoint location:
-
-```bash
-databricks bundle run dais-2025-rtm-demo --param checkpointLocation=/path/to/checkpoint
-```
-
-### Rows Per Second
-
-The demo defaults to **200 rows/second**. You can adjust this:
-
-```bash
-databricks bundle run dais-2025-rtm-demo --param rowsPerSecond=500
-```
+- **Target catalog** — defaults to `main`. Override at deploy time:
+  ```bash
+  databricks bundle deploy --var="catalog_volume=<your_catalog>"
+  ```
+- **Checkpoint location** — defaults to `/Volumes/<catalog>/default/spark-rtm-demo`. Override at run time:
+  ```bash
+  databricks bundle run rtm-demo --param checkpointLocation=/path
+  ```
+- **Rows per second** — defaults to `200`. Override at run time:
+  ```bash
+  databricks bundle run rtm-demo --param rowsPerSecond=500
+  ```
 
 **Performance Note:** This demo is designed for small data volumes to showcase latency differences. Increasing `rowsPerSecond` beyond the default may negatively impact end-to-end latency numbers as the system becomes resource-constrained.
 
-## Project Structure
+## Repo layout
 
-| File | Description |
-|------|-------------|
-| `DAIS 2025 RTM Demo.ipynb` | Main demo notebook |
-| `resources/SensorDataGenerator.ipynb` | Generates synthetic sensor data using Spark rate source |
-| `resources/EnvironmentalMonitorListProcessor.ipynb` | transformWithState processor for alerts and aggregations |
-| `resources/HelperFunctions.ipynb` | Utility functions for latency calculation and metrics |
-| `resources/CityLocations.ipynb` | City and location data (64 cities, 3 locations each) |
+| File | Purpose |
+|------|---------|
+| `RTM Demo.ipynb` | Main notebook: runs MBM then RTM, aggregates P99 |
+| `databricks.yml` | Bundle definition: job, cluster, UC volume, parameters |
+| `resources/SensorDataGenerator.ipynb` | Rate-source stream with the 64-city sensor schema |
+| `resources/EnvironmentalMonitorListProcessor.ipynb` | `StatefulProcessor` using `ListState` for per-city running state |
+| `resources/HelperFunctions.ipynb` | Latency extraction from `StreamingQueryProgress` and metrics helpers |
+| `resources/CityLocations.ipynb` | 64 cities × 3 locations lookup data |
+
+## References
+
+- [DAIS 2025 talk on Real-Time Mode](https://youtu.be/zGJvbV80FdU?si=fSjHpF7mfnf1UZh9)
+- [Databricks Real-Time Mode documentation](https://docs.databricks.com/aws/en/structured-streaming/real-time)
+- [`transformWithState` documentation](https://docs.databricks.com/aws/en/stateful-applications/)
