@@ -53,6 +53,8 @@ You can also trigger the deployed job from the Databricks Jobs UI. Running the j
 
 **Performance Note:** This demo is designed for small data volumes to showcase latency differences. Increasing `rowsPerSecond` beyond the default may negatively impact end-to-end latency numbers as the system becomes resource-constrained.
 
+**Note:** The number of partitions was updated from 8 to 2; 8 was used in a previous version.
+
 ## Repo layout
 
 | File | Purpose |
