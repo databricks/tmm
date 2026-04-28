@@ -2,8 +2,9 @@
 
 A Databricks Asset Bundle that compares **Real-Time Mode (RTM)** and **MicroBatch Mode** on the same Spark Structured Streaming pipeline, using `transformWithState` for stateful per-city aggregations over synthetic sensor data. The whole demo runs on a single Databricks cluster — no Kafka, Kinesis, or external data source required.
 
-> [!NOTE]
-> Production RTM pipelines typically read from a messaging bus (Kafka, Kinesis). This demo uses Spark's `rate` source so you can observe RTM's latency characteristics depending on the trigger settings without provisioning infrastructure.
+## Why no message bus?
+
+Data is generated internally by Spark's built-in `rate` source (200 rows/s across 64 cities, defined in `resources/SensorDataGenerator.ipynb`) and written to an in-memory sink, so no Kafka/Kinesis broker or durable external storage is required. This is still a valid RTM demo because the latency gap between RTM and MicroBatch is produced by the streaming engine itself (`Trigger.RealTime` + `transformWithState`), not by the source, and each rate-source record carries a timestamp — which is exactly what `e2eLatencyMs` measures against.
 
 ## What you'll see
 
