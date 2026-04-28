@@ -44,8 +44,8 @@ resources:
         - job_cluster_key: rtm-demo-cluster
           new_cluster:
             spark_version: 18.1.x-scala2.13
-            node_type_id: m6id.4xlarge
-            driver_node_type_id: m6id.xlarge
+            node_type_id: m6id.xlarge
+            driver_node_type_id: m6id.large
             num_workers: 1
             spark_conf:
               spark.databricks.streaming.realTimeMode.enabled: "true"
