@@ -11,7 +11,7 @@ targets:
     default: true
     mode: development
     #workspace:
-      #host: https://data-ai-lakehouse.cloud.databricks.com/
+      #host: https://xxx.cloud.databricks.com/
       #profile: e2-demo-west
 
 resources:
