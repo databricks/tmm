@@ -6,7 +6,7 @@ A Databricks Asset Bundle that compares **Real-Time Mode (RTM)** and **MicroBatc
 
 The whole demo runs on a single Databricks cluster — no Kafka, Kinesis, or external data source required.
 
-Data is generated internally by Spark's built-in `rate` source (200 rows/s across 64 cities, defined in `resources/SensorDataGenerator.ipynb`) and written to an in-memory sink, so no Kafka/Kinesis broker or durable external storage is required. This is still a valid RTM demo because the latency gap between RTM and MicroBatch is produced by the streaming engine itself (`Trigger.RealTime` + `transformWithState`), not by the source, and each rate-source record carries a timestamp — which is exactly what `e2eLatencyMs` measures against.
+Data is generated internally by Spark's built-in `rate` source (200 rows/s across 64 cities) and written to an in-memory sink, so no Kafka/Kinesis broker or durable external storage is required. This is still a valid RTM demo because the latency gap between RTM and MicroBatch is mostly produced by the streaming engine itself, not by the source, and each rate-source record carries a timestamp — which is exactly what `e2eLatencyMs` measures against.
 
 ## What you'll see
 
