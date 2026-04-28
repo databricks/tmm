@@ -6,7 +6,7 @@ A Databricks Asset Bundle that compares **Real-Time Mode (RTM)** and **MicroBatc
 
 The whole demo runs on a single Databricks cluster — no Kafka, Kinesis, or external data source required.
 
-Data is generated internally by Spark's built-in `rate` source (200 rows/s across 64 cities) and written to an in-memory sink, so no Kafka/Kinesis broker or durable external storage is required. This is still a valid RTM demo because the latency gap between RTM and MicroBatch is mostly produced by the streaming engine itself, not by the source, and each rate-source record carries a timestamp — which is exactly what `e2eLatencyMs` measures against.
+Data is generated internally by Spark's built-in `rate` source (200 rows/s across 64 cities) and written to an in-memory sink, so no Kafka/Kinesis broker or durable external storage is required. This is still a valid RTM demo because the latency gap between RTM and MicroBatch is mostly produced by the streaming engine itself, not by the source, and each rate-source record carries a timestamp — which is exactly what `e2eLatencyMs` measures against. 
 
 ## What you'll see
 
@@ -25,7 +25,7 @@ The cluster config in this bundle sets `spark.databricks.streaming.realTimeMode.
 
 ### Option 1 — Deploy from the workspace UI
 
-This project is a **Databricks Asset Bundle (DAB)**. Clone or sync the repository to a Databricks Git folder and click the **Deploy** button (rocket icon) in the bundle view. The job, cluster, and Unity Catalog volume are created automatically — no CLI required.
+This project is a **Databricks Asset Bundle (DAB)**. Clone or sync the repository to a Databricks Git folder and click the **Deploy** button (rocket icon) in the bundle view. The job, cluster, and Unity Catalog volume are created automatically — no CLI required. Then just run the job which spins up the cluster and examin the output in the notebook. See the [video demo here](https://github.com/databricks/tmm/tree/main/Spark-RTM-Kafka)
 
 ### Option 2 — Deploy via CLI
 
@@ -53,7 +53,7 @@ You can also trigger the deployed job from the Databricks Jobs UI. Running the j
 
 **Performance Note:** This demo is designed for small data volumes to showcase latency differences. Increasing `rowsPerSecond` beyond the default may negatively impact end-to-end latency numbers as the system becomes resource-constrained.
 
-**Note:** The number of partitions was updated from 8 to 2; 8 was used in a previous version.
+**Note:** The number of partitions for this demo was updated from 8 to 2 (we used 8 in a previous version)
 
 ## Repo layout
 
@@ -68,6 +68,8 @@ You can also trigger the deployed job from the Databricks Jobs UI. Running the j
 
 ## References
 
+- [Video walkthrough of this demo](https://www.youtube.com/watch?v=Xnb1jtY4W6k)
+- [Simlar RTM demo with Kafka setup, used at DAIS 2025](https://github.com/databricks/tmm/tree/main/Spark-RTM-Kafka)
 - [DAIS 2025 talk on Real-Time Mode](https://youtu.be/zGJvbV80FdU?si=fSjHpF7mfnf1UZh9)
 - [Databricks Real-Time Mode documentation](https://docs.databricks.com/aws/en/structured-streaming/real-time)
 - [`transformWithState` documentation](https://docs.databricks.com/aws/en/stateful-applications/)
