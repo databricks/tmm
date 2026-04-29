@@ -5,6 +5,9 @@ variables:
   catalog_volume:
     description: Target catalog for UC volume
     default: main
+  volume_name:
+    description: Short name of the UC volume used for checkpoints
+    default: spark-rtm-demo
 
 targets:
   dev:
@@ -19,14 +22,14 @@ resources:
     checkpoint-volume:
       catalog_name: ${var.catalog_volume}
       schema_name: default
-      name: spark-rtm-demo
+      name: ${var.volume_name}
       volume_type: MANAGED
   jobs:
     rtm-demo:
       name: rtm-demo
       parameters:
         - name: checkpointLocation
-          default: "/Volumes/${var.catalog_volume}/default/spark-rtm-demo"
+          default: "/Volumes/${var.catalog_volume}/default/${var.volume_name}"
         - name: rowsPerSecond
           default: "200"
       tasks:

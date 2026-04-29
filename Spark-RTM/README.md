@@ -25,7 +25,7 @@ The cluster config in this bundle sets `spark.databricks.streaming.realTimeMode.
 
 ### Option 1 — Deploy from the workspace UI
 
-This project is a **Databricks Asset Bundle (DAB)**. Clone or sync the repository to a Databricks Git folder and click the **Deploy** button (rocket icon) in the bundle view. The job, cluster, and Unity Catalog volume are created automatically — no CLI required. Then just run the job which spins up the cluster and examin the output in the notebook. See the [video demo here](https://github.com/databricks/tmm/tree/main/Spark-RTM-Kafka)
+This project is a **Databricks Asset Bundle (DAB)**. Clone or sync the repository to a Databricks Git folder and click the **Deploy** button (rocket icon) in the bundle view. The job, cluster, and Unity Catalog volume are created automatically — no CLI required. Then just run the job which spins up the cluster and examine the output in the notebook. See the [video demo here](https://github.com/databricks/tmm/tree/main/Spark-RTM-Kafka)
 
 ### Option 2 — Deploy via CLI
 
@@ -42,7 +42,11 @@ You can also trigger the deployed job from the Databricks Jobs UI. Running the j
   ```bash
   databricks bundle deploy --var="catalog_volume=<your_catalog>"
   ```
-- **Checkpoint location** — defaults to `/Volumes/<catalog>/default/spark-rtm-demo`. Override at run time:
+- **Volume name** — defaults to `spark-rtm-demo`. Override at deploy time (keeps the created volume and the checkpoint path in sync):
+  ```bash
+  databricks bundle deploy --var="volume_name=<your_volume>"
+  ```
+- **Checkpoint location** — defaults to `/Volumes/<catalog>/default/<volume_name>`. Override at run time (this run only; the provisioned volume is unused):
   ```bash
   databricks bundle run rtm-demo --param checkpointLocation=/path
   ```
