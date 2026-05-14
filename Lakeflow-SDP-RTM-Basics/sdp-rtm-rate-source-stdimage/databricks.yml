@@ -1,0 +1,30 @@
+bundle:
+  name: sdp-rtm-rate-source
+
+resources:
+  pipelines:
+    sdp_rtm_rate_source:
+      name: sdp-rtm-rate-source
+      catalog: demo_frank
+      schema: sdp_rtm_mem_console
+      continuous: true
+      serverless: true
+      channel: PREVIEW
+      pipeline_type: WORKSPACE
+      configuration:
+        spark.databricks.streaming.realTimeMode.enabled: "true"
+      libraries:
+        - file:
+            path: ./transformations/temperature_rtm.py
+      tags:
+        created_by: frank_munz
+
+targets:
+  dev:
+    mode: development
+    default: true
+    resources:
+      pipelines:
+        sdp_rtm_rate_source:
+          development: true
+
