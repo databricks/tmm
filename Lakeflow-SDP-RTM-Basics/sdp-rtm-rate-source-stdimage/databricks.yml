@@ -10,7 +10,6 @@ resources:
       continuous: true
       serverless: true
       channel: PREVIEW
-      pipeline_type: WORKSPACE
       configuration:
         spark.databricks.streaming.realTimeMode.enabled: "true"
       libraries:
