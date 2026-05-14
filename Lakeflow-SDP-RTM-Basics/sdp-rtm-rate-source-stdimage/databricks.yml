@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=bundle_config_schema.json
 bundle:
   name: sdp-rtm-rate-source
 
@@ -5,7 +6,7 @@ resources:
   pipelines:
     sdp_rtm_rate_source:
       name: sdp-rtm-rate-source
-      catalog: demo_frank
+      catalog: demo
       schema: sdp_rtm_mem_console
       continuous: true
       serverless: true
@@ -19,11 +20,9 @@ resources:
         created_by: frank_munz
 
 targets:
-  dev:
-    mode: development
+  prod:
+    mode: production
     default: true
-    resources:
-      pipelines:
-        sdp_rtm_rate_source:
-          development: true
+    workspace:
+      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
 
