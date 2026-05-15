@@ -171,11 +171,56 @@ if not ZEROBUS_REGION:
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## B1. Create `workshop.zerobus.measurements` (idempotent)
+# MAGIC ## B0. Storage preflight — fail fast if the catalog is on default storage
+# MAGIC
+# MAGIC Zerobus direct-write requires the target table to live in UC-managed cloud storage
+# MAGIC (S3 / ADLS / GCS) reachable by the Zerobus data plane. If the catalog has no
+# MAGIC explicit managed location and the schema doesn't override one, table writes fall back
+# MAGIC to workspace **default storage**, which Zerobus rejects with a 403 at insert time.
+# MAGIC Easier to fail here with a clear message than to fail later in attendee notebooks.
 
 # COMMAND ----------
 
+# Make sure the schema exists before we ask UC about its storage_location.
 spark.sql(f"CREATE SCHEMA IF NOT EXISTS {CATALOG}.zerobus COMMENT 'Zerobus ingest targets'")
+
+from databricks.sdk import WorkspaceClient
+_w_pre = WorkspaceClient()
+_catalog_info = _w_pre.catalogs.get(name=CATALOG)
+_schema_info  = _w_pre.schemas.get(full_name=f"{CATALOG}.zerobus")
+
+_catalog_loc = getattr(_catalog_info, "storage_root",     None)
+_schema_loc  = getattr(_schema_info,  "storage_location", None) or getattr(_schema_info, "storage_root", None)
+
+if not (_catalog_loc or _schema_loc):
+    raise RuntimeError(
+        f"\nZerobus storage preflight FAILED.\n"
+        f"\n"
+        f"Catalog '{CATALOG}' has no managed storage location, and schema "
+        f"'{CATALOG}.zerobus' inherits none. Tables created here will land in workspace "
+        f"default storage, which Zerobus direct-write rejects with HTTP 403 at insert.\n"
+        f"\n"
+        f"Fix one of:\n"
+        f"  1) Catalog-level (preferred):\n"
+        f"       ALTER CATALOG {CATALOG} SET MANAGED LOCATION '<s3://… | abfss://… | gs://…>';\n"
+        f"  2) Schema-level (narrower scope):\n"
+        f"       ALTER SCHEMA {CATALOG}.zerobus SET MANAGED LOCATION '<cloud-uri>';\n"
+        f"  3) Run setup against a different catalog that already has UC managed storage.\n"
+        f"\n"
+        f"The cloud URI must be backed by a UC STORAGE CREDENTIAL + EXTERNAL LOCATION.\n"
+        f"After fixing, drop any existing `{CATALOG}.zerobus.measurements` / "
+        f"`{CATALOG}.zerobus.config` tables and re-run this notebook so they are recreated "
+        f"in the new location."
+    )
+
+print(f"Storage OK — catalog_loc={_catalog_loc!r}  schema_loc={_schema_loc!r}")
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## B1. Create `workshop.zerobus.measurements` (idempotent)
+
+# COMMAND ----------
 spark.sql(f"""
     CREATE TABLE IF NOT EXISTS {CATALOG}.zerobus.measurements (
         id          STRING COMMENT 'UUID generated per submission',
