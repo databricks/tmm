@@ -110,11 +110,15 @@ The setup notebook (`setup_workshop.py`, run once per workshop) is split into tw
 
 **Part B — Lab 3 Zerobus provisioning** (skipped if `zerobus_region` widget is blank):
 0. **Storage preflight.** Create schema `workshop.zerobus`, then check via the SDK that
-   the catalog has `storage_root` set OR the schema has an explicit `storage_location`.
-   If neither is present (workspace default storage), raise `RuntimeError` with remediation
-   guidance (set `MANAGED LOCATION` on the catalog or schema, or use a different catalog).
-   Zerobus rejects writes to default-storage tables with HTTP 403 at insert time — failing
-   here at setup is much cheaper than failing in 1000 attendee notebooks later.
+   the catalog/schema has a managed storage location AND that the location is not workspace
+   default storage. The check pattern-matches the effective `storage_root` against known
+   default-storage bucket prefixes (`s3://dbstorage-`, `s3://databricks-`,
+   `abfss://unity-catalog@`, `abfss://dbstorage`, `gs://databricks-`); a customer-owned
+   UC managed location won't match any of them. If the location is missing OR matches a
+   default-storage prefix, raise `RuntimeError` with remediation guidance (set
+   `MANAGED LOCATION` on the catalog or schema, or use a different catalog). Zerobus
+   rejects writes to default-storage tables with HTTP 403 at insert time — failing here
+   at setup is much cheaper than failing in 1000 attendee notebooks later.
 1. Create the managed Delta table `workshop.zerobus.measurements` with exactly
    `id STRING, city STRING, temperature FLOAT, comment STRING`. Zerobus does not create
    tables.

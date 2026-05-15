@@ -191,14 +191,35 @@ _schema_info  = _w_pre.schemas.get(full_name=f"{CATALOG}.zerobus")
 
 _catalog_loc = getattr(_catalog_info, "storage_root",     None)
 _schema_loc  = getattr(_schema_info,  "storage_location", None) or getattr(_schema_info, "storage_root", None)
+_effective   = _schema_loc or _catalog_loc
 
-if not (_catalog_loc or _schema_loc):
+# Workspace default-storage URIs use Databricks-managed buckets named with these prefixes.
+# A UC managed location backed by a customer-owned STORAGE CREDENTIAL won't match any of them.
+_DEFAULT_STORAGE_MARKERS = (
+    "s3://dbstorage-",        # AWS Databricks default storage
+    "s3://databricks-",       # AWS alt prefix
+    "abfss://unity-catalog@", # Azure default (rough)
+    "abfss://dbstorage",      # Azure alt
+    "gs://databricks-",       # GCP default
+)
+_is_default_storage = bool(_effective) and any(
+    _effective.startswith(p) for p in _DEFAULT_STORAGE_MARKERS
+)
+
+if not _effective or _is_default_storage:
+    _why = (
+        f"Catalog '{CATALOG}' is on **workspace default storage** "
+        f"(storage_root={_effective!r}). "
+        if _is_default_storage else
+        f"Catalog '{CATALOG}' has no managed storage location, and schema "
+        f"'{CATALOG}.zerobus' inherits none. "
+    )
     raise RuntimeError(
         f"\nZerobus storage preflight FAILED.\n"
         f"\n"
-        f"Catalog '{CATALOG}' has no managed storage location, and schema "
-        f"'{CATALOG}.zerobus' inherits none. Tables created here will land in workspace "
-        f"default storage, which Zerobus direct-write rejects with HTTP 403 at insert.\n"
+        f"{_why}Zerobus direct-write requires the target table to live in customer-owned "
+        f"UC managed storage (S3 / ADLS / GCS) backed by a STORAGE CREDENTIAL + EXTERNAL "
+        f"LOCATION. Default-storage tables get rejected with HTTP 403 at insert.\n"
         f"\n"
         f"Fix one of:\n"
         f"  1) Catalog-level (preferred):\n"
@@ -213,7 +234,7 @@ if not (_catalog_loc or _schema_loc):
         f"in the new location."
     )
 
-print(f"Storage OK — catalog_loc={_catalog_loc!r}  schema_loc={_schema_loc!r}")
+print(f"Storage OK — effective_location={_effective!r}")
 
 # COMMAND ----------
 
