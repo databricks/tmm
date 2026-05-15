@@ -10,11 +10,11 @@ Lab 2) and a shared Zerobus target table (for Lab 3) are preseeded by a single s
   in **SQL** (1b) over `samples.bakehouse.sales_transactions`. The MV is created with three
   `CONSTRAINT ... EXPECT` clauses wired in from the start — one per violation behavior
   (log / drop row / fail update) — so attendees paste one block and run, no replacement step.
-  Source files in `lab1/`.
+  Source files in `lab1-SDP/`.
 - **Lab 2 — Wanderbricks, SQL, Learn how to use Genie Code (verified).** AutoCDC on
   `samples.wanderbricks.booking_updates`, Auto Loader on JSON fraud markers,
   streaming table on `samples.wanderbricks.payments`, and a three-way-join gold MV.
-  Reference files in `lab2/`.
+  Reference files in `lab2-GenieCode/`.
 - **Lab 3 — Zerobus direct ingest (live instructor demo; attendees may follow along).**
   Instructor runs an Exploration notebook that pushes one `{id, city, temperature, comment}`
   record into the shared Delta table `workshop.zerobus.measurements` via the
@@ -25,24 +25,26 @@ Lab 2) and a shared Zerobus target table (for Lab 3) are preseeded by a single s
   `client_secret` lives in the table in cleartext; this is intentional given the 1:1000
   shared-credential model (every attendee needs the secret to mint OAuth tokens, and the
   SP's UC grants are tightly scoped to `measurements`). The lab's teaching point is
-  the governance surface (scoped OAuth via `authorization_details` carrying only the
-  table-level privileges — `SELECT`, `MODIFY` on `workshop.zerobus.measurements` in
-  underscore form — even though the SP also needs UC `USE CATALOG` / `USE SCHEMA` granted
-  out-of-band for the write to resolve. Plus SP audit identity, table-level GRANT.)
-  Discussed live rather than silently typed. Reference file in `lab3/send_temperature.py`.
+  the governance surface (scoped OAuth via `authorization_details` carrying the **full
+  UC chain** — `USE CATALOG`, `USE SCHEMA`, `SELECT`, `MODIFY` — with **spaced**
+  privilege names matching `SHOW GRANTS`. SP audit identity, table-level GRANT, no
+  broader scope than required.) Discussed live rather than silently typed. REST variant
+  in `lab3-Zerobus-Ingest/send_temperature.py`; gRPC variant (uses the official
+  `databricks-zerobus-ingest-sdk` via a serverless notebook **Environment**) in
+  `lab3-Zerobus-Ingest/send_temperature_grpc.py`.
 - **Lab 4 — Real-Time Mode for SDP (optional / take-home).** A continuous, serverless,
   PREVIEW-channel SDP pipeline using `@dp.update_flow` with `pipelines.trigger: "RealTime"`,
   enabled at the pipeline level via `spark.databricks.streaming.realTimeMode.enabled = true`
   in the bundle's `configuration:` block. A synthetic `rate` source feeds a 10-second
   windowed aggregation; the console sink emits an `engine_latency_ms` column readable from
-  the driver logs. Deployed as a Declarative Automation Bundle from `lab4/`. Conform to
+  the driver logs. Deployed as a Declarative Automation Bundle from `lab4-SDP-RTM/`. Conform to
   the official RTM user guide for SDP — flow-level keys are `pipelines.trigger` and
   `pipelines.trigger.interval`, not the older `pipelines.execution.realTimeMode` /
   `pipelines.realtime.trigger.duration`.
 - **Lab 5 — Iceberg side-quest (optional / take-home).** A managed-Iceberg CTAS
   (`global_sales_gold`, top-5 locations) run **outside** the pipeline in the SQL editor,
   read back from a small PyIceberg Exploration notebook via the UC Iceberg REST Catalog.
-  Not part of the ~100-minute core arc; skip-friendly. Source files in `lab5/`.
+  Not part of the ~100-minute core arc; skip-friendly. Source files in `lab5-Iceberg/`.
 - **Lab 6 — CI/CD via Declarative Automation Bundles (external Gourmet Pipeline).** Clones
   `databricks/tmm/Lakeflow-Gourmet-Pipeline` into the workspace via Git folder + sparse
   checkout, per-student overrides of `catalog_name` / `prod_warehouse_id` (and optionally
@@ -127,10 +129,14 @@ The setup notebook (`setup_workshop.py`, run once per workshop) is split into tw
    always read a current value.
 3. Grant the SP: `USE CATALOG` on `workshop`, `USE SCHEMA` on `workshop.zerobus`,
    `MODIFY + SELECT` on the data table. Nothing broader — this bounds the blast radius.
-   The Zerobus OAuth scoped-token endpoint (`zerobusDirectWriteApi` resource) only accepts
-   the **table-level** privileges in `authorization_details` (in underscore form: `SELECT`,
-   `MODIFY`). The catalog/schema grants are still required for the write to succeed, but
-   adding them to `authorization_details` returns `invalid_authorization_details`.
+   The Zerobus OAuth scoped-token endpoint (`zerobusDirectWriteApi` resource) requires the
+   token's `authorization_details` to carry the **full UC chain** — `USE CATALOG` on the
+   catalog, `USE SCHEMA` on the schema, and `SELECT` + `MODIFY` on the table — using the
+   **spaced** privilege names exactly as `SHOW GRANTS` reports them. Underscore form
+   (`USE_CATALOG`, `USE_SCHEMA`) is rejected with `invalid_authorization_details`. A token
+   minted *without* the catalog/schema entries (table-only) is accepted by `/oidc/v1/token`
+   with HTTP 200 but rejected by `/zerobus/v1/tables/.../insert` with HTTP 403 at write
+   time — that's the failure mode to watch for.
 4. Create the config table `workshop.zerobus.config` (single row, columns: `client_id`,
    `client_secret`, `workspace_url`, `workspace_id`, `zerobus_endpoint`) and `GRANT SELECT`
    on it to `account users` (with fallback to workspace `users`). Cleartext storage of
@@ -179,9 +185,9 @@ The setup notebook (`setup_workshop.py`, run once per workshop) is split into tw
 - `CLAUDE.md` — this file.
 - `.gitignore` — standard Databricks/Python ignores.
 - `setup_workshop.py` — instructor-run setup notebook (Part A: Lab 2 shared volume + seed; Part B: Lab 3 Zerobus target table, SP, grants, config table).
-- `lab1/` — Lab 1 reference files: `sales_transactions.py` (streaming table) and `sales_stats.sql` (MV with three `EXPECT` constraints baked in).
-- `lab2/` — Lab 2 reference SQL files (`bookings_current.sql`, `booking_fraud_flags.sql`, `payments.sql`, `booking_fraud_summary.sql`).
-- `lab3/` — Lab 3 reference file: `send_temperature.py` (Databricks notebook source). Payload-construction and POST logic are in a single "DO NOT MODIFY" cell; attendees only change the three widgets (city, temperature, comment).
-- `lab4/` — Lab 4 (optional / take-home) Real-Time Mode bundle: `databricks.yml` (continuous, serverless, PREVIEW channel, RTM enabled at pipeline level) and `transformations/temperature_rtm.py` (`@dp.update_flow` with `pipelines.trigger: "RealTime"`, console sink with `engine_latency_ms` column).
-- `lab5/` — Lab 5 (optional / take-home) Iceberg side-quest reference files: `global_sales_gold.sql` (managed-Iceberg CTAS, runs outside the pipeline) and `read_global_sales_gold.py` (PyIceberg reader, Databricks notebook source, talks to the UC Iceberg REST Catalog).
+- `lab1-SDP/` — Lab 1 reference files: `sales_transactions.py` (streaming table) and `sales_stats.sql` (MV with three `EXPECT` constraints baked in).
+- `lab2-GenieCode/` — Lab 2 reference SQL files (`bookings_current.sql`, `booking_fraud_flags.sql`, `payments.sql`, `booking_fraud_summary.sql`).
+- `lab3-Zerobus-Ingest/` — Lab 3 reference file: `send_temperature.py` (Databricks notebook source). Payload-construction and POST logic are in a single "DO NOT MODIFY" cell; attendees only change the three widgets (city, temperature, comment).
+- `lab4-SDP-RTM/` — Lab 4 (optional / take-home) Real-Time Mode bundle: `databricks.yml` (continuous, serverless, PREVIEW channel, RTM enabled at pipeline level) and `transformations/temperature_rtm.py` (`@dp.update_flow` with `pipelines.trigger: "RealTime"`, console sink with `engine_latency_ms` column).
+- `lab5-Iceberg/` — Lab 5 (optional / take-home) Iceberg side-quest reference files: `global_sales_gold.sql` (managed-Iceberg CTAS, runs outside the pipeline) and `read_global_sales_gold.py` (PyIceberg reader, Databricks notebook source, talks to the UC Iceberg REST Catalog).
 - (no `lab6/` folder) — Lab 6 (CI/CD via Asset Bundles) ships from the external repo `databricks/tmm/Lakeflow-Gourmet-Pipeline`; nothing is forked into this repo.

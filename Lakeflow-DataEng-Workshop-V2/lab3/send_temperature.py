@@ -73,12 +73,18 @@ _WORKSPACE_ID  = _CONFIG["workspace_id"]
 
 def _fetch_oauth_token() -> str:
     """Exchange SP client credentials for a Zerobus-scoped OAuth access token."""
-    # The zerobusDirectWriteApi resource only accepts table-level privileges in
-    # authorization_details. USE CATALOG / USE SCHEMA must still be granted to the SP
-    # in UC (so the underlying write resolves), but they do not belong in this payload.
+    # Per the official Zerobus REST recipe, authorization_details must carry the full
+    # UC chain (CATALOG + SCHEMA + TABLE) and privilege names use the spaced form
+    # ("USE CATALOG", "USE SCHEMA") — the same form `SHOW GRANTS` reports. Underscore
+    # form is rejected as `invalid_authorization_details`. A token minted without the
+    # catalog/schema entries triggers a 403 from /insert at write time.
     authorization_details = json.dumps([
+        {"type": "unity_catalog_privileges", "privileges": ["USE CATALOG"],
+         "object_type": "CATALOG", "object_full_path": CATALOG},
+        {"type": "unity_catalog_privileges", "privileges": ["USE SCHEMA"],
+         "object_type": "SCHEMA",  "object_full_path": f"{CATALOG}.{SCHEMA}"},
         {"type": "unity_catalog_privileges", "privileges": ["SELECT", "MODIFY"],
-         "object_type": "TABLE", "object_full_path": f"{CATALOG}.{SCHEMA}.{TABLE}"},
+         "object_type": "TABLE",   "object_full_path": f"{CATALOG}.{SCHEMA}.{TABLE}"},
     ])
     resp = requests.post(
         f"{_WORKSPACE_URL}/oidc/v1/token",
@@ -91,7 +97,11 @@ def _fetch_oauth_token() -> str:
         },
         timeout=30,
     )
-    resp.raise_for_status()
+    if not resp.ok:
+        raise RuntimeError(
+            f"OAuth token request failed: {resp.status_code} {resp.reason}\n"
+            f"  body: {resp.text[:500]}"
+        )
     return resp.json()["access_token"]
 
 
@@ -113,7 +123,13 @@ def submit_temperature(city: str, temperature: float, comment: str = "") -> dict
         data=json.dumps([record]),   # Zerobus REST requires a JSON array, even for 1 row
         timeout=30,
     )
-    resp.raise_for_status()
+    if not resp.ok:
+        raise RuntimeError(
+            f"Zerobus insert failed: {resp.status_code} {resp.reason}\n"
+            f"  url:   {resp.url}\n"
+            f"  body:  {resp.text[:500]}\n"
+            f"  x-request-id: {resp.headers.get('x-request-id')}"
+        )
     return record
 
 # COMMAND ----------
