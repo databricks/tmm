@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI-Powered Data Engineering with Lakeflow — README</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5/github-markdown-light.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+      min-width: 200px;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 2em 3em;
+      background: #fff;
+    }
+    .markdown-body { box-sizing: border-box; }
+    .markdown-body pre {
+      background: #f6f8fa;
+      padding: 1em;
+      border-radius: 6px;
+      overflow: auto;
+    }
+    .markdown-body code {
+      background: rgba(175, 184, 193, 0.2);
+      padding: 0.2em 0.4em;
+      border-radius: 3px;
+      font-size: 88%;
+    }
+    .markdown-body pre code {
+      background: transparent;
+      padding: 0;
+      font-size: 100%;
+    }
+    .hint {
+      color: #57606a;
+      font-size: 0.9em;
+      padding: 0.5em 0 1em;
+      border-bottom: 1px solid #d0d7de;
+      margin-bottom: 1.5em;
+    }
+  </style>
+</head>
+<body>
+  <article class="markdown-body" id="content">
+    <p class="hint">Rendered from <code>README.md</code>. Reload the page after edits to see changes.</p>
+    <p>Loading…</p>
+  </article>
+  <script>
+    marked.setOptions({
+      gfm: true,
+      breaks: false,
+      highlight: (code, lang) => {
+        if (lang && hljs.getLanguage(lang)) {
+          return hljs.highlight(code, { language: lang }).value;
+        }
+        return hljs.highlightAuto(code).value;
+      },
+    });
+
+    fetch('README.md', { cache: 'no-store' })
+      .then(r => r.text())
+      .then(md => {
+        const art = document.getElementById('content');
+        art.innerHTML =
+          '<p class="hint">Rendered from <code>README.md</code>. Reload the page after edits to see changes.</p>' +
+          marked.parse(md);
+        document.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+      })
+      .catch(err => {
+        document.getElementById('content').innerHTML =
+          '<p>Failed to load <code>README.md</code>: ' + err + '</p>';
+      });
+  </script>
+</body>
+</html>

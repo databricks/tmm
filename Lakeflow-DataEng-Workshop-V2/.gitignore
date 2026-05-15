@@ -1,0 +1,34 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Databricks CLI / Asset Bundles
+.databricks/
+.bundle/
+
+# Jupyter / notebook scratch
+.ipynb_checkpoints/
+
+# Secrets / env
+.env
+.env.local
+*.pem
+*.key
+
+# Build / dist
+build/
+dist/
+
+# Logs
+*.log
