@@ -1,4 +1,4 @@
-# Lab 5 — Real-Time Mode for SDP (optional)
+# Lab 4 — Real-Time Mode for SDP (optional)
 # Deployed from the Workspace UI via the Deployments (rocket) icon.
 bundle:
   name: sdp-rtm-rate-source

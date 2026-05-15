@@ -1,4 +1,4 @@
--- Lab 6, Step 6a — Top-5 sales locations as a managed Iceberg table.
+-- Lab 5, Step 5a — Top-5 sales locations as a managed Iceberg table.
 -- Runs OUTSIDE the SDP pipeline (SQL editor or a %sql notebook cell).
 -- Managed Iceberg via CTAS avoids needing an external location for
 -- delta.universalFormat.compatibility.location, at the cost of being

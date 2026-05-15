@@ -1,7 +1,7 @@
 # Databricks notebook source
 # MAGIC %md
 # MAGIC # Read `global_sales_gold` with PyIceberg
-# MAGIC Exploration notebook for Lab 6, Step 6b. Runs against the UC Iceberg REST Catalog — no Spark required.
+# MAGIC Exploration notebook for Lab 5, Step 5b. Runs against the UC Iceberg REST Catalog — no Spark required.
 
 # COMMAND ----------
 

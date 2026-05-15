@@ -12,12 +12,11 @@
 # MAGIC 4. `USE_SCHEMA` grant on `workshop.shared` to group `account users`
 # MAGIC 5. `READ_VOLUME` grant on `workshop.shared.landing` to group `account users`
 # MAGIC
-# MAGIC **Part B — Lab 4 Zerobus provisioning**
-# MAGIC 1. Schema `workshop.zerobus` + managed Delta table `workshop.zerobus.course_temp` (`id STRING, city STRING, temp FLOAT`)
+# MAGIC **Part B — Lab 3 Zerobus provisioning**
+# MAGIC 1. Schema `workshop.zerobus` + managed Delta table `workshop.zerobus.measurements` (`id STRING, city STRING, temperature FLOAT, comment STRING`)
 # MAGIC 2. Service principal `workshop-zerobus-sp` with a fresh OAuth client secret
 # MAGIC 3. UC grants for that SP: `USE CATALOG` on `workshop`, `USE SCHEMA` on `workshop.zerobus`, `MODIFY + SELECT` on the table
-# MAGIC 4. Databricks secret scope `workshop` holding `zerobus_client_id`, `zerobus_client_secret`, `zerobus_endpoint`, `zerobus_workspace_id`, `zerobus_workspace_url`
-# MAGIC 5. `READ` ACL on the scope granted to group `account users` — attendees read via `dbutils.secrets.get(...)`, nobody copy-pastes credentials
+# MAGIC 4. Config table `workshop.zerobus.config` (single row: `client_id`, `client_secret`, `workspace_url`, `workspace_id`, `zerobus_endpoint`) with `SELECT` granted to `account users` — attendees read all five values from one place
 # MAGIC
 # MAGIC Idempotent: safe to re-run. Does not touch per-attendee schemas.
 
@@ -159,7 +158,7 @@ print(f"Expected ~{int(47726 * FRAUD_PCT / 100)} at {FRAUD_PCT}% of ~47,726 dist
 
 # MAGIC %md
 # MAGIC ---
-# MAGIC # Part B — Zerobus provisioning (Lab 4)
+# MAGIC # Part B — Zerobus provisioning (Lab 3)
 # MAGIC
 # MAGIC Creates the target table, a shared service principal, UC grants, and a secret scope.
 # MAGIC Skip by leaving the `zerobus_region` widget blank.
@@ -172,20 +171,21 @@ if not ZEROBUS_REGION:
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## B1. Create `workshop.zerobus.course_temp` (idempotent)
+# MAGIC ## B1. Create `workshop.zerobus.measurements` (idempotent)
 
 # COMMAND ----------
 
 spark.sql(f"CREATE SCHEMA IF NOT EXISTS {CATALOG}.zerobus COMMENT 'Zerobus ingest targets'")
 spark.sql(f"""
-    CREATE TABLE IF NOT EXISTS {CATALOG}.zerobus.course_temp (
-        id    STRING,
-        city  STRING,
-        temp  FLOAT
+    CREATE TABLE IF NOT EXISTS {CATALOG}.zerobus.measurements (
+        id          STRING COMMENT 'UUID generated per submission',
+        city        STRING COMMENT 'Reporting city',
+        temperature FLOAT  COMMENT 'Temperature in degrees Celsius',
+        comment     STRING COMMENT 'Free-form note from the attendee (may be empty)'
     )
-    COMMENT 'Workshop Lab 4 target — one row per attendee submission via Zerobus REST'
+    COMMENT 'Workshop Lab 3 target — one row per attendee submission via Zerobus REST'
 """)
-print(f"Table ready: {CATALOG}.zerobus.course_temp")
+print(f"Table ready: {CATALOG}.zerobus.measurements")
 
 # COMMAND ----------
 
@@ -195,7 +195,6 @@ print(f"Table ready: {CATALOG}.zerobus.course_temp")
 # COMMAND ----------
 
 from databricks.sdk import WorkspaceClient
-from databricks.sdk.service.workspace import AclPermission
 
 w = WorkspaceClient()
 SP_DISPLAY_NAME = "workshop-zerobus-sp"
@@ -246,13 +245,13 @@ print(f"Generated new OAuth client secret for SP {SP_APPLICATION_ID} (shown once
 
 spark.sql(f"GRANT USE CATALOG ON CATALOG {CATALOG} TO `{SP_APPLICATION_ID}`")
 spark.sql(f"GRANT USE SCHEMA  ON SCHEMA  {CATALOG}.zerobus TO `{SP_APPLICATION_ID}`")
-spark.sql(f"GRANT MODIFY, SELECT ON TABLE {CATALOG}.zerobus.course_temp TO `{SP_APPLICATION_ID}`")
-print(f"Grants applied to SP {SP_APPLICATION_ID}: USE CATALOG, USE SCHEMA, MODIFY+SELECT")
+spark.sql(f"GRANT MODIFY, SELECT ON TABLE {CATALOG}.zerobus.measurements TO `{SP_APPLICATION_ID}`")
+print(f"Grants applied to SP {SP_APPLICATION_ID}: USE CATALOG, USE SCHEMA, MODIFY+SELECT on measurements")
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## B5. Compute endpoint/workspace values and write the secret scope
+# MAGIC ## B5. Compute endpoint/workspace values and write the config table
 
 # COMMAND ----------
 
@@ -267,47 +266,48 @@ print(f"ZEROBUS_ENDPOINT = {ZEROBUS_ENDPOINT}")
 
 # COMMAND ----------
 
-SCOPE = "workshop"
-try:
-    w.secrets.create_scope(scope=SCOPE)
-    print(f"Created secret scope: {SCOPE}")
-except Exception as e:
-    if "RESOURCE_ALREADY_EXISTS" in str(e) or "already exists" in str(e).lower():
-        print(f"Secret scope already exists: {SCOPE}")
-    else:
-        raise
+# Single-row UC config table next to the data table. Attendees read all five values
+# from here (including the SP client_secret in cleartext — they need it to mint
+# OAuth tokens, and the SP's UC grants are tightly bounded to measurements).
+from pyspark.sql import Row
 
-for k, v in [
-    ("zerobus_client_id",     SP_APPLICATION_ID),
-    ("zerobus_client_secret", SP_CLIENT_SECRET),
-    ("zerobus_endpoint",      ZEROBUS_ENDPOINT),
-    ("zerobus_workspace_id",  str(WORKSPACE_ID)),
-    ("zerobus_workspace_url", WORKSPACE_URL),
-]:
-    w.secrets.put_secret(scope=SCOPE, key=k, string_value=v)
+config_row = Row(
+    client_id        = SP_APPLICATION_ID,
+    client_secret    = SP_CLIENT_SECRET,
+    workspace_url    = WORKSPACE_URL,
+    workspace_id     = str(WORKSPACE_ID),
+    zerobus_endpoint = ZEROBUS_ENDPOINT,
+)
+(spark.createDataFrame([config_row])
+      .write.mode("overwrite")
+      .saveAsTable(f"{CATALOG}.zerobus.config"))
 
-# Grant READ on the scope. The Secrets ACL API resolves principals against
-# workspace-level identities; account-level groups like `account users` are only
-# accepted when identity federation has assigned them to this workspace. Try the
-# preferred group first, then fall back to the built-in workspace group `users`.
-_acl_principal = None
+spark.sql(
+    f"COMMENT ON TABLE {CATALOG}.zerobus.config IS "
+    f"'Lab 3 Zerobus client config — read-only for attendees. "
+    f"Contains the OAuth client_secret in cleartext; SP grants are tightly scoped "
+    f"to {CATALOG}.zerobus.measurements.'"
+)
+
+# Grant SELECT to the broadest available group, mirroring the prior scope-ACL fallback.
+_grant_principal = None
 for _candidate in ("account users", "users"):
     try:
-        w.secrets.put_acl(scope=SCOPE, principal=_candidate, permission=AclPermission.READ)
-        _acl_principal = _candidate
+        spark.sql(f"GRANT SELECT ON TABLE {CATALOG}.zerobus.config TO `{_candidate}`")
+        _grant_principal = _candidate
         break
     except Exception as _e:
-        if "does not exist" in str(_e):
+        if "does not exist" in str(_e).lower() or "principal" in str(_e).lower():
             continue
         raise
 
-if _acl_principal:
-    print(f"Wrote 5 secrets to scope '{SCOPE}' and granted READ to `{_acl_principal}`.")
+if _grant_principal:
+    print(f"Wrote config row to {CATALOG}.zerobus.config and granted SELECT to `{_grant_principal}`.")
 else:
     print(
-        f"Wrote 5 secrets to scope '{SCOPE}', but could not grant READ — neither "
-        f"`account users` nor `users` exists as a workspace principal. "
-        f"Grant READ manually to the appropriate group."
+        f"Wrote config row to {CATALOG}.zerobus.config, but could not grant SELECT — "
+        f"neither `account users` nor `users` exists as a workspace principal. "
+        f"Grant SELECT manually."
     )
 
 # COMMAND ----------
@@ -322,11 +322,10 @@ else:
 print("=" * 70)
 print("ZEROBUS SHARED PROVISIONING — SUMMARY")
 print("=" * 70)
-print(f"Table              : {CATALOG}.zerobus.course_temp")
+print(f"Data table         : {CATALOG}.zerobus.measurements")
+print(f"Config table       : {CATALOG}.zerobus.config")
+print(f"Config columns     : client_id, client_secret, workspace_url, workspace_id, zerobus_endpoint")
 print(f"Service principal  : {SP_DISPLAY_NAME}  (application_id: {SP_APPLICATION_ID})")
-print(f"Secret scope       : {SCOPE}")
-print(f"Secret keys        : zerobus_client_id, zerobus_client_secret, zerobus_endpoint,")
-print(f"                     zerobus_workspace_id, zerobus_workspace_url")
-print(f"Scope ACL          : `{_acl_principal or '(not granted — see warning above)'}` → READ")
+print(f"Config table ACL   : `{_grant_principal or '(not granted — see warning above)'}` → SELECT")
 print(f"Zerobus endpoint   : {ZEROBUS_ENDPOINT}")
 print("=" * 70)
