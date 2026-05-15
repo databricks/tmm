@@ -1,6 +1,6 @@
 # AI-Powered Data Engineering with Lakeflow
 
-**Version 2.0**
+**Version 2.0 - May 2026**
 
 > **Audience**: entry- to mid-level data engineers, with no or some prior Databricks knowledge. The environment is already set up for you — you have an empty workspace in an account with a pre-assigned schema `workshop.USER_ID`.
 
@@ -41,14 +41,18 @@ Three placeholders show up throughout — resolve them once here, then paste blo
 
 ### One-time setup — Clone this workshop repo
 
-Clone this repo into your Workspace once at the start. You get this lab guide and all the labs locally.
+Clone this repo into your Workspace once at the start. You get this lab guide and all the labs locally. We use **sparse checkout** so you only pull the workshop subfolder, not the entire `databricks/tmm` repo.
 
 1. Workspace sidebar → **Workspace** → **Create** → **Git folder**.
-2. **Git repository URL**: this workshop's GitHub URL (your instructor will share it).
-3. **Git provider**: GitHub.
-4. Click **Create Git folder**.
+2. In the **Create Git folder** dialog:
+   - **Git repository URL**: `https://github.com/databricks/tmm`
+   - **Git provider**: GitHub
+   - **Git folder name**: `de_workshop`
+   - Enable **Sparse checkout mode**
+   - **Sparse checkout path**: `Lakeflow-DataEng-Workshop-V2`
+3. Click **Create Git folder**. The `Lakeflow-DataEng-Workshop-V2/` subfolder clones into `de_workshop/` in your workspace.
 
-The cloned `lab1/` … `lab6/` folders are read-only reference. For Labs 1 and 2 you create a new pipeline; the editor auto-creates a workspace folder named after the pipeline in your home directory, so your work stays separate from the cloned repo. Lab 5 is the exception — you deploy directly from the cloned `lab5/`.
+The cloned `lab1/` … `lab6/` folders inside `de_workshop/Lakeflow-DataEng-Workshop-V2/` are read-only reference. For Labs 1 and 2 you create a new pipeline; the editor auto-creates a workspace folder named after the pipeline in your home directory, so your work stays separate from the cloned repo. Lab 5 is the exception — you deploy directly from the cloned `lab5/`.
 
 ---
 

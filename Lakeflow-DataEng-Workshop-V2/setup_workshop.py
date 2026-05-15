@@ -286,8 +286,29 @@ for k, v in [
 ]:
     w.secrets.put_secret(scope=SCOPE, key=k, string_value=v)
 
-w.secrets.put_acl(scope=SCOPE, principal="account users", permission=AclPermission.READ)
-print(f"Wrote 5 secrets to scope '{SCOPE}' and granted READ to `account users`.")
+# Grant READ on the scope. The Secrets ACL API resolves principals against
+# workspace-level identities; account-level groups like `account users` are only
+# accepted when identity federation has assigned them to this workspace. Try the
+# preferred group first, then fall back to the built-in workspace group `users`.
+_acl_principal = None
+for _candidate in ("account users", "users"):
+    try:
+        w.secrets.put_acl(scope=SCOPE, principal=_candidate, permission=AclPermission.READ)
+        _acl_principal = _candidate
+        break
+    except Exception as _e:
+        if "does not exist" in str(_e):
+            continue
+        raise
+
+if _acl_principal:
+    print(f"Wrote 5 secrets to scope '{SCOPE}' and granted READ to `{_acl_principal}`.")
+else:
+    print(
+        f"Wrote 5 secrets to scope '{SCOPE}', but could not grant READ — neither "
+        f"`account users` nor `users` exists as a workspace principal. "
+        f"Grant READ manually to the appropriate group."
+    )
 
 # COMMAND ----------
 
@@ -306,6 +327,6 @@ print(f"Service principal  : {SP_DISPLAY_NAME}  (application_id: {SP_APPLICATION
 print(f"Secret scope       : {SCOPE}")
 print(f"Secret keys        : zerobus_client_id, zerobus_client_secret, zerobus_endpoint,")
 print(f"                     zerobus_workspace_id, zerobus_workspace_url")
-print(f"Scope ACL          : `account users` → READ")
+print(f"Scope ACL          : `{_acl_principal or '(not granted — see warning above)'}` → READ")
 print(f"Zerobus endpoint   : {ZEROBUS_ENDPOINT}")
 print("=" * 70)
