@@ -159,7 +159,7 @@ Check Tables / Expectations for the details.
 
 ### Lab 1 take-away
 
-In a few lines, you've built a streaming ingest of bakehouse transactions, a materialized view that summarises sales by product, and three different data-quality behaviours all firing in the same run. 
+In a few lines, you've built a streaming ingest of bakehouse transactions, a materialized view that summarizes sales by product, and three different data-quality behaviors all firing in the same run. 
 
 The same shape, written without SDP, would be a streaming job, a batch job, and a scheduler — three separate systems to wire together and keep in sync. 
 
@@ -327,7 +327,7 @@ You should see every attendee's row, including your own. In a real production de
 
 > **Optional.** Skip if you're short on time — nothing else in the workshop depends on it. The whole demo is a single file deployed via a Declarative Automation Bundle, ~5 minutes hands-on.
 
-Standard SDP runs as micro-batches — fine for seconds-level latency, not for milliseconds. **Real-Time Mode (RTM)** is a specialization of SDP's continuous mode that pushes end-to-end latency as low as ~5 ms by combining three optimisations:
+Standard SDP runs as micro-batches — fine for seconds-level latency, not for milliseconds. **Real-Time Mode (RTM)** is a specialization of SDP's continuous mode that pushes end-to-end latency as low as ~5 ms by combining three optimizations:
 
 - **Long-running batches** — a single batch (default 5 min) processes records as they arrive, instead of restarting per micro-batch.
 - **Simultaneous stage scheduling** — all query stages run concurrently, so the cluster must have task slots ≥ sum of tasks across stages.
@@ -450,7 +450,7 @@ The pipeline is **continuous and serverless**, so it keeps consuming compute unt
 
 A data product lives in more than one place — a pipeline, a job, a dashboard, a connector flow. A **Declarative Automation Bundle** (DAB — formerly *Databricks Asset Bundle*) collapses all of that into one folder: `databricks.yml` plus `resources/`, versioned like code. No shell recipes, no drift between envs, no screenshot-driven promotion.
 
-You'll sparse-clone `databricks/tmm/Lakeflow-Gourmet-Pipeline` into your workspace, retarget two variables, and deploy / run / tear down the whole data product — SQL medallion pipeline, `gourmet-workflow` job with `ai_query` enrichment, AI/BI dashboard — entirely from the **Workspace UI**. The same bundle is also the unit a CI runner ships from the **CLI**; the equivalent commands are summarised at the end of the lab.
+You'll sparse-clone `databricks/tmm/Lakeflow-Gourmet-Pipeline` into your workspace, retarget two variables, and deploy / run / tear down the whole data product — SQL medallion pipeline, `gourmet-workflow` job with `ai_query` enrichment, AI/BI dashboard — entirely from the **Workspace UI**. The same bundle is also the unit a CI runner ships from the **CLI**; the equivalent commands are summarized at the end of the lab.
 
 ### Prerequisites
 

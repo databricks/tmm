@@ -1,6 +1,6 @@
-# Lakeflow Data Engineering Workshop (V2)
+# Lakeflow Data Engineering Workshop
 
-Databricks's new Data Engineering course, rebuilt around the **Lakeflow Pipelines Editor**.
+Welcome to Databricks's new Data Engineering course!
 
 ## Technologies covered
 
