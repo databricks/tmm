@@ -1,25 +1,29 @@
 # Databricks notebook source
+
 # MAGIC %md
 # MAGIC # Workshop setup — shared landing volume, fraud-marker seed, Zerobus provisioning
-# MAGIC
-# MAGIC Run **once per workshop catalog**, before attendees start.
-# MAGIC
-# MAGIC **Part A — Lab 2 shared assets**
+# MAGIC 
+# MAGIC A catalog `workshop`is assumed to be created by the training environment (Vocareum) before attendees start. If you're using this workshop without Vocareum, create the catalog manually. 
+# MAGIC 
+# MAGIC This setup script sets up everything else that is needed by the workshop attendees. Run it as ADMIN. 
+# MAGIC It's idempotent: safe to re-run. Does not touch per-attendee schemas.
+# MAGIC 
+# MAGIC **Part A — Shared assets**
 # MAGIC 1. Schema `workshop.shared` (if not exists)
 # MAGIC 2. Managed volume `workshop.shared.landing` (if not exists)
 # MAGIC 3. Folder `booking_fraud_flags/` in that volume seeded with JSONL fraud markers
 # MAGIC    for **3%** of distinct `booking_id`s from `samples.wanderbricks.booking_updates`
 # MAGIC 4. `USE_SCHEMA` grant on `workshop.shared` to group `account users`
 # MAGIC 5. `READ_VOLUME` grant on `workshop.shared.landing` to group `account users`
-# MAGIC
-# MAGIC **Part B — Lab 3 Zerobus provisioning** (uses the official `databricks-zerobus-ingest-sdk` over gRPC)
+# MAGIC 
+# MAGIC **Part B — Zerobus provisioning** (uses the official `databricks-zerobus-ingest-sdk` over gRPC)
 # MAGIC 1. Schema `workshop.zerobus` + managed Delta table `workshop.zerobus.measurements` (`id STRING, city STRING, temperature FLOAT, comment STRING`)
 # MAGIC 2. Service principal `workshop-zerobus-sp` with a fresh OAuth client secret
 # MAGIC 3. UC grants for that SP: `USE CATALOG` on `workshop`, `USE SCHEMA` on `workshop.zerobus`, `MODIFY + SELECT` on the table
 # MAGIC 4. Config table `workshop.zerobus.config` (single row: `client_id`, `client_secret`, `workspace_url`, `workspace_id`, `zerobus_endpoint`) with `SELECT` granted to `account users` — attendees read all five values from one place
 # MAGIC 5. End-to-end smoke test that opens a gRPC stream as the SP, ingests one row, deletes it, and prints PASS — so any breakage shows up here, not in 1000 attendee notebooks
-# MAGIC
-# MAGIC Idempotent: safe to re-run. Does not touch per-attendee schemas.
+# MAGIC 
+# MAGIC 
 
 # COMMAND ----------
 
@@ -54,7 +58,7 @@ print(f"Volume folder ready: {VOLUME_PATH}")
 
 # MAGIC %md
 # MAGIC ## 3. Seed fraud markers (3% of bookings, written as JSONL)
-# MAGIC
+# MAGIC 
 # MAGIC Re-run overwrites the seeded files so attendees always see a fresh, consistent set.
 
 # COMMAND ----------
@@ -129,7 +133,7 @@ for f in dbutils.fs.ls(VOLUME_PATH):
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 4-5. Grants — read-only for attendees
+# MAGIC ## 4-5. Grants — VOLUME is read-only for attendees
 
 # COMMAND ----------
 
@@ -159,8 +163,8 @@ print(f"Expected ~{int(47726 * FRAUD_PCT / 100)} at {FRAUD_PCT}% of ~47,726 dist
 
 # MAGIC %md
 # MAGIC ---
-# MAGIC # Part B — Zerobus provisioning (Lab 3)
-# MAGIC
+# MAGIC # Part B — Zerobus provisioning  
+# MAGIC 
 # MAGIC Creates the target table, a shared service principal, UC grants, a UC config table,
 # MAGIC and runs an end-to-end gRPC SDK smoke test. Skip by leaving the `zerobus_region`
 # MAGIC widget blank.
@@ -174,7 +178,7 @@ if not ZEROBUS_REGION:
 
 # MAGIC %md
 # MAGIC ## Install the Zerobus Ingest SDK (interactive — runs once at setup)
-# MAGIC
+# MAGIC 
 # MAGIC `databricks-zerobus-ingest-sdk` is needed for the smoke test in B6 below. The setup
 # MAGIC notebook is run interactively by the workshop owner once, so an inline `%pip install`
 # MAGIC is fine. Attendee notebooks should use the **Environment side panel** instead, to
@@ -195,12 +199,16 @@ ZEROBUS_REGION  = dbutils.widgets.get("zerobus_region").strip()
 
 # MAGIC %md
 # MAGIC ## B0. Storage preflight — fail fast if the catalog is on default storage
-# MAGIC
+# MAGIC 
+# MAGIC 
+# MAGIC **The test below is WIP, don't try to run the Zerobus lab with default storage on a serverless only environment unless the requirements for Zerobus have changed.**
+# MAGIC 
 # MAGIC Zerobus direct-write requires the target table to live in UC-managed cloud storage
 # MAGIC (S3 / ADLS / GCS) reachable by the Zerobus data plane. If the catalog has no
 # MAGIC explicit managed location and the schema doesn't override one, table writes fall back
 # MAGIC to workspace **default storage**, which Zerobus rejects with a 403 at insert time.
 # MAGIC Easier to fail here with a clear message than to fail later in attendee notebooks.
+# MAGIC 
 
 # COMMAND ----------
 
@@ -237,17 +245,7 @@ if _is_default_storage:
         f"CREDENTIAL + EXTERNAL LOCATION. Default-storage tables get rejected with HTTP 403 "
         f"at insert.\n"
         f"\n"
-        f"Fix one of:\n"
-        f"  1) Catalog-level (preferred):\n"
-        f"       ALTER CATALOG {CATALOG} SET MANAGED LOCATION '<s3://… | abfss://… | gs://…>';\n"
-        f"  2) Schema-level (narrower scope):\n"
-        f"       ALTER SCHEMA {CATALOG}.zerobus SET MANAGED LOCATION '<cloud-uri>';\n"
-        f"  3) Run setup against a different catalog that already has UC managed storage.\n"
-        f"\n"
-        f"The cloud URI must be backed by a UC STORAGE CREDENTIAL + EXTERNAL LOCATION.\n"
-        f"After fixing, drop any existing `{CATALOG}.zerobus.measurements` / "
-        f"`{CATALOG}.zerobus.config` tables and re-run this notebook so they are recreated "
-        f"in the new location."
+      
     )
 
 print(f"Storage preflight OK — effective_location={_effective!r}  (None means inherited from metastore; the B6 smoke test will confirm Zerobus accepts writes)")
@@ -255,9 +253,10 @@ print(f"Storage preflight OK — effective_location={_effective!r}  (None means 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## B1. Create `workshop.zerobus.measurements` (idempotent)
+# MAGIC ## B1. Create `workshop.zerobus.measurements` 
 
 # COMMAND ----------
+
 spark.sql(f"""
     CREATE TABLE IF NOT EXISTS {CATALOG}.zerobus.measurements (
         id          STRING COMMENT 'UUID generated per submission',
@@ -296,7 +295,7 @@ SP_ID             = sp.id  # workspace-scoped SP id
 
 # MAGIC %md
 # MAGIC ## B3. Generate a fresh OAuth client secret for the SP
-# MAGIC
+# MAGIC 
 # MAGIC Each run rotates the secret. Old secrets keep working until they expire, but only the
 # MAGIC latest value is pushed to the secret scope — so attendee notebooks always read a valid one.
 
@@ -396,7 +395,7 @@ else:
 
 # MAGIC %md
 # MAGIC ## B6. gRPC end-to-end smoke test
-# MAGIC
+# MAGIC 
 # MAGIC Open a stream as the freshly-provisioned SP, ingest one dummy row, clean it up.
 # MAGIC Any breakage (wrong endpoint, missing grants, storage misconfig that the preflight
 # MAGIC didn't catch, SDK install drift) surfaces here at setup time — not in 1000 attendee

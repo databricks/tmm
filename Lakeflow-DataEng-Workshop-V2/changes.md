@@ -1,3 +1,32 @@
+# Workshop changes — 2026-05-16 (Iceberg lab removed)
+
+The Iceberg side-quest (previously Lab 6) was removed entirely from the workshop, and the
+CI/CD via Declarative Automation Bundles lab moved from Lab 6 → Lab 5.
+
+- `Labguide.md`: deleted the entire **Lab 5 — Iceberg side-quest** section (the CTAS, the
+  PyIceberg reader, the `EXTERNAL USE SCHEMA` note, the `labs/05-Iceberg/` reference
+  pointer). Renumbered the CI/CD lab heading to **Lab 5 — CI/CD via Declarative Automation
+  Bundles**, and renumbered all six step headings `Step 6a` … `Step 6f` → `Step 5a` … `Step 5f`.
+  Updated the overview list and the `prod_warehouse_id (Lab 6 only)` substitutions row.
+- `labs/`: deleted `labs/05-Iceberg/` (both `global_sales_gold.sql` and
+  `read_global_sales_gold.py`). Renamed `labs/06-DAB/` → `labs/05-DAB/`.
+- `README.md`: dropped the **Managed Iceberg on Unity Catalog** bullet from "Technologies
+  covered."
+- `CLAUDE.md`: dropped the Lab 5 Iceberg project-overview entry; renumbered Lab 6 (DAB) →
+  Lab 5; removed the Lab 5a/5b language-split entries (no Iceberg pipeline split to
+  preserve); removed the `CREATE OR REPLACE TABLE` exemption (no longer needed without the
+  Iceberg CTAS); renamed the **Lab 6 specifics** heading and body references to **Lab 5**;
+  rewrote the files-in-this-repo entry — there is no `labs/05-Iceberg/`, and the renamed
+  `labs/05-DAB/` is reserved as the local clone target only.
+- Project overview opening line: "three optional/take-home labs" → "two optional/take-home
+  labs."
+
+The historical `changes.md` entries below describe an earlier review session against the
+prior six-lab structure. They are kept for context; the bullets that mention Lab 5
+(Iceberg) / Lab 6 (Iceberg) refer to that prior layout, not the current one.
+
+---
+
 # Workshop dry-run fixes — 2026-05-15
 
 Applied during a single review session. Pre-existing folder rename (`lab1-bakehouse/` → `lab1/` etc., Iceberg moved from Lab 5 to Lab 6, RTM added as new Lab 5) was already staged in git; everything below is the content/correctness work that followed.

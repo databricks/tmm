@@ -26,11 +26,11 @@ COMMENT
     Agent Usage: Call this function to create personalized marketing content that resonates 
     with local culture and includes calorie-matched snacks for target demographics.
 
-    AI Model: Uses databricks-claude-3-7-sonnet for natural language generation.'
+    AI Model: Uses databricks-claude-sonnet-4-5 for natural language generation.'
 
 RETURN 
   ai_query(
-    'databricks-claude-3-7-sonnet',
+    'databricks-claude-sonnet-4-5',
     'Create a seasonal cookie recipe description for the district ' || district || 
     ' in the city ' || city || ' in country ' || country || 
     ' using the local ingredient ' || ingredient || 

@@ -2,7 +2,7 @@
 
 ## Project overview
 Three-core-lab Databricks training on Lakeflow Spark Declarative Pipelines (SDP) and direct
-ingest, plus three optional/take-home labs, delivered in the new Lakeflow Pipelines Editor.
+ingest, plus two optional/take-home labs, delivered in the new Lakeflow Pipelines Editor.
 Attendees each have a pre-assigned schema `workshop.<user>`. A shared landing volume (for
 Lab 2) and a shared Zerobus target table (for Lab 3) are preseeded by a single setup notebook.
 
@@ -43,11 +43,7 @@ Lab 2) and a shared Zerobus target table (for Lab 3) are preseeded by a single s
   the official RTM user guide for SDP — flow-level keys are `pipelines.trigger` and
   `pipelines.trigger.interval`, not the older `pipelines.execution.realTimeMode` /
   `pipelines.realtime.trigger.duration`.
-- **Lab 5 — Iceberg side-quest (optional / take-home).** A managed-Iceberg CTAS
-  (`global_sales_gold`, top-5 locations) run **outside** the pipeline in the SQL editor,
-  read back from a small PyIceberg Exploration notebook via the UC Iceberg REST Catalog.
-  Not part of the ~100-minute core arc; skip-friendly. Source files in `labs/05-Iceberg/`.
-- **Lab 6 — CI/CD via Declarative Automation Bundles (external Gourmet Pipeline).** Clones
+- **Lab 5 — CI/CD via Declarative Automation Bundles (external Gourmet Pipeline).** Clones
   `databricks/tmm/Lakeflow-Gourmet-Pipeline` locally via `git clone --filter=blob:none
   --no-checkout` + `git sparse-checkout`, per-student overrides of `catalog_name` /
   `prod_warehouse_id` (and optionally
@@ -65,11 +61,6 @@ Lab 2) and a shared Zerobus target table (for Lab 3) are preseeded by a single s
 - Lab 4 (RTM) — **Python** (`@dp.update_flow` with `pipelines.trigger: "RealTime"`), in its
   own bundle and pipeline. Optional/take-home, doesn't affect the in-pipeline language split
   of the core arc.
-- Lab 5a (managed Iceberg CTAS, **outside** the pipeline) — **SQL**
-  (`CREATE OR REPLACE TABLE ... USING ICEBERG AS SELECT ...`).
-- Lab 5b (Iceberg reader, **outside** the pipeline) — small **Python** Exploration notebook
-  using `pyiceberg`. Client-side reader, not pipeline code — the in-pipeline language split
-  is untouched.
 - Net effect for **in-pipeline** code in the core arc (Labs 1–2 — Lab 3 is a one-shot
   Zerobus producer notebook, not an SDP pipeline): Python appears exactly once (Lab 1a);
   everything else in the pipeline is SQL. This is deliberate so Lab 2 aligns with what
@@ -77,8 +68,7 @@ Lab 2) and a shared Zerobus target table (for Lab 3) are preseeded by a single s
 
 ## SDP code conventions (MUST follow)
 - Use **`CREATE OR REFRESH`** (never `CREATE OR REPLACE`) for streaming tables and
-  materialized views. `CREATE OR REPLACE TABLE` **is** allowed for the Lab 5 managed
-  Iceberg CTAS, because that runs outside SDP in the SQL editor — plain Spark SQL semantics apply.
+  materialized views.
 - Python: `from pyspark import pipelines as dp`. Never use legacy `import dlt`,
   `dlt.read`, `dlt.read_stream`, or `dlt.apply_changes`.
 - Inside `@dp.table`, use `spark.read.table(...)` for MV / batch reads and
@@ -179,17 +169,16 @@ after the restart). Then:
 - Any doc references should link to `docs.databricks.com/aws/en/ldp/...` or
   `docs.databricks.com/aws/en/genie-code/...` and include the doc's "last updated" date.
 
-## Lab 6 specifics (CI/CD via Declarative Automation Bundles)
+## Lab 5 specifics (CI/CD via Declarative Automation Bundles)
 - Upstream source of truth: `https://github.com/databricks/tmm/tree/main/Lakeflow-Gourmet-Pipeline`.
-- Per-student variables students MUST adjust in `databricks.yml`:
-  - `catalog_name` — default is `daiwt_gourmet`; change to `workshop`.
-  - `prod_warehouse_id` — default is an example ID that likely doesn't exist in the workshop workspace; replace with a real one from **SQL Warehouses**.
+- Per-student variables students MUST adjust in `databricks.yml` (retargeting is mandatory — the upstream defaults will fail to deploy):
+  - `catalog_name` — default is `daiwt_gourmet`, which does not exist in the workshop workspace; change to `workshop`.
+  - `prod_warehouse_id` — default is an example ID that doesn't exist in the workshop workspace; replace with a real one from **SQL Warehouses**.
   - `schema_name` — default is `${workspace.current_user.short_name}`; leave it if that matches the attendee's `<user>` schema, otherwise override to the literal `<user>` value.
-- Gotcha: dashboard SQL cannot be parameterized yet — if the attendee changes catalog/schema away from defaults, they must manually replace `daiwt_gourmet` in `resources/dashboard_gourmet_aibi.yml` and `src/aibi_dashboard.json`.
-- Do NOT add a copy of the Gourmet Pipeline code to this repo. Lab 6 points to the upstream repo and students clone locally via `git clone --filter=blob:none --no-checkout` + `git sparse-checkout set Lakeflow-Gourmet-Pipeline`, then deploy with `databricks bundle deploy -t presenter`. The lab is taught from the **CLI** end-to-end; no Workspace UI clone or Deployments-pane step.
-- The lab is taught from the **CLI**: `databricks bundle validate`, `databricks bundle deploy -t presenter`, `databricks bundle run`, `databricks bundle destroy`. Link to the docs:
-  `https://docs.databricks.com/aws/en/dev-tools/bundles/`. These are the basic commands;
-  production CI runners use the same `databricks bundle deploy` against `dev` / `prod` targets.
+- Do NOT add a copy of the Gourmet Pipeline code to this repo. Lab 5 points to the upstream repo; students sparse-clone via the **Workspace UI** (Workspace → Create → Git folder, sparse-checkout path `Lakeflow-Gourmet-Pipeline`).
+- The lab is taught **end-to-end from the Workspace UI**: sparse-clone in Workspace, edit `databricks.yml` in the workspace editor, deploy/run/destroy via the **Deployments** pane (🚀 icon, same flow as Lab 4). The `databricks bundle validate` step is intentionally skipped — Deploy validates implicitly.
+- The CLI alternative (`databricks bundle validate / deploy / run / summary / destroy`) is presented at the end of the lab as a separate table, framed as the path a CI runner takes. Production runs add more flags (auth profile, log level, parameter overrides, `--var`); the table shows the basic shape only. Docs: `https://docs.databricks.com/aws/en/dev-tools/bundles/`.
+- All doc links live in the top-level `## References and other demos` section of `Labguide.md`. Do not scatter `Docs:` links inside the per-step instructions.
 
 ## Files in this repo
 - `README.md` — course overview.
@@ -201,5 +190,4 @@ after the restart). Then:
 - `labs/02-GenieCode/` — Lab 2 reference SQL files (`bookings_current.sql`, `booking_fraud_flags.sql`, `payments.sql`, `booking_fraud_summary.sql`).
 - `labs/03-Zerobus/` — Lab 3 reference file: `send_temperature.py` (Databricks notebook source). Record-construction and the gRPC stream lifecycle (`ZerobusSdk.create_stream` → `ingest_record` → `flush` → `close`) are in a single "DO NOT MODIFY" cell; attendees only change the three widgets (city, temperature, comment). The SDK install is declared in PEP 723 inline metadata at the top of the file.
 - `labs/04-SDP-RTM/` — Lab 4 (optional / take-home) Real-Time Mode bundle: `databricks.yml` (continuous, serverless, PREVIEW channel, RTM enabled at pipeline level) and `transformations/temperature_rtm.py` (`@dp.update_flow` with `pipelines.trigger: "RealTime"`, console sink with `engine_latency_ms` column).
-- `labs/05-Iceberg/` — Lab 5 (optional / take-home) Iceberg side-quest reference files: `global_sales_gold.sql` (managed-Iceberg CTAS, runs outside the pipeline) and `read_global_sales_gold.py` (PyIceberg reader, Databricks notebook source, talks to the UC Iceberg REST Catalog).
-- (no `labs/06-DABs/` folder) — Lab 6 (CI/CD via Declarative Automation Bundles) ships from the external repo `databricks/tmm/Lakeflow-Gourmet-Pipeline`; nothing is forked into this repo.
+- (no `labs/05-DAB/` source) — Lab 5 (CI/CD via Declarative Automation Bundles) ships from the external repo `databricks/tmm/Lakeflow-Gourmet-Pipeline`; nothing is forked into this repo. The empty `labs/05-DAB/` folder is reserved as the lab's local clone target.

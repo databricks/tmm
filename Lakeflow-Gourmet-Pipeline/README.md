@@ -92,7 +92,6 @@ The core of this project is a multi-task workflow that ingests franchise, suppli
 ## Troubleshooting
 
 - make sure you have the right parameters set in ```databricks.yml``` in particular DWH ID, catalog and schema name.
-- if you deploy to a different catalog/schema you need to adjust the SQL in the dashboard yml file for catalog and schema since this cannot be parametrized yet. 
 - Note, to keep the demo as flexible as possible and remove the requirement to have connection details for SFDC and MS SQL we use endpoint stubs for the data providers. 
 
 

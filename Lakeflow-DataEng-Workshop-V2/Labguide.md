@@ -2,7 +2,14 @@
 
 **Version 2.0 - May 2026**
 
+👋 Welcome! This is the lab guide for the **quarterly Databricks Data Engineering workshop**. We're glad to have you here.
+
+Over the next 90 mins we'll work through the core data engineering knowledge every data engineer should have — **ingestion, transformation, and orchestration**. Using core technologies and OSS frameworks listed in the labs.
+
+Take your time, ask questions, and don't worry about breaking anything — your schema is yours alone. Let's build. 🚀
+
 > **Audience**: entry- to mid-level data engineers, with no or some prior Databricks knowledge. The environment is already set up for you — you have an empty workspace in an account with a pre-assigned schema `workshop.USER_ID`.
+> This is an instructor lead course. Not a DIY manual. 
 
 ### Overview
 
@@ -10,8 +17,7 @@
 - **Lab 2 — Learn how to use Genie Code as a data engineer**: all-**SQL** pipeline (AutoCDC + Auto Loader + join gold MV), produced from a single Genie Code prompt — and verified by you before it runs. Reference files in [`labs/02-GenieCode/`](./labs/02-GenieCode/).
 - **Lab 3 — Work with Zerobus Ingest to push IoT data** *(live instructor demo; attendees may follow along)*: one `ingest_record(...)` call via the official `databricks-zerobus-ingest-sdk` (gRPC) lands a row in `workshop.zerobus.measurements`, with credentials fetched from a shared UC config table. Reference files in [`labs/03-Zerobus/`](./labs/03-Zerobus/).
 - **Lab 4 — Real-Time Mode for SDP** *(optional)*: deploy a continuous pipeline running in Real-Time Mode (RTM), watch sub-second latency aggregates land in the driver console, and read the engine latency from the driver logs. Reference bundle in [`labs/04-SDP-RTM/`](./labs/04-SDP-RTM/).
-- **Lab 5 — Iceberg side-quest** *(optional)*: publish a derived bakehouse result as a managed Iceberg table and read it back with PyIceberg through the Unity Catalog Iceberg REST endpoint — no Spark session required. Reference files in [`labs/05-Iceberg/`](./labs/05-Iceberg/).
-- **Lab 6 — CI/CD via Declarative Automation Bundles** *(optional)*: clone a public repo with a DAB, retarget two variables to `workshop.USER_ID`, and deploy it from the **CLI** with `databricks bundle deploy` — the same path a CI runner takes.
+- **Lab 5 — CI/CD via Declarative Automation Bundles** *(optional)*: clone a public repo with a DAB, retarget two variables to `workshop.USER_ID`, and deploy it from the **CLI** with `databricks bundle deploy` — the same path a CI runner takes.
 
 ## Important — Your User ID
 
@@ -38,7 +44,7 @@ Three placeholders show up throughout — resolve them once here, then paste blo
 | `USER_ID` | Your user id, derived from your login email (see above). Example: `labuser10148895_1745997814`. Your schema is `workshop.USER_ID`. |
 | `workshop` | The catalog used for all labs. This is fixed. No need to change this. |
 | `<course_warehouse_name>` / `<course_warehouse_id>` (Lab 3 only) | The course SQL warehouse provisioned for you by the courseware. Your instructor will share the exact name and ID. |
-| `prod_warehouse_id` (Lab 6 only) | A running SQL warehouse ID. Find it in sidebar **SQL Warehouses** → click a warehouse → copy the ID from the URL. |
+| `prod_warehouse_id` (Lab 5 only) | A running SQL warehouse ID. Find it in sidebar **SQL Warehouses** → click a warehouse → copy the ID from the URL. |
 
 ## One-time setup — Clone this workshop repo
 
@@ -78,7 +84,7 @@ Before you write a single line, create the pipeline that will host Steps 1a and 
 
 ### Step 1a — Streaming table (Python)
 
-Paste into `my_transformation.py` and rename the file to `sales_transactions`:
+Use the **copy** button at the top-right of the code block to grab the snippet, then click into Cell 1, press **Cmd/Ctrl+A** to clear the placeholder, and paste with **Cmd/Ctrl+V**. (If you ever see an `unexpected indent` error, it's because the editor auto-indented an empty leading line — `Cmd/Ctrl+A` then re-paste fixes it.)
 
 ```python
 from pyspark import pipelines as dp
@@ -92,6 +98,8 @@ def sales_transactions():
     # spark.readStream.table(...) inside @dp.table ⇒ streaming table
     return spark.readStream.table("samples.bakehouse.sales_transactions")
 ```
+
+Rename the file to `sales_transactions.py` by clicking the file name in the **tab bar** (the title above the editor cell) and typing the new name.
 
 Click **Run file**. The DAG sidebar shows one node `sales_transactions` (~3,333 rows).
 
@@ -405,8 +413,8 @@ def temperature_rtm_flow():
 ### Step 4c — Deploy and run from the Workspace UI
 
 1. Open the `labs/04-SDP-RTM/` folder in your Workspace. Because `databricks.yml` is present, the **Deployments** icon (🚀) appears in the left pane.
-2. Click **Deployments** → pick a target → **Deploy**.
-3. After validate + deploy finishes, open the deployed `sdp-rtm-rate-source` pipeline and click **Run**. Because it's continuous, it keeps running — no need to re-trigger.
+2. Click **Deployments** → pick the **`prod`** target (the only one defined in this bundle) → **Deploy**.
+3. After validate + deploy finishes, open the deployed `sdp-rtm-rate-source` pipeline. **Note:** because the pipeline is `continuous: true`, the deploy already auto-started the first update — there's nothing to click. If you do click **Run** you'll see *"An active update already exists for pipeline …"*, which is expected. Just leave the existing update running.
 
 ### Step 4d — Look up the engine latency in the driver logs
 
@@ -425,146 +433,45 @@ The console sink writes the windowed aggregates — including `engine_latency_ms
 
 4. Read off the `engine_latency_ms` column — that's the end-to-end latency from the newest event in the window to the row landing in the sink. With RTM, expect a few tens of milliseconds. To compare with micro-batch mode, drop the `pipelines.trigger`/`pipelines.trigger.interval` keys from the flow's `spark_conf=` in `transformations/temperature_rtm.py` (and optionally also flip the pipeline-level `spark.databricks.streaming.realTimeMode.enabled` to `"false"` in `databricks.yml`), then redeploy. The latency typically jumps to several hundred milliseconds.
 
+### Step 4e — Stop the pipeline when you're done
+
+The pipeline is **continuous and serverless**, so it keeps consuming compute until you stop it. Always stop it when you've finished observing latency:
+
+- In the Lakeflow Pipelines Editor with the pipeline open, click **Stop** at the top, **or**
+- From the CLI: `databricks bundle destroy -t prod` (removes the deployed pipeline entirely).
+
 > Reference files: [`labs/04-SDP-RTM/databricks.yml`](./labs/04-SDP-RTM/databricks.yml) and [`labs/04-SDP-RTM/transformations/temperature_rtm.py`](./labs/04-SDP-RTM/transformations/temperature_rtm.py). Originally based on [`Lakeflow-SDP-RTM-Basics`](https://github.com/databricks/tmm/tree/main/Lakeflow-SDP-RTM-Basics) in the public `databricks/tmm` repo.
 
 ---
 
-## Lab 5 — Iceberg side-quest (optional)
+## Lab 5 — CI/CD via Declarative Automation Bundles (optional)
 
-> **Optional / take-home.** Skip if you're short on time — nothing else in the workshop depends on it. Run after Lab 1 or any time after; only the Bakehouse `sales_transactions` streaming table from Lab 1 is a prerequisite.
+> **Optional / take-home.** Skip if you're short on time. The whole demo is a sparse-clone of an external repo plus a few clicks in the **Deployments** pane. ~10 minutes hands-on.
 
-Publish a derived bakehouse result as a **managed Iceberg table** — then read it back with **PyIceberg** through the Unity Catalog Iceberg REST endpoint. No Spark session, no cluster, no connector JAR. That's the portability pitch of Iceberg on Unity Catalog: the same table Databricks writes is readable by Trino, Snowflake, OSS Spark, or any pure-Python client.
+A data product lives in more than one place — a pipeline, a job, a dashboard, a connector flow. A **Declarative Automation Bundle** (DAB — formerly *Databricks Asset Bundle*) collapses all of that into one folder: `databricks.yml` plus `resources/`, versioned like code. No shell recipes, no drift between envs, no screenshot-driven promotion.
 
-### Step 5a — Top-5 sales locations as a managed Iceberg table (SQL, outside the pipeline)
-
-The streaming table from Lab 1 is Delta. To make a derived result readable by any Iceberg-compatible engine without configuring an external location for UniForm Compatibility Mode, the simplest path is a **CTAS into a managed Iceberg table** — run it *outside* the pipeline in the SQL editor or a `%sql` cell.
-
-Open a new SQL editor tab (sidebar **SQL Editor** → **Create new query**) and run, replacing `workshop` and `USER_ID`:
-
-```sql
-CREATE OR REPLACE TABLE workshop.USER_ID.global_sales_gold
-USING ICEBERG
-AS
-SELECT
-    f.city,
-    f.country,
-    COUNT(*)                    AS txn_count,
-    SUM(t.quantity)             AS units_sold,
-    ROUND(SUM(t.totalPrice), 2) AS gross_revenue
-FROM workshop.USER_ID.sales_transactions t
-JOIN samples.bakehouse.sales_franchises f
-    USING (franchiseID)
-GROUP BY f.city, f.country
-ORDER BY gross_revenue DESC
-LIMIT 5;
-```
-
-**Why this shape:**
-- `USING ICEBERG` creates a **native managed Iceberg table** — full read/write from Databricks *and* external engines via the UC Iceberg REST Catalog (IRC).
-- No `delta.universalFormat.*` properties, no `compatibility.location`, no external location to pre-configure. Managed Iceberg is self-contained.
-- Snapshot, not live. Re-run this CTAS (or swap to `INSERT OVERWRITE`) to refresh — acceptable for an analytics/gold table; if you need live-as-it-changes semantics, that's UniForm Compatibility Mode territory instead.
-- `samples.bakehouse.sales_franchises` supplies the `city` / `country` dimensions — `sales_transactions` itself only has `franchiseID`.
-
-Verify:
-
-```sql
-SELECT * FROM workshop.USER_ID.global_sales_gold;
-```
-
-You should see 5 rows, top (city, country) pairs by gross revenue (a city in two countries would count twice). In `DESCRIBE EXTENDED`, the `Provider` column reads `iceberg`.
-
-### Step 5b — Read the Iceberg table with PyIceberg (Exploration notebook)
-
-Now read the same table with a lightweight Iceberg client — no Spark required.
-
-Asset browser → **Add → Exploration** → name `read_global_sales_gold` → language **Python** → **Create**. Paste each of the three snippets below into its own cell (use **+ Code** to add cells).
-
-**Cell 1 — install** (a `%pip` magic must be alone in its cell):
-
-```python
-%pip install --upgrade "pyiceberg>=0.10,<0.11" "pyarrow>=17"
-# On Azure workspaces, also: %pip install adlfs
-```
-
-**Cell 2 — restart Python** so the freshly installed wheels are visible:
-
-```python
-dbutils.library.restartPython()
-```
-
-**Cell 3 — read the Iceberg table:**
-
-```python
-from pyiceberg.catalog import load_catalog
-
-WORKSPACE = spark.conf.get("spark.databricks.workspaceUrl")  # e.g. "dbc-xxx.cloud.databricks.com"
-CATALOG   = "workshop"   # workshop UC catalog
-SCHEMA    = "USER_ID"      # your pre-assigned schema
-TOKEN     = dbutils.notebook.entry_point.getDbutils().notebook().getContext().apiToken().get()
-
-iceberg_catalog = load_catalog(
-    "uc",
-    uri=f"https://{WORKSPACE}/api/2.1/unity-catalog/iceberg-rest",
-    warehouse=CATALOG,     # pins the UC catalog — subsequent identifiers are <schema>.<table>
-    token=TOKEN,
-)
-
-tbl = iceberg_catalog.load_table(f"{SCHEMA}.global_sales_gold")
-print(tbl.current_snapshot())             # snapshot metadata proves this is Iceberg
-tbl.scan(limit=10).to_pandas()            # top-5 rows as pandas
-```
-
-Expected output: a pandas DataFrame with the same 5 (city, country) pairs you saw in Step 5a, plus snapshot metadata for the Iceberg table.
-
-**What you just demonstrated:**
-- `pip install pyiceberg` — no cluster restart, no Iceberg JARs, no Spark session. A pure-Python client talks to Unity Catalog via the **Iceberg REST Catalog** endpoint at `/api/2.1/unity-catalog/iceberg-rest`.
-- The `warehouse` parameter pins the UC catalog, so table identifiers collapse from three-part to two-part.
-- External clients run this same code. Supply a PAT or OAuth token and the workspace URL — done. That's the portability of Iceberg on Unity Catalog.
-
-**Requirements your admin has likely already set** (workshop attendees usually inherit these; flag with the instructor if any call fails with `403`):
-- `EXTERNAL USE SCHEMA` on `workshop.USER_ID`
-- External data access enabled on the workspace
-- Workspace IP access list (if enabled) allows your client
-
-> Reference copies of the CTAS and the PyIceberg reader live in [`labs/05-Iceberg/`](./labs/05-Iceberg/) alongside this guide.
-
----
-
-## Lab 6 — CI/CD via Declarative Automation Bundles (optional)
-
-> **Optional / take-home.** Skip if you're short on time. The whole demo is a sparse-clone of an external repo plus four CLI commands. ~10 minutes hands-on.
-
-A data product lives in more than one place — a pipeline, a job, a dashboard, a connector flow. A **Declarative Automation Bundle** (DAB — formerly *Databricks Asset Bundle*; the CLI is still `databricks bundle`) collapses all of that into one folder: `databricks.yml` plus `resources/`, versioned like code. No shell recipes, no drift between envs, no screenshot-driven promotion.
-
-You'll sparse-clone `databricks/tmm/Lakeflow-Gourmet-Pipeline`, retarget two variables for your workspace, and ship the whole data product — SQL medallion pipeline, `gourmet-workflow` job with `ai_query` enrichment, AI/BI dashboard — using the **CLI**. This is the same path a CI runner takes on every commit.
-
-Source repo: <https://github.com/databricks/tmm/tree/main/Lakeflow-Gourmet-Pipeline>
-Docs: <https://docs.databricks.com/aws/en/dev-tools/bundles/>
+You'll sparse-clone `databricks/tmm/Lakeflow-Gourmet-Pipeline` into your workspace, retarget two variables, and deploy / run / tear down the whole data product — SQL medallion pipeline, `gourmet-workflow` job with `ai_query` enrichment, AI/BI dashboard — entirely from the **Workspace UI**. The same bundle is also the unit a CI runner ships from the **CLI**; the equivalent commands are summarised at the end of the lab.
 
 ### Prerequisites
 
-- Databricks CLI installed and authenticated to your workspace.
-  Install: <https://docs.databricks.com/aws/en/dev-tools/cli/install>
-  Auth: `databricks auth login --host <your-workspace-url>` (OAuth user-to-machine).
-- `git` available locally.
-- A running SQL warehouse in your workspace; copy its ID from sidebar **SQL Warehouses** → click warehouse → URL.
+- A running SQL warehouse in your workspace; copy its ID from sidebar **SQL Warehouses** → click a warehouse → URL.
 
-### Step 6a — Sparse-clone the bundle
+### Step 5a — Sparse-clone the bundle (Workspace UI)
 
-Clone only the bundle subfolder, not the whole `databricks/tmm` repo:
+Clone only the bundle subfolder into your workspace, not the whole `databricks/tmm` repo. Same flow you used for the workshop repo at the start.
 
-```bash
-git clone --filter=blob:none --no-checkout https://github.com/databricks/tmm.git
-cd tmm
-git sparse-checkout init --cone
-git sparse-checkout set Lakeflow-Gourmet-Pipeline
-git checkout main
-cd Lakeflow-Gourmet-Pipeline
-```
+1. Workspace sidebar → **Workspace** → **Create** → **Git folder**.
+2. In the **Create Git folder** dialog:
+   - **Git repository URL**: `https://github.com/databricks/tmm`
+   - **Git provider**: GitHub
+   - **Git folder name**: `gourmet`
+   - Enable **Sparse checkout mode**
+   - **Sparse checkout path**: `Lakeflow-Gourmet-Pipeline`
+3. Click **Create Git folder**. The `Lakeflow-Gourmet-Pipeline/` subfolder clones into `gourmet/` in your workspace.
 
-### Step 6b — Retarget two variables
+### Step 5b — Retarget two variables
 
-Open `databricks.yml` and edit the `variables` block:
+In the cloned `gourmet/Lakeflow-Gourmet-Pipeline/` folder, open `databricks.yml` in the workspace editor and edit the `variables` block:
 
 ```yaml
 variables:
@@ -579,51 +486,34 @@ variables:
 
 If your `USER_ID` schema doesn't match `${workspace.current_user.short_name}`, override `schema_name` to the literal `USER_ID` value. Also check `targets.presenter` — if it overrides `schema_name`, point it at the same value.
 
-> **Dashboard SQL is not parameterized yet.** If you change `catalog_name` away from `workshop`, you must also manually replace `daiwt_gourmet` in `resources/dashboard_gourmet_aibi.yml` and `src/aibi_dashboard.json`. Otherwise the dashboard renders empty.
+> **Retargeting is mandatory, not optional.** The default catalog `daiwt_gourmet` does not exist in the workshop workspace, so the deploy will fail unless you change `catalog_name` to `workshop` (and supply a real `prod_warehouse_id`).
 
-### Step 6c — Validate the bundle
+### Step 5c — Deploy to the `presenter` target (Workspace UI)
 
-```bash
-databricks bundle validate
-```
+1. In the cloned `gourmet/Lakeflow-Gourmet-Pipeline/` folder in your Workspace, the **Deployments** icon (🚀) appears in the left pane because `databricks.yml` is present.
+2. Click **Deployments** → pick the **`presenter`** target (the only one defined in this bundle) → **Deploy**.
 
-Validate parses `databricks.yml`, resolves variables and `${...}` substitutions, and checks the resource shapes against the workspace API. It does **not** deploy anything. A clean validate is your green light to deploy.
+Deploy uploads the bundle assets (notebooks, SQL files, resource definitions), creates/updates the SDP pipelines, the `gourmet-workflow` job, and the AI/BI dashboard — all in one click.
 
-Docs: <https://docs.databricks.com/aws/en/dev-tools/bundles/work-tasks#validate>
+### Step 5d — Run the workflow (Workspace UI)
 
-### Step 6d — Deploy to the `presenter` target
+After deploy completes, the **Deployments** pane shows the deployed resources with links into the workspace.
 
-```bash
-databricks bundle deploy -t presenter
-```
+1. From the Deployments pane, open `gourmet-workflow` (or navigate to it in **Workflows**).
+2. Click **Run now** at the top of the job page.
 
-The bundle ships with a single target named `presenter`. Deploy uploads the bundle assets (notebooks, SQL files, resource definitions), creates/updates the SDP pipelines, the `gourmet-workflow` job, and the AI/BI dashboard — all in one call.
+The run ingests franchise / supplier / transaction data, runs the SDP medallion transformations, executes the AI enrichment steps (`ai_query`, sentiment, translation), and refreshes the dashboard. Watch progress on the run page until completion.
 
-Docs: <https://docs.databricks.com/aws/en/dev-tools/bundles/deploy>
+### Step 5e — Tear down (Workspace UI, recommended after the workshop)
 
-### Step 6e — Run the workflow
+1. Open the **Deployments** pane in the cloned bundle folder.
+2. Pick the **`presenter`** target → **Destroy**.
 
-```bash
-databricks bundle run gourmet-workflow -t presenter
-```
+This removes everything the deploy created: pipelines, job, dashboard. Source data and the cloned repo are untouched.
 
-This triggers the deployed `gourmet-workflow` job: ingest franchise/supplier/transaction data, run the SDP medallion transformations, execute the AI enrichment steps (`ai_query`, sentiment, translation), and refresh the dashboard. Stream the run to your terminal until completion.
+### CLI alternative — the basic command set
 
-Docs: <https://docs.databricks.com/aws/en/dev-tools/bundles/run>
-
-### Step 6f — Tear down (recommended after the workshop)
-
-```bash
-databricks bundle destroy -t presenter
-```
-
-Removes everything the deploy created: pipelines, job, dashboard. Source data and the cloned repo are untouched. Use this to clean up after the workshop instead of deleting resources by hand in the UI.
-
-Docs: <https://docs.databricks.com/aws/en/dev-tools/bundles/destroy>
-
-### The basic command set
-
-These five are the core commands you'll use day-to-day:
+The Workspace UI **Deployments** pane is one entry point; the **Databricks CLI** is the other. Same bundle, same `databricks.yml`, same `presenter` target — just driven from a terminal. This is the path a CI runner takes on every commit. The commands below are the basic shape; production runs add more flags (auth profile, log level, parameter overrides, `--var` injections, …).
 
 | Command | Purpose |
 |---|---|
@@ -633,31 +523,32 @@ These five are the core commands you'll use day-to-day:
 | `databricks bundle summary -t <target>` | Show what's deployed under this target (URLs, IDs). |
 | `databricks bundle destroy -t <target>` | Remove all resources the bundle created in that target. |
 
-In a real CI/CD setup you'd add `dev` and `prod` targets to `databricks.yml`, give them environment-specific overrides for `catalog_name` / `prod_warehouse_id` / `mode`, and run `databricks bundle deploy -t dev` on PR open and `databricks bundle deploy -t prod` on merge to main — same bundle, different target.
+To use these, install the Databricks CLI and authenticate once (`databricks auth login --host <your-workspace-url>`), then run them from inside the bundle folder. In a real CI/CD setup you'd add `dev` and `prod` targets to `databricks.yml`, give them environment-specific overrides for `catalog_name` / `prod_warehouse_id` / `mode`, and run `databricks bundle deploy -t dev` on PR open and `databricks bundle deploy -t prod` on merge to main — same bundle, different target.
 
 ### Troubleshooting
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
-| `bundle validate` fails on warehouse ID | `prod_warehouse_id` doesn't exist in your workspace | paste a real warehouse ID from **SQL Warehouses** |
-| `new_recipe_Claude_LLM` task fails with `RESOURCE_DOES_NOT_EXIST` for `databricks-claude-3-7-sonnet` | the hardcoded model isn't available on your workspace | edit `src/ai_query.sql`, replacing **both** occurrences of `databricks-claude-3-7-sonnet` with one that is available (e.g. `databricks-claude-sonnet-4-5` or `databricks-claude-haiku-4-5`); or run with `--params ai_enabled=FALSE` to skip AI tasks |
+| Deploy fails on warehouse ID | `prod_warehouse_id` doesn't exist in your workspace | paste a real warehouse ID from **SQL Warehouses** |
+| `new_recipe_Claude_LLM` task fails with `RESOURCE_DOES_NOT_EXIST` for `databricks-claude-3-7-sonnet` | the hardcoded model isn't available on your workspace | edit `src/ai_query.sql`, replacing **both** occurrences of `databricks-claude-3-7-sonnet` with one that is available (e.g. `databricks-claude-sonnet-4-5` or `databricks-claude-haiku-4-5`); or run with `ai_enabled=FALSE` to skip AI tasks |
 | `SCHEMA_NOT_FOUND` during run | `schema_name` resolved to something that doesn't exist in your catalog | override the `schema_name` default in `databricks.yml` to your literal `USER_ID` value |
 | Dashboard renders empty after deploy | dashboard SQL still references `daiwt_gourmet` (not parameterizable yet) | replace `daiwt_gourmet` with `workshop` in `resources/dashboard_gourmet_aibi.yml` and `src/aibi_dashboard.json`, then redeploy |
 
 ### What to take away
 
 - **Bundles are the CI/CD primitive for data products.** `databricks.yml` + `resources/*.yml` captures an entire data product (SDP pipelines, jobs, dashboards, Lakeflow Connect flows) as versioned code. One file tree, committable, reviewable, deployable.
-- **Five basic commands cover the full lifecycle.** `validate`, `deploy`, `run`, `summary`, `destroy` — locally, in a script, or in a CI runner. Same commands, same bundle.
-- **Targets separate environments.** Add `dev` and `prod` targets with per-environment overrides; route them via branch (`-t dev` on PR, `-t prod` on merge).
-- **The CLI is the source of truth.** The Workspace UI's **Deployments** pane runs the same `bundle deploy` against the same `databricks.yml`. Pick the entry point that fits the moment; the result is identical.
+- **Two entry points, one bundle.** The Workspace UI **Deployments** pane and the Databricks CLI run against the same `databricks.yml`. Pick the entry point that fits the moment; the result is identical.
+- **Targets separate environments.** Add `dev` and `prod` targets with per-environment overrides; route them via branch (`-t dev` on PR, `-t prod` on merge) in CI.
 
 ---
 
 ## References and other demos
 
 * [Get to know Genie Code: Lakeflow and Analytics](https://www.databricks.com/resources/demos/videos/get-know-genie-code)
-* Complete [Lakeflow Demo: From messy sales data to AI insights](https://www.databricks.com/resources/demos/videos/lakeflow-action-gourmet-pipeline-demo-daiwt)
+* Complete [Lakeflow Demo: From messy sales data to AI insights](https://www.databricks.com/resources/demos/videos/lakeflow-action-gourmet-pipeline-demo-daiwt) (source for Lab 5)
+* [Declarative Automation Bundles documentation](https://docs.databricks.com/aws/en/dev-tools/bundles/) (Lab 5)
+* [Lakeflow-Gourmet-Pipeline source repo](https://github.com/databricks/tmm/tree/main/Lakeflow-Gourmet-Pipeline) (Lab 5)
 * Getting Started with [OSS Apache SDP, VSCode](https://github.com/databricks/tmm/tree/main/OSS-SDP-OpenSkyNetwork)
 * [Lakeflow SDP — Real-Time Mode Basics](https://github.com/databricks/tmm/tree/main/Lakeflow-SDP-RTM-Basics) (source for Lab 4)
 * RTM demo to watch: [Air Traffic Control with Apache Spark Structured Streaming — Real-Time Mode](https://www.databricks.com/resources/demos/videos/air-traffic-control-with-apache-spark-structured-streaming-real-time-mode)
-* Other [Databricks workshops](https://www.databricks.com/events?event_type=workshop&region=all) for DBSQL, AI, Unity Catalog
+* Looking for the next Data Engineering workshop, or other [Databricks workshops](https://www.databricks.com/events?event_type=workshop&region=all) for DBSQL, AI, Unity Catalog

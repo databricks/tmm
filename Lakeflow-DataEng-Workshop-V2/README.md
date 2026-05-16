@@ -8,7 +8,6 @@ Databricks's new Data Engineering course, rebuilt around the **Lakeflow Pipeline
 - **Genie Code (Agent mode)** — AI-assisted pipeline authoring with human-in-the-loop verification.
 - **Zerobus Ingest** — direct gRPC ingest into Delta tables via the official `databricks-zerobus-ingest-sdk`.
 - **SDP Real-Time Mode (RTM)** — continuous, serverless pipelines with sub-second end-to-end latency.
-- **Managed Iceberg on Unity Catalog** — published via SDP and read back with PyIceberg through the UC Iceberg REST Catalog.
 - **Declarative Automation Bundles (DABs)** — CI/CD-style deploys from the CLI with `databricks bundle deploy`.
 
 See [Labguide.md](./Labguide.md) for the step-by-step exercises.
