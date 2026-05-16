@@ -12,11 +12,12 @@
 # MAGIC 4. `USE_SCHEMA` grant on `workshop.shared` to group `account users`
 # MAGIC 5. `READ_VOLUME` grant on `workshop.shared.landing` to group `account users`
 # MAGIC
-# MAGIC **Part B — Lab 3 Zerobus provisioning**
+# MAGIC **Part B — Lab 3 Zerobus provisioning** (uses the official `databricks-zerobus-ingest-sdk` over gRPC)
 # MAGIC 1. Schema `workshop.zerobus` + managed Delta table `workshop.zerobus.measurements` (`id STRING, city STRING, temperature FLOAT, comment STRING`)
 # MAGIC 2. Service principal `workshop-zerobus-sp` with a fresh OAuth client secret
 # MAGIC 3. UC grants for that SP: `USE CATALOG` on `workshop`, `USE SCHEMA` on `workshop.zerobus`, `MODIFY + SELECT` on the table
 # MAGIC 4. Config table `workshop.zerobus.config` (single row: `client_id`, `client_secret`, `workspace_url`, `workspace_id`, `zerobus_endpoint`) with `SELECT` granted to `account users` — attendees read all five values from one place
+# MAGIC 5. End-to-end smoke test that opens a gRPC stream as the SP, ingests one row, deletes it, and prints PASS — so any breakage shows up here, not in 1000 attendee notebooks
 # MAGIC
 # MAGIC Idempotent: safe to re-run. Does not touch per-attendee schemas.
 
@@ -171,6 +172,27 @@ if not ZEROBUS_REGION:
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC ## Install the Zerobus Ingest SDK (interactive — runs once at setup)
+# MAGIC
+# MAGIC `databricks-zerobus-ingest-sdk` is needed for the smoke test in B6 below. The setup
+# MAGIC notebook is run interactively by the workshop owner once, so an inline `%pip install`
+# MAGIC is fine. Attendee notebooks should use the **Environment side panel** instead, to
+# MAGIC avoid 1000× per-session install latency.
+
+# COMMAND ----------
+
+# MAGIC %pip install --quiet "databricks-zerobus-ingest-sdk>=1.0.0"
+# MAGIC dbutils.library.restartPython()
+
+# COMMAND ----------
+
+# Re-resolve widgets after the Python restart triggered by %pip.
+CATALOG         = dbutils.widgets.get("catalog").strip()
+ZEROBUS_REGION  = dbutils.widgets.get("zerobus_region").strip()
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ## B0. Storage preflight — fail fast if the catalog is on default storage
 # MAGIC
 # MAGIC Zerobus direct-write requires the target table to live in UC-managed cloud storage
@@ -249,7 +271,7 @@ spark.sql(f"""
         temperature FLOAT  COMMENT 'Temperature in degrees Celsius',
         comment     STRING COMMENT 'Free-form note from the attendee (may be empty)'
     )
-    COMMENT 'Workshop Lab 3 target — one row per attendee submission via Zerobus REST'
+    COMMENT 'Workshop Lab 3 target — one row per attendee submission via the Zerobus Ingest SDK'
 """)
 print(f"Table ready: {CATALOG}.zerobus.measurements")
 
@@ -379,9 +401,71 @@ else:
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## B6. Summary — copy these values for the instructor record
+# MAGIC ## B6. gRPC end-to-end smoke test
 # MAGIC
-# MAGIC Attendees never touch these directly — their notebook reads from the `workshop` scope.
+# MAGIC Open a stream as the freshly-provisioned SP, ingest one dummy row, clean it up.
+# MAGIC Any breakage (wrong endpoint, missing grants, storage misconfig that the preflight
+# MAGIC didn't catch, SDK install drift) surfaces here at setup time — not in 1000 attendee
+# MAGIC notebooks later.
+
+# COMMAND ----------
+
+import json
+import time
+import uuid
+
+from zerobus.sdk.sync import ZerobusSdk
+from zerobus.sdk.shared import RecordType, StreamConfigurationOptions, TableProperties
+
+_smoke_cfg     = spark.table(f"{CATALOG}.zerobus.config").first()
+_SMOKE_CLIENT_ID     = _smoke_cfg["client_id"]
+_SMOKE_CLIENT_SECRET = _smoke_cfg["client_secret"]
+_SMOKE_WORKSPACE_URL = _smoke_cfg["workspace_url"]
+# SDK wants the bare host (no scheme, no path).
+_SMOKE_SERVER_ENDPOINT = _smoke_cfg["zerobus_endpoint"].replace("https://", "").rstrip("/")
+
+assert _SMOKE_CLIENT_ID and _SMOKE_CLIENT_SECRET, \
+    f"Empty credentials in {CATALOG}.zerobus.config — provisioning step above did not complete."
+
+_SMOKE_TEST_ID = f"setup-smoke-{uuid.uuid4()}"
+_smoke_record  = {
+    "id":          _SMOKE_TEST_ID,
+    "city":        "_setup_smoke",
+    "temperature": -999.0,
+    "comment":     "setup_workshop smoke test — auto-deleted",
+}
+
+_smoke_sdk    = ZerobusSdk(_SMOKE_SERVER_ENDPOINT, unity_catalog_url=_SMOKE_WORKSPACE_URL)
+_smoke_opts   = StreamConfigurationOptions(record_type=RecordType.JSON)
+_smoke_tprops = TableProperties(f"{CATALOG}.zerobus.measurements")
+
+print(f"[smoke] server_endpoint = {_SMOKE_SERVER_ENDPOINT}")
+print(f"[smoke] workspace_url   = {_SMOKE_WORKSPACE_URL}")
+print(f"[smoke] client_id (4)   = ...{_SMOKE_CLIENT_ID[-4:]}")
+print(f"[smoke] opening stream...")
+_smoke_stream = _smoke_sdk.create_stream(
+    _SMOKE_CLIENT_ID, _SMOKE_CLIENT_SECRET, _smoke_tprops, _smoke_opts
+)
+try:
+    _smoke_stream.ingest_record(json.dumps(_smoke_record))
+    _smoke_stream.flush()
+    print(f"[smoke] flushed ok (id={_SMOKE_TEST_ID})")
+finally:
+    _smoke_stream.close()
+    print("[smoke] stream closed")
+
+# Cleanup — Spark runs as the user (admin), not the SP, so DELETE doesn't need an SP grant.
+for _ in range(10):
+    if spark.table(f"{CATALOG}.zerobus.measurements").filter(f"id = '{_SMOKE_TEST_ID}'").count():
+        break
+    time.sleep(2)
+spark.sql(f"DELETE FROM {CATALOG}.zerobus.measurements WHERE id = '{_SMOKE_TEST_ID}'")
+print(f"[smoke] cleanup OK — removed row {_SMOKE_TEST_ID}")
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## B7. Summary
 
 # COMMAND ----------
 
@@ -394,4 +478,6 @@ print(f"Config columns     : client_id, client_secret, workspace_url, workspace_
 print(f"Service principal  : {SP_DISPLAY_NAME}  (application_id: {SP_APPLICATION_ID})")
 print(f"Config table ACL   : `{_grant_principal or '(not granted — see warning above)'}` → SELECT")
 print(f"Zerobus endpoint   : {ZEROBUS_ENDPOINT}")
+print(f"gRPC smoke test    : PASS")
+print(f"Attendee notebook  : lab3/send_temperature.py")
 print("=" * 70)

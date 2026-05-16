@@ -17,21 +17,20 @@ Lab 2) and a shared Zerobus target table (for Lab 3) are preseeded by a single s
   Reference files in `lab2-GenieCode/`.
 - **Lab 3 — Zerobus direct ingest (live instructor demo; attendees may follow along).**
   Instructor runs an Exploration notebook that pushes one `{id, city, temperature, comment}`
-  record into the shared Delta table `workshop.zerobus.measurements` via the
-  **Zerobus REST API** (serverless-friendly; the gRPC SDK can't pip-install on serverless
-  compute). Credentials come from the UC config table `workshop.zerobus.config` (single
-  row, columns: `client_id`, `client_secret`, `workspace_url`, `workspace_id`,
-  `zerobus_endpoint`) — attendees read all five values from one place. The shared SP
-  `client_secret` lives in the table in cleartext; this is intentional given the 1:1000
-  shared-credential model (every attendee needs the secret to mint OAuth tokens, and the
-  SP's UC grants are tightly scoped to `measurements`). The lab's teaching point is
-  the governance surface (scoped OAuth via `authorization_details` carrying the **full
-  UC chain** — `USE CATALOG`, `USE SCHEMA`, `SELECT`, `MODIFY` — with **spaced**
-  privilege names matching `SHOW GRANTS`. SP audit identity, table-level GRANT, no
-  broader scope than required.) Discussed live rather than silently typed. REST variant
-  in `lab3-Zerobus-Ingest/send_temperature.py`; gRPC variant (uses the official
-  `databricks-zerobus-ingest-sdk` via a serverless notebook **Environment**) in
-  `lab3-Zerobus-Ingest/send_temperature_grpc.py`.
+  record into the shared Delta table `workshop.zerobus.measurements` via the **official
+  `databricks-zerobus-ingest-sdk`** (gRPC). The SDK is installed once per notebook via the
+  serverless **Environment** side panel — `Add Dependency: databricks-zerobus-ingest-sdk`
+  → `Apply` — which builds the package into the runtime so it imports immediately, with
+  no per-session `%pip install` cost (matters at 1000-attendee scale). Credentials come
+  from the UC config table `workshop.zerobus.config` (single row, columns: `client_id`,
+  `client_secret`, `workspace_url`, `workspace_id`, `zerobus_endpoint`) — attendees read
+  all five values from one place. The shared SP `client_secret` lives in the table in
+  cleartext; this is intentional given the 1:1000 shared-credential model (every attendee
+  needs the secret to authenticate the SDK, and the SP's UC grants are tightly scoped to
+  `measurements`). The lab's teaching point is the governance surface (SP audit identity,
+  table-level `MODIFY + SELECT` grant, narrowest blast radius — the SDK handles OAuth and
+  `authorization_details` internally so the failure mode of a hand-rolled REST client
+  cannot recur). Reference file in `lab3-Zerobus-Ingest/send_temperature.py`.
 - **Lab 4 — Real-Time Mode for SDP (optional / take-home).** A continuous, serverless,
   PREVIEW-channel SDP pipeline using `@dp.update_flow` with `pipelines.trigger: "RealTime"`,
   enabled at the pipeline level via `spark.databricks.streaming.realTimeMode.enabled = true`
@@ -129,21 +128,24 @@ The setup notebook (`setup_workshop.py`, run once per workshop) is split into tw
    always read a current value.
 3. Grant the SP: `USE CATALOG` on `workshop`, `USE SCHEMA` on `workshop.zerobus`,
    `MODIFY + SELECT` on the data table. Nothing broader — this bounds the blast radius.
-   The Zerobus OAuth scoped-token endpoint (`zerobusDirectWriteApi` resource) requires the
-   token's `authorization_details` to carry the **full UC chain** — `USE CATALOG` on the
-   catalog, `USE SCHEMA` on the schema, and `SELECT` + `MODIFY` on the table — using the
-   **spaced** privilege names exactly as `SHOW GRANTS` reports them. Underscore form
-   (`USE_CATALOG`, `USE_SCHEMA`) is rejected with `invalid_authorization_details`. A token
-   minted *without* the catalog/schema entries (table-only) is accepted by `/oidc/v1/token`
-   with HTTP 200 but rejected by `/zerobus/v1/tables/.../insert` with HTTP 403 at write
-   time — that's the failure mode to watch for.
+   The Zerobus Ingest SDK handles the OAuth `authorization_details` payload internally
+   (it requires the full UC chain — `USE CATALOG` + `USE SCHEMA` + `SELECT` + `MODIFY` —
+   with **spaced** privilege names matching `SHOW GRANTS`), so as long as those four
+   grants are in place the SDK takes care of the rest.
 4. Create the config table `workshop.zerobus.config` (single row, columns: `client_id`,
    `client_secret`, `workspace_url`, `workspace_id`, `zerobus_endpoint`) and `GRANT SELECT`
    on it to `account users` (with fallback to workspace `users`). Cleartext storage of
-   `client_secret` is intentional: every attendee needs the secret to mint OAuth tokens
-   anyway, and the SP's UC grants are tightly bounded — the table simplifies the read
-   path at the cost of secret-scope redaction. Attendees then read via
+   `client_secret` is intentional: every attendee needs the secret to authenticate the
+   SDK anyway, and the SP's UC grants are tightly bounded — the table simplifies the
+   read path at the cost of secret-scope redaction. Attendees then read via
    `spark.table("workshop.zerobus.config").first()`.
+5. **gRPC smoke test.** Install `databricks-zerobus-ingest-sdk` (interactive `%pip install`
+   is fine here — setup runs once), then open a stream as the freshly-provisioned SP,
+   ingest one dummy row, delete it, print PASS. Catches any breakage (wrong endpoint,
+   missing grants, storage misconfig the preflight didn't catch) at setup time rather
+   than in 1000 attendee notebooks. Attendee notebooks must use the **Environment side
+   panel** to install the SDK, not `%pip install`, to avoid 1000× per-session install
+   latency.
 
 **Global rules:**
 6. Never grant anything on the individual per-attendee schemas.
