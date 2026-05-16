@@ -8,7 +8,7 @@
 
 - **Lab 1 — Manually code an SDP pipeline**: streaming table in **Python**, materialized view in **SQL** with three data-quality expectations wired in from the start. Reference files in [`lab1/`](./lab1/).
 - **Lab 2 — Learn how to use Genie Code as a data engineer**: all-**SQL** pipeline (AutoCDC + Auto Loader + join gold MV), produced from a single Genie Code prompt — and verified by you before it runs. Reference files in [`lab2/`](./lab2/).
-- **Lab 3 — Work with Zerobus Ingest to push IoT data** *(live instructor demo; attendees may follow along)*: one HTTP POST lands a row in `workshop.zerobus.measurements`, with credentials fetched from a shared UC config table. Reference files in [`lab3/`](./lab3/).
+- **Lab 3 — Work with Zerobus Ingest to push IoT data** *(live instructor demo; attendees may follow along)*: one `ingest_record(...)` call via the official `databricks-zerobus-ingest-sdk` (gRPC) lands a row in `workshop.zerobus.measurements`, with credentials fetched from a shared UC config table. Reference files in [`lab3/`](./lab3/).
 - **Lab 4 — Real-Time Mode for SDP** *(optional)*: deploy a continuous pipeline running in Real-Time Mode (RTM), watch sub-second latency aggregates land in the driver console, and read the engine latency from the driver logs. Reference bundle in [`lab4/`](./lab4/).
 - **Lab 5 — Iceberg side-quest** *(optional)*: publish a derived bakehouse result as a managed Iceberg table and read it back with PyIceberg through the Unity Catalog Iceberg REST endpoint — no Spark session required. Reference files in [`lab5/`](./lab5/).
 - **Lab 6 — CI/CD via Declarative Automation Bundles** *(optional)*: clone a public repo with a DAB, retarget two variables to `workshop.USER_ID`, and deploy it from the **CLI** with `databricks bundle deploy` — the same path a CI runner takes.
@@ -52,7 +52,7 @@ Clone this repo into your Workspace once at the start. You get this lab guide an
    - **Sparse checkout path**: `Lakeflow-DataEng-Workshop-V2`
 3. Click **Create Git folder**. The `Lakeflow-DataEng-Workshop-V2/` subfolder clones into `de_workshop/` in your workspace.
 
-The cloned `lab1/` … `lab5/` folders inside `de_workshop/Lakeflow-DataEng-Workshop-V2/` are read-only reference (Lab 6 has no folder — it points at an external repo). For Labs 1 and 2 you create a new pipeline; the editor auto-creates a workspace folder named after the pipeline in your home directory, so your work stays separate from the cloned repo. Lab 4 is the exception — you deploy directly from the cloned `lab4/`.
+The cloned `lab1/` … `lab5/` folders inside `de_workshop/Lakeflow-DataEng-Workshop-V2/` are read-only reference (Lab 6 has no folder — it points at an external repo). For Labs 1 and 2 you create a new pipeline; the editor auto-creates a workspace folder named after the pipeline in your home directory, so your work stays separate from the cloned repo. Labs 3 and 4 are the exceptions — you run / deploy directly from the cloned `lab3/` and `lab4/`.
 
 ---
 
@@ -231,27 +231,33 @@ Explain the data flow in this pipeline end-to-end. Which node is incrementally m
 
 ## Lab 3 — Work with Zerobus Ingest to push IoT data
 
-> **Format: live instructor demo.** The instructor will run this end-to-end on the projector. Attendees are welcome to follow along in their own workspace — every asset is already provisioned for you — but the teaching point is the *governance surface* (scoped OAuth, SP audit identity, table-level GRANT), which lands better when talked through than typed in silence. If you're short on time, watch and ask questions; come back to it later.
+Lab 3 flips the script: until now you processed data that came to you (sample tables, a JSON volume, a CDC stream). Now **you** are the IoT producer, emitting one IoT event data that is stored in a Delta table in the Lakebouse.
 
-Until now, data came to you — sample tables, a JSON volume, a Delta stream. Lab 3 flips the script: **you** are the producer.
+**What's already provisioned for you:**
 
-One HTTP POST lands one row in `workshop.zerobus.measurements`. No Kafka, no Auto Loader, no pipeline required. The token that authorises the POST is precise like a *hotel keycard, not a master key* — scoped via `authorization_details` to `MODIFY` on that one table, and nothing else.
+- **Zerobus table** — a Delta table `workshop.zerobus.measurements` (`id STRING, city STRING, temperature FLOAT, comment STRING`). Every event lands here.
+- **Producer identity** — a service principal `workshop-zerobus-sp` with `MODIFY + SELECT` on that one table. The SDK authenticates as this SP from your notebook.
 
-Here in the lab, credentials come from a shared UC config table.
+**Overview of what you do:** open the notebook, set three parameters (city, temperature, comment), use the official **Databricks Zerobus Ingest SDK** which opens a gRPC stream, ingests one event with a fresh UUID, flushes for durability, closes. 
 
+Then you verify the event landed — first inside the notebook, then from a SQL warehouse as a downstream consumer.
+
+**Shared Zerobus table, thousands of simultaneous producers.** This same `workshop.zerobus.measurements` table is the target for *every* attendee in the workshop. When the instructor signals go, all of you will be firing `ingest_record` all writing to the same Delta table. Zerobus is built to absorb exactly this shape of load: many concurrent streams converging on one table. 
+
+By the end of the lab you'll see every attendee's events sitting alongside your own — a live demo of what a real fleet of IoT producers looks like on the wire.
 
 ### Target
-
-A managed Delta table provisioned by the setup notebook:
 
 | catalog | schema | table | columns |
 |---|---|---|---|
 | `workshop` | `zerobus` | `measurements` | `id STRING, city STRING, temperature FLOAT, comment STRING` |
 
 
-### Step 3a — Open the reference notebook
+### Step 3a — Open the notebook from the cloned repo
 
-Asset browser (or Workspace) → **Add → Exploration** → name `send_temperature` → language **Python** → **Create**. Paste the contents of [`lab3/send_temperature.py`](./lab3/send_temperature.py).
+In the Workspace sidebar, navigate to your cloned `de_workshop/Lakeflow-DataEng-Workshop-V2/lab3/send_temperature.py` and click to open it. The notebook runs directly from the Git folder. 
+
+The notebook ships with `databricks-zerobus-ingest-sdk` already declared in its **Environment** (top-right Environment icon). On first attach, the serverless runtime builds that dependency into the notebook's cached venv — no manual click-through, no `%pip install`, no per-session install delay. 
 
 ### Step 3b — Fill in the widgets at the top
 
@@ -261,13 +267,17 @@ Asset browser (or Workspace) → **Add → Exploration** → name `send_temperat
 
 ### Step 3c — Run the **Submit** cell
 
-That cell calls `submit_temperature(CITY, TEMPERATURE, COMMENT)`, which the notebook's plumbing cell defines. The plumbing cell is marked **⛔ DO NOT MODIFY** — it reads the config row, generates a UUID, exchanges the SP creds for an OAuth token scoped to the table via `authorization_details`, and posts a one-element JSON array to:
+That cell calls `submit_temperature(CITY, TEMPERATURE, COMMENT)`, which the notebook's plumbing cell defines. The plumbing cell is marked **⛔ DO NOT MODIFY** 
 
-```
-POST https://<workspace_id>.zerobus.<region>.cloud.databricks.com/zerobus/v1/tables/workshop.zerobus.measurements/insert
+```python
+sdk = ZerobusSdk(_SERVER_ENDPOINT, unity_catalog_url=_WORKSPACE_URL)
+stream = sdk.create_stream(_CLIENT_ID, _CLIENT_SECRET, table_props, options)
+stream.ingest_record(json.dumps(record))
+stream.flush()
+stream.close()
 ```
 
-On success you'll see:
+The SDK handles the OAuth token exchange and scoping internally — the attendee never sees an `authorization_details` payload or a bearer token. On success you'll see:
 
 ```
 ✅ Sent to workshop.zerobus.measurements: {'id': '…', 'city': 'Munich', 'temperature': 21.5, 'comment': 'Hello Zerobus'}
@@ -275,7 +285,7 @@ On success you'll see:
 
 ### Step 3d — Verify in the notebook
 
-The last cell runs `spark.table("workshop.zerobus.measurements").where(col("city") == "Munich")`. Your row appears within a few seconds. Zerobus REST is exactly-once at the protocol level (per-record ACK with idempotency); a client that retries on transport errors becomes at-least-once. Order isn't guaranteed across producers.
+The last cell runs `spark.table("workshop.zerobus.measurements").where(col("city") == "Munich")`. Your row appears within a few seconds. Zerobus is **at-least-once** at the protocol level — durability ACKs come back per record, and a client that retries on transport errors may produce duplicates. Order isn't guaranteed across producers.
 
 ### Step 3e — Verify in Databricks SQL
 
@@ -293,28 +303,13 @@ ORDER BY city, temperature;
 
 You should see every attendee's row, including your own. In a real production deployment this is the query a dashboard would run, refreshed on a schedule — same table, same grants, no separate serving tier.
 
-### Governance surface — who wrote what, and what could they write?
-
-This is the part of the design most workshop material skips. The SP+Zerobus model vs. a "just grant MODIFY and INSERT" model differ in ways that matter once you leave the workshop:
-
-| Dimension | Zerobus + SP (this lab) | Direct `INSERT` (attendees granted MODIFY) |
-|---|---|---|
-| **Producer identity in audit** | `workshop-zerobus-sp` — one row per ingest in the audit log, trivially traceable back to the Lab 3 flow. Queryable: `SELECT * FROM system.access.audit WHERE user_identity.email = 'workshop-zerobus-sp'`. | Each attendee's own user identity, mixed in with every other query they ran that session. Forensics have to filter by action type (`writeTable`) and table name. |
-| **What the credential can do** | SP token is minted per-request with `authorization_details` pinning it to `MODIFY/SELECT` on **this one table** (catalog/schema USE granted out-of-band, not in the token). A leaked token can only append rows to `measurements`. Cannot `DELETE`, cannot `DROP`, cannot touch any other table. | Attendee holds a PAT / session token with whatever grants they have. `MODIFY` on the table allows `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `OPTIMIZE`, `VACUUM` — anything write-shaped. Harder to reason about. |
-| **Revocation** | Rotate the SP's OAuth client secret in the setup notebook — old secret stops working, the config table gets the new one, attendees notice nothing. No per-attendee churn. | Have to revoke/adjust grants on the group. If attendees wandered off with a PAT, the PAT keeps working until it's explicitly revoked. |
-| **Credential surface** | Lives in `workshop.zerobus.config` with `SELECT` granted to `account users`; the SP grants are tightly bounded to one table, so the bound on a leaked secret is "writes to `measurements`," nothing more. | No extra credential — the attendee uses their own identity. Lower credential risk, but higher *authorization* risk because the identity is broad-purpose. |
-| **Scales to 1,000 producers?** | Yes: each producer gets its own SP or they all share one; either way the path of least privilege stays the same. | Doesn't apply outside Databricks — external producers have no Databricks user identity to authenticate as. |
-
-The TL;DR: the SP + scoped OAuth model **narrows the credential** (it can only do one thing on one table), **widens the audit trail** (you always know which producer flow wrote a row), and **scales to producers outside your workspace**. Direct `INSERT` is simpler for in-workspace use but can't express any of those properties.
 
 ### What to take away
 
-- **Direct-to-Delta ingest** — one POST, one row, no intermediate bus. Ideal for edge devices or low-volume producers that live outside Databricks.
-- **Fine-grained OAuth — a hotel keycard, not a master key.** `authorization_details` scopes the token to one table: a leaked token can append rows to `measurements`, and nothing else. No `SELECT *`, no `DELETE`, no `DROP`.
-- **Producer identity in audit** — `system.access.audit` attributes the write to `workshop-zerobus-sp`, not to the attendee. That's the right answer for "which pipeline produced this row?" queries.
-- **Config in a UC table, not copy-paste** — attendees read all five values (`client_id`, `client_secret`, `workspace_url`, `workspace_id`, `zerobus_endpoint`) from `workshop.zerobus.config` with one `spark.table(...).first()`. The shared `client_secret` is in the table in cleartext; this is intentional given the 1:1000 shared-credential model — every attendee needs the secret to mint OAuth tokens anyway, and the SP is grant-bounded to this one table.
-- **REST vs gRPC SDK trade-off** — REST is a handshake per record (higher per-record cost), gRPC holds a persistent stream (much higher throughput). For this workshop, one record per attendee, REST is the right call. At volume, use the SDK.
-- **Zerobus does not create tables** — the table must exist with the exact schema before any record can land.
+- **Direct-to-Delta ingest** — one `ingest_record` call, one row, no intermediate bus. The SDK holds a gRPC stream with durability ACKs, so it scales from a single-record demo like this to high-throughput production producers.
+- **Fine-grained OAuth — like a hotel keycard, not a master key.** The SDK mints tokens scoped via `authorization_details` to one table: even if the SP's client_secret leaked, the only thing it could do is append rows to `measurements`. No `SELECT *`, no `DELETE`, no `DROP`.
+- **Producer identity in audit** — `system.access.audit` attributes the write to the service principal(s), not to the attendee. That's the right answer for "which pipeline produced this row?" queries.
+- **SDK over REST** — the `databricks-zerobus-ingest-sdk` uses gRPC with a persistent stream and durability ACKs (higher throughput, simpler retries) and handles all the OAuth + `authorization_details` plumbing internally. The Zerobus REST API exists is available too.
 
 > Reference notebook: [`lab3/send_temperature.py`](./lab3/send_temperature.py).
 

@@ -10,18 +10,21 @@ Lab 2) and a shared Zerobus target table (for Lab 3) are preseeded by a single s
   in **SQL** (1b) over `samples.bakehouse.sales_transactions`. The MV is created with three
   `CONSTRAINT ... EXPECT` clauses wired in from the start — one per violation behavior
   (log / drop row / fail update) — so attendees paste one block and run, no replacement step.
-  Source files in `lab1-SDP/`.
+  Source files in `lab1/`.
 - **Lab 2 — Wanderbricks, SQL, Learn how to use Genie Code (verified).** AutoCDC on
   `samples.wanderbricks.booking_updates`, Auto Loader on JSON fraud markers,
   streaming table on `samples.wanderbricks.payments`, and a three-way-join gold MV.
-  Reference files in `lab2-GenieCode/`.
+  Reference files in `lab2/`.
 - **Lab 3 — Zerobus direct ingest (live instructor demo; attendees may follow along).**
   Instructor runs an Exploration notebook that pushes one `{id, city, temperature, comment}`
   record into the shared Delta table `workshop.zerobus.measurements` via the **official
-  `databricks-zerobus-ingest-sdk`** (gRPC). The SDK is installed once per notebook via the
-  serverless **Environment** side panel — `Add Dependency: databricks-zerobus-ingest-sdk`
-  → `Apply` — which builds the package into the runtime so it imports immediately, with
-  no per-session `%pip install` cost (matters at 1000-attendee scale). Credentials come
+  `databricks-zerobus-ingest-sdk`** (gRPC). The SDK is declared as a **PEP 723 inline
+  metadata** dependency at the top of `lab3/send_temperature.py`, which Databricks reads
+  on attach and builds into the notebook's serverless **Environment** (visible in the
+  side panel) — so the SDK imports immediately on first run, with no `%pip install`
+  cell and no per-session install cost (matters at 1000-attendee scale). If the auto-build
+  doesn't kick in, attendees can fall back to clicking **Apply** in the Environment side
+  panel — the dep is already listed there. Credentials come
   from the UC config table `workshop.zerobus.config` (single row, columns: `client_id`,
   `client_secret`, `workspace_url`, `workspace_id`, `zerobus_endpoint`) — attendees read
   all five values from one place. The shared SP `client_secret` lives in the table in
@@ -30,23 +33,24 @@ Lab 2) and a shared Zerobus target table (for Lab 3) are preseeded by a single s
   `measurements`). The lab's teaching point is the governance surface (SP audit identity,
   table-level `MODIFY + SELECT` grant, narrowest blast radius — the SDK handles OAuth and
   `authorization_details` internally so the failure mode of a hand-rolled REST client
-  cannot recur). Reference file in `lab3-Zerobus-Ingest/send_temperature.py`.
+  cannot recur). Reference file in `lab3/send_temperature.py`.
 - **Lab 4 — Real-Time Mode for SDP (optional / take-home).** A continuous, serverless,
   PREVIEW-channel SDP pipeline using `@dp.update_flow` with `pipelines.trigger: "RealTime"`,
   enabled at the pipeline level via `spark.databricks.streaming.realTimeMode.enabled = true`
   in the bundle's `configuration:` block. A synthetic `rate` source feeds a 10-second
   windowed aggregation; the console sink emits an `engine_latency_ms` column readable from
-  the driver logs. Deployed as a Declarative Automation Bundle from `lab4-SDP-RTM/`. Conform to
+  the driver logs. Deployed as a Declarative Automation Bundle from `lab4/`. Conform to
   the official RTM user guide for SDP — flow-level keys are `pipelines.trigger` and
   `pipelines.trigger.interval`, not the older `pipelines.execution.realTimeMode` /
   `pipelines.realtime.trigger.duration`.
 - **Lab 5 — Iceberg side-quest (optional / take-home).** A managed-Iceberg CTAS
   (`global_sales_gold`, top-5 locations) run **outside** the pipeline in the SQL editor,
   read back from a small PyIceberg Exploration notebook via the UC Iceberg REST Catalog.
-  Not part of the ~100-minute core arc; skip-friendly. Source files in `lab5-Iceberg/`.
+  Not part of the ~100-minute core arc; skip-friendly. Source files in `lab5/`.
 - **Lab 6 — CI/CD via Declarative Automation Bundles (external Gourmet Pipeline).** Clones
-  `databricks/tmm/Lakeflow-Gourmet-Pipeline` into the workspace via Git folder + sparse
-  checkout, per-student overrides of `catalog_name` / `prod_warehouse_id` (and optionally
+  `databricks/tmm/Lakeflow-Gourmet-Pipeline` locally via `git clone --filter=blob:none
+  --no-checkout` + `git sparse-checkout`, per-student overrides of `catalog_name` /
+  `prod_warehouse_id` (and optionally
   `schema_name`) in `databricks.yml`, then deploys via `databricks bundle deploy` from the
   CLI — the same path a CI runner would take. The upstream demo bundle has only one target
   (`presenter`); production CI/CD would extend with `dev` and `prod` targets. Source lives
@@ -66,9 +70,10 @@ Lab 2) and a shared Zerobus target table (for Lab 3) are preseeded by a single s
 - Lab 5b (Iceberg reader, **outside** the pipeline) — small **Python** Exploration notebook
   using `pyiceberg`. Client-side reader, not pipeline code — the in-pipeline language split
   is untouched.
-- Net effect for **in-pipeline** code in the core arc (Labs 1–3): Python appears exactly
-  once (Lab 1a); everything else in the pipeline is SQL. This is deliberate so Lab 2 aligns
-  with what Genie Code generates. Do not "unify" Lab 1 to all-Python or all-SQL.
+- Net effect for **in-pipeline** code in the core arc (Labs 1–2 — Lab 3 is a one-shot
+  Zerobus producer notebook, not an SDP pipeline): Python appears exactly once (Lab 1a);
+  everything else in the pipeline is SQL. This is deliberate so Lab 2 aligns with what
+  Genie Code generates. Do not "unify" Lab 1 to all-Python or all-SQL.
 
 ## SDP code conventions (MUST follow)
 - Use **`CREATE OR REFRESH`** (never `CREATE OR REPLACE`) for streaming tables and
@@ -109,43 +114,48 @@ The setup notebook (`setup_workshop.py`, run once per workshop) is split into tw
 5. **Grant `READ_VOLUME` on `workshop.shared.landing` to group `account users`**
    (read-only — no `WRITE_VOLUME`).
 
-**Part B — Lab 3 Zerobus provisioning** (skipped if `zerobus_region` widget is blank):
-0. **Storage preflight.** Create schema `workshop.zerobus`, then check via the SDK that
-   the catalog/schema has a managed storage location AND that the location is not workspace
-   default storage. Empirically the only confirmed default-storage marker on AWS is the
-   `s3://dbstorage-` bucket prefix; Databricks-internal demo workspaces and customer-owned
-   buckets both write to `s3://databricks-…` style locations and Zerobus accepts those, so
-   we do not flag them. If the location is missing OR matches the default-storage prefix,
-   raise `RuntimeError` with remediation guidance (set `MANAGED LOCATION` on the catalog
-   or schema, or use a different catalog). Zerobus rejects writes to default-storage tables
-   with HTTP 403 at insert time — failing here at setup is cheaper than failing in 1000
-   attendee notebooks later.
-1. Create the managed Delta table `workshop.zerobus.measurements` with exactly
-   `id STRING, city STRING, temperature FLOAT, comment STRING`. Zerobus does not create
-   tables.
-2. Create (or reuse) a workspace service principal `workshop-zerobus-sp`. Always generate
-   a fresh OAuth client secret on each run — config-table writes overwrite, so attendees
-   always read a current value.
-3. Grant the SP: `USE CATALOG` on `workshop`, `USE SCHEMA` on `workshop.zerobus`,
-   `MODIFY + SELECT` on the data table. Nothing broader — this bounds the blast radius.
-   The Zerobus Ingest SDK handles the OAuth `authorization_details` payload internally
-   (it requires the full UC chain — `USE CATALOG` + `USE SCHEMA` + `SELECT` + `MODIFY` —
-   with **spaced** privilege names matching `SHOW GRANTS`), so as long as those four
-   grants are in place the SDK takes care of the rest.
-4. Create the config table `workshop.zerobus.config` (single row, columns: `client_id`,
-   `client_secret`, `workspace_url`, `workspace_id`, `zerobus_endpoint`) and `GRANT SELECT`
-   on it to `account users` (with fallback to workspace `users`). Cleartext storage of
-   `client_secret` is intentional: every attendee needs the secret to authenticate the
-   SDK anyway, and the SP's UC grants are tightly bounded — the table simplifies the
-   read path at the cost of secret-scope redaction. Attendees then read via
-   `spark.table("workshop.zerobus.config").first()`.
-5. **gRPC smoke test.** Install `databricks-zerobus-ingest-sdk` (interactive `%pip install`
-   is fine here — setup runs once), then open a stream as the freshly-provisioned SP,
-   ingest one dummy row, delete it, print PASS. Catches any breakage (wrong endpoint,
-   missing grants, storage misconfig the preflight didn't catch) at setup time rather
-   than in 1000 attendee notebooks. Attendee notebooks must use the **Environment side
-   panel** to install the SDK, not `%pip install`, to avoid 1000× per-session install
-   latency.
+**Part B — Lab 3 Zerobus provisioning** (skipped if `zerobus_region` widget is blank).
+After the skip-check, an inline `%pip install "databricks-zerobus-ingest-sdk>=1.0.0"`
++ `dbutils.library.restartPython()` cell installs the SDK for the smoke test in B6
+(interactive `%pip install` is fine here — setup runs once; widgets are re-resolved
+after the restart). Then:
+
+- **B0. Storage preflight.** Create schema `workshop.zerobus`, then check via the SDK
+  that the catalog/schema has a managed storage location AND that the location is not
+  workspace default storage. The check fails only on a confirmed default-storage URI
+  (currently `s3://dbstorage-` prefix on AWS); a missing `storage_root` is treated as
+  "inherited from metastore, fine," and the B6 smoke test confirms Zerobus actually
+  accepts writes. Zerobus rejects writes to default-storage tables with HTTP 403 at
+  insert time — failing here at setup is cheaper than failing in 1000 attendee
+  notebooks later.
+- **B1.** Create the managed Delta table `workshop.zerobus.measurements` with exactly
+  `id STRING, city STRING, temperature FLOAT, comment STRING`. Zerobus does not create
+  tables.
+- **B2.** Create (or reuse) a workspace service principal `workshop-zerobus-sp`.
+- **B3.** Always generate a fresh OAuth client secret on each run — config-table writes
+  overwrite, so attendees always read a current value.
+- **B4.** Grant the SP: `USE CATALOG` on `workshop`, `USE SCHEMA` on `workshop.zerobus`,
+  `MODIFY + SELECT` on the data table. Nothing broader — this bounds the blast radius.
+  The Zerobus Ingest SDK handles the OAuth `authorization_details` payload internally
+  (it requires the full UC chain — `USE CATALOG` + `USE SCHEMA` + `SELECT` + `MODIFY` —
+  with **spaced** privilege names matching `SHOW GRANTS`), so as long as those four
+  grants are in place the SDK takes care of the rest.
+- **B5.** Create the config table `workshop.zerobus.config` (single row, columns:
+  `client_id`, `client_secret`, `workspace_url`, `workspace_id`, `zerobus_endpoint`)
+  and `GRANT SELECT` on it to `account users` (with fallback to workspace `users`).
+  Cleartext storage of `client_secret` is intentional: every attendee needs the secret
+  to authenticate the SDK anyway, and the SP's UC grants are tightly bounded — the
+  table simplifies the read path at the cost of secret-scope redaction. Attendees
+  read via `spark.table("workshop.zerobus.config").first()`.
+- **B6. gRPC smoke test.** Open a stream as the freshly-provisioned SP, ingest one
+  dummy row, delete it, print PASS. Catches any breakage (wrong endpoint, missing
+  grants, storage misconfig the preflight didn't catch) at setup time rather than
+  in 1000 attendee notebooks. Attendee notebooks install the SDK via PEP 723 inline
+  metadata in `lab3/send_temperature.py` (which Databricks renders into the notebook's
+  Environment side panel automatically), not via `%pip install`, to avoid the per-session
+  install cost at 1000-attendee scale.
+- **B7.** Print the summary block (data table, config table, SP, ACL principal,
+  Zerobus endpoint, smoke-test status, attendee notebook path).
 
 **Global rules:**
 6. Never grant anything on the individual per-attendee schemas.
@@ -169,14 +179,14 @@ The setup notebook (`setup_workshop.py`, run once per workshop) is split into tw
 - Any doc references should link to `docs.databricks.com/aws/en/ldp/...` or
   `docs.databricks.com/aws/en/genie-code/...` and include the doc's "last updated" date.
 
-## Lab 6 specifics (CI/CD via Asset Bundles)
+## Lab 6 specifics (CI/CD via Declarative Automation Bundles)
 - Upstream source of truth: `https://github.com/databricks/tmm/tree/main/Lakeflow-Gourmet-Pipeline`.
 - Per-student variables students MUST adjust in `databricks.yml`:
   - `catalog_name` — default is `daiwt_gourmet`; change to `workshop`.
   - `prod_warehouse_id` — default is an example ID that likely doesn't exist in the workshop workspace; replace with a real one from **SQL Warehouses**.
   - `schema_name` — default is `${workspace.current_user.short_name}`; leave it if that matches the attendee's `<user>` schema, otherwise override to the literal `<user>` value.
 - Gotcha: dashboard SQL cannot be parameterized yet — if the attendee changes catalog/schema away from defaults, they must manually replace `daiwt_gourmet` in `resources/dashboard_gourmet_aibi.yml` and `src/aibi_dashboard.json`.
-- Do NOT add a copy of the Gourmet Pipeline code to this repo. Lab 6 points to the upstream repo and students clone via Workspace **Create → Git folder** with sparse checkout path `Lakeflow-Gourmet-Pipeline`.
+- Do NOT add a copy of the Gourmet Pipeline code to this repo. Lab 6 points to the upstream repo and students clone locally via `git clone --filter=blob:none --no-checkout` + `git sparse-checkout set Lakeflow-Gourmet-Pipeline`, then deploy with `databricks bundle deploy -t presenter`. The lab is taught from the **CLI** end-to-end; no Workspace UI clone or Deployments-pane step.
 - The lab is taught from the **CLI**: `databricks bundle validate`, `databricks bundle deploy -t presenter`, `databricks bundle run`, `databricks bundle destroy`. Link to the docs:
   `https://docs.databricks.com/aws/en/dev-tools/bundles/`. These are the basic commands;
   production CI runners use the same `databricks bundle deploy` against `dev` / `prod` targets.
@@ -187,9 +197,9 @@ The setup notebook (`setup_workshop.py`, run once per workshop) is split into tw
 - `CLAUDE.md` — this file.
 - `.gitignore` — standard Databricks/Python ignores.
 - `setup_workshop.py` — instructor-run setup notebook (Part A: Lab 2 shared volume + seed; Part B: Lab 3 Zerobus target table, SP, grants, config table).
-- `lab1-SDP/` — Lab 1 reference files: `sales_transactions.py` (streaming table) and `sales_stats.sql` (MV with three `EXPECT` constraints baked in).
-- `lab2-GenieCode/` — Lab 2 reference SQL files (`bookings_current.sql`, `booking_fraud_flags.sql`, `payments.sql`, `booking_fraud_summary.sql`).
-- `lab3-Zerobus-Ingest/` — Lab 3 reference file: `send_temperature.py` (Databricks notebook source). Payload-construction and POST logic are in a single "DO NOT MODIFY" cell; attendees only change the three widgets (city, temperature, comment).
-- `lab4-SDP-RTM/` — Lab 4 (optional / take-home) Real-Time Mode bundle: `databricks.yml` (continuous, serverless, PREVIEW channel, RTM enabled at pipeline level) and `transformations/temperature_rtm.py` (`@dp.update_flow` with `pipelines.trigger: "RealTime"`, console sink with `engine_latency_ms` column).
-- `lab5-Iceberg/` — Lab 5 (optional / take-home) Iceberg side-quest reference files: `global_sales_gold.sql` (managed-Iceberg CTAS, runs outside the pipeline) and `read_global_sales_gold.py` (PyIceberg reader, Databricks notebook source, talks to the UC Iceberg REST Catalog).
-- (no `lab6/` folder) — Lab 6 (CI/CD via Asset Bundles) ships from the external repo `databricks/tmm/Lakeflow-Gourmet-Pipeline`; nothing is forked into this repo.
+- `lab1/` — Lab 1 reference files: `sales_transactions.py` (streaming table) and `sales_stats.sql` (MV with three `EXPECT` constraints baked in).
+- `lab2/` — Lab 2 reference SQL files (`bookings_current.sql`, `booking_fraud_flags.sql`, `payments.sql`, `booking_fraud_summary.sql`).
+- `lab3/` — Lab 3 reference file: `send_temperature.py` (Databricks notebook source). Record-construction and the gRPC stream lifecycle (`ZerobusSdk.create_stream` → `ingest_record` → `flush` → `close`) are in a single "DO NOT MODIFY" cell; attendees only change the three widgets (city, temperature, comment). The SDK install is declared in PEP 723 inline metadata at the top of the file.
+- `lab4/` — Lab 4 (optional / take-home) Real-Time Mode bundle: `databricks.yml` (continuous, serverless, PREVIEW channel, RTM enabled at pipeline level) and `transformations/temperature_rtm.py` (`@dp.update_flow` with `pipelines.trigger: "RealTime"`, console sink with `engine_latency_ms` column).
+- `lab5/` — Lab 5 (optional / take-home) Iceberg side-quest reference files: `global_sales_gold.sql` (managed-Iceberg CTAS, runs outside the pipeline) and `read_global_sales_gold.py` (PyIceberg reader, Databricks notebook source, talks to the UC Iceberg REST Catalog).
+- (no `lab6/` folder) — Lab 6 (CI/CD via Declarative Automation Bundles) ships from the external repo `databricks/tmm/Lakeflow-Gourmet-Pipeline`; nothing is forked into this repo.

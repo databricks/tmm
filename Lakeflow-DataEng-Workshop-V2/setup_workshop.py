@@ -161,8 +161,9 @@ print(f"Expected ~{int(47726 * FRAUD_PCT / 100)} at {FRAUD_PCT}% of ~47,726 dist
 # MAGIC ---
 # MAGIC # Part B — Zerobus provisioning (Lab 3)
 # MAGIC
-# MAGIC Creates the target table, a shared service principal, UC grants, and a secret scope.
-# MAGIC Skip by leaving the `zerobus_region` widget blank.
+# MAGIC Creates the target table, a shared service principal, UC grants, a UC config table,
+# MAGIC and runs an end-to-end gRPC SDK smoke test. Skip by leaving the `zerobus_region`
+# MAGIC widget blank.
 
 # COMMAND ----------
 
@@ -370,7 +371,7 @@ spark.sql(
     f"to {CATALOG}.zerobus.measurements.'"
 )
 
-# Grant SELECT to the broadest available group, mirroring the prior scope-ACL fallback.
+# Grant SELECT to the broadest available group, with fallback if `account users` doesn't exist.
 _grant_principal = None
 for _candidate in ("account users", "users"):
     try:
