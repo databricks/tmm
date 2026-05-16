@@ -89,8 +89,10 @@ _CONFIG        = spark.table(f"{CATALOG}.{SCHEMA}.config").first()
 _CLIENT_ID     = _CONFIG["client_id"]
 _CLIENT_SECRET = _CONFIG["client_secret"]
 _WORKSPACE_URL = _CONFIG["workspace_url"]
+_WORKSPACE_ID  = _CONFIG["workspace_id"]
 # The SDK wants the bare host (no scheme, no path) for the gRPC endpoint:
 _SERVER_ENDPOINT = _CONFIG["zerobus_endpoint"].replace("https://", "").rstrip("/")
+print(f"Config loaded for workspace_id={_WORKSPACE_ID}, endpoint={_SERVER_ENDPOINT}")
 
 
 def submit_temperature(city: str, temperature: float, comment: str = "") -> dict:
@@ -134,7 +136,7 @@ from pyspark.sql.functions import col
 display(
     spark.table(f"{CATALOG}.{SCHEMA}.{TABLE}")
          .where(col("city") == CITY)
-         .orderBy("id")
+         .orderBy(col("temperature").desc())
 )
 
 # COMMAND ----------

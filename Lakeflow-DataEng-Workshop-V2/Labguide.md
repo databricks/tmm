@@ -25,6 +25,7 @@ Throughout this guide, replace `USER_ID` with that exact value. Your pre-assigne
 
 - Your catalog `workshop` / your schema `workshop.USER_ID` already exists and is writable.
 - A shared volume exists at `/Volumes/workshop/shared/landing/` with a seeded subfolder `booking_fraud_flags/` containing JSON fraud markers keyed by `booking_id`. The volume is **read-only** for attendees (every attendee has `READ_VOLUME`, nobody has `WRITE_VOLUME`), so one attendee cannot disrupt another.
+- The Zerobus target table `workshop.zerobus.measurements` (`id, city, temperature, comment`), the shared service principal `workshop-zerobus-sp` (with `USE CATALOG` on `workshop`, `USE SCHEMA` on `workshop.zerobus`, and `MODIFY + SELECT` on the table), and the config table `workshop.zerobus.config` (single row holding `client_id`, `client_secret`, `workspace_url`, `workspace_id`, `zerobus_endpoint`) are all pre-provisioned for Lab 3.
 - This lab runs completely serverless.
 - You can read `samples.bakehouse.*` and `samples.wanderbricks.*` (public sample data).
 
@@ -35,11 +36,11 @@ Three placeholders show up throughout — resolve them once here, then paste blo
 | Placeholder | What to use |
 |---|---|
 | `USER_ID` | Your user id, derived from your login email (see above). Example: `labuser10148895_1745997814`. Your schema is `workshop.USER_ID`. |
-| `workshop` | The catalog. Fixed — do not change. |
+| `workshop` | The catalog used for all labs. This is fixed. No need to change this. |
 | `<course_warehouse_name>` / `<course_warehouse_id>` (Lab 3 only) | The course SQL warehouse provisioned for you by the courseware. Your instructor will share the exact name and ID. |
 | `prod_warehouse_id` (Lab 6 only) | A running SQL warehouse ID. Find it in sidebar **SQL Warehouses** → click a warehouse → copy the ID from the URL. |
 
-### One-time setup — Clone this workshop repo
+## One-time setup — Clone this workshop repo
 
 Clone this repo into your Workspace once at the start. You get this lab guide and all the labs locally. We use **sparse checkout** so you only pull the workshop subfolder, not the entire `databricks/tmm` repo.
 
@@ -52,15 +53,14 @@ Clone this repo into your Workspace once at the start. You get this lab guide an
    - **Sparse checkout path**: `Lakeflow-DataEng-Workshop-V2`
 3. Click **Create Git folder**. The `Lakeflow-DataEng-Workshop-V2/` subfolder clones into `de_workshop/` in your workspace.
 
-The cloned `labs/01-SDP/` … `labs/05-Iceberg/` folders inside `de_workshop/Lakeflow-DataEng-Workshop-V2/` are read-only reference (Lab 6 has no folder — it points at an external repo). For Labs 1 and 2 you create a new pipeline; the editor auto-creates a workspace folder named after the pipeline in your home directory, so your work stays separate from the cloned repo. Labs 3 and 4 are the exceptions — you run / deploy directly from the cloned `labs/03-Zerobus/` and `labs/04-SDP-RTM/`.
 
----
+Most of those labs folder have reference files only. Some folders come with notebooks that you can run directly as described further below.
+
 
 ## Lab 1 — Manually code an SDP pipeline
 
-Before SDP, a pipeline was three systems wired together: a streaming job, a batch job, and a scheduler. You declared the *how*. With SDP, you declare the *target table* — the platform owns scheduling, dependencies, and incremental state.
 
-In this lab you'll hand-code that shape end to end: one **Streaming Table** in Python over the bakehouse sample data, and one **Materialized View** in SQL with three `EXPECT` expectations baked in from the start — *log*, *drop row*, *fail update* — so you see every violation behavior in a single run. Two files. Roughly thirty lines of declarative code.
+In this lab you'll hand-code a SDP end to end: one **Streaming Table** in Python over the famous bakehouse sample data set, and a **Materialized View** implemented SQL with three data quality constrains. One pipeline. Two files only. 
 
 ### Set up the pipeline in the Lakeflow Pipelines Editor
 
@@ -214,8 +214,7 @@ AutoCDC is a time-lapse, not a scrapbook. Every update collapses into one curren
 
 ### Optional
 
-You will see that the payments table isn't used. 
-Ask Genie to JOIN the `fraud_by_payment_method` with the `payments` table to answer the question of the fraud percentage is correlated with the `guest_count`
+The gold MV (`booking_fraud_summary`) groups by `payment_method`. Ask Genie to extend it with `bookings_current` (the AutoCDC target) so the analysis also includes `guests_count` — for example: is the fraud rate correlated with party size? `guests_count` lives in `bookings_current` (it carries over from `samples.wanderbricks.booking_updates`).
 
 ### Ask Genie Code in Chat mode
 
@@ -236,7 +235,8 @@ Lab 3 flips the script: until now you processed data that came to you (sample ta
 **What's already provisioned for you:**
 
 - **Zerobus table** — a Delta table `workshop.zerobus.measurements` (`id STRING, city STRING, temperature FLOAT, comment STRING`). Every event lands here.
-- **Producer identity** — a service principal `workshop-zerobus-sp` with `MODIFY + SELECT` on that one table. The SDK authenticates as this SP from your notebook.
+- **Producer identity** — a service principal `workshop-zerobus-sp` with `USE CATALOG` on `workshop`, `USE SCHEMA` on `workshop.zerobus`, and `MODIFY + SELECT` on that one table. The SDK authenticates as this SP from your notebook (the full UC chain is required for the OAuth `authorization_details` payload).
+- **Config table** — `workshop.zerobus.config`, a single row holding `client_id`, `client_secret`, `workspace_url`, `workspace_id`, and `zerobus_endpoint`. The notebook reads all five values from this one place.
 
 **Overview of what you do:** open the notebook, set three parameters (city, temperature, comment), use the official **Databricks Zerobus Ingest SDK** which opens a gRPC stream, ingests one event with a fresh UUID, flushes for durability, closes. 
 
@@ -332,7 +332,7 @@ Standard SDP runs as micro-batches — fine for seconds-level latency, not for m
 A minimal three-piece pipeline, all in one file:
 
 1. **Source** — a synthetic `rate` stream (RTM officially supports Kafka, MSK, Event Hubs, Kinesis EFO; `rate` is used here for portability).
-2. **Update Flow** — RTM **requires** `@dp.update_flow` (not `@dp.table` / `@dp.view`) with `pipelines.execution.realTimeMode = true` set at the flow level.
+2. **Update Flow** — RTM **requires** `@dp.update_flow` (not `@dp.table` / `@dp.view`) with `pipelines.trigger: "RealTime"` and a `pipelines.trigger.interval` set at the flow level (via `spark_conf=`).
 3. **Sink** — declared up-front with `dp.create_sink(...)`. Production RTM uses Kafka-family sinks; this demo writes to `console` so aggregates land in the **driver log**.
 
 The pipeline reads the rate stream, derives a synthetic `temperature_c`, runs a sliding-window aggregation (10-second window, 2-second slide), and emits an `engine_latency_ms` column on every row — the time between the newest event in the window and the row landing in the sink. RTM ≈ a few–tens of ms, MicroBatch ≈ hundreds+. Smaller = better.
@@ -355,6 +355,53 @@ variables:
 
 `continuous: true`, `serverless: true`, `channel: PREVIEW`, and the RTM enable flag are already set — leave them as-is.
 
+The flow file `transformations/temperature_rtm.py` is the actual RTM pipeline — note the `@dp.update_flow` decorator with the two trigger keys, the synthetic `rate` source, the windowed aggregation, and the `engine_latency_ms` computation:
+
+```python
+from pyspark import pipelines as dp
+from pyspark.sql.functions import (
+    avg, col, count, current_timestamp, expr,
+    max as max_, min as min_, unix_millis, window,
+)
+
+dp.create_sink(
+    "hot_temperatures_sink",
+    "console",
+    {"mode": "append", "truncate": "false"},
+)
+
+
+@dp.update_flow(
+    name="temperature_rtm_flow",
+    target="hot_temperatures_sink",
+    spark_conf={
+        "pipelines.trigger": "RealTime",
+        "pipelines.trigger.interval": "1 minute",
+    },
+)
+def temperature_rtm_flow():
+    return (
+        spark.readStream
+        .format("rate")
+        .option("rowsPerSecond", "100")
+        .load()
+        .withColumnRenamed("timestamp", "source_timestamp")
+        .withColumn("temperature_c", expr("19 + rand() * 7"))
+        .withWatermark("source_timestamp", "10 seconds")
+        .groupBy(window(col("source_timestamp"), "10 seconds", "2 seconds"))
+        .agg(
+            count("*").alias("event_count"),
+            avg("temperature_c").alias("avg_temp_c"),
+            max_("source_timestamp").alias("last_event_ts"),
+        )
+        .withColumn("sink_timestamp", current_timestamp())
+        .withColumn(
+            "engine_latency_ms",
+            unix_millis(col("sink_timestamp")) - unix_millis(col("last_event_ts")),
+        )
+    )
+```
+
 ### Step 4c — Deploy and run from the Workspace UI
 
 1. Open the `labs/04-SDP-RTM/` folder in your Workspace. Because `databricks.yml` is present, the **Deployments** icon (🚀) appears in the left pane.
@@ -376,7 +423,7 @@ The console sink writes the windowed aggregates — including `engine_latency_ms
    |2026-05-15 09:42:18 |2026-05-15 09:42:28 |1000       |22.51             |   |37               |
    ```
 
-4. Read off the `engine_latency_ms` column — that's the end-to-end latency from the newest event in the window to the row landing in the sink. With RTM, expect a few tens of milliseconds. Toggle RTM off in `databricks.yml` (set `spark.databricks.streaming.realTimeMode.enabled` to `"false"`) and redeploy to see how the same pipeline behaves in micro-batch mode — the latency typically jumps to several hundred milliseconds.
+4. Read off the `engine_latency_ms` column — that's the end-to-end latency from the newest event in the window to the row landing in the sink. With RTM, expect a few tens of milliseconds. To compare with micro-batch mode, drop the `pipelines.trigger`/`pipelines.trigger.interval` keys from the flow's `spark_conf=` in `transformations/temperature_rtm.py` (and optionally also flip the pipeline-level `spark.databricks.streaming.realTimeMode.enabled` to `"false"` in `databricks.yml`), then redeploy. The latency typically jumps to several hundred milliseconds.
 
 > Reference files: [`labs/04-SDP-RTM/databricks.yml`](./labs/04-SDP-RTM/databricks.yml) and [`labs/04-SDP-RTM/transformations/temperature_rtm.py`](./labs/04-SDP-RTM/transformations/temperature_rtm.py). Originally based on [`Lakeflow-SDP-RTM-Basics`](https://github.com/databricks/tmm/tree/main/Lakeflow-SDP-RTM-Basics) in the public `databricks/tmm` repo.
 
@@ -430,13 +477,22 @@ You should see 5 rows, top (city, country) pairs by gross revenue (a city in two
 
 Now read the same table with a lightweight Iceberg client — no Spark required.
 
-Asset browser → **Add → Exploration** → name `read_global_sales_gold` → language **Python** → **Create**. Paste:
+Asset browser → **Add → Exploration** → name `read_global_sales_gold` → language **Python** → **Create**. Paste each of the three snippets below into its own cell (use **+ Code** to add cells).
+
+**Cell 1 — install** (a `%pip` magic must be alone in its cell):
 
 ```python
-# MAGIC %pip install --upgrade "pyiceberg>=0.9,<0.10" "pyarrow>=17,<20"
-# (Azure workspaces only) %pip install adlfs
+%pip install --upgrade "pyiceberg>=0.10,<0.11" "pyarrow>=17"
+# On Azure workspaces, also: %pip install adlfs
+```
+
+**Cell 2 — restart Python** so the freshly installed wheels are visible:
+
+```python
 dbutils.library.restartPython()
 ```
+
+**Cell 3 — read the Iceberg table:**
 
 ```python
 from pyiceberg.catalog import load_catalog
@@ -458,7 +514,7 @@ print(tbl.current_snapshot())             # snapshot metadata proves this is Ice
 tbl.scan(limit=10).to_pandas()            # top-5 rows as pandas
 ```
 
-Expected output: a pandas DataFrame with the same 5 (city, country) pairs you saw in Step 6a, plus snapshot metadata for the Iceberg table.
+Expected output: a pandas DataFrame with the same 5 (city, country) pairs you saw in Step 5a, plus snapshot metadata for the Iceberg table.
 
 **What you just demonstrated:**
 - `pip install pyiceberg` — no cluster restart, no Iceberg JARs, no Spark session. A pure-Python client talks to Unity Catalog via the **Iceberg REST Catalog** endpoint at `/api/2.1/unity-catalog/iceberg-rest`.

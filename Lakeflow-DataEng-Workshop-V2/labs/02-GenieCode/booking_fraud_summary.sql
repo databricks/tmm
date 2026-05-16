@@ -1,5 +1,5 @@
 CREATE OR REFRESH MATERIALIZED VIEW booking_fraud_summary
-COMMENT 'Booking totals and fraud rate per payment method'
+COMMENT 'Payment totals and fraud rate per payment method (gross_amount sums payment rows; a booking with multiple payments contributes each one)'
 AS
 WITH fraud_bookings AS (
     -- DISTINCT because the same booking can appear in multiple flag JSON files.

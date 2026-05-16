@@ -5,7 +5,7 @@
 
 # COMMAND ----------
 
-# MAGIC %pip install --upgrade "pyiceberg>=0.9,<0.10" "pyarrow>=17,<20"
+# MAGIC %pip install --upgrade "pyiceberg>=0.10,<0.11" "pyarrow>=17"
 # MAGIC # %pip install adlfs   # uncomment on Azure workspaces
 
 # COMMAND ----------
