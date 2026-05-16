@@ -1,4 +1,11 @@
 # Databricks notebook source
+# /// script
+# dependencies = [
+#   "databricks-zerobus-ingest-sdk>=1.0.0",
+# ]
+# [tool.databricks.environment]
+# environment_version = "5"
+# ///
 # MAGIC %md
 # MAGIC # Lab 3 — Send a temperature reading to Zerobus
 # MAGIC
@@ -11,21 +18,19 @@
 # MAGIC are read at runtime from the shared UC config table `workshop.zerobus.config`,
 # MAGIC populated by the setup notebook. You never paste them.
 # MAGIC
-# MAGIC ## One-time Environment setup (required before running on serverless)
+# MAGIC ## SDK install — declared in the file
 # MAGIC
-# MAGIC The Zerobus SDK is installed **once** via the notebook Environment, not via
-# MAGIC `%pip install`. The Environment is pre-built into the runtime so the SDK is
-# MAGIC importable from the first cell, with no per-session install delay (this matters
-# MAGIC at 1000-attendee scale).
+# MAGIC The `databricks-zerobus-ingest-sdk` dependency is declared in this notebook's
+# MAGIC PEP 723 inline metadata at the very top of the source file. On a serverless
+# MAGIC runtime, Databricks reads that block, builds the dependency into the notebook's
+# MAGIC Environment, and the SDK is importable from the first cell — no `%pip install`,
+# MAGIC no manual click-through. The Environment is cached, so subsequent attaches are
+# MAGIC instant.
 # MAGIC
-# MAGIC 1. Top right of the notebook → **Environment** icon.
-# MAGIC 2. **Dependencies** → **Add Dependency** → paste `databricks-zerobus-ingest-sdk`.
-# MAGIC 3. Click **Apply**. The runtime restarts with the SDK ready to import.
-# MAGIC
-# MAGIC The package ships a manylinux x86_64 wheel (Rust-backed gRPC core via PyO3); its
-# MAGIC only Python dep is `protobuf>=4.25,<7`. No PySpark, no compile step. If `import
-# MAGIC zerobus...` fails below, the Environment hasn't been applied — repeat the steps
-# MAGIC above before running the rest of the notebook.
+# MAGIC If `import zerobus...` fails below, open **Environment** (top-right icon), check
+# MAGIC that the dependency is listed, and click **Apply**. The package ships a manylinux
+# MAGIC x86_64 wheel (Rust-backed gRPC core via PyO3); its only Python dep is
+# MAGIC `protobuf>=4.25,<7`. No PySpark, no compile step.
 # MAGIC
 # MAGIC Schema of the target table:
 # MAGIC
