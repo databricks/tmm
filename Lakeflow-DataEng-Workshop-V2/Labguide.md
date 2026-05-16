@@ -6,11 +6,11 @@
 
 ### Overview
 
-- **Lab 1 — Manually code an SDP pipeline**: streaming table in **Python**, materialized view in **SQL** with three data-quality expectations wired in from the start. Reference files in [`lab1/`](./lab1/).
-- **Lab 2 — Learn how to use Genie Code as a data engineer**: all-**SQL** pipeline (AutoCDC + Auto Loader + join gold MV), produced from a single Genie Code prompt — and verified by you before it runs. Reference files in [`lab2/`](./lab2/).
-- **Lab 3 — Work with Zerobus Ingest to push IoT data** *(live instructor demo; attendees may follow along)*: one `ingest_record(...)` call via the official `databricks-zerobus-ingest-sdk` (gRPC) lands a row in `workshop.zerobus.measurements`, with credentials fetched from a shared UC config table. Reference files in [`lab3/`](./lab3/).
-- **Lab 4 — Real-Time Mode for SDP** *(optional)*: deploy a continuous pipeline running in Real-Time Mode (RTM), watch sub-second latency aggregates land in the driver console, and read the engine latency from the driver logs. Reference bundle in [`lab4/`](./lab4/).
-- **Lab 5 — Iceberg side-quest** *(optional)*: publish a derived bakehouse result as a managed Iceberg table and read it back with PyIceberg through the Unity Catalog Iceberg REST endpoint — no Spark session required. Reference files in [`lab5/`](./lab5/).
+- **Lab 1 — Manually code an SDP pipeline**: streaming table in **Python**, materialized view in **SQL** with three data-quality expectations wired in from the start. Reference files in [`labs/01-SDP/`](./labs/01-SDP/).
+- **Lab 2 — Learn how to use Genie Code as a data engineer**: all-**SQL** pipeline (AutoCDC + Auto Loader + join gold MV), produced from a single Genie Code prompt — and verified by you before it runs. Reference files in [`labs/02-GenieCode/`](./labs/02-GenieCode/).
+- **Lab 3 — Work with Zerobus Ingest to push IoT data** *(live instructor demo; attendees may follow along)*: one `ingest_record(...)` call via the official `databricks-zerobus-ingest-sdk` (gRPC) lands a row in `workshop.zerobus.measurements`, with credentials fetched from a shared UC config table. Reference files in [`labs/03-Zerobus/`](./labs/03-Zerobus/).
+- **Lab 4 — Real-Time Mode for SDP** *(optional)*: deploy a continuous pipeline running in Real-Time Mode (RTM), watch sub-second latency aggregates land in the driver console, and read the engine latency from the driver logs. Reference bundle in [`labs/04-SDP-RTM/`](./labs/04-SDP-RTM/).
+- **Lab 5 — Iceberg side-quest** *(optional)*: publish a derived bakehouse result as a managed Iceberg table and read it back with PyIceberg through the Unity Catalog Iceberg REST endpoint — no Spark session required. Reference files in [`labs/05-Iceberg/`](./labs/05-Iceberg/).
 - **Lab 6 — CI/CD via Declarative Automation Bundles** *(optional)*: clone a public repo with a DAB, retarget two variables to `workshop.USER_ID`, and deploy it from the **CLI** with `databricks bundle deploy` — the same path a CI runner takes.
 
 ## Important — Your User ID
@@ -52,7 +52,7 @@ Clone this repo into your Workspace once at the start. You get this lab guide an
    - **Sparse checkout path**: `Lakeflow-DataEng-Workshop-V2`
 3. Click **Create Git folder**. The `Lakeflow-DataEng-Workshop-V2/` subfolder clones into `de_workshop/` in your workspace.
 
-The cloned `lab1/` … `lab5/` folders inside `de_workshop/Lakeflow-DataEng-Workshop-V2/` are read-only reference (Lab 6 has no folder — it points at an external repo). For Labs 1 and 2 you create a new pipeline; the editor auto-creates a workspace folder named after the pipeline in your home directory, so your work stays separate from the cloned repo. Labs 3 and 4 are the exceptions — you run / deploy directly from the cloned `lab3/` and `lab4/`.
+The cloned `labs/01-SDP/` … `labs/05-Iceberg/` folders inside `de_workshop/Lakeflow-DataEng-Workshop-V2/` are read-only reference (Lab 6 has no folder — it points at an external repo). For Labs 1 and 2 you create a new pipeline; the editor auto-creates a workspace folder named after the pipeline in your home directory, so your work stays separate from the cloned repo. Labs 3 and 4 are the exceptions — you run / deploy directly from the cloned `labs/03-Zerobus/` and `labs/04-SDP-RTM/`.
 
 ---
 
@@ -67,7 +67,7 @@ In this lab you'll hand-code that shape end to end: one **Streaming Table** in P
 Before you write a single line, create the pipeline that will host Steps 1a and 1b:
 
 1. Workspace sidebar → **New** → **ETL pipeline**. The **Lakeflow Pipelines Editor** opens with a default name `New Pipeline <date> <time>`.
-2. Click the name → rename to `pipeline_USER_ID`. The editor automatically creates a workspace folder of the same name under your home (`/Workspace/Users/<your-email>/pipeline_USER_ID/`) — no manual `mkdir` needed. That folder is where your Lab 1 work lives; the cloned `lab1/` folder is the answer key.
+2. Click the name → rename to `pipeline_USER_ID`. The editor automatically creates a workspace folder of the same name under your home (`/Workspace/Users/<your-email>/pipeline_USER_ID/`) — no manual `mkdir` needed. That folder is where your Lab 1 work lives; the cloned `labs/01-SDP/` folder is the answer key.
 3. **Right of the pipeline name**, click the catalog/schema selector — a **Default location** modal opens. Set:
    - **Default catalog**: `workshop`
    - **Default schema**: type `USER_ID` and click **Save**. The dropdown sometimes only offers *"Create schema"* even though your `USER_ID` schema already exists — ignore that, the typed literal is accepted.
@@ -170,7 +170,7 @@ The skill this lab teaches isn't typing SQL. It's catching the draft that *looks
 1. Workspace sidebar → **New** → **ETL pipeline**. Rename to `pipeline_USER_ID_lab2`. The editor auto-creates a workspace folder of the same name under your home — Genie Code will write the four SQL files it generates there.
 2. Set **Default catalog** to `workshop` and **Default schema** to `USER_ID` (same as Lab 1).
 
-The cloned `lab2/` folder is your answer key — keep it open in another tab to verify what Genie produces.
+The cloned `labs/02-GenieCode/` folder is your answer key — keep it open in another tab to verify what Genie produces.
 
 ### Open Genie Code
 
@@ -225,7 +225,7 @@ Switch Genie Code to **Chat** mode and ask:
 Explain the data flow in this pipeline end-to-end. Which node is incrementally maintained versus fully recomputed on refresh, and why?
 ```
 
-> Reference copies of the four SQL files live in [`lab2/`](./lab2/) alongside this guide — use them as the answer key when verifying Genie Code's output.
+> Reference copies of the four SQL files live in [`labs/02-GenieCode/`](./labs/02-GenieCode/) alongside this guide — use them as the answer key when verifying Genie Code's output.
 
 ---
 
@@ -255,7 +255,7 @@ By the end of the lab you'll see every attendee's events sitting alongside your 
 
 ### Step 3a — Open the notebook from the cloned repo
 
-In the Workspace sidebar, navigate to your cloned `de_workshop/Lakeflow-DataEng-Workshop-V2/lab3/send_temperature.py` and click to open it. The notebook runs directly from the Git folder. 
+In the Workspace sidebar, navigate to your cloned `de_workshop/Lakeflow-DataEng-Workshop-V2/labs/03-Zerobus/send_temperature.py` and click to open it. The notebook runs directly from the Git folder. 
 
 The notebook ships with `databricks-zerobus-ingest-sdk` already declared in its **Environment** (top-right Environment icon). On first attach, the serverless runtime builds that dependency into the notebook's cached venv — no manual click-through, no `%pip install`, no per-session install delay. 
 
@@ -311,7 +311,7 @@ You should see every attendee's row, including your own. In a real production de
 - **Producer identity in audit** — `system.access.audit` attributes the write to the service principal(s), not to the attendee. That's the right answer for "which pipeline produced this row?" queries.
 - **SDK over REST** — the `databricks-zerobus-ingest-sdk` uses gRPC with a persistent stream and durability ACKs (higher throughput, simpler retries) and handles all the OAuth + `authorization_details` plumbing internally. The Zerobus REST API exists is available too.
 
-> Reference notebook: [`lab3/send_temperature.py`](./lab3/send_temperature.py).
+> Reference notebook: [`labs/03-Zerobus/send_temperature.py`](./labs/03-Zerobus/send_temperature.py).
 
 ---
 
@@ -339,11 +339,11 @@ The pipeline reads the rate stream, derives a synthetic `temperature_c`, runs a 
 
 ### Step 4a — Open the RTM bundle
 
-You already cloned the workshop repo at the start. Navigate to the `lab4/` subfolder — it has `databricks.yml` and `transformations/temperature_rtm.py` ready to deploy.
+You already cloned the workshop repo at the start. Navigate to the `labs/04-SDP-RTM/` subfolder — it has `databricks.yml` and `transformations/temperature_rtm.py` ready to deploy.
 
 ### Step 4b — Adjust the bundle for your schema
 
-Open `lab4/databricks.yml`. Two variables drive the deploy — set them to your values:
+Open `labs/04-SDP-RTM/databricks.yml`. Two variables drive the deploy — set them to your values:
 
 ```yaml
 variables:
@@ -357,7 +357,7 @@ variables:
 
 ### Step 4c — Deploy and run from the Workspace UI
 
-1. Open the `lab4/` folder in your Workspace. Because `databricks.yml` is present, the **Deployments** icon (🚀) appears in the left pane.
+1. Open the `labs/04-SDP-RTM/` folder in your Workspace. Because `databricks.yml` is present, the **Deployments** icon (🚀) appears in the left pane.
 2. Click **Deployments** → pick a target → **Deploy**.
 3. After validate + deploy finishes, open the deployed `sdp-rtm-rate-source` pipeline and click **Run**. Because it's continuous, it keeps running — no need to re-trigger.
 
@@ -378,7 +378,7 @@ The console sink writes the windowed aggregates — including `engine_latency_ms
 
 4. Read off the `engine_latency_ms` column — that's the end-to-end latency from the newest event in the window to the row landing in the sink. With RTM, expect a few tens of milliseconds. Toggle RTM off in `databricks.yml` (set `spark.databricks.streaming.realTimeMode.enabled` to `"false"`) and redeploy to see how the same pipeline behaves in micro-batch mode — the latency typically jumps to several hundred milliseconds.
 
-> Reference files: [`lab4/databricks.yml`](./lab4/databricks.yml) and [`lab4/transformations/temperature_rtm.py`](./lab4/transformations/temperature_rtm.py). Originally based on [`Lakeflow-SDP-RTM-Basics`](https://github.com/databricks/tmm/tree/main/Lakeflow-SDP-RTM-Basics) in the public `databricks/tmm` repo.
+> Reference files: [`labs/04-SDP-RTM/databricks.yml`](./labs/04-SDP-RTM/databricks.yml) and [`labs/04-SDP-RTM/transformations/temperature_rtm.py`](./labs/04-SDP-RTM/transformations/temperature_rtm.py). Originally based on [`Lakeflow-SDP-RTM-Basics`](https://github.com/databricks/tmm/tree/main/Lakeflow-SDP-RTM-Basics) in the public `databricks/tmm` repo.
 
 ---
 
@@ -470,7 +470,7 @@ Expected output: a pandas DataFrame with the same 5 (city, country) pairs you sa
 - External data access enabled on the workspace
 - Workspace IP access list (if enabled) allows your client
 
-> Reference copies of the CTAS and the PyIceberg reader live in [`lab5/`](./lab5/) alongside this guide.
+> Reference copies of the CTAS and the PyIceberg reader live in [`labs/05-Iceberg/`](./labs/05-Iceberg/) alongside this guide.
 
 ---
 

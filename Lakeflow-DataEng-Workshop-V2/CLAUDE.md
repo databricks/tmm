@@ -10,16 +10,16 @@ Lab 2) and a shared Zerobus target table (for Lab 3) are preseeded by a single s
   in **SQL** (1b) over `samples.bakehouse.sales_transactions`. The MV is created with three
   `CONSTRAINT ... EXPECT` clauses wired in from the start — one per violation behavior
   (log / drop row / fail update) — so attendees paste one block and run, no replacement step.
-  Source files in `lab1/`.
+  Source files in `labs/01-SDP/`.
 - **Lab 2 — Wanderbricks, SQL, Learn how to use Genie Code (verified).** AutoCDC on
   `samples.wanderbricks.booking_updates`, Auto Loader on JSON fraud markers,
   streaming table on `samples.wanderbricks.payments`, and a three-way-join gold MV.
-  Reference files in `lab2/`.
+  Reference files in `labs/02-GenieCode/`.
 - **Lab 3 — Zerobus direct ingest (live instructor demo; attendees may follow along).**
   Instructor runs an Exploration notebook that pushes one `{id, city, temperature, comment}`
   record into the shared Delta table `workshop.zerobus.measurements` via the **official
   `databricks-zerobus-ingest-sdk`** (gRPC). The SDK is declared as a **PEP 723 inline
-  metadata** dependency at the top of `lab3/send_temperature.py`, which Databricks reads
+  metadata** dependency at the top of `labs/03-Zerobus/send_temperature.py`, which Databricks reads
   on attach and builds into the notebook's serverless **Environment** (visible in the
   side panel) — so the SDK imports immediately on first run, with no `%pip install`
   cell and no per-session install cost (matters at 1000-attendee scale). If the auto-build
@@ -33,20 +33,20 @@ Lab 2) and a shared Zerobus target table (for Lab 3) are preseeded by a single s
   `measurements`). The lab's teaching point is the governance surface (SP audit identity,
   table-level `MODIFY + SELECT` grant, narrowest blast radius — the SDK handles OAuth and
   `authorization_details` internally so the failure mode of a hand-rolled REST client
-  cannot recur). Reference file in `lab3/send_temperature.py`.
+  cannot recur). Reference file in `labs/03-Zerobus/send_temperature.py`.
 - **Lab 4 — Real-Time Mode for SDP (optional / take-home).** A continuous, serverless,
   PREVIEW-channel SDP pipeline using `@dp.update_flow` with `pipelines.trigger: "RealTime"`,
   enabled at the pipeline level via `spark.databricks.streaming.realTimeMode.enabled = true`
   in the bundle's `configuration:` block. A synthetic `rate` source feeds a 10-second
   windowed aggregation; the console sink emits an `engine_latency_ms` column readable from
-  the driver logs. Deployed as a Declarative Automation Bundle from `lab4/`. Conform to
+  the driver logs. Deployed as a Declarative Automation Bundle from `labs/04-SDP-RTM/`. Conform to
   the official RTM user guide for SDP — flow-level keys are `pipelines.trigger` and
   `pipelines.trigger.interval`, not the older `pipelines.execution.realTimeMode` /
   `pipelines.realtime.trigger.duration`.
 - **Lab 5 — Iceberg side-quest (optional / take-home).** A managed-Iceberg CTAS
   (`global_sales_gold`, top-5 locations) run **outside** the pipeline in the SQL editor,
   read back from a small PyIceberg Exploration notebook via the UC Iceberg REST Catalog.
-  Not part of the ~100-minute core arc; skip-friendly. Source files in `lab5/`.
+  Not part of the ~100-minute core arc; skip-friendly. Source files in `labs/05-Iceberg/`.
 - **Lab 6 — CI/CD via Declarative Automation Bundles (external Gourmet Pipeline).** Clones
   `databricks/tmm/Lakeflow-Gourmet-Pipeline` locally via `git clone --filter=blob:none
   --no-checkout` + `git sparse-checkout`, per-student overrides of `catalog_name` /
@@ -102,7 +102,7 @@ Lab 2) and a shared Zerobus target table (for Lab 3) are preseeded by a single s
   — JSON fraud markers keyed by `booking_id`.
 
 ## Setup-notebook responsibilities (MUST include)
-The setup notebook (`setup_workshop.py`, run once per workshop) is split into two parts.
+The setup notebook (`misc/setup_workshop.py`, run once per workshop) is split into two parts.
 
 **Part A — Lab 2 shared assets:**
 1. Create schema `workshop.shared` if it does not exist.
@@ -151,7 +151,7 @@ after the restart). Then:
   dummy row, delete it, print PASS. Catches any breakage (wrong endpoint, missing
   grants, storage misconfig the preflight didn't catch) at setup time rather than
   in 1000 attendee notebooks. Attendee notebooks install the SDK via PEP 723 inline
-  metadata in `lab3/send_temperature.py` (which Databricks renders into the notebook's
+  metadata in `labs/03-Zerobus/send_temperature.py` (which Databricks renders into the notebook's
   Environment side panel automatically), not via `%pip install`, to avoid the per-session
   install cost at 1000-attendee scale.
 - **B7.** Print the summary block (data table, config table, SP, ACL principal,
@@ -196,10 +196,10 @@ after the restart). Then:
 - `Labguide.md` — attendee-facing lab guide.
 - `CLAUDE.md` — this file.
 - `.gitignore` — standard Databricks/Python ignores.
-- `setup_workshop.py` — instructor-run setup notebook (Part A: Lab 2 shared volume + seed; Part B: Lab 3 Zerobus target table, SP, grants, config table).
-- `lab1/` — Lab 1 reference files: `sales_transactions.py` (streaming table) and `sales_stats.sql` (MV with three `EXPECT` constraints baked in).
-- `lab2/` — Lab 2 reference SQL files (`bookings_current.sql`, `booking_fraud_flags.sql`, `payments.sql`, `booking_fraud_summary.sql`).
-- `lab3/` — Lab 3 reference file: `send_temperature.py` (Databricks notebook source). Record-construction and the gRPC stream lifecycle (`ZerobusSdk.create_stream` → `ingest_record` → `flush` → `close`) are in a single "DO NOT MODIFY" cell; attendees only change the three widgets (city, temperature, comment). The SDK install is declared in PEP 723 inline metadata at the top of the file.
-- `lab4/` — Lab 4 (optional / take-home) Real-Time Mode bundle: `databricks.yml` (continuous, serverless, PREVIEW channel, RTM enabled at pipeline level) and `transformations/temperature_rtm.py` (`@dp.update_flow` with `pipelines.trigger: "RealTime"`, console sink with `engine_latency_ms` column).
-- `lab5/` — Lab 5 (optional / take-home) Iceberg side-quest reference files: `global_sales_gold.sql` (managed-Iceberg CTAS, runs outside the pipeline) and `read_global_sales_gold.py` (PyIceberg reader, Databricks notebook source, talks to the UC Iceberg REST Catalog).
-- (no `lab6/` folder) — Lab 6 (CI/CD via Declarative Automation Bundles) ships from the external repo `databricks/tmm/Lakeflow-Gourmet-Pipeline`; nothing is forked into this repo.
+- `misc/setup_workshop.py` — instructor-run setup notebook (Part A: Lab 2 shared volume + seed; Part B: Lab 3 Zerobus target table, SP, grants, config table).
+- `labs/01-SDP/` — Lab 1 reference files: `sales_transactions.py` (streaming table) and `sales_stats.sql` (MV with three `EXPECT` constraints baked in).
+- `labs/02-GenieCode/` — Lab 2 reference SQL files (`bookings_current.sql`, `booking_fraud_flags.sql`, `payments.sql`, `booking_fraud_summary.sql`).
+- `labs/03-Zerobus/` — Lab 3 reference file: `send_temperature.py` (Databricks notebook source). Record-construction and the gRPC stream lifecycle (`ZerobusSdk.create_stream` → `ingest_record` → `flush` → `close`) are in a single "DO NOT MODIFY" cell; attendees only change the three widgets (city, temperature, comment). The SDK install is declared in PEP 723 inline metadata at the top of the file.
+- `labs/04-SDP-RTM/` — Lab 4 (optional / take-home) Real-Time Mode bundle: `databricks.yml` (continuous, serverless, PREVIEW channel, RTM enabled at pipeline level) and `transformations/temperature_rtm.py` (`@dp.update_flow` with `pipelines.trigger: "RealTime"`, console sink with `engine_latency_ms` column).
+- `labs/05-Iceberg/` — Lab 5 (optional / take-home) Iceberg side-quest reference files: `global_sales_gold.sql` (managed-Iceberg CTAS, runs outside the pipeline) and `read_global_sales_gold.py` (PyIceberg reader, Databricks notebook source, talks to the UC Iceberg REST Catalog).
+- (no `labs/06-DABs/` folder) — Lab 6 (CI/CD via Declarative Automation Bundles) ships from the external repo `databricks/tmm/Lakeflow-Gourmet-Pipeline`; nothing is forked into this repo.

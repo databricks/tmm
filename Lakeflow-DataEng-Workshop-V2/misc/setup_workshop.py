@@ -473,5 +473,5 @@ print(f"Service principal  : {SP_DISPLAY_NAME}  (application_id: {SP_APPLICATION
 print(f"Config table ACL   : `{_grant_principal or '(not granted — see warning above)'}` → SELECT")
 print(f"Zerobus endpoint   : {ZEROBUS_ENDPOINT}")
 print(f"gRPC smoke test    : PASS")
-print(f"Attendee notebook  : lab3/send_temperature.py")
+print(f"Attendee notebook  : labs/03-Zerobus/send_temperature.py")
 print("=" * 70)
