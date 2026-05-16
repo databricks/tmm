@@ -2,7 +2,7 @@
 
 **Version 2.0 - May 2026**
 
-👋 Welcome! This is the lab guide for the **quarterly Databricks Data Engineering workshop**. We're glad to have you here.
+👋 Welcome. This is the lab guide for the **quarterly Databricks Data Engineering workshop**. We're glad to have you here.
 
 Over the next 90 mins we'll work through the core data engineering knowledge every data engineer should have — **ingestion, transformation, and orchestration**. Using core technologies and OSS frameworks listed in the labs.
 
@@ -30,7 +30,7 @@ Throughout this guide, replace `USER_ID` with that exact value. Your pre-assigne
 ## Prerequisites (already done by the setup notebook)
 
 - Your catalog `workshop` / your schema `workshop.USER_ID` already exists and is writable.
-- A shared volume exists at `/Volumes/workshop/shared/landing/` with a seeded subfolder `booking_fraud_flags/` containing JSON fraud markers keyed by `booking_id`. The volume is **read-only** for attendees (every attendee has `READ_VOLUME`, nobody has `WRITE_VOLUME`), so one attendee cannot disrupt another.
+- A shared volume exists at `/Volumes/workshop/shared/landing/` with a seeded subdirectory `booking_fraud_flags/` containing JSON fraud markers keyed by `booking_id`. The volume is **read-only** for attendees (every attendee has `READ_VOLUME`, nobody has `WRITE_VOLUME`), so one attendee cannot disrupt another.
 - The Zerobus target table `workshop.zerobus.measurements` (`id, city, temperature, comment`), the shared service principal `workshop-zerobus-sp` (with `USE CATALOG` on `workshop`, `USE SCHEMA` on `workshop.zerobus`, and `MODIFY + SELECT` on the table), and the config table `workshop.zerobus.config` (single row holding `client_id`, `client_secret`, `workspace_url`, `workspace_id`, `zerobus_endpoint`) are all pre-provisioned for Lab 3.
 - This lab runs completely serverless.
 - You can read `samples.bakehouse.*` and `samples.wanderbricks.*` (public sample data).
@@ -41,14 +41,14 @@ Three placeholders show up throughout — resolve them once here, then paste blo
 
 | Placeholder | What to use |
 |---|---|
-| `USER_ID` | Your user id, derived from your login email (see above). Example: `labuser10148895_1745997814`. Your schema is `workshop.USER_ID`. |
+| `USER_ID` | Your user id, derived from your login email (see preceding row). Example: `labuser10148895_1745997814`. Your schema is `workshop.USER_ID`. |
 | `workshop` | The catalog used for all labs. This is fixed. No need to change this. |
-| `<course_warehouse_name>` / `<course_warehouse_id>` (Lab 3 only) | The course SQL warehouse provisioned for you by the courseware. Your instructor will share the exact name and ID. |
+| `<course_warehouse_name>` / `<course_warehouse_id>` (Lab 3 only) | The course SQL warehouse provisioned for you by the training materials. Your instructor shares the exact name and ID. |
 | `prod_warehouse_id` (Lab 5 only) | A running SQL warehouse ID. Find it in sidebar **SQL Warehouses** → click a warehouse → copy the ID from the URL. |
 
 ## One-time setup — Clone this workshop repo
 
-Clone this repo into your Workspace once at the start. You get this lab guide and all the labs locally. We use **sparse checkout** so you only pull the workshop subfolder, not the entire `databricks/tmm` repo.
+Clone this repo into your Workspace once at the start. You get this lab guide and all the labs locally. We use **sparse checkout** so you only pull the workshop subdirectory, not the entire `databricks/tmm` repo.
 
 1. Workspace sidebar → **Workspace** → **Create** → **Git folder**.
 2. In the **Create Git folder** dialog:
@@ -57,7 +57,7 @@ Clone this repo into your Workspace once at the start. You get this lab guide an
    - **Git folder name**: `de_workshop`
    - Enable **Sparse checkout mode**
    - **Sparse checkout path**: `Lakeflow-DataEng-Workshop-V2`
-3. Click **Create Git folder**. The `Lakeflow-DataEng-Workshop-V2/` subfolder clones into `de_workshop/` in your workspace.
+3. Click **Create Git folder**. The `Lakeflow-DataEng-Workshop-V2/` subdirectory clones into `de_workshop/` in your workspace.
 
 
 Most of those labs folder have reference files only. Some folders come with notebooks that you can run directly as described further below.
@@ -70,7 +70,7 @@ In this lab you'll hand-code a SDP end to end: one **Streaming Table** in Python
 
 ### Set up the pipeline in the Lakeflow Pipelines Editor
 
-Before you write a single line, create the pipeline that will host Steps 1a and 1b:
+Before you write a single line, create the pipeline that hosts Steps 1a and 1b:
 
 1. Workspace sidebar → **New** → **ETL pipeline**. The **Lakeflow Pipelines Editor** opens with a default name `New Pipeline <date> <time>`.
 2. Click the name → rename to `pipeline_USER_ID`. The editor automatically creates a workspace folder of the same name under your home (`/Workspace/Users/<your-email>/pipeline_USER_ID/`) — no manual `mkdir` needed. That folder is where your Lab 1 work lives; the cloned `labs/01-SDP/` folder is the answer key.
@@ -80,7 +80,7 @@ Before you write a single line, create the pipeline that will host Steps 1a and 
 
    Unqualified table names now resolve to `workshop.USER_ID.<table>`. The full **Pipeline settings** panel may open after Save — close it with the ✕ to return to the editor.
 4. The default file `my_transformation.py` is already Python — Step 1a uses Python. The editor opens blank with a placeholder; just start typing.
-5. Confirm **⚙ Settings** shows **Serverless** ON and Unity Catalog selected.
+5. Confirm **⚙ Settings** shows **serverless** ON and Unity Catalog selected.
 
 ### Step 1a — Streaming table (Python)
 
@@ -99,7 +99,7 @@ def sales_transactions():
     return spark.readStream.table("samples.bakehouse.sales_transactions")
 ```
 
-Rename the file to `sales_transactions.py` by clicking the file name in the **tab bar** (the title above the editor cell) and typing the new name.
+Rename the file to `sales_transactions.py` by clicking the file name in the **tab bar** (the title preceding the editor cell) and typing the new name.
 
 Click **Run file**. The DAG sidebar shows one node `sales_transactions` (~3,333 rows).
 
@@ -155,7 +155,7 @@ Check Tables / Expectations for the details.
 
 **Try a violation yourself (optional)**
 - To see a *drop* in action, weaken one predicate (e.g., `EXPECT (avg_txn_value > 10000) ON VIOLATION DROP ROW`) and re-run — rows disappear and the dropped count climbs.
-- To see an *abort*, flip `known_product` to `EXPECT (product = 'Cronut')` — the update fails with the constraint name in the error.
+- To see a *failure*, flip `known_product` to `EXPECT (product = 'Cronut')` — the update fails with the constraint name in the error.
 
 ### Lab 1 take-away
 
@@ -175,7 +175,7 @@ The skill this lab teaches isn't typing SQL. It's catching the draft that *looks
 
 ### Set up a fresh pipeline for Lab 2
 
-1. Workspace sidebar → **New** → **ETL pipeline**. Rename to `pipeline_USER_ID_lab2`. The editor auto-creates a workspace folder of the same name under your home — Genie Code will write the four SQL files it generates there.
+1. Workspace sidebar → **New** → **ETL pipeline**. Rename to `pipeline_USER_ID_lab2`. The editor auto-creates a workspace folder of the same name under your home — Genie Code writes the four SQL files it generates there.
 2. Set **Default catalog** to `workshop` and **Default schema** to `USER_ID` (same as Lab 1).
 
 The cloned `labs/02-GenieCode/` folder is your answer key — keep it open in another tab to verify what Genie produces.
@@ -238,7 +238,7 @@ Explain the data flow in this pipeline end-to-end. Which node is incrementally m
 
 ## Lab 3 — Work with Zerobus Ingest to push IoT data
 
-Lab 3 flips the script: until now you processed data that came to you (sample tables, a JSON volume, a CDC stream). Now **you** are the IoT producer, emitting one IoT event data that is stored in a Delta table in the Lakebouse.
+Lab 3 flips the script: until now you processed data that came to you (sample tables, a JSON volume, a CDC stream). Now **you** are the IoT producer, emitting one IoT event data that is stored in a Delta table in the Lakehouse.
 
 **What's already provisioned for you:**
 
@@ -250,7 +250,7 @@ Lab 3 flips the script: until now you processed data that came to you (sample ta
 
 Then you verify the event landed — first inside the notebook, then from a SQL warehouse as a downstream consumer.
 
-**Shared Zerobus table, thousands of simultaneous producers.** This same `workshop.zerobus.measurements` table is the target for *every* attendee in the workshop. When the instructor signals go, all of you will be firing `ingest_record` all writing to the same Delta table. Zerobus is built to absorb exactly this shape of load: many concurrent streams converging on one table. 
+**Shared Zerobus table, thousands of simultaneous producers.** This same `workshop.zerobus.measurements` table is the target for *every* attendee in the workshop. When the instructor signals go, all of you fire `ingest_record` and write to the same Delta table. Zerobus is built to absorb exactly this shape of load: many concurrent streams converging on one table. 
 
 By the end of the lab you'll see every attendee's events sitting alongside your own — a live demo of what a real fleet of IoT producers looks like on the wire.
 
@@ -300,7 +300,7 @@ The last cell runs `spark.table("workshop.zerobus.measurements").where(col("city
 The notebook read the table as a producer; now read it as a consumer. This proves the row is a real row in a real governed table, queryable by anything that can talk to a SQL warehouse — a BI dashboard, a downstream pipeline, a JDBC client, `ai_query(...)`.
 
 1. Workspace sidebar → **SQL Editor** → **New query**.
-2. In the top-right warehouse picker, select the **course warehouse** — `<course_warehouse_name>` (ID `<course_warehouse_id>`). It was provisioned for you by the courseware, so it's already running; you don't need to start a warehouse of your own.
+2. In the top-right warehouse picker, select the **course warehouse** — `<course_warehouse_name>` (ID `<course_warehouse_id>`). It was provisioned for you by the training materials, so it's already running; you don't need to start a warehouse of your own.
 3. Paste and run:
 
 ```sql
@@ -347,7 +347,7 @@ The pipeline reads the rate stream, derives a synthetic `temperature_c`, runs a 
 
 ### Step 4a — Open the RTM bundle
 
-You already cloned the workshop repo at the start. Navigate to the `labs/04-SDP-RTM/` subfolder — it has `databricks.yml` and `transformations/temperature_rtm.py` ready to deploy.
+You already cloned the workshop repo at the start. Navigate to the `labs/04-SDP-RTM/` subdirectory — it has `databricks.yml` and `transformations/temperature_rtm.py` ready to deploy.
 
 ### Step 4b — Adjust the bundle for your schema
 
@@ -458,7 +458,7 @@ You'll sparse-clone `databricks/tmm/Lakeflow-Gourmet-Pipeline` into your workspa
 
 ### Step 5a — Sparse-clone the bundle (Workspace UI)
 
-Clone only the bundle subfolder into your workspace, not the whole `databricks/tmm` repo. Same flow you used for the workshop repo at the start.
+Clone only the bundle subdirectory into your workspace, not the whole `databricks/tmm` repo. Same flow you used for the workshop repo at the start.
 
 1. Workspace sidebar → **Workspace** → **Create** → **Git folder**.
 2. In the **Create Git folder** dialog:
@@ -467,7 +467,7 @@ Clone only the bundle subfolder into your workspace, not the whole `databricks/t
    - **Git folder name**: `gourmet`
    - Enable **Sparse checkout mode**
    - **Sparse checkout path**: `Lakeflow-Gourmet-Pipeline`
-3. Click **Create Git folder**. The `Lakeflow-Gourmet-Pipeline/` subfolder clones into `gourmet/` in your workspace.
+3. Click **Create Git folder**. The `Lakeflow-Gourmet-Pipeline/` subdirectory clones into `gourmet/` in your workspace.
 
 ### Step 5b — Retarget two variables
 
@@ -486,7 +486,7 @@ variables:
 
 If your `USER_ID` schema doesn't match `${workspace.current_user.short_name}`, override `schema_name` to the literal `USER_ID` value. Also check `targets.presenter` — if it overrides `schema_name`, point it at the same value.
 
-> **Retargeting is mandatory, not optional.** The default catalog `daiwt_gourmet` does not exist in the workshop workspace, so the deploy will fail unless you change `catalog_name` to `workshop` (and supply a real `prod_warehouse_id`).
+> **Retargeting is mandatory, not optional.** The default catalog `daiwt_gourmet` does not exist in the workshop workspace, so the deploy fails unless you change `catalog_name` to `workshop` (and supply a real `prod_warehouse_id`).
 
 ### Step 5c — Deploy to the `presenter` target (Workspace UI)
 
@@ -530,9 +530,9 @@ To use these, install the Databricks CLI and authenticate once (`databricks auth
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | Deploy fails on warehouse ID | `prod_warehouse_id` doesn't exist in your workspace | paste a real warehouse ID from **SQL Warehouses** |
-| `new_recipe_Claude_LLM` task fails with `RESOURCE_DOES_NOT_EXIST` for `databricks-claude-3-7-sonnet` | the hardcoded model isn't available on your workspace | edit `src/ai_query.sql`, replacing **both** occurrences of `databricks-claude-3-7-sonnet` with one that is available (e.g. `databricks-claude-sonnet-4-5` or `databricks-claude-haiku-4-5`); or run with `ai_enabled=FALSE` to skip AI tasks |
+| `new_recipe_Claude_LLM` task fails with `RESOURCE_DOES_NOT_EXIST` for `databricks-claude-3-7-sonnet` | the hard-coded model isn't available on your workspace | edit `src/ai_query.sql`, replacing **both** occurrences of `databricks-claude-3-7-sonnet` with one that is available (e.g. `databricks-claude-sonnet-4-5` or `databricks-claude-haiku-4-5`); or run with `ai_enabled=FALSE` to skip AI tasks |
 | `SCHEMA_NOT_FOUND` during run | `schema_name` resolved to something that doesn't exist in your catalog | override the `schema_name` default in `databricks.yml` to your literal `USER_ID` value |
-| Dashboard renders empty after deploy | dashboard SQL still references `daiwt_gourmet` (not parameterizable yet) | replace `daiwt_gourmet` with `workshop` in `resources/dashboard_gourmet_aibi.yml` and `src/aibi_dashboard.json`, then redeploy |
+| Dashboard renders empty after deploy | dashboard SQL still references `daiwt_gourmet` (not configurable yet) | replace `daiwt_gourmet` with `workshop` in `resources/dashboard_gourmet_aibi.yml` and `src/aibi_dashboard.json`, then redeploy |
 
 ### What to take away
 
@@ -548,7 +548,7 @@ To use these, install the Databricks CLI and authenticate once (`databricks auth
 * Complete [Lakeflow Demo: From messy sales data to AI insights](https://www.databricks.com/resources/demos/videos/lakeflow-action-gourmet-pipeline-demo-daiwt) (source for Lab 5)
 * [Declarative Automation Bundles documentation](https://docs.databricks.com/aws/en/dev-tools/bundles/) (Lab 5)
 * [Lakeflow-Gourmet-Pipeline source repo](https://github.com/databricks/tmm/tree/main/Lakeflow-Gourmet-Pipeline) (Lab 5)
-* Getting Started with [OSS Apache SDP, VSCode](https://github.com/databricks/tmm/tree/main/OSS-SDP-OpenSkyNetwork)
+* Getting Started with [OSS Apache SDP, VS Code](https://github.com/databricks/tmm/tree/main/OSS-SDP-OpenSkyNetwork)
 * [Lakeflow SDP — Real-Time Mode Basics](https://github.com/databricks/tmm/tree/main/Lakeflow-SDP-RTM-Basics) (source for Lab 4)
 * RTM demo to watch: [Air Traffic Control with Apache Spark Structured Streaming — Real-Time Mode](https://www.databricks.com/resources/demos/videos/air-traffic-control-with-apache-spark-structured-streaming-real-time-mode)
 * Looking for the next Data Engineering workshop, or other [Databricks workshops](https://www.databricks.com/events?event_type=workshop&region=all) for DBSQL, AI, Unity Catalog

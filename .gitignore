@@ -1,2 +1,12 @@
 Cookies-DataEng-DAB/.vscode/settings.json
 NASA-swift-genie/supernova-pipeline/run-Kafka-Pipeline-SQL
+
+# Vale (prose linter) — exclude all settings, styles, and findings
+.vale.ini
+.vale/
+**/.vale.ini
+**/.vale/
+vale.ini
+**/vale.ini
+.vale-results.*
+**/.vale-results.*
