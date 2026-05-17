@@ -22,14 +22,12 @@
 # MAGIC 3. UC grants for that SP: `USE CATALOG` on `workshop`, `USE SCHEMA` on `workshop.zerobus`, `MODIFY + SELECT` on the table
 # MAGIC 4. Config table `workshop.zerobus.config` (single row: `client_id`, `client_secret`, `workspace_url`, `workspace_id`, `zerobus_endpoint`) with `SELECT` granted to `account users` — attendees read all five values from one place
 # MAGIC 5. End-to-end smoke test that opens a gRPC stream as the SP, ingests one row, deletes it, and prints PASS — so any breakage shows up here, not in 1000 attendee notebooks
-# MAGIC
-# MAGIC
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC ## 0. Admin gate — stop if the runner is not a workspace admin
-# MAGIC
+# MAGIC 
 # MAGIC This notebook creates account-wide objects (schemas, volumes, service principals, OAuth secrets, account-group grants). It must be run by a workspace admin. A non-admin run would fail mid-way with permission errors and leave partial state behind.
 
 # COMMAND ----------
@@ -268,7 +266,6 @@ if ZEROBUS_REGION and not _REGION_RE.fullmatch(ZEROBUS_REGION):
 # MAGIC explicit managed location and the schema doesn't override one, table writes fall back
 # MAGIC to workspace **default storage**, which Zerobus rejects with a 403 at insert time.
 # MAGIC Easier to fail here with a clear message than to fail later in attendee notebooks.
-# MAGIC 
 
 # COMMAND ----------
 
@@ -313,7 +310,7 @@ print(f"Storage preflight OK — effective_location={_effective!r}  (None means 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## B1. Create `workshop.zerobus.measurements` 
+# MAGIC ## B1. Create `workshop.zerobus.measurements`
 
 # COMMAND ----------
 

@@ -9,7 +9,7 @@ CI/CD via Declarative Automation Bundles lab moved from Lab 6 → Lab 5.
   Bundles**, and renumbered all six step headings `Step 6a` … `Step 6f` → `Step 5a` … `Step 5f`.
   Updated the overview list and the `prod_warehouse_id (Lab 6 only)` substitutions row.
 - `labs/`: deleted `labs/05-Iceberg/` (both `global_sales_gold.sql` and
-  `read_global_sales_gold.py`). Renamed `labs/06-DAB/` → `labs/05-DAB/`.
+  `read_global_sales_gold.py`). Renamed `labs/06-DAB/` → `labs/05-Lakeflow-AI/`.
 - `README.md`: dropped the **Managed Iceberg on Unity Catalog** bullet from "Technologies
   covered."
 - `CLAUDE.md`: dropped the Lab 5 Iceberg project-overview entry; renumbered Lab 6 (DAB) →
@@ -17,7 +17,7 @@ CI/CD via Declarative Automation Bundles lab moved from Lab 6 → Lab 5.
   preserve); removed the `CREATE OR REPLACE TABLE` exemption (no longer needed without the
   Iceberg CTAS); renamed the **Lab 6 specifics** heading and body references to **Lab 5**;
   rewrote the files-in-this-repo entry — there is no `labs/05-Iceberg/`, and the renamed
-  `labs/05-DAB/` is reserved as the local clone target only.
+  `labs/05-Lakeflow-AI/` is reserved as the local clone target only.
 - Project overview opening line: "three optional/take-home labs" → "two optional/take-home
   labs."
 

@@ -478,10 +478,18 @@ The pipeline is **continuous and serverless**, so it keeps consuming compute unt
 
 > **Optional / take-home.** Skip if you're short on time. The whole demo is a sparse-clone of an external repo plus a few clicks in the **Deployments** pane. ~10 minutes hands-on.
 
-A data product lives in more than one place — a pipeline, a job, a dashboard, a connector flow. A **Declarative Automation Bundle** (DAB — formerly *Databricks Asset Bundle*) collapses all of that into one folder: `databricks.yml` plus `resources/`, versioned like code. No shell recipes, no drift between envs, no screenshot-driven promotion.
+A modern data application lives in more than one place — a pipeline, a job, a dashboard, a connector flow. A **Declarative Automation Bundle** (DAB — formerly *Databricks Asset Bundle*) collapses all of that into one folder: `databricks.yml` plus `resources/`, versioned like code. No shell recipes, no drift between envs, no screenshot-driven promotion.
 
-You'll sparse-clone `databricks/tmm/Lakeflow-Gourmet-Pipeline` into your workspace, retarget two variables, and deploy, run, and tear down the whole data product — SQL medallion pipeline, `gourmet-workflow` job with `ai_query` enrichment, AI/BI dashboard — entirely from the **Workspace UI**. The same bundle is also the unit a CI runner ships from the **CLI**; the equivalent commands are summarized at the end of the lab.
+You'll sparse-clone `databricks/tmm/Lakeflow-Gourmet-Pipeline` into your workspace, retarget two variables, and deploy, run it. 
 
+The Gourmet Pipeline lab showcases a global restaurant chain that is seeking AI insights based on live data for their marketing campaigns
+ — SQL medallion architecture 
+ - SDP pipeline, `gourmet-workflow` 
+ - job with `ai_query` enrichment, if/then, SDP, notebooks etc. 
+ - AI/BI dashboard 
+ -  all deployed entirely from the **Workspace UI**. 
+ 
+ 
 ### Prerequisites
 
 - A running SQL warehouse in your workspace; copy its ID from sidebar **SQL Warehouses** → click a warehouse → URL.
@@ -566,9 +574,9 @@ To use these, install the Databricks CLI and authenticate once (`databricks auth
 
 ### What to take away
 
-- **Bundles are the CI/CD primitive for data products.** `databricks.yml` + `resources/*.yml` captures an entire data product (SDP pipelines, jobs, dashboards, Lakeflow Connect flows) as versioned code. One file tree, committable, reviewable, deployable.
-- **Two entry points, one bundle.** The Workspace UI **Deployments** pane and the Databricks CLI run against the same `databricks.yml`. Pick the entry point that fits the moment; the result is identical.
-- **Targets separate environments.** Add `dev` and `prod` targets with per-environment overrides; route them via branch (`-t dev` on PR, `-t prod` on merge) in CI.
+- **A full Lakeflow application in one bundle — Lakeflow Connect, Jobs, and Pipelines together.** The Gourmet bundle isn't a single pipeline; it's an end-to-end data product: three **Lakeflow Connect** ingest flows (franchises, suppliers, transactions), an SDP medallion **pipeline** for transformations, a **`gourmet-workflow` job** that orchestrates ingest → transform → enrich → publish, and an AI/BI dashboard on top. That's the realistic shape of a production data product — multiple Lakeflow surfaces wired together — and DABs let you ship all of it as one unit.
+- **AI Functions turn messy sales data into business insights.** Inside the pipeline, `ai_query`, `ai_classify`, `ai_translate`, and friends run inline as SQL functions over the silver tables — no separate model-serving deployment, no glue code. The output answers questions a marketing team actually asks: *which campaigns to run, in which region, in which language, for which product line*. AI moves out of a separate notebook and into the same SQL the medallion is already speaking.
+- **DABs make complex data products deployable.** `databricks.yml` + `resources/*.yml` captures pipelines, jobs, dashboards, and Connect flows as versioned code — one file tree, committable, reviewable, deployable from either the **Workspace UI Deployments pane** or `databricks bundle deploy` in CI. Targets (`dev`, `prod`, `presenter`) carry per-environment overrides; branch promotion is just `-t dev` → `-t prod`. Same bundle, different target.
 
 ---
 
