@@ -131,31 +131,7 @@ print(f"✅ Sent to {CATALOG}.{SCHEMA}.{TABLE}: {sent}")
 
 # COMMAND ----------
 
-from pyspark.sql.functions import col
-
-display(
-    spark.table(f"{CATALOG}.{SCHEMA}.{TABLE}")
-         .where(col("city") == CITY)
-         .orderBy(col("temperature").desc())
-)
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## 🛡️ Audit trail — see your write attributed to the service principal
-# MAGIC
-# MAGIC `system.access.audit` shows one chain of events per `ingest_record` call, all
-# MAGIC attributed to the SP's application_id (not your user identity): SP authentication →
-# MAGIC three UC permission checks → OAuth token mint → `zerobus / createEphemeralStream`.
-# MAGIC `user_identity.email` for a service principal is its **application_id UUID**, not
-# MAGIC the display name — the subquery against the config table handles that.
-
-# COMMAND ----------
-
 # MAGIC %sql
-# MAGIC SELECT event_time, service_name, action_name, user_identity.email AS sp_app_id
-# MAGIC FROM system.access.audit
-# MAGIC WHERE event_date = current_date()
-# MAGIC   AND user_identity.email = (SELECT client_id FROM workshop.zerobus.config)
-# MAGIC ORDER BY event_time DESC
-# MAGIC LIMIT 50
+# MAGIC SELECT id, city, temperature, comment
+# MAGIC FROM workshop.zerobus.measurements
+# MAGIC ORDER BY city, temperature DESC;

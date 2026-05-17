@@ -3,7 +3,7 @@
 # MAGIC %md
 # MAGIC # Workshop setup — shared landing volume, fraud-marker seed, Zerobus provisioning
 # MAGIC 
-# MAGIC A catalog `workshop`is assumed to be created by the training environment (Vocareum) before attendees start. If you're using this workshop without Vocareum, create the catalog manually. 
+# MAGIC A catalog `workshop` is assumed to be created by the training environment (Vocareum) before attendees start. If you're using this workshop without Vocareum, create the catalog manually. 
 # MAGIC 
 # MAGIC This setup script sets up everything else that is needed by the workshop attendees. Run it as ADMIN. 
 # MAGIC It's idempotent: safe to re-run. Does not touch per-attendee schemas.
@@ -22,8 +22,31 @@
 # MAGIC 3. UC grants for that SP: `USE CATALOG` on `workshop`, `USE SCHEMA` on `workshop.zerobus`, `MODIFY + SELECT` on the table
 # MAGIC 4. Config table `workshop.zerobus.config` (single row: `client_id`, `client_secret`, `workspace_url`, `workspace_id`, `zerobus_endpoint`) with `SELECT` granted to `account users` — attendees read all five values from one place
 # MAGIC 5. End-to-end smoke test that opens a gRPC stream as the SP, ingests one row, deletes it, and prints PASS — so any breakage shows up here, not in 1000 attendee notebooks
-# MAGIC 
-# MAGIC 
+# MAGIC
+# MAGIC
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## 0. Admin gate — stop if the runner is not a workspace admin
+# MAGIC
+# MAGIC This notebook creates account-wide objects (schemas, volumes, service principals, OAuth secrets, account-group grants). It must be run by a workspace admin. A non-admin run would fail mid-way with permission errors and leave partial state behind.
+
+# COMMAND ----------
+
+from databricks.sdk import WorkspaceClient
+
+_w = WorkspaceClient()
+_me = _w.current_user.me()
+_groups = {g.display for g in (_me.groups or [])}
+
+if "admins" not in _groups:
+    raise PermissionError(
+        f"Setup must be run by a workspace admin. Current user '{_me.user_name}' is not a member of the `admins` group "
+        f"(member of: {sorted(_groups) or 'no groups'}). Ask an admin to run this notebook."
+    )
+
+print(f"Admin check passed: {_me.user_name} is a workspace admin.")
 
 # COMMAND ----------
 
@@ -32,12 +55,36 @@ dbutils.widgets.text("fraud_pct", "3.0", "% of bookings to flag as fraud")
 dbutils.widgets.text("num_files", "5", "Number of JSONL files to split the seed across")
 dbutils.widgets.text("zerobus_region", "us-west-2", "Zerobus region (e.g. us-west-2) — set to blank to skip Part B")
 
+import re
+
+_CATALOG_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+_REGION_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+
 CATALOG         = dbutils.widgets.get("catalog").strip()
-FRAUD_PCT       = float(dbutils.widgets.get("fraud_pct"))
-NUM_FILES       = int(dbutils.widgets.get("num_files"))
 ZEROBUS_REGION  = dbutils.widgets.get("zerobus_region").strip()
 
-assert CATALOG, "Set the 'catalog' widget (default: workshop) before running."
+try:
+    FRAUD_PCT = float(dbutils.widgets.get("fraud_pct"))
+except ValueError as e:
+    raise ValueError("Set 'fraud_pct' to a numeric percentage, e.g. 3.0.") from e
+
+try:
+    NUM_FILES = int(dbutils.widgets.get("num_files"))
+except ValueError as e:
+    raise ValueError("Set 'num_files' to a positive integer, e.g. 5.") from e
+
+if not _CATALOG_RE.fullmatch(CATALOG):
+    raise ValueError(
+        "Set 'catalog' to a simple UC identifier: letters, numbers, and underscores; "
+        "it must start with a letter or underscore."
+    )
+if not 0.0 <= FRAUD_PCT <= 100.0:
+    raise ValueError("Set 'fraud_pct' between 0 and 100.")
+if NUM_FILES < 1:
+    raise ValueError("Set 'num_files' to at least 1.")
+if ZEROBUS_REGION and not _REGION_RE.fullmatch(ZEROBUS_REGION):
+    raise ValueError("Set 'zerobus_region' to a region-like value such as 'us-west-2', or blank to skip Part B.")
+
 print(f"catalog={CATALOG}  fraud_pct={FRAUD_PCT}%  num_files={NUM_FILES}  zerobus_region={ZEROBUS_REGION or '(unset, Part B will be skipped)'}")
 
 # COMMAND ----------
@@ -107,7 +154,7 @@ print(f"Generated {marker_count} fraud markers ({FRAUD_PCT}% of distinct booking
 # COMMAND ----------
 
 # Clear any prior seed files so re-runs produce a clean directory, then write JSONL.
-for f in dbutils.fs.ls(VOLUME_PATH) if any(True for _ in dbutils.fs.ls(VOLUME_PATH)) else []:
+for f in dbutils.fs.ls(VOLUME_PATH):
     if f.name.endswith(".json") or f.name.startswith("_"):
         dbutils.fs.rm(f.path)
 
@@ -192,8 +239,21 @@ if not ZEROBUS_REGION:
 # COMMAND ----------
 
 # Re-resolve widgets after the Python restart triggered by %pip.
+import re
+
+_CATALOG_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+_REGION_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+
 CATALOG         = dbutils.widgets.get("catalog").strip()
 ZEROBUS_REGION  = dbutils.widgets.get("zerobus_region").strip()
+
+if not _CATALOG_RE.fullmatch(CATALOG):
+    raise ValueError(
+        "Set 'catalog' to a simple UC identifier: letters, numbers, and underscores; "
+        "it must start with a letter or underscore."
+    )
+if ZEROBUS_REGION and not _REGION_RE.fullmatch(ZEROBUS_REGION):
+    raise ValueError("Set 'zerobus_region' to a region-like value such as 'us-west-2', or blank to skip Part B.")
 
 # COMMAND ----------
 
@@ -297,7 +357,7 @@ SP_ID             = sp.id  # workspace-scoped SP id
 # MAGIC ## B3. Generate a fresh OAuth client secret for the SP
 # MAGIC 
 # MAGIC Each run rotates the secret. Old secrets keep working until they expire, but only the
-# MAGIC latest value is pushed to the secret scope — so attendee notebooks always read a valid one.
+# MAGIC latest value is written to the config table — so attendee notebooks always read a valid one.
 
 # COMMAND ----------
 
@@ -315,7 +375,7 @@ _sp_secret_resp = requests.post(
 )
 _sp_secret_resp.raise_for_status()
 SP_CLIENT_SECRET = _sp_secret_resp.json()["secret"]
-print(f"Generated new OAuth client secret for SP {SP_APPLICATION_ID} (shown once, written to scope below)")
+print(f"Generated new OAuth client secret for SP {SP_APPLICATION_ID} (shown once, written to config below)")
 
 # COMMAND ----------
 

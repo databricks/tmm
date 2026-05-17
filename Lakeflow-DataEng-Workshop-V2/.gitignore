@@ -33,4 +33,7 @@ dist/
 # Logs
 *.log
 
-.claude
+# Vale (tooling, not a project artifact)
+.vale.ini
+.vale/
+

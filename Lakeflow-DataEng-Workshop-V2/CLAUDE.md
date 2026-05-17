@@ -11,9 +11,15 @@ Lab 2) and a shared Zerobus target table (for Lab 3) are preseeded by a single s
   `CONSTRAINT ... EXPECT` clauses wired in from the start — one per violation behavior
   (log / drop row / fail update) — so attendees paste one block and run, no replacement step.
   Source files in `labs/01-SDP/`.
-- **Lab 2 — Wanderbricks, SQL, Learn how to use Genie Code (verified).** AutoCDC on
-  `samples.wanderbricks.booking_updates`, Auto Loader on JSON fraud markers,
-  streaming table on `samples.wanderbricks.payments`, and a three-way-join gold MV.
+- **Lab 2 — Wanderbricks, SQL, Learn how to use Genie Code (verified).** Five-file
+  SQL pipeline: AutoCDC SCD Type 1 on `samples.wanderbricks.booking_updates`
+  → `bookings_current`; Auto Loader on JSON fraud markers → `booking_fraud_flags`;
+  plain streaming table on `samples.wanderbricks.payments` → `payments`; silver
+  streaming table `bookings_with_fraud` (one row per booking, `is_fraud BOOLEAN`,
+  LEFT JOIN of `bookings_current` with `DISTINCT booking_id` from fraud flags);
+  gold materialized view `fraud_by_party_and_method` joining
+  `bookings_with_fraud` with `payments`, GROUP BY `(guests_count, payment_method)`,
+  reporting `booking_count`, `fraud_count`, `fraud_pct`, `gross_amount`.
   Reference files in `labs/02-GenieCode/`.
 - **Lab 3 — Zerobus direct ingest (live instructor demo; attendees may follow along).**
   Instructor runs an Exploration notebook that pushes one `{id, city, temperature, comment}`
@@ -180,6 +186,23 @@ after the restart). Then:
 - The CLI alternative (`databricks bundle validate / deploy / run / summary / destroy`) is presented at the end of the lab as a separate table, framed as the path a CI runner takes. Production runs add more flags (auth profile, log level, parameter overrides, `--var`); the table shows the basic shape only. Docs: `https://docs.databricks.com/aws/en/dev-tools/bundles/`.
 - All doc links live in the top-level `## References and other demos` section of `Labguide.md`. Do not scatter `Docs:` links inside the per-step instructions.
 
+## Documentation linting (Vale)
+The Markdown docs in this repo (`README.md`, `Labguide.md`, `changes.md`) are reviewed with [Vale](https://vale.sh/) using the **Google developer documentation style** package. Vale is not committed to this repo — set it up locally on demand:
+
+1. Install: `brew install vale`.
+2. Create a project-local `.vale.ini` with `StylesPath = .vale/styles`, `MinAlertLevel = warning`, `Vocab = Workshop`, `Packages = Google`, and `BasedOnStyles = Vale, Google` for `*.{md,markdown}`.
+3. Add a project vocabulary at `.vale/styles/config/vocabularies/Workshop/accept.txt` with: `Databricks Lakeflow Lakehouse Lakebase Lakeview Zerobus MLflow OAuth SDP LDP DAB RTM SCD RAG CDC ACK REST PySpark DLT Wanderbricks Bakehouse Kinesis idempotency conformant`.
+4. Run `vale sync` then `vale README.md Labguide.md changes.md`.
+5. Add `.vale.ini` and `.vale/` to `.gitignore` — these are tooling, not project artifacts.
+
+**Fix policy** (in priority order):
+- **Always fix:** real typos (e.g. `Lakebouse` → `Lakehouse`), wrong product names (`VSCode` → `VS Code`), exclamation points in prose, `e.g.`/`i.e.` → `for example`/`that is`, future-tense `will` → present tense, first-person `we`, `above` → `preceding`.
+- **Fix per Google style:** sentence-case headings (lowercase generic words after the dash, e.g. `Step 1a — streaming table`); keep product names capitalized (`Lakeflow Pipelines Editor`, `Real-Time Mode`, `Declarative Automation Bundles`, `Genie Code`, `Workspace UI`, `Bakehouse`, `Wanderbricks`).
+- **Skip (false positives in our domain):** `ingest` flagged for `import/load` (it's the correct technical term for streaming/Zerobus/Auto Loader), `admin` short form, `CLI` when used as a proper-noun reference to `databricks` CLI, spaced em-dash ` — ` (Google's `Google.EmDash` rule is opinionated; our style keeps the spaces).
+- **Vocab artifact:** do not add `NOT` to `accept.txt` — it makes Vale flag every lowercase `not`. Use `**not**` (markdown bold) for emphasis instead.
+
+Re-run Vale after any non-trivial doc edit. Goal is zero unaddressed warnings; remaining errors should all be in the skip list above or the project vocabulary.
+
 ## Files in this repo
 - `README.md` — course overview.
 - `Labguide.md` — attendee-facing lab guide.
@@ -187,7 +210,7 @@ after the restart). Then:
 - `.gitignore` — standard Databricks/Python ignores.
 - `misc/setup_workshop.py` — instructor-run setup notebook (Part A: Lab 2 shared volume + seed; Part B: Lab 3 Zerobus target table, SP, grants, config table).
 - `labs/01-SDP/` — Lab 1 reference files: `sales_transactions.py` (streaming table) and `sales_stats.sql` (MV with three `EXPECT` constraints baked in).
-- `labs/02-GenieCode/` — Lab 2 reference SQL files (`bookings_current.sql`, `booking_fraud_flags.sql`, `payments.sql`, `booking_fraud_summary.sql`).
+- `labs/02-GenieCode/` — Lab 2 reference SQL files in Genie's bronze/silver/gold structure: `bronze/bookings.sql` (AutoCDC SCD1), `bronze/payments.sql` (plain stream), `bronze/fraud_flags.sql` (Auto Loader), `silver/bookings_with_fraud.sql` (MV joining bookings + fraud_flags), `gold/fraud_by_party_and_method.sql` (MV grouped by `guests_count` × `payment_method`).
 - `labs/03-Zerobus/` — Lab 3 reference file: `send_temperature.py` (Databricks notebook source). Record-construction and the gRPC stream lifecycle (`ZerobusSdk.create_stream` → `ingest_record` → `flush` → `close`) are in a single "DO NOT MODIFY" cell; attendees only change the three widgets (city, temperature, comment). The SDK install is declared in PEP 723 inline metadata at the top of the file.
 - `labs/04-SDP-RTM/` — Lab 4 (optional / take-home) Real-Time Mode bundle: `databricks.yml` (continuous, serverless, PREVIEW channel, RTM enabled at pipeline level) and `transformations/temperature_rtm.py` (`@dp.update_flow` with `pipelines.trigger: "RealTime"`, console sink with `engine_latency_ms` column).
 - (no `labs/05-DAB/` source) — Lab 5 (CI/CD via Declarative Automation Bundles) ships from the external repo `databricks/tmm/Lakeflow-Gourmet-Pipeline`; nothing is forked into this repo. The empty `labs/05-DAB/` folder is reserved as the lab's local clone target.

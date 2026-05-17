@@ -1,4 +1,4 @@
-# Lakeflow Data Engineering Workshop
+# Lakeflow data engineering workshop
 
 Welcome to Databricks's new Data Engineering course.
 
