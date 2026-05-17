@@ -438,30 +438,46 @@ def temperature_rtm_flow():
 2. Click **Deployments** → pick the **`prod`** target (the only one defined in this bundle) → **Deploy**.
 3. After validation and deployment finish, open the deployed `sdp-rtm-rate-source` pipeline. **Note:** because the pipeline is `continuous: true`, the deploy already auto-started the first update — there's nothing to click. If you do click **Run** you'll see *"An active update already exists for pipeline …"*, which is expected. Just leave the existing update running.
 
-### Step 4d — Look up the engine latency in the driver logs
+### Step 4d — Read latency in the driver logs
 
-The console sink writes the windowed aggregates — including `engine_latency_ms` — straight to the **driver log**. To find it:
+Both the console sink **and** the RTM latency listener write to the same place — the pipeline's driver log. Get there once:
 
 1. In the Lakeflow Pipelines Editor, with your `sdp-rtm-rate-source` pipeline open, click **Compute** at the top.
 2. In the compute pane, click **Driver logs**.
-3. Scroll the log output. You'll see batch outputs from the console sink with rows like:
 
-   ```
-   +--------------------+--------------------+-----------+------------------+...+-----------------+
-   |window_start        |window_end          |event_count|avg_temp_c        |   |engine_latency_ms|
-   +--------------------+--------------------+-----------+------------------+...+-----------------+
-   |2026-05-15 09:42:18 |2026-05-15 09:42:28 |1000       |22.51             |   |37               |
-   ```
+You'll see two interleaved tracks in that log:
 
-4. **Read the `engine_latency_ms` column carefully.** Each batch prints several rows — one per active sliding window — but most of them are **incremental update emits** (a new event just landed in an open window), so `engine_latency_ms` ≈ a few ms regardless of trigger mode. The number that actually contrasts RTM vs. micro-batch is the **highest value in the batch** — that's the **closed-window emit** (the row that paid the watermark wait). Look at the **p99** (or just the max) per batch, not the p50.
+**Track 1 — `[rtm]` lines (this is the real number).** A `StreamingQueryListener` registered at the bottom of `transformations/temperature_rtm.py` prints one line per progress event with the official `rtmMetrics` from `StreamingQueryProgress`:
 
-   In the example output above, five rows show ≈ 9 ms (incremental) and one shows ≈ 2009 ms (closed). With RTM enabled, the closed-window number compresses to tens of ms; with RTM disabled it stays in the seconds.
+```
+[rtm] batch=104 rtmMetrics={"processingLatencyMs":{"p50":7,"p99":14},"sourceQueuingLatencyMs":{"p50":1,"p99":4},"e2eLatencyMs":{"p50":18,"p99":31}}
+```
 
-5. **To compare with micro-batch mode**, do *both* of these in the bundle, then redeploy:
-   - Drop the `pipelines.trigger` / `pipelines.trigger.interval` keys from the flow's `spark_conf=` in `transformations/temperature_rtm.py`.
-   - Flip the pipeline-level `spark.databricks.streaming.realTimeMode.enabled` to `"false"` in `databricks.yml`.
+Three numbers, each with **p50** (median) and **p99** (tail):
+- `processingLatencyMs` — receive → sink
+- `sourceQueuingLatencyMs` — time queued at source before the pipeline reads it
+- `e2eLatencyMs` — total end-to-end (record produced → record sunk)
 
-   Removing only the flow-level trigger leaves pipeline-level RTM optimizations active — you have to flip both for a clean micro-batch baseline. After the redeploy, the **closed-window** row's `engine_latency_ms` (the per-batch max) typically lands in the 1–3 second range, vs. tens of ms with RTM enabled.
+These are the metrics Databricks engineering exposes for RTM SLA work. With RTM enabled, expect `processingLatencyMs.p99` in the **single-digit to low-tens of milliseconds**.
+
+Tip: `grep '\[rtm\]'` (or filter the log view) to see only the listener lines without the sink tables.
+
+**Track 2 — console sink batch tables (the windowed aggregate landing).** The same flow also writes its windowed aggregate to the `console` sink, and you'll see formatted batch tables interleaved with the `[rtm]` lines:
+
+```
++--------------------+--------------------+-----------+------------------+...+-----------------+
+|window_start        |window_end          |event_count|avg_temp_c        |   |engine_latency_ms|
++--------------------+--------------------+-----------+------------------+...+-----------------+
+|2026-05-15 09:42:18 |2026-05-15 09:42:28 |1000       |22.51             |   |37               |
+```
+
+These tables are the windowed aggregates landing in the sink — useful for *seeing* the data flow, but not for RTM latency claims. Each batch prints multiple rows (one per active sliding window) and most are **incremental update emits**, so `engine_latency_ms` ≈ a few ms regardless of mode. Treat the table as visual confirmation that data is flowing; trust `[rtm]` for the latency numbers.
+
+**Compare with micro-batch mode.** To see the contrast, edit *both* of these in the bundle, then redeploy:
+- Drop the `pipelines.trigger` / `pipelines.trigger.interval` keys from the flow's `spark_conf=` in `transformations/temperature_rtm.py`.
+- Flip the pipeline-level `spark.databricks.streaming.realTimeMode.enabled` to `"false"` in `databricks.yml`.
+
+Removing only the flow-level trigger leaves pipeline-level RTM optimizations active — you have to flip **both** for a clean micro-batch baseline. After the redeploy, watch `[rtm] processingLatencyMs.p99` climb from tens of ms into the hundreds of ms or seconds.
 
 ### Step 4e — Stop the pipeline when you're done
 

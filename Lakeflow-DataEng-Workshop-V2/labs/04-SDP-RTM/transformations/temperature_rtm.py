@@ -17,7 +17,7 @@ dp.create_sink(
     target="hot_temperatures_sink",
     spark_conf={
         "pipelines.trigger": "RealTime",
-        "pipelines.trigger.interval": "1 minute",
+        "pipelines.trigger.interval": "5 minutes",
     },
 )
 def temperature_rtm_flow():
@@ -55,3 +55,48 @@ def temperature_rtm_flow():
             col("engine_latency_ms"),
         )
     )
+
+
+# ---------------------------------------------------------------------------
+# Real RTM latency: register a StreamingQueryListener that prints rtmMetrics
+# (p50/p99 for processingLatencyMs, sourceQueuingLatencyMs, e2eLatencyMs)
+# on every progress event. Lines are tagged [rtm] so they're easy to grep
+# in the driver log alongside the console sink's batch tables.
+# ---------------------------------------------------------------------------
+import json
+from pyspark.sql.streaming import StreamingQueryListener
+
+
+class RTMLatencyLogger(StreamingQueryListener):
+    """Surface latency in the driver log for RTM and micro-batch alike.
+
+    RTM on  → prints rtmMetrics (p50/p99 for processing/queuing/e2e latency).
+    RTM off → rtmMetrics is None, so falls back to per-batch durationMs
+              (triggerExecution / addBatch / getBatch).
+    """
+
+    def onQueryStarted(self, event):
+        pass
+
+    def onQueryTerminated(self, event):
+        pass
+
+    def onQueryProgress(self, event):
+        prog = event.progress
+        rtm = getattr(prog, "rtmMetrics", None)
+        if rtm is not None:
+            print(
+                f"[rtm] batch={prog.batchId} mode=rtm "
+                f"rtmMetrics={json.dumps(rtm)}"
+            )
+        else:
+            d = prog.durationMs or {}
+            print(
+                f"[rtm] batch={prog.batchId} mode=micro-batch "
+                f"triggerExecutionMs={d.get('triggerExecution', 'n/a')} "
+                f"addBatchMs={d.get('addBatch', 'n/a')} "
+                f"getBatchMs={d.get('getBatch', 'n/a')}"
+            )
+
+
+spark.streams.addListener(RTMLatencyLogger())
