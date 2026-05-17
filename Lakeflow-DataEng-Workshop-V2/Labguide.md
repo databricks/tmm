@@ -335,23 +335,21 @@ You should see every attendee's row, including your own. In a real production de
 
 > **Optional.** Skip if you're short on time — nothing else in the workshop depends on it. The whole demo is a single file deployed via a Declarative Automation Bundle, ~5 minutes hands-on.
 
-Standard SDP runs as micro-batches — fine for seconds-level latency, not for milliseconds. **Real-Time Mode (RTM)** is a specialization of SDP's continuous mode that pushes end-to-end latency as low as ~5 ms by combining three optimizations:
-
-- **Long-running batches** — a single batch (default 5 min) processes records as they arrive, instead of restarting per micro-batch.
-- **Simultaneous stage scheduling** — all query stages run concurrently, so the cluster must have task slots ≥ sum of tasks across stages.
-- **Streaming shuffle** — downstream stages consume from upstream as data is produced, not after the upstream completes.
+Standard SDP runs as micro-batches. **Real-Time Mode (RTM)** is a specialization of SDP's continuous mode that pushes end-to-end latency into the millisecond range by combining long-running batches, simultaneous stage scheduling, and streaming shuffle. This lab shows **how to enable RTM** for an SDP pipeline — the three config steps you need, deployed as a bundle.
 
 > **Public Preview:** RTM for Lakeflow SDP requires the SDP **PREVIEW** channel.
 
+### The three config steps to enable RTM
+
+1. **Continuous mode** at the pipeline level — RTM runs *on top of* continuous, not as a replacement.
+2. **`spark.databricks.streaming.realTimeMode.enabled = true`** in the pipeline's Spark config.
+3. **An `@dp.update_flow`** (not `@dp.table` / `@dp.view`) with `pipelines.trigger: "RealTime"` set at the flow level via `spark_conf=`.
+
+All three are wired into the bundle you're about to deploy.
+
 ### What you'll deploy
 
-A minimal three-piece pipeline, all in one file:
-
-1. **Source** — a synthetic `rate` stream (RTM officially supports Kafka, MSK, Event Hubs, Kinesis EFO; `rate` is used here for portability).
-2. **Update Flow** — RTM **requires** `@dp.update_flow` (not `@dp.table` / `@dp.view`) with `pipelines.trigger: "RealTime"` and a `pipelines.trigger.interval` set at the flow level (via `spark_conf=`).
-3. **Sink** — declared up-front with `dp.create_sink(...)`. Production RTM uses Kafka-family sinks; this demo writes to `console` so aggregates land in the **driver log**.
-
-The pipeline reads the rate stream, derives a synthetic `temperature_c`, runs a sliding-window aggregation (10-second window, 2-second slide), and emits an `engine_latency_ms` column on every row — the time between the newest event in the window and the row landing in the sink. RTM ≈ a few–tens of ms, MicroBatch ≈ hundreds+. Smaller = better.
+A minimal pipeline in one file: a synthetic `rate` source, a sliding-window aggregation (10-second window, 2-second slide), and a `console` sink so the windowed rows land in the driver log where you can see them.
 
 ### Step 4a — Open the RTM bundle
 
@@ -371,14 +369,11 @@ variables:
 
 `continuous: true`, `serverless: true`, `channel: PREVIEW`, and the RTM enable flag are already set — leave them as-is.
 
-The flow file `transformations/temperature_rtm.py` is the actual RTM pipeline — note the `@dp.update_flow` decorator with the two trigger keys, the synthetic `rate` source, the windowed aggregation, and the `engine_latency_ms` computation:
+The flow file `transformations/temperature_rtm.py` is the actual RTM pipeline — note the `@dp.update_flow` decorator with `pipelines.trigger: "RealTime"`, the synthetic `rate` source, and the windowed aggregation:
 
 ```python
 from pyspark import pipelines as dp
-from pyspark.sql.functions import (
-    avg, col, count, current_timestamp, expr,
-    max as max_, min as min_, unix_millis, window,
-)
+from pyspark.sql.functions import avg, col, count, expr, max as max_, min as min_, window
 
 dp.create_sink(
     "hot_temperatures_sink",
@@ -392,7 +387,7 @@ dp.create_sink(
     target="hot_temperatures_sink",
     spark_conf={
         "pipelines.trigger": "RealTime",
-        "pipelines.trigger.interval": "1 minute",
+        "pipelines.trigger.interval": "2 minutes",
     },
 )
 def temperature_rtm_flow():
@@ -410,15 +405,6 @@ def temperature_rtm_flow():
             avg("temperature_c").alias("avg_temp_c"),
             min_("temperature_c").alias("min_temp_c"),
             max_("temperature_c").alias("max_temp_c"),
-            max_("source_timestamp").alias("last_event_ts"),
-        )
-        .withColumn("sink_timestamp", current_timestamp())
-        # engine_latency_ms = time from the newest event in this window
-        # to the row landing in the sink. RTM ≈ a few–tens of ms,
-        # MicroBatch ≈ hundreds+. Smaller = better.
-        .withColumn(
-            "engine_latency_ms",
-            unix_millis(col("sink_timestamp")) - unix_millis(col("last_event_ts")),
         )
         .select(
             col("window.start").alias("window_start"),
@@ -427,10 +413,11 @@ def temperature_rtm_flow():
             col("avg_temp_c"),
             col("min_temp_c"),
             col("max_temp_c"),
-            col("engine_latency_ms"),
         )
     )
 ```
+
+Below the flow definition the file also registers a `StreamingQueryListener` (`RTMLatencyLogger`) that prints one `[rtm]` line to the driver log per progress event — useful as a heartbeat that the engine is making progress.
 
 ### Step 4c — deploy and run from the Workspace UI
 
@@ -438,46 +425,35 @@ def temperature_rtm_flow():
 2. Click **Deployments** → pick the **`prod`** target (the only one defined in this bundle) → **Deploy**.
 3. After validation and deployment finish, open the deployed `sdp-rtm-rate-source` pipeline. **Note:** because the pipeline is `continuous: true`, the deploy already auto-started the first update — there's nothing to click. If you do click **Run** you'll see *"An active update already exists for pipeline …"*, which is expected. Just leave the existing update running.
 
-### Step 4d — Read latency in the driver logs
+### Step 4d — Verify RTM is running
 
-Both the console sink **and** the RTM latency listener write to the same place — the pipeline's driver log. Get there once:
+Open the driver log to confirm the pipeline is producing output:
 
 1. In the Lakeflow Pipelines Editor, with your `sdp-rtm-rate-source` pipeline open, click **Compute** at the top.
 2. In the compute pane, click **Driver logs**.
 
-You'll see two interleaved tracks in that log:
+You'll see two interleaved tracks:
 
-**Track 1 — `[rtm]` lines (this is the real number).** A `StreamingQueryListener` registered at the bottom of `transformations/temperature_rtm.py` prints one line per progress event with the official `rtmMetrics` from `StreamingQueryProgress`:
-
-```
-[rtm] batch=104 rtmMetrics={"processingLatencyMs":{"p50":7,"p99":14},"sourceQueuingLatencyMs":{"p50":1,"p99":4},"e2eLatencyMs":{"p50":18,"p99":31}}
-```
-
-Three numbers, each with **p50** (median) and **p99** (tail):
-- `processingLatencyMs` — receive → sink
-- `sourceQueuingLatencyMs` — time queued at source before the pipeline reads it
-- `e2eLatencyMs` — total end-to-end (record produced → record sunk)
-
-These are the metrics Databricks engineering exposes for RTM SLA work. With RTM enabled, expect `processingLatencyMs.p99` in the **single-digit to low-tens of milliseconds**.
-
-Tip: `grep '\[rtm\]'` (or filter the log view) to see only the listener lines without the sink tables.
-
-**Track 2 — console sink batch tables (the windowed aggregate landing).** The same flow also writes its windowed aggregate to the `console` sink, and you'll see formatted batch tables interleaved with the `[rtm]` lines:
+**Console sink batch tables — the windowed aggregate landing in the sink.** These are visual confirmation that data is flowing through the RTM flow:
 
 ```
-+--------------------+--------------------+-----------+------------------+...+-----------------+
-|window_start        |window_end          |event_count|avg_temp_c        |   |engine_latency_ms|
-+--------------------+--------------------+-----------+------------------+...+-----------------+
-|2026-05-15 09:42:18 |2026-05-15 09:42:28 |1000       |22.51             |   |37               |
++--------------------+--------------------+-----------+------------------+------------------+------------------+
+|window_start        |window_end          |event_count|avg_temp_c        |min_temp_c        |max_temp_c        |
++--------------------+--------------------+-----------+------------------+------------------+------------------+
+|2026-05-15 09:42:18 |2026-05-15 09:42:28 |1000       |22.51             |19.00             |25.99             |
 ```
 
-These tables are the windowed aggregates landing in the sink — useful for *seeing* the data flow, but not for RTM latency claims. Each batch prints multiple rows (one per active sliding window) and most are **incremental update emits**, so `engine_latency_ms` ≈ a few ms regardless of mode. Treat the table as visual confirmation that data is flowing; trust `[rtm]` for the latency numbers.
+Each batch prints one row per active sliding window — same data the pipeline would push to a real Kafka sink in production.
 
-**Compare with micro-batch mode.** To see the contrast, edit *both* of these in the bundle, then redeploy:
-- Drop the `pipelines.trigger` / `pipelines.trigger.interval` keys from the flow's `spark_conf=` in `transformations/temperature_rtm.py`.
-- Flip the pipeline-level `spark.databricks.streaming.realTimeMode.enabled` to `"false"` in `databricks.yml`.
+**`[rtm]` listener lines — engine heartbeat.** The `RTMLatencyLogger` registered at the bottom of `transformations/temperature_rtm.py` prints one line per `StreamingQueryProgress` event:
 
-Removing only the flow-level trigger leaves pipeline-level RTM optimizations active — you have to flip **both** for a clean micro-batch baseline. After the redeploy, watch `[rtm] processingLatencyMs.p99` climb from tens of ms into the hundreds of ms or seconds.
+```
+[rtm] batch=460 mode=durationMs-fallback triggerExecutionMs=3705 addBatchMs=3490 getBatchMs=0
+```
+
+`mode=durationMs-fallback` reports per-trigger wall-clock from `durationMs`. It tells you the engine is making progress; it does **not** measure per-record latency.
+
+> **Why no per-record latency here?** RTM's per-record `rtmMetrics` (`processingLatencyMs`, `sourceQueuingLatencyMs`, `e2eLatencyMs`, each as p50/p99) is only computed for the [officially-supported source/sink combos: Kafka, MSK, Event Hubs, Kinesis EFO](https://docs.databricks.com/aws/en/dlt/realtime-mode#supported-sources-and-sinks). This lab uses `rate` + `console` for portability, so `rtmMetrics` isn't populated and the listener falls back to `durationMs`. RTM optimizations are still running — only the per-record instrumentation is missing — so most production RTM pipelines use Kafka or Kinesis (neither available in this workshop) where the real p50/p99 numbers light up automatically.
 
 ### Step 4e — Stop the pipeline when you're done
 

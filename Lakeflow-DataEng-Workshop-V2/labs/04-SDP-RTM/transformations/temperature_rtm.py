@@ -1,9 +1,6 @@
 # transformations/temperature_rtm.py
 from pyspark import pipelines as dp
-from pyspark.sql.functions import (
-    avg, col, count, current_timestamp, expr,
-    max as max_, min as min_, unix_millis, window,
-)
+from pyspark.sql.functions import avg, col, count, expr, max as max_, min as min_, window
 
 dp.create_sink(
     "hot_temperatures_sink",
@@ -17,7 +14,7 @@ dp.create_sink(
     target="hot_temperatures_sink",
     spark_conf={
         "pipelines.trigger": "RealTime",
-        "pipelines.trigger.interval": "5 minutes",
+        "pipelines.trigger.interval": "2 minutes",
     },
 )
 def temperature_rtm_flow():
@@ -35,15 +32,6 @@ def temperature_rtm_flow():
             avg("temperature_c").alias("avg_temp_c"),
             min_("temperature_c").alias("min_temp_c"),
             max_("temperature_c").alias("max_temp_c"),
-            max_("source_timestamp").alias("last_event_ts"),
-        )
-        .withColumn("sink_timestamp", current_timestamp())
-        # engine_latency_ms = time from the newest event in this window
-        # to the row landing in the sink. RTM ≈ a few–tens of ms,
-        # MicroBatch ≈ hundreds+. Smaller = better.
-        .withColumn(
-            "engine_latency_ms",
-            unix_millis(col("sink_timestamp")) - unix_millis(col("last_event_ts")),
         )
         .select(
             col("window.start").alias("window_start"),
@@ -52,7 +40,6 @@ def temperature_rtm_flow():
             col("avg_temp_c"),
             col("min_temp_c"),
             col("max_temp_c"),
-            col("engine_latency_ms"),
         )
     )
 
@@ -70,9 +57,18 @@ from pyspark.sql.streaming import StreamingQueryListener
 class RTMLatencyLogger(StreamingQueryListener):
     """Surface latency in the driver log for RTM and micro-batch alike.
 
-    RTM on  → prints rtmMetrics (p50/p99 for processing/queuing/e2e latency).
-    RTM off → rtmMetrics is None, so falls back to per-batch durationMs
-              (triggerExecution / addBatch / getBatch).
+    The Python StreamingQueryProgress wrapper doesn't always expose every
+    Scala-side field as a direct attribute, so we parse the underlying
+    progress JSON and look for `rtmMetrics` there.
+
+    Note: `rtmMetrics` is currently only populated for officially-supported
+    RTM source/sink combos (Kafka, MSK, Event Hubs). For unsupported
+    sources/sinks like the `rate` source + `console` sink in this demo,
+    RTM optimizations still run, but the per-record latency instrumentation
+    isn't emitted — so we fall back to `durationMs` from the progress
+    object. That fallback is labelled `mode=durationMs-fallback` to make
+    it clear this is **not** "RTM is off", it's "rtmMetrics unavailable
+    for this source/sink".
     """
 
     def onQueryStarted(self, event):
@@ -83,8 +79,15 @@ class RTMLatencyLogger(StreamingQueryListener):
 
     def onQueryProgress(self, event):
         prog = event.progress
+        # 1. try the direct Python attribute (newer wrappers expose it)
         rtm = getattr(prog, "rtmMetrics", None)
-        if rtm is not None:
+        # 2. fall back to parsing the progress JSON
+        if rtm is None and hasattr(prog, "json"):
+            try:
+                rtm = json.loads(prog.json).get("rtmMetrics")
+            except Exception:
+                rtm = None
+        if rtm:
             print(
                 f"[rtm] batch={prog.batchId} mode=rtm "
                 f"rtmMetrics={json.dumps(rtm)}"
@@ -92,7 +95,7 @@ class RTMLatencyLogger(StreamingQueryListener):
         else:
             d = prog.durationMs or {}
             print(
-                f"[rtm] batch={prog.batchId} mode=micro-batch "
+                f"[rtm] batch={prog.batchId} mode=durationMs-fallback "
                 f"triggerExecutionMs={d.get('triggerExecution', 'n/a')} "
                 f"addBatchMs={d.get('addBatch', 'n/a')} "
                 f"getBatchMs={d.get('getBatch', 'n/a')}"
