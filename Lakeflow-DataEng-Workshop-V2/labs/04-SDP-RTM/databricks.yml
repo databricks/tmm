@@ -5,8 +5,8 @@ bundle:
 
 variables:
   catalog_name:
-    description: "UC catalog (workshop default)"
-    default: workshop
+    description: "UC catalog (de_workshop default)"
+    default: de_workshop
   schema_name:
     description: "Your USER_ID schema (replace with your own user id)"
     default: USER_ID

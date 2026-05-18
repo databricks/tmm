@@ -3,6 +3,6 @@
 CREATE OR REFRESH STREAMING TABLE fraud_flags
 TBLPROPERTIES ('created_by' = 'genie_code', 'created_at' = '2026-05-17T13:34:00Z')
 AS SELECT * FROM STREAM(read_files(
-  '/Volumes/workshop/shared/landing/booking_fraud_flags/',
+  '/Volumes/de_workshop/shared/landing/booking_fraud_flags/',
   format => 'json'
 ));

@@ -1,26 +1,27 @@
 # Databricks notebook source
 
 # MAGIC %md
-# MAGIC # Workshop setup — shared landing volume, fraud-marker seed, Zerobus provisioning
-# MAGIC 
-# MAGIC A catalog `workshop` is assumed to be created by the training environment (Vocareum) before attendees start. If you're using this workshop without Vocareum, create the catalog manually. 
-# MAGIC 
-# MAGIC This setup script sets up everything else that is needed by the workshop attendees. Run it as ADMIN. 
+# MAGIC # Workshop setup — de_workshop catalog, shared landing volume, fraud-marker seed, Zerobus provisioning
+# MAGIC
+# MAGIC This setup script sets up everything that is needed by the workshop attendees. Run it as ADMIN.
 # MAGIC It's idempotent: safe to re-run. Does not touch per-attendee schemas.
-# MAGIC 
+# MAGIC
+# MAGIC In Vocareum-style training environments, the `de_workshop` catalog is usually pre-provisioned; the `CREATE CATALOG IF NOT EXISTS` is a no-op there. Without Vocareum, the notebook creates the catalog itself.
+# MAGIC
 # MAGIC **Part A — Shared assets**
-# MAGIC 1. Schema `workshop.shared` (if not exists)
-# MAGIC 2. Managed volume `workshop.shared.landing` (if not exists)
-# MAGIC 3. Folder `booking_fraud_flags/` in that volume seeded with JSONL fraud markers
+# MAGIC 1. Catalog `de_workshop` (if not exists)
+# MAGIC 2. Schema `de_workshop.shared` (if not exists)
+# MAGIC 3. Managed volume `de_workshop.shared.landing` (if not exists)
+# MAGIC 4. Folder `booking_fraud_flags/` in that volume seeded with JSONL fraud markers
 # MAGIC    for **3%** of distinct `booking_id`s from `samples.wanderbricks.booking_updates`
-# MAGIC 4. `USE_SCHEMA` grant on `workshop.shared` to group `account users`
-# MAGIC 5. `READ_VOLUME` grant on `workshop.shared.landing` to group `account users`
-# MAGIC 
+# MAGIC 5. `USE_SCHEMA` grant on `de_workshop.shared` to group `account users`
+# MAGIC 6. `READ_VOLUME` grant on `de_workshop.shared.landing` to group `account users`
+# MAGIC
 # MAGIC **Part B — Zerobus provisioning** (uses the official `databricks-zerobus-ingest-sdk` over gRPC)
-# MAGIC 1. Schema `workshop.zerobus` + managed Delta table `workshop.zerobus.measurements` (`id STRING, city STRING, temperature FLOAT, comment STRING`)
+# MAGIC 1. Schema `de_workshop.zerobus` + managed Delta table `de_workshop.zerobus.measurements` (`id STRING, city STRING, temperature FLOAT, comment STRING`)
 # MAGIC 2. Service principal `workshop-zerobus-sp` with a fresh OAuth client secret
-# MAGIC 3. UC grants for that SP: `USE CATALOG` on `workshop`, `USE SCHEMA` on `workshop.zerobus`, `MODIFY + SELECT` on the table
-# MAGIC 4. Config table `workshop.zerobus.config` (single row: `client_id`, `client_secret`, `workspace_url`, `workspace_id`, `zerobus_endpoint`) with `SELECT` granted to `account users` — attendees read all five values from one place
+# MAGIC 3. UC grants for that SP: `USE CATALOG` on `de_workshop`, `USE SCHEMA` on `de_workshop.zerobus`, `MODIFY + SELECT` on the table
+# MAGIC 4. Config table `de_workshop.zerobus.config` (single row: `client_id`, `client_secret`, `workspace_url`, `workspace_id`, `zerobus_endpoint`) with `SELECT` granted to `account users` — attendees read all five values from one place
 # MAGIC 5. End-to-end smoke test that opens a gRPC stream as the SP, ingests one row, deletes it, and prints PASS — so any breakage shows up here, not in 1000 attendee notebooks
 
 # COMMAND ----------
@@ -48,7 +49,7 @@ print(f"Admin check passed: {_me.user_name} is a workspace admin.")
 
 # COMMAND ----------
 
-dbutils.widgets.text("catalog", "workshop", "Workshop catalog")
+dbutils.widgets.text("catalog", "de_workshop", "Workshop catalog")
 dbutils.widgets.text("fraud_pct", "3.0", "% of bookings to flag as fraud")
 dbutils.widgets.text("num_files", "5", "Number of JSONL files to split the seed across")
 dbutils.widgets.text("zerobus_region", "us-west-2", "Zerobus region (e.g. us-west-2) — set to blank to skip Part B")
@@ -88,10 +89,14 @@ print(f"catalog={CATALOG}  fraud_pct={FRAUD_PCT}%  num_files={NUM_FILES}  zerobu
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 1-2. Create shared schema and landing volume (idempotent)
+# MAGIC ## 1-2. Create catalog, shared schema, and landing volume (idempotent)
 
 # COMMAND ----------
 
+# Create the de_workshop catalog itself so the notebook is self-contained.
+# In Vocareum-style training environments, the catalog is usually pre-provisioned;
+# this CREATE is a no-op there.
+spark.sql(f"CREATE CATALOG IF NOT EXISTS {CATALOG} COMMENT 'Workshop catalog for Lakeflow DataEng Workshop V2'")
 spark.sql(f"CREATE SCHEMA IF NOT EXISTS {CATALOG}.shared COMMENT 'Workshop shared assets'")
 spark.sql(f"CREATE VOLUME IF NOT EXISTS {CATALOG}.shared.landing COMMENT 'Shared landing for workshop seed data'")
 
@@ -310,7 +315,7 @@ print(f"Storage preflight OK — effective_location={_effective!r}  (None means 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## B1. Create `workshop.zerobus.measurements`
+# MAGIC ## B1. Create `de_workshop.zerobus.measurements`
 
 # COMMAND ----------
 

@@ -3,7 +3,7 @@
 ## Project overview
 Three-core-lab Databricks training on Lakeflow Spark Declarative Pipelines (SDP) and direct
 ingest, plus two optional/take-home labs, delivered in the new Lakeflow Pipelines Editor.
-Attendees each have a pre-assigned schema `workshop.<user>`. A shared landing volume (for
+Attendees each have a pre-assigned schema `de_workshop.<user>`. A shared landing volume (for
 Lab 2) and a shared Zerobus target table (for Lab 3) are preseeded by a single setup notebook.
 
 - **Lab 1 — Bakehouse, hand-coded.** Streaming table in **Python** (1a) and a materialized view
@@ -23,7 +23,7 @@ Lab 2) and a shared Zerobus target table (for Lab 3) are preseeded by a single s
   Reference files in `labs/02-GenieCode/`.
 - **Lab 3 — Zerobus direct ingest (live instructor demo; attendees may follow along).**
   Instructor runs an Exploration notebook that pushes one `{id, city, temperature, comment}`
-  record into the shared Delta table `workshop.zerobus.measurements` via the **official
+  record into the shared Delta table `de_workshop.zerobus.measurements` via the **official
   `databricks-zerobus-ingest-sdk`** (gRPC). The SDK is declared as a **PEP 723 inline
   metadata** dependency at the top of `labs/03-Zerobus/send_temperature.py`, which Databricks reads
   on attach and builds into the notebook's serverless **Environment** (visible in the
@@ -31,7 +31,7 @@ Lab 2) and a shared Zerobus target table (for Lab 3) are preseeded by a single s
   cell and no per-session install cost (matters at 1000-attendee scale). If the auto-build
   doesn't kick in, attendees can fall back to clicking **Apply** in the Environment side
   panel — the dep is already listed there. Credentials come
-  from the UC config table `workshop.zerobus.config` (single row, columns: `client_id`,
+  from the UC config table `de_workshop.zerobus.config` (single row, columns: `client_id`,
   `client_secret`, `workspace_url`, `workspace_id`, `zerobus_endpoint`) — attendees read
   all five values from one place. The shared SP `client_secret` lives in the table in
   cleartext; this is intentional given the 1:1000 shared-credential model (every attendee
@@ -92,22 +92,22 @@ Lab 2) and a shared Zerobus target table (for Lab 3) are preseeded by a single s
 - `samples.wanderbricks.payments` — joined with bookings via `booking_id`.
 
 ## Destination conventions
-- Catalog: `workshop` (fixed — do not replace with a placeholder).
-- Per-attendee schema: `workshop.<user>` (exists; setup notebook never creates/mutates it).
-- Shared landing volume: `/Volumes/workshop/shared/landing/booking_fraud_flags/`
+- Catalog: `de_workshop` (fixed — do not replace with a placeholder).
+- Per-attendee schema: `de_workshop.<user>` (exists; setup notebook never creates/mutates it).
+- Shared landing volume: `/Volumes/de_workshop/shared/landing/booking_fraud_flags/`
   — JSON fraud markers keyed by `booking_id`.
 
 ## Setup-notebook responsibilities (MUST include)
 The setup notebook (`misc/setup_workshop.py`, run once per workshop) is split into two parts.
 
 **Part A — Lab 2 shared assets:**
-1. Create schema `workshop.shared` if it does not exist.
-2. Create volume `workshop.shared.landing` if it does not exist.
+1. Create schema `de_workshop.shared` if it does not exist.
+2. Create volume `de_workshop.shared.landing` if it does not exist.
 3. Create folder `booking_fraud_flags/` in the volume and seed JSON fraud markers
    for **3%** of distinct `booking_id`s from `samples.wanderbricks.booking_updates`.
-4. **Grant `USE_SCHEMA` on `workshop.shared` to group `account users`**
+4. **Grant `USE_SCHEMA` on `de_workshop.shared` to group `account users`**
    (so attendees can see the volume).
-5. **Grant `READ_VOLUME` on `workshop.shared.landing` to group `account users`**
+5. **Grant `READ_VOLUME` on `de_workshop.shared.landing` to group `account users`**
    (read-only — no `WRITE_VOLUME`).
 
 **Part B — Lab 3 Zerobus provisioning** (skipped if `zerobus_region` widget is blank).
@@ -116,7 +116,7 @@ After the skip-check, an inline `%pip install "databricks-zerobus-ingest-sdk>=1.
 (interactive `%pip install` is fine here — setup runs once; widgets are re-resolved
 after the restart). Then:
 
-- **B0. Storage preflight.** Create schema `workshop.zerobus`, then check via the SDK
+- **B0. Storage preflight.** Create schema `de_workshop.zerobus`, then check via the SDK
   that the catalog/schema has a managed storage location AND that the location is not
   workspace default storage. The check fails only on a confirmed default-storage URI
   (currently `s3://dbstorage-` prefix on AWS); a missing `storage_root` is treated as
@@ -124,25 +124,25 @@ after the restart). Then:
   accepts writes. Zerobus rejects writes to default-storage tables with HTTP 403 at
   insert time — failing here at setup is cheaper than failing in 1000 attendee
   notebooks later.
-- **B1.** Create the managed Delta table `workshop.zerobus.measurements` with exactly
+- **B1.** Create the managed Delta table `de_workshop.zerobus.measurements` with exactly
   `id STRING, city STRING, temperature FLOAT, comment STRING`. Zerobus does not create
   tables.
 - **B2.** Create (or reuse) a workspace service principal `workshop-zerobus-sp`.
 - **B3.** Always generate a fresh OAuth client secret on each run — config-table writes
   overwrite, so attendees always read a current value.
-- **B4.** Grant the SP: `USE CATALOG` on `workshop`, `USE SCHEMA` on `workshop.zerobus`,
+- **B4.** Grant the SP: `USE CATALOG` on `de_workshop`, `USE SCHEMA` on `de_workshop.zerobus`,
   `MODIFY + SELECT` on the data table. Nothing broader — this bounds the blast radius.
   The Zerobus Ingest SDK handles the OAuth `authorization_details` payload internally
   (it requires the full UC chain — `USE CATALOG` + `USE SCHEMA` + `SELECT` + `MODIFY` —
   with **spaced** privilege names matching `SHOW GRANTS`), so as long as those four
   grants are in place the SDK takes care of the rest.
-- **B5.** Create the config table `workshop.zerobus.config` (single row, columns:
+- **B5.** Create the config table `de_workshop.zerobus.config` (single row, columns:
   `client_id`, `client_secret`, `workspace_url`, `workspace_id`, `zerobus_endpoint`)
   and `GRANT SELECT` on it to `account users` (with fallback to workspace `users`).
   Cleartext storage of `client_secret` is intentional: every attendee needs the secret
   to authenticate the SDK anyway, and the SP's UC grants are tightly bounded — the
   table simplifies the read path at the cost of secret-scope redaction. Attendees
-  read via `spark.table("workshop.zerobus.config").first()`.
+  read via `spark.table("de_workshop.zerobus.config").first()`.
 - **B6. gRPC smoke test.** Open a stream as the freshly-provisioned SP, ingest one
   dummy row, delete it, print PASS. Catches any breakage (wrong endpoint, missing
   grants, storage misconfig the preflight didn't catch) at setup time rather than
@@ -178,7 +178,7 @@ after the restart). Then:
 ## Lab 5 specifics (CI/CD via Declarative Automation Bundles)
 - Upstream source of truth: `https://github.com/databricks/tmm/tree/main/Lakeflow-Gourmet-Pipeline`.
 - Per-student variables students MUST adjust in `databricks.yml` (retargeting is mandatory — the upstream defaults will fail to deploy):
-  - `catalog_name` — default is `daiwt_gourmet`, which does not exist in the workshop workspace; change to `workshop`.
+  - `catalog_name` — default is `daiwt_gourmet`, which does not exist in the workshop workspace; change to `de_workshop`.
   - `prod_warehouse_id` — default is an example ID that doesn't exist in the workshop workspace; replace with a real one from **SQL Warehouses**.
   - `schema_name` — default is `${workspace.current_user.short_name}`; leave it if that matches the attendee's `<user>` schema, otherwise override to the literal `<user>` value.
 - Do NOT add a copy of the Gourmet Pipeline code to this repo. Lab 5 points to the upstream repo; students sparse-clone via the **Workspace UI** (Workspace → Create → Git folder, sparse-checkout path `Lakeflow-Gourmet-Pipeline`).

@@ -8,16 +8,16 @@ Over the next 90 minutes we'll work through the core data engineering knowledge 
 
 Take your time, ask questions, and don't worry about breaking anything — your schema is yours alone. Let's build. 🚀
 
-> **Audience**: entry- to mid-level data engineers, with little or some prior Databricks knowledge. The environment is already set up for you — you have an empty workspace in an account with a pre-assigned schema `workshop.USER_ID`.
+> **Audience**: entry- to mid-level data engineers, with little or some prior Databricks knowledge. The environment is already set up for you — you have an empty workspace in an account with a pre-assigned schema `de_workshop.USER_ID`.
 > This is an instructor-led course. Not a DIY manual. 
 
 ### Overview
 
 - **Lab 1 — Manually code an SDP pipeline**: streaming table in **Python**, materialized view in **SQL** with three data-quality expectations wired in from the start. Reference files in [`labs/01-SDP/`](./labs/01-SDP/).
 - **Lab 2 — Learn how to use Genie Code as a data engineer**: all-**SQL** pipeline (AutoCDC + Auto Loader + join gold MV), produced from a single Genie Code prompt — and verified by you before it runs. Reference files in [`labs/02-GenieCode/`](./labs/02-GenieCode/).
-- **Lab 3 — Work with Zerobus Ingest to push IoT data** *(live instructor demo; attendees may follow along)*: one `ingest_record(...)` call via the official `databricks-zerobus-ingest-sdk` (gRPC) lands a row in `workshop.zerobus.measurements`, with credentials fetched from a shared UC config table. Reference files in [`labs/03-Zerobus/`](./labs/03-Zerobus/).
+- **Lab 3 — Work with Zerobus Ingest to push IoT data** *(live instructor demo; attendees may follow along)*: one `ingest_record(...)` call via the official `databricks-zerobus-ingest-sdk` (gRPC) lands a row in `de_workshop.zerobus.measurements`, with credentials fetched from a shared UC config table. Reference files in [`labs/03-Zerobus/`](./labs/03-Zerobus/).
 - **Lab 4 — Real-Time Mode for SDP** *(optional)*: deploy a continuous pipeline running in Real-Time Mode (RTM), watch sub-second latency aggregates land in the driver console, and read the engine latency from the driver logs. Reference bundle in [`labs/04-SDP-RTM/`](./labs/04-SDP-RTM/).
-- **Lab 5 — CI/CD via Declarative Automation Bundles** *(optional)*: clone a public repo with a DAB, retarget two variables to `workshop.USER_ID`, and deploy it from the **Workspace UI**. The equivalent CLI path with `databricks bundle deploy` is included as the CI/CD pattern.
+- **Lab 5 — CI/CD via Declarative Automation Bundles** *(optional)*: clone a public repo with a DAB, retarget two variables to `de_workshop.USER_ID`, and deploy it from the **Workspace UI**. The equivalent CLI path with `databricks bundle deploy` is included as the CI/CD pattern.
 
 ## Important — your user ID
 
@@ -25,13 +25,13 @@ This workshop is designed so it can be run with thousands of participants in a s
 
 To get your user ID, check your login email by clicking on the user avatar (e.g. **L**) at the **top right** of the workspace. Example: `labuser10148895_1745997814@vocareum.com` means your user ID is `labuser10148895_1745997814`.
 
-Throughout this guide, replace `USER_ID` with that exact value. Your pre-assigned schema is `workshop.USER_ID`.
+Throughout this guide, replace `USER_ID` with that exact value. Your pre-assigned schema is `de_workshop.USER_ID`.
 
 ## Prerequisites (already done by the setup notebook)
 
-- Your catalog `workshop` / your schema `workshop.USER_ID` already exists and is writable.
-- A shared volume exists at `/Volumes/workshop/shared/landing/` with a seeded subdirectory `booking_fraud_flags/` containing JSON fraud markers keyed by `booking_id`. The volume is **read-only** for attendees (every attendee has `READ_VOLUME`, nobody has `WRITE_VOLUME`), so one attendee cannot disrupt another.
-- The Zerobus target table `workshop.zerobus.measurements` (`id, city, temperature, comment`), the shared service principal `workshop-zerobus-sp` (with `USE CATALOG` on `workshop`, `USE SCHEMA` on `workshop.zerobus`, and `MODIFY + SELECT` on the table), and the config table `workshop.zerobus.config` (single row holding `client_id`, `client_secret`, `workspace_url`, `workspace_id`, `zerobus_endpoint`) are all pre-provisioned for Lab 3.
+- Your catalog `de_workshop` / your schema `de_workshop.USER_ID` already exists and is writable.
+- A shared volume exists at `/Volumes/de_workshop/shared/landing/` with a seeded subdirectory `booking_fraud_flags/` containing JSON fraud markers keyed by `booking_id`. The volume is **read-only** for attendees (every attendee has `READ_VOLUME`, nobody has `WRITE_VOLUME`), so one attendee cannot disrupt another.
+- The Zerobus target table `de_workshop.zerobus.measurements` (`id, city, temperature, comment`), the shared service principal `workshop-zerobus-sp` (with `USE CATALOG` on `de_workshop`, `USE SCHEMA` on `de_workshop.zerobus`, and `MODIFY + SELECT` on the table), and the config table `de_workshop.zerobus.config` (single row holding `client_id`, `client_secret`, `workspace_url`, `workspace_id`, `zerobus_endpoint`) are all pre-provisioned for Lab 3.
 - This lab runs completely serverless.
 - You can read `samples.bakehouse.*` and `samples.wanderbricks.*` (public sample data).
 
@@ -41,8 +41,8 @@ Three placeholders show up throughout — resolve them once here, then paste blo
 
 | Placeholder | What to use |
 |---|---|
-| `USER_ID` | Your user ID, derived from your login email (see preceding row). Example: `labuser10148895_1745997814`. Your schema is `workshop.USER_ID`. |
-| `workshop` | The catalog used for all labs. This is fixed. No need to change this. |
+| `USER_ID` | Your user ID, derived from your login email (see preceding row). Example: `labuser10148895_1745997814`. Your schema is `de_workshop.USER_ID`. Throughout the lab, replace USER_ID with your own user ID. |
+| `de_workshop` | The catalog used for all labs. This is fixed. No need to change this. |
 | `<course_warehouse_name>` / `<course_warehouse_id>` (Lab 3 only) | The course SQL warehouse provisioned for you by the training materials. Your instructor shares the exact name and ID. |
 | `prod_warehouse_id` (Lab 5 only) | A running SQL warehouse ID. Find it in sidebar **SQL Warehouses** → click a warehouse → copy the ID from the URL. |
 
@@ -54,16 +54,16 @@ Clone this repo into your Workspace once at the start. You get this lab guide an
 2. In the **Create Git folder** dialog:
    - **Git repository URL**: `https://github.com/databricks/tmm`
    - **Git provider**: GitHub
-   - **Git folder name**: `de_workshop`
+   - **Git folder name**: `de-workshop-repo`
    - Enable **Sparse checkout mode**
    - **Sparse checkout path**: `Lakeflow-DataEng-Workshop-V2`
-3. Click **Create Git folder**. The `Lakeflow-DataEng-Workshop-V2/` subdirectory clones into `de_workshop/` in your workspace.
+3. Click **Create Git folder**. The `Lakeflow-DataEng-Workshop-V2/` subdirectory clones into `de-workshop-repo/` in your workspace.
 
 
 Most of those lab folders have reference files only. Some folders include notebooks that you can run directly, as described below.
 
 
-## Lab 1 — Manually code an SDP pipeline
+## Lab 1 — Manually code a Lakeflow SDP pipeline and Job
 
 
 In this lab you'll hand-code an end-to-end SDP pipeline: one **streaming table** in Python over the well-known Bakehouse sample dataset, and a **materialized view** implemented in SQL with three data quality constraints. One pipeline. Two files only. 
@@ -76,7 +76,7 @@ Before you write a single line, create the pipeline that hosts Steps 1a and 1b:
 2. Click the name → rename to `pipeline_USER_ID`. The editor automatically creates a workspace folder of the same name under your home (`/Workspace/Users/<your-email>/pipeline_USER_ID/`). That folder is where your Lab 1 work lives. 
 
 3. **Right of the pipeline name**, click the catalog/schema selector — a **Default location** modal opens. Set:
-   - **Default catalog**: `workshop`
+   - **Default catalog**: `de_workshop`
    - **Default schema**: copy your `USER_ID` and click **Save**. Make sure to use your schema name, since it is writable for you and other schemas aren't writable. **So the pipeline will only run if you select the correct schema.** 
    
    The dropdown sometimes only offers *"Create schema"* even though your `USER_ID` schema already exists — ignore that, the typed/copied literal is accepted. 
@@ -182,7 +182,7 @@ The same shape, written without SDP, would be a streaming job, a batch job, and 
 Running the pipeline with an addtional downstream action as a multi-step workflow gave you a production ready job that can be invoked by any Job trigger. 
 
 
-![Lab 1 — completed pipeline] run in the Lakeflow Pipelines Editor: streaming table `sales_transactions` (3.3K output records) feeds materialized view `sales_stats` (6 output records, 3 expectations, 100% written, 0% dropped)](./misc/images/lab1-ui-expectations.png)
+![Lab 1 — completed pipeline run in the Lakeflow Pipelines Editor: streaming table sales_transactions (3.3K output records) feeds materialized view sales_stats (6 output records, 3 expectations, 100% written, 0% dropped)](./misc/images/lab1-ui-expectations.png)
 
 
 
@@ -202,7 +202,7 @@ The skill this lab teaches isn't typing SQL. It's catching the draft that *looks
 ### Set up a fresh pipeline
 
 1. Workspace sidebar → **New** → **ETL pipeline**. Rename to `pipeline_USER_ID_lab2`. The editor auto-creates a workspace folder of the same name under your home — Genie Code writes the five SQL files it generates there.
-2. Set **Default catalog** to `workshop` and **Default schema** to `USER_ID` (same as Lab 1).
+2. Set **Default catalog** to `de_workshop` and **Default schema** to `USER_ID` (same as Lab 1).
 
 
 ### Open Genie Code
@@ -222,13 +222,13 @@ build a SQL pipeline with SDP that answers:
 Inputs:
 1. samples.wanderbricks.booking_updates — a CDC stream of booking state-update events 
 2. samples.wanderbricks.payments streaming data 
-3. /Volumes/workshop/shared/landing/booking_fraud_flags/with JSON files marking fraudulent bookings 
+3. /Volumes/de_workshop/shared/landing/booking_fraud_flags/with JSON files marking fraudulent bookings 
 
 * mark all bookings with fraud in bookings_with_fraud.
 * gold materialized view fraud_by_party_and_method: use bookings_with_fraud and payments 
 
 
-Run the pipeline and report row counts.
+Run the pipeline, report row counts, and answer the question about fraud and its correlation.
 ```
 
 This prompt is deliberately higher-level — it states the *business question* and the *inputs*, and lets Genie Code plan the solution (table names, columns, join shape, aggregation form). This is the honest way to use an AI data engineering agent.
@@ -272,15 +272,15 @@ Lab 3 flips the script: until now you ingested data that was available to you (s
 
 **What's already provisioned for you:**
 
-- **Zerobus table** — a Delta table `workshop.zerobus.measurements` (`id STRING, city STRING, temperature FLOAT, comment STRING`). Every event lands here.
-- **Producer identity** — a service principal `workshop-zerobus-sp` with `USE CATALOG` on `workshop`, `USE SCHEMA` on `workshop.zerobus`, and `MODIFY + SELECT` on that one table. The SDK authenticates as this SP from your notebook (the full UC chain is required for the OAuth `authorization_details` payload).
-- **Config table** — This is only required to execute the lab. Typically these values are available in your IoT producer. We use the table `workshop.zerobus.config`, a single row holding `client_id`, `client_secret`, `workspace_url`, `workspace_id`, and `zerobus_endpoint`. The notebook (IoT producer) reads its config data from here.
+- **Zerobus table** — a Delta table `de_workshop.zerobus.measurements` (`id STRING, city STRING, temperature FLOAT, comment STRING`). Every event lands here.
+- **Producer identity** — a service principal `workshop-zerobus-sp` with `USE CATALOG` on `de_workshop`, `USE SCHEMA` on `de_workshop.zerobus`, and `MODIFY + SELECT` on that one table. The SDK authenticates as this SP from your notebook (the full UC chain is required for the OAuth `authorization_details` payload).
+- **Config table** — This is only required to execute the lab. Typically these values are available in your IoT producer. We use the table `de_workshop.zerobus.config`, a single row holding `client_id`, `client_secret`, `workspace_url`, `workspace_id`, and `zerobus_endpoint`. The notebook (IoT producer) reads its config data from here.
 
 **Overview of what you do:** open the notebook, set three parameters (city, temperature, comment), use the official **Databricks Zerobus Ingest SDK**, which opens a gRPC stream, ingests one event with a fresh UUID, flushes for durability, closes. 
 
 Then you verify the event landed — first inside the notebook, then from a SQL warehouse as a downstream consumer.
 
-**Shared Zerobus table, thousands of simultaneous producers.** This same `workshop.zerobus.measurements` table is the target for *every* attendee in the workshop. When the instructor signals go, all of you fire `ingest_record` and write to the same Delta table. Zerobus is built to absorb exactly this shape of load: many concurrent streams converging on one table. 
+**Shared Zerobus table, thousands of simultaneous producers.** This same `de_workshop.zerobus.measurements` table is the target for *every* attendee in the workshop. When the instructor signals go, all of you fire `ingest_record` and write to the same Delta table. Zerobus is built to absorb exactly this shape of load: many concurrent streams converging on one table. 
 
 By the end of the lab you'll see every attendee's events sitting alongside your own — a live demo of what a real fleet of IoT producers looks like on the wire.
 
@@ -288,12 +288,12 @@ By the end of the lab you'll see every attendee's events sitting alongside your 
 
 | catalog | schema | table | columns |
 |---|---|---|---|
-| `workshop` | `zerobus` | `measurements` | `id STRING, city STRING, temperature FLOAT, comment STRING` |
+| `de_workshop` | `zerobus` | `measurements` | `id STRING, city STRING, temperature FLOAT, comment STRING` |
 
 
 ### Step 3a — Open the notebook from the cloned repo
 
-In the Workspace sidebar, navigate to your cloned `de_workshop/Lakeflow-DataEng-Workshop-V2/labs/03-Zerobus/send_temperature.py` and click to open it. The notebook runs directly from the Git folder. 
+In the Workspace sidebar, navigate to your cloned `de-workshop-repo/Lakeflow-DataEng-Workshop-V2/labs/03-Zerobus/send_temperature.py` and click to open it. The notebook runs directly from the Git folder. 
 
 The notebook ships with `databricks-zerobus-ingest-sdk` already declared in its **Environment** (top-right Environment icon). On first attach, the serverless runtime builds that dependency into the notebook's cached venv — no manual click-through, no `%pip install`, no per-session install delay. 
 
@@ -318,7 +318,7 @@ stream.close()
 The SDK handles the OAuth token exchange and scoping internally — the attendee never sees an `authorization_details` payload or a bearer token. On success you'll see:
 
 ```
-✅ Sent to workshop.zerobus.measurements: {'id': '…', 'city': 'Munich', 'temperature': 21.5, 'comment': 'Hello Zerobus'}
+✅ Sent to de_workshop.zerobus.measurements: {'id': '…', 'city': 'Munich', 'temperature': 21.5, 'comment': 'Hello Zerobus'}
 ```
 
 ### Step 3d — Verify your row landed
@@ -327,7 +327,7 @@ Pick **one** of the two surfaces below. The data is the same governed Delta tabl
 
 Zerobus is **at-least-once** at the protocol level — durability ACKs come back per record, and a client that retries on transport errors may produce duplicates. Order isn't guaranteed across producers.
 
-**Option A — in the notebook.** The last cell runs a `%sql` query against `workshop.zerobus.measurements`, ordered by city and temperature. Find your row by the city you typed at the top — it appears within a few seconds.
+**Option A — in the notebook.** The last cell runs a `%sql` query against `de_workshop.zerobus.measurements`, ordered by city and temperature. Find your row by the city you typed at the top — it appears within a few seconds.
 
 **Option B — in Databricks SQL.** Read the table as a downstream consumer. This proves the row is a real row in a real governed table, queryable by anything that can talk to a SQL warehouse — a BI dashboard, a downstream pipeline, a JDBC client, `ai_query(...)`.
 
@@ -337,7 +337,7 @@ Zerobus is **at-least-once** at the protocol level — durability ACKs come back
 
 ```sql
 SELECT id, city, temperature, comment
-FROM workshop.zerobus.measurements
+FROM de_workshop.zerobus.measurements
 ORDER BY city, temperature;
 ```
 
@@ -385,7 +385,7 @@ Open `labs/04-SDP-RTM/databricks.yml`. Two variables drive the deploy — set th
 ```yaml
 variables:
   catalog_name:
-    default: workshop          # leave as-is for the workshop
+    default: de_workshop       # leave as-is for this workshop
   schema_name:
     default: USER_ID           # ← replace with your own USER_ID
 ```
@@ -529,7 +529,7 @@ In the cloned `gourmet/Lakeflow-Gourmet-Pipeline/` folder, open `databricks.yml`
 ```yaml
 variables:
   catalog_name:
-    default: workshop          # ← was daiwt_gourmet
+    default: de_workshop       # ← was daiwt_gourmet
   prod_warehouse_id:
     default: <your-warehouse-id>   # ← paste from SQL Warehouses
   schema_name:
@@ -539,7 +539,7 @@ variables:
 
 If your `USER_ID` schema doesn't match `${workspace.current_user.short_name}`, override `schema_name` to the literal `USER_ID` value. Also check `targets.presenter` — if it overrides `schema_name`, point it at the same value.
 
-> **Retargeting is mandatory, not optional.** The default catalog `daiwt_gourmet` does not exist in the workshop workspace, so the deploy fails unless you change `catalog_name` to `workshop` (and supply a real `prod_warehouse_id`).
+> **Retargeting is mandatory, not optional.** The default catalog `daiwt_gourmet` does not exist in the workshop workspace, so the deploy fails unless you change `catalog_name` to `de_workshop` (and supply a real `prod_warehouse_id`).
 
 ### Step 5c — deploy to the `presenter` target (Workspace UI)
 
