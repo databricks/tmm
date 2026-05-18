@@ -5,7 +5,7 @@ from pyspark.sql.functions import avg, col, count, expr, max as max_, min as min
 dp.create_sink(
     "hot_temperatures_sink",
     "console",
-    {"mode": "append", "truncate": "false"},
+    {"truncate": "false"},
 )
 
 
@@ -13,15 +13,15 @@ dp.create_sink(
     name="temperature_rtm_flow",
     target="hot_temperatures_sink",
     spark_conf={
-        "pipelines.execution.realTimeMode":    "true",
-        "pipelines.realtime.trigger.duration": "5 minute",   
+        "pipelines.trigger": "RealTime",
+        "pipelines.trigger.interval": "5 minutes",  # optional; defaults to 5 minutes
     },
 )
 def temperature_rtm_flow():
     return (
         spark.readStream
         .format("rate")
-        .option("rowsPerSecond", "100")
+        .option("rowsPerSecond", "1")
         .load()
         .withColumnRenamed("timestamp", "source_timestamp")
         .withColumn("temperature_c", expr("19 + rand() * 7"))
