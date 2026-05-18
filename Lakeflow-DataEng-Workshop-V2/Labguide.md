@@ -73,11 +73,14 @@ In this lab you'll hand-code an end-to-end SDP pipeline: one **streaming table**
 Before you write a single line, create the pipeline that hosts Steps 1a and 1b:
 
 1. Workspace sidebar → **New** → **ETL pipeline**. The **Lakeflow Pipelines Editor** opens with a default name `New Pipeline <date> <time>`.
-2. Click the name → rename to `pipeline_USER_ID`. The editor automatically creates a workspace folder of the same name under your home (`/Workspace/Users/<your-email>/pipeline_USER_ID/`). That folder is where your Lab 1 work lives. 
 
-3. **Right of the pipeline name**, click the catalog/schema selector — a **Default location** modal opens. Set:
+2. a. **Update pipeline name** Click the name of the pipeline, next to the pipeline symbol at the top of the editor → rename to `pipeline_USER_ID`. Note you must have a unique pipeline name, this is why we use the USER_ID here.  
+
+    b. The editor automatically created a pipeline root folder under your home (`/Workspace/Users/<your-email>/New Pipeline DATE TIME`). Although not necessary, you may decide to rename it to something prettier, such as `pipeline-lab1`.  
+
+3. **Update catalog/schema** Right of the pipeline name, click the catalog/schema selector. Set it to the following values:
    - **Default catalog**: `de_workshop`
-   - **Default schema**: copy your `USER_ID` and click **Save**. Make sure to use your schema name, since it is writable for you and other schemas aren't writable. **So the pipeline will only run if you select the correct schema.** 
+   - **Default schema**: copy your `USER_ID` and click **Save**. Make sure to use your correct schema name, since it is writable for you but other schemas aren't writable. **So the pipeline will only run if you select the correct schema.** 
    
    The dropdown sometimes only offers *"Create schema"* even though your `USER_ID` schema already exists — ignore that, the typed/copied literal is accepted. 
 
@@ -86,7 +89,9 @@ Before you write a single line, create the pipeline that hosts Steps 1a and 1b:
 
 ### Step 1a — streaming table (Python)
 
-Use the **copy** button at the top-right of the code block to grab the snippet, then paste it into the editor. (If you ever see an `unexpected indent` error, it's because the editor auto-indented an empty leading line, then use Genie with /fix to correct the data set).
+Use the **copy** button at the top-right of the code block to grab the snippet, then paste it into the editor. 
+
+(If you ever see an `unexpected indent` error, it's because the editor auto-indented an empty leading line, then use Genie with /fix to correct the data set).
 
 ```python
 from pyspark import pipelines as dp
@@ -161,12 +166,17 @@ Wrap the SDP pipeline and a downstream consumer notebook into a two-task job:
 1. Workspace sidebar → **Jobs & Pipelines** → **Create** → **Job**. 
 * Name it `workflow_USER_ID`.
 2. **Task 1**
-* Type **Pipeline**, select your `pipeline_USER_ID` from Lab 1. 
-* Task name: `sdp _pipeline`.
+* Select **Add another task type** and **ETL Pipeline**
+    * Task name **my_pipeline**
+    * Type **Pipeline**
+    * For **Pipeline** select your `pipeline_USER_ID` from Lab 1. 
+    * Save Task
 3. **Task 2**
-* Type **Notebook**, path `labs/01-SDP/downstream.py`  
-* Task name: `downstream`. 
-* Under **Depends on**, select `pipeline`.
+    * Click on **Add task** select Notebook. 
+    * Task name: `downstream`. 
+    * Type **Notebook**
+    * path `labs/01-SDP/downstream.py`  
+    * Under **Depends on**, select `pipeline`.
 4. Click **Run now**. 
 * Verify the job executes. The pipeline runs first; on success the notebook fires and prints to its task log.
 * Check out the possible triggers for a job
