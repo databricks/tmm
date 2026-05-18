@@ -14,7 +14,7 @@ dp.create_sink(
     target="hot_temperatures_sink",
     spark_conf={
         "pipelines.execution.realTimeMode":    "true",
-        "pipelines.realtime.trigger.duration": "1 minute",   
+        "pipelines.realtime.trigger.duration": "5 minute",   
     },
 )
 def temperature_rtm_flow():
