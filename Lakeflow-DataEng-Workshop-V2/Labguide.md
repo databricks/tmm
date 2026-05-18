@@ -154,14 +154,37 @@ A materialized view is either *incrementally maintained* (only the rows that cha
 
 See Tables / Expectations for the details if a table is incrementalized or not. 
 
+### Step 1c (Optional) — use Lakeflow Jobs to create a Workflow with SDP and a downstream action
+
+Wrap the SDP pipeline and a downstream consumer notebook into a two-task job:
+
+1. Workspace sidebar → **Jobs & Pipelines** → **Create** → **Job**. 
+* Name it `workflow_USER_ID`.
+2. **Task 1**
+* Type **Pipeline**, select your `pipeline_USER_ID` from Lab 1. 
+* Task name: `sdp _pipeline`.
+3. **Task 2**
+* Type **Notebook**, path `labs/01-SDP/downstream.py`  
+* Task name: `downstream`. 
+* Under **Depends on**, select `pipeline`.
+4. Click **Run now**. 
+* Verify the job executes. The pipeline runs first; on success the notebook fires and prints to its task log.
+* Check out the possible triggers for a job
+
 
 ### Lab 1 take-away
 
 In a few lines, you've built a streaming table ingest of bakehouse transactions, a materialized view that summarizes sales by product, and three data-quality expecations with different actions. 
 
+
 The same shape, written without SDP, would be a streaming job, a batch job, and a scheduler — three separate systems to wire together and keep in sync. Here it lives in one pipeline, expressed as the *target table* you want, and the platform owns the rest.
 
+Running the pipeline with an addtional downstream action as a multi-step workflow gave you a production ready job that can be invoked by any Job trigger. 
+
+
 ![Lab 1 — completed pipeline] run in the Lakeflow Pipelines Editor: streaming table `sales_transactions` (3.3K output records) feeds materialized view `sales_stats` (6 output records, 3 expectations, 100% written, 0% dropped)](./misc/images/lab1-ui-expectations.png)
+
+
 
 ---
 
@@ -560,7 +583,6 @@ To use these, install the Databricks CLI and authenticate once (`databricks auth
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | Deploy fails on warehouse ID | `prod_warehouse_id` doesn't exist in your workspace | paste a real warehouse ID from **SQL Warehouses** |
-| `new_recipe_Claude_LLM` task fails with `RESOURCE_DOES_NOT_EXIST` for `databricks-claude-sonnet-4-5` | the hard-coded model isn't available on your workspace | edit `src/ai_query.sql`, replacing **both** occurrences of `databricks-claude-sonnet-4-5` with one that is available (e.g. `databricks-claude-haiku-4-5`); or run with `ai_enabled=FALSE` to skip AI tasks |
 | `SCHEMA_NOT_FOUND` during run | `schema_name` resolved to something that doesn't exist in your catalog | override the `schema_name` default in `databricks.yml` to your literal `USER_ID` value |
 | `databricks bundle deploy` prints `Warning: source-linked deployment is available only in the Databricks Workspace` | running the CLI from a terminal (outside the Workspace UI) — `source_linked_deployment: true` only takes effect in the UI Deployments pane | harmless — ignore the warning; the bundle still deploys correctly |
 
