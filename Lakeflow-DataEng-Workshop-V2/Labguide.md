@@ -628,9 +628,6 @@ To use these, install the Databricks CLI and authenticate once (`databricks auth
 
 * [Get to know Genie Code: Lakeflow and Analytics](https://www.databricks.com/resources/demos/videos/get-know-genie-code)
 * Complete [Lakeflow Demo: From messy sales data to AI insights](https://www.databricks.com/resources/demos/videos/lakeflow-action-gourmet-pipeline-demo-daiwt) (source for Lab 5)
-* [Declarative Automation Bundles documentation](https://docs.databricks.com/aws/en/dev-tools/bundles/) (Lab 5)
-* [Lakeflow-Gourmet-Pipeline source repo](https://github.com/databricks/tmm/tree/main/Lakeflow-Gourmet-Pipeline) (Lab 5)
 * Getting Started with [OSS Apache SDP, VS Code](https://github.com/databricks/tmm/tree/main/OSS-SDP-OpenSkyNetwork)
-* [Lakeflow SDP — Real-Time Mode Basics](https://github.com/databricks/tmm/tree/main/Lakeflow-SDP-RTM-Basics) (source for Lab 4)
 * RTM demo to watch: [Air Traffic Control with Apache Spark Structured Streaming — Real-Time Mode](https://www.databricks.com/resources/demos/videos/air-traffic-control-with-apache-spark-structured-streaming-real-time-mode)
 * Looking for the next Data Engineering workshop, or other [Databricks workshops](https://www.databricks.com/events?event_type=workshop&region=all) for DBSQL, AI, Unity Catalog
