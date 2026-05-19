@@ -30,5 +30,7 @@ targets:
   prod:
     mode: production
     default: true
+    presets:
+      source_linked_deployment: true
     workspace:
       root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}

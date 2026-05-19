@@ -370,11 +370,13 @@ You should see every attendee's row, including your own. In a real production de
 
 Standard SDP runs as micro-batches. The new **Real-Time Mode (RTM)** pushes end-to-end latency into the millisecond range by combining long-running batches, simultaneous stage scheduling, and streaming shuffle. This lab shows **how to enable RTM** for an SDP pipeline — the three config steps you need, deployed as a bundle.
 
-> **Public Preview:** Currently, RTM for Lakeflow SDP requires the SDP **PREVIEW** channel.
+**Public Preview:** Currently, RTM for Lakeflow SDP requires the SDP **PREVIEW** channel.
+
+_This lab assumes that the latest update with the syntax used in the pipeline code is rolled out (end of May 2026)._
 
 ### The three config steps to enable RTM
 
-1. **Continuous mode** at the pipeline level — RTM runs *on top of* continuous, not as a replacement.
+1. **Continuous mode** at the pipeline level.
 2. **`spark.databricks.streaming.realTimeMode.enabled = true`** in the pipeline's Spark config.
 3. **An `@dp.update_flow`** (not `@dp.table` / `@dp.view`) with `pipelines.trigger: "RealTime"`.
 
