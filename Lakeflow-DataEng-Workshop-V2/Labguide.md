@@ -368,17 +368,17 @@ You should see every attendee's row, including your own. In a real production de
 
 > **Optional.** Skip if you're short on time — nothing else in the workshop depends on it. The whole demo is a single file deployed via a Declarative Automation Bundle, ~5 minutes hands-on.
 
-Standard SDP runs as micro-batches. **Real-Time Mode (RTM)** is a specialization of SDP's continuous mode that pushes end-to-end latency into the millisecond range by combining long-running batches, simultaneous stage scheduling, and streaming shuffle. This lab shows **how to enable RTM** for an SDP pipeline — the three config steps you need, deployed as a bundle.
+Standard SDP runs as micro-batches. The new **Real-Time Mode (RTM)** pushes end-to-end latency into the millisecond range by combining long-running batches, simultaneous stage scheduling, and streaming shuffle. This lab shows **how to enable RTM** for an SDP pipeline — the three config steps you need, deployed as a bundle.
 
-> **Public Preview:** RTM for Lakeflow SDP requires the SDP **PREVIEW** channel.
+> **Public Preview:** Currently, RTM for Lakeflow SDP requires the SDP **PREVIEW** channel.
 
 ### The three config steps to enable RTM
 
 1. **Continuous mode** at the pipeline level — RTM runs *on top of* continuous, not as a replacement.
 2. **`spark.databricks.streaming.realTimeMode.enabled = true`** in the pipeline's Spark config.
-3. **An `@dp.update_flow`** (not `@dp.table` / `@dp.view`) with `pipelines.trigger: "RealTime"` set at the flow level via `spark_conf=`.
+3. **An `@dp.update_flow`** (not `@dp.table` / `@dp.view`) with `pipelines.trigger: "RealTime"`.
 
-All three are wired into the bundle you're about to deploy.
+All three are already wired into the bundle you're about to deploy.
 
 ### What you'll deploy
 
@@ -386,7 +386,7 @@ A minimal pipeline in one file: a synthetic `rate` source, a sliding-window aggr
 
 ### Step 4a — Open the RTM bundle
 
-You already cloned the workshop repo at the start. Navigate to the `labs/04-SDP-RTM/` subdirectory — it has `databricks.yml` and `transformations/temperature_rtm.py` ready to deploy.
+You already cloned the workshop repo at the start of this workshop. Navigate to the `labs/04-SDP-RTM/` subdirectory — it has `databricks.yml` and `transformations/temperature_rtm.py` ready to deploy.
 
 ### Step 4b — Adjust the bundle for your schema
 
@@ -400,7 +400,7 @@ variables:
     default: USER_ID           # ← replace with your own USER_ID
 ```
 
-`continuous: true`, `serverless: true`, `channel: PREVIEW`, and the RTM enable flag are already set — leave them as-is.
+`continuous: true`, `serverless: true`, `channel: PREVIEW`, and the RTM enable flag are already set. Leave them as-is.
 
 The flow file `transformations/temperature_rtm.py` is the actual RTM pipeline — note the `@dp.update_flow` decorator with `pipelines.trigger: "RealTime"`, the synthetic `rate` source, and the windowed aggregation:
 
@@ -450,15 +450,16 @@ def temperature_rtm_flow():
     )
 ```
 
-Below the flow definition the file also registers a `StreamingQueryListener` (`RTMLatencyLogger`) that prints one `[rtm]` line to the driver log per progress event — useful as a heartbeat that the engine is making progress.
 
 ### Step 4c — deploy and run from the Workspace UI
 
 1. Open the `labs/04-SDP-RTM/` folder in your Workspace. Because `databricks.yml` is present, the **Deployments** icon (🚀) appears in the left pane.
 2. Click **Deployments** → pick the **`prod`** target (the only one defined in this bundle) → **Deploy**.
-3. After validation and deployment finish, open the deployed `sdp-rtm-rate-source` pipeline. **Note:** because the pipeline is `continuous: true`, the deploy already auto-started the first update — there's nothing to click. If you do click **Run** you'll see *"An active update already exists for pipeline …"*, which is expected. Just leave the existing update running.
+3. After validation and deployment finish, open the deployed `sdp-rtm-rate-source` pipeline. **Note:** because the pipeline is `continuous: true`, the deploy already auto-started the first update — there's nothing to click. 
 
-### Step 4d — Verify RTM is running
+If you do click **Run** but the pipeline is running already, you might see *"An active update already exists for pipeline …"*, which is expected. Just leave the existing update running.
+
+### Step 4d — Verify the pipeline output
 
 Open the driver log to confirm the pipeline is producing output:
 
@@ -476,26 +477,17 @@ You'll see two interleaved tracks:
 |2026-05-15 09:42:18 |2026-05-15 09:42:28 |1000       |22.51             |19.00             |25.99             |
 ```
 
-Each batch prints one row per active sliding window — same data the pipeline would push to a real Kafka sink in production.
 
-**`[rtm]` listener lines — engine heartbeat.** The `RTMLatencyLogger` registered at the bottom of `transformations/temperature_rtm.py` prints one line per `StreamingQueryProgress` event:
+* You can opt to register a `StreamingQueryListener` to display the [latency of RTM](https://docs.databricks.com/aws/en/structured-streaming/stream-monitoring).
+* Alternatively, check the log4j output for entries with the substring `e2eLatencyMs`.
 
-```
-[rtm] batch=460 mode=durationMs-fallback triggerExecutionMs=3705 addBatchMs=3490 getBatchMs=0
-```
-
-`mode=durationMs-fallback` reports per-trigger wall-clock from `durationMs`. It tells you the engine is making progress; it does **not** measure per-record latency.
-
-> **Why no per-record latency here?** RTM's per-record `rtmMetrics` (`processingLatencyMs`, `sourceQueuingLatencyMs`, `e2eLatencyMs`, each as p50/p99) is only computed for the [officially-supported source/sink combos: Kafka, MSK, Event Hubs, Kinesis EFO](https://docs.databricks.com/aws/en/dlt/realtime-mode#supported-sources-and-sinks). This lab uses `rate` + `console` for portability, so `rtmMetrics` isn't populated and the listener falls back to `durationMs`. RTM optimizations are still running — only the per-record instrumentation is missing — so most production RTM pipelines use Kafka or Kinesis (neither available in this workshop) where the real p50/p99 numbers light up automatically.
-
-### Step 4e — Stop the pipeline when you're done
+### Step 4e — Stop the pipeline when you're done and remove it 
 
 The pipeline is **continuous and serverless**, so it keeps consuming compute until you stop it. Always stop it when you've finished observing latency:
 
 - In the Lakeflow Pipelines Editor with the pipeline open, click **Stop** at the top, **or**
-- From the CLI: `databricks bundle destroy -t prod --auto-approve` (removes the deployed pipeline entirely; `--auto-approve` skips the interactive prompt — required for CI/scripts).
+- Remove the deployment using the same UI with the rocket symbol that was used for deployement. 
 
-> Reference files: [`labs/04-SDP-RTM/databricks.yml`](./labs/04-SDP-RTM/databricks.yml) and [`labs/04-SDP-RTM/transformations/temperature_rtm.py`](./labs/04-SDP-RTM/transformations/temperature_rtm.py). Originally based on [`Lakeflow-SDP-RTM-Basics`](https://github.com/databricks/tmm/tree/main/Lakeflow-SDP-RTM-Basics) in the public `databricks/tmm` repo.
 
 ---
 
