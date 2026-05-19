@@ -1,6 +1,6 @@
 # Lakeflow SDP — Real-Time Mode Basics
 
-A minimal Lakeflow Spark Declarative Pipeline (SDP) running in **Real-Time Mode (RTM)** — the whole demo is a single file: [temperature_rtm.py](sdp-rtm-rate-source-stdimage/sdp-rtm-basic/transformations/temperature_rtm.py). It reads a synthetic `rate` stream, runs a sliding-window aggregation, and writes to a console sink so you can see RTM working without wiring up Kafka.
+A minimal Lakeflow Spark Declarative Pipeline (SDP) running in **Real-Time Mode (RTM)** — the whole demo is a single file: [temperature_rtm.py](sdp-rtm-basic/transformations/temperature_rtm.py). It reads a synthetic `rate` stream, runs a sliding-window aggregation, and writes to a console sink so you can see RTM working without wiring up Kafka.
 
 **This demo shows *how to enable RTM* for an SDP pipeline — the three config steps you need, deployed as a Declarative Automation Bundle.** It does not measure per-record latency; that requires a Kafka-family source/sink (see the closing note).
 
@@ -19,14 +19,14 @@ The checkpoint interval (`pipelines.trigger.interval`) controls how often state 
 ## The three config steps to enable RTM
 
 1. **Continuous mode** at the pipeline level — RTM runs *on top of* continuous, not as a replacement.
-2. **`spark.databricks.streaming.realTimeMode.enabled = true`** in the pipeline's Spark config (set in [databricks.yml](sdp-rtm-rate-source-stdimage/databricks.yml)).
+2. **`spark.databricks.streaming.realTimeMode.enabled = true`** in the pipeline's Spark config (set in [databricks.yml](databricks.yml)).
 3. **An `@dp.update_flow`** (not `@dp.table` / `@dp.view`) with `pipelines.trigger: "RealTime"` set at the flow level via `spark_conf=`.
 
 All three are wired into this bundle.
 
 ## The three building blocks of the flow
 
-All defined in [temperature_rtm.py](sdp-rtm-rate-source-stdimage/sdp-rtm-basic/transformations/temperature_rtm.py):
+All defined in [temperature_rtm.py](sdp-rtm-basic/transformations/temperature_rtm.py):
 
 ### 1. Source
 
@@ -38,7 +38,7 @@ spark.readStream.format("rate").option("rowsPerSecond", "1").load()
 
 ### 2. Update flow
 
-The bridge between source and sink. RTM **requires** `@dp.update_flow` (not `@dp.table` / `@dp.view`) with `pipelines.trigger: "RealTime"` set at the flow level — in addition to the pipeline-level config in [databricks.yml](sdp-rtm-rate-source-stdimage/databricks.yml).
+The bridge between source and sink. RTM **requires** `@dp.update_flow` (not `@dp.table` / `@dp.view`) with `pipelines.trigger: "RealTime"` set at the flow level — in addition to the pipeline-level config in [databricks.yml](databricks.yml).
 
 ```python
 @dp.update_flow(
@@ -67,8 +67,8 @@ dp.create_sink("hot_temperatures_sink", "console", {"truncate": "false"})
 The DAB is deployable entirely from the UI — no local CLI required.
 
 1. **Workspace → Create → Git folder**, paste `https://github.com/databricks/tmm`, enable **Sparse checkout** with path `Lakeflow-SDP-RTM-Basics`.
-2. Open [databricks.yml](sdp-rtm-rate-source-stdimage/databricks.yml) and set `catalog` / `schema` to values you have access to. RTM, continuous mode, and the PREVIEW channel are already configured.
-3. Open the `sdp-rtm-rate-source-stdimage` folder, click the **Deployments** icon (rocket ship), pick a target, and **Deploy**.
+2. Open [databricks.yml](databricks.yml) and set `catalog` / `schema` to values you have access to. RTM, continuous mode, and the PREVIEW channel are already configured.
+3. Open the `Lakeflow-SDP-RTM-Basics` folder, click the **Deployments** icon (rocket ship), pick a target, and **Deploy**.
 4. Because the pipeline is `continuous: true`, the deploy auto-starts the first update — there's nothing to click. Open the deployed `sdp-rtm-basic` pipeline in the Lakeflow Pipelines Editor and watch windowed aggregates land in the driver console.
 
 ## Verify RTM is running
