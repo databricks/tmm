@@ -388,7 +388,7 @@ A minimal pipeline in one file: a synthetic `rate` source, a sliding-window aggr
 
 ### Step 4a — Open the RTM bundle
 
-You already cloned the workshop repo at the start of this workshop. Navigate to the `labs/04-SDP-RTM/` subdirectory — it has `databricks.yml` and `transformations/temperature_rtm.py` ready to deploy.
+You already cloned the workshop repo at the start of this workshop. Navigate to the `labs/04-SDP-RTM/` subdirectory — it has `databricks.yml` and `sdp-rtm-rate-source/transformations/temperature_rtm.py` ready to deploy.
 
 ### Step 4b — Adjust the bundle for your schema
 
@@ -402,9 +402,9 @@ variables:
     default: USER_ID           # ← replace with your own USER_ID
 ```
 
-`continuous: true`, `serverless: true`, `channel: PREVIEW`, and the RTM enable flag are already set. Leave them as-is.
+`continuous: true`, `serverless: true`, `channel: PREVIEW`, and the RTM enable flag are already set. Leave them as-is. The pipeline's `root_path` is set to `./sdp-rtm-rate-source` so the Lakeflow Pipelines Editor treats that subfolder as the project tree root.
 
-The flow file `transformations/temperature_rtm.py` is the actual RTM pipeline — note the `@dp.update_flow` decorator with `pipelines.trigger: "RealTime"`, the synthetic `rate` source, and the windowed aggregation:
+The flow file `sdp-rtm-rate-source/transformations/temperature_rtm.py` is the actual RTM pipeline — note the `@dp.update_flow` decorator with `pipelines.trigger: "RealTime"`, the synthetic `rate` source, and the windowed aggregation:
 
 ```python
 from pyspark import pipelines as dp
