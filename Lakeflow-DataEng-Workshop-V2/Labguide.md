@@ -468,8 +468,6 @@ Open the driver log to confirm the pipeline is producing output:
 1. In the Lakeflow Pipelines Editor, with your `sdp-rtm-rate-source` pipeline open, click **Compute** at the top.
 2. In the compute pane, click **Driver logs**.
 
-You'll see two interleaved tracks:
-
 **Console sink batch tables — the windowed aggregate landing in the sink.** These are visual confirmation that data is flowing through the RTM flow:
 
 ```
