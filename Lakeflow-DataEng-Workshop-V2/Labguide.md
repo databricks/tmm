@@ -13,6 +13,8 @@ Take your time, ask questions, and don't worry about breaking anything — your 
 
 ### Overview
 
+This Labguide is available [here](https://github.com/databricks/tmm/blob/main/Lakeflow-DataEng-Workshop-V2/Labguide.md). 
+
 - **Lab 1 — Manually code an SDP pipeline**: streaming table in **Python**, materialized view in **SQL** with three data-quality expectations wired in from the start. Reference files in [`labs/01-SDP/`](./labs/01-SDP/).
 - **Lab 2 — Learn how to use Genie Code as a data engineer**: all-**SQL** pipeline (AutoCDC + Auto Loader + join gold MV), produced from a single Genie Code prompt — and verified by you before it runs. Reference files in [`labs/02-GenieCode/`](./labs/02-GenieCode/).
 - **Lab 3 — Work with Zerobus Ingest to push IoT data** *(live instructor demo; attendees may follow along)*: one `ingest_record(...)` call via the official `databricks-zerobus-ingest-sdk` (gRPC) lands a row in `de_workshop.zerobus.measurements`, with credentials fetched from a shared UC config table. Reference files in [`labs/03-Zerobus/`](./labs/03-Zerobus/).
@@ -43,8 +45,7 @@ Three placeholders show up throughout — resolve them once here, then paste blo
 |---|---|
 | `USER_ID` | Your user ID, derived from your login email (see preceding row). Example: `labuser10148895_1745997814`. Your schema is `de_workshop.USER_ID`. Throughout the lab, replace USER_ID with your own user ID. |
 | `de_workshop` | The catalog used for all labs. This is fixed. No need to change this. |
-| `<course_warehouse_name>` / `<course_warehouse_id>` (Lab 3 only) | The course SQL warehouse provisioned for you by the training materials. Your instructor shares the exact name and ID. |
-| `prod_warehouse_id` (Lab 5 only) | A running SQL warehouse ID. Find it in sidebar **SQL Warehouses** → click a warehouse → copy the ID from the URL. |
+| `<course_warehouse_name>` / `<course_warehouse_id>`  | The course SQL warehouse provisioned for you by the training materials. Your instructor shares the exact name and ID. |
 
 ## One-time setup — Clone this workshop repo
 
@@ -192,7 +193,7 @@ The same shape, written without SDP, would be a streaming job, a batch job, and 
 Running the pipeline with an addtional downstream action as a multi-step workflow gave you a production ready job that can be invoked by any Job trigger. 
 
 
-![Lab 1 — completed pipeline run in the Lakeflow Pipelines Editor: streaming table sales_transactions (3.3K output records) feeds materialized view sales_stats (6 output records, 3 expectations, 100% written, 0% dropped)](./misc/images/lab1-ui-expectations.png)
+![Lab 1 — completed pipeline run in the Lakeflow Pipelines Editor: streaming table sales_transactions (3.3K output records) feeds materialized view sales_stats (6 output records, 3 expectations, 100% written, 0% dropped)](https://raw.githubusercontent.com/databricks/tmm/main/Lakeflow-DataEng-Workshop-V2/misc/images/lab1-ui-expectations.png)
 
 
 
@@ -270,7 +271,7 @@ Explain the data flow in this pipeline end-to-end. Which node is incrementally m
 
 ### What you should see
 
-![Lab 2 — Genie Code generated pipeline with bronze (bookings, fraud_flags, payments), silver (bookings_with_fraud) and gold (fraud_by_party_and_method) layers in the Lakeflow Pipelines Editor](./misc/images/lab2-dag.png)
+![Lab 2 — Genie Code generated pipeline with bronze (bookings, fraud_flags, payments), silver (bookings_with_fraud) and gold (fraud_by_party_and_method) layers in the Lakeflow Pipelines Editor](https://raw.githubusercontent.com/databricks/tmm/main/Lakeflow-DataEng-Workshop-V2/misc/images/lab2-dag.png)
 
 The Lakeflow Pipelines Editor shows Genie Code's plan on the right, the generated SQL in the centre, and the resolved DAG with row counts at the bottom — three bronze streaming tables, one silver streaming table, and a gold materialized view. Use the row counts as your sanity check against the [Verify](#verify--the-step-that-matters-most) section.
 
