@@ -9,7 +9,7 @@ variables:
     default: de_workshop
   schema_name:
     description: "Your USER_ID schema (replace with your own user id)"
-    default: default
+    default: USER_ID
 
 resources:
   pipelines:
@@ -17,7 +17,6 @@ resources:
       name: sdp-rtm-rate-source
       catalog: ${var.catalog_name}
       schema: ${var.schema_name}
-      dbr_version: custom:18.1.3-delta-pipelines-photon-master-commit-cc3408b-image-13103aa,
       continuous: true
       serverless: true
       channel: PREVIEW
