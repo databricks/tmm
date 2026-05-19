@@ -479,7 +479,35 @@ Open the driver log to confirm the pipeline is producing output:
 
 
 * You can opt to register a `StreamingQueryListener` to display the [latency of RTM](https://docs.databricks.com/aws/en/structured-streaming/stream-monitoring).
-* Alternatively, check the log4j output for entries with the substring `e2eLatencyMs`.
+* Alternatively, check the log4j output for entries with the substring `e2eLatencyMs`. Each entry reports per-record latency percentiles (P0/P50/P90/P95/P99) for three stages of the pipeline:
+
+```json
+"latencies" : {
+    "processingLatencyMs" : {
+      "P0" : 1.0,
+      "P50" : 27.0,
+      "P90" : 48.0,
+      "P95" : 50.0,
+      "P99" : 54.0
+    },
+    "sourceQueuingLatencyMs" : {
+      "P0" : 0.0,
+      "P50" : 0.0,
+      "P90" : 0.0,
+      "P95" : 1.0,
+      "P99" : 6.0
+    },
+    "e2eLatencyMs" : {
+      "P0" : 1.0,
+      "P50" : 27.0,
+      "P90" : 48.0,
+      "P95" : 50.0,
+      "P99" : 62.0
+    }
+  }
+```
+
+`e2eLatencyMs` is the sum of `sourceQueuingLatencyMs` (time records waited in the source) + `processingLatencyMs` (time the engine spent on them). These metrics are only emitted for RTM.
 
 ### Step 4e — Stop the pipeline when you're done and remove it 
 
