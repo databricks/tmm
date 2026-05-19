@@ -25,7 +25,7 @@ resources:
         spark.databricks.streaming.realTimeMode.enabled: "true"
       libraries:
         - file:
-            path: ./transformations/temperature_rtm.py
+            path: ./sdp-rtm-pipeline/transformations/temperature_rtm.py
 
 targets:
   prod:
