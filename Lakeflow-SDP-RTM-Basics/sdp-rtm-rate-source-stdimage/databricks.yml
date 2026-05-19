@@ -2,12 +2,21 @@
 bundle:
   name: sdp-rtm-rate-source
 
+variables:
+  catalog_name:
+    description: "UC catalog (defaults to main for the standalone demo)"
+    default: main
+  schema_name:
+    description: "UC schema (defaults to default for the standalone demo)"
+    default: default
+
 resources:
   pipelines:
     sdp_rtm_rate_source:
       name: sdp-rtm-rate-source
-      catalog: demo
-      schema: sdp_rtm_mem_console
+      catalog: ${var.catalog_name}
+      schema: ${var.schema_name}
+      root_path: ./sdp-rtm-rate-source
       continuous: true
       serverless: true
       channel: PREVIEW
@@ -15,9 +24,7 @@ resources:
         spark.databricks.streaming.realTimeMode.enabled: "true"
       libraries:
         - file:
-            path: ./transformations/temperature_rtm.py
-      tags:
-        created_by: frank_munz
+            path: ./sdp-rtm-rate-source/transformations/temperature_rtm.py
 
 targets:
   prod:
@@ -25,4 +32,3 @@ targets:
     default: true
     workspace:
       root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
-

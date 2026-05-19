@@ -5,7 +5,7 @@ from pyspark.sql.functions import avg, col, count, expr, max as max_, min as min
 dp.create_sink(
     "hot_temperatures_sink",
     "console",
-    {"mode": "append", "truncate": "false"},
+    {"truncate": "false"},
 )
 
 
@@ -13,18 +13,15 @@ dp.create_sink(
     name="temperature_rtm_flow",
     target="hot_temperatures_sink",
     spark_conf={
-        # Current RTM flow-level keys (per the official docs).
-        # Older keys `pipelines.execution.realTimeMode` and
-        # `pipelines.realtime.trigger.duration` are deprecated.
         "pipelines.trigger": "RealTime",
-        "pipelines.trigger.interval": "5 minutes",
+        "pipelines.trigger.interval": "5 minutes",  # optional; defaults to 5 minutes
     },
 )
 def temperature_rtm_flow():
     return (
         spark.readStream
         .format("rate")
-        .option("rowsPerSecond", "100")
+        .option("rowsPerSecond", "1")
         .load()
         .withColumnRenamed("timestamp", "source_timestamp")
         .withColumn("temperature_c", expr("19 + rand() * 7"))
@@ -45,56 +42,3 @@ def temperature_rtm_flow():
             col("max_temp_c"),
         )
     )
-
-
-# ---------------------------------------------------------------------------
-# Real RTM latency: register a StreamingQueryListener that prints rtmMetrics
-# (p50/p99 for processingLatencyMs, sourceQueuingLatencyMs, e2eLatencyMs)
-# on every progress event. Lines are tagged [rtm] so they're easy to grep
-# in the driver log alongside the console sink's batch tables.
-#
-# Note: `rtmMetrics` is currently only populated for officially-supported RTM
-# source/sink combos (Kafka, MSK, Event Hubs, Kinesis EFO). For the `rate`
-# source + `console` sink in this demo, RTM optimizations still run, but the
-# per-record latency instrumentation isn't emitted — the listener falls back
-# to per-trigger durationMs and tags the line `mode=durationMs-fallback`.
-# That fallback is **not** "RTM is off"; it's "rtmMetrics unavailable for
-# this source/sink".
-# ---------------------------------------------------------------------------
-import json
-from pyspark.sql.streaming import StreamingQueryListener
-
-
-class RTMLatencyLogger(StreamingQueryListener):
-    def onQueryStarted(self, event):
-        pass
-
-    def onQueryTerminated(self, event):
-        pass
-
-    def onQueryProgress(self, event):
-        prog = event.progress
-        # 1. try the direct Python attribute (newer wrappers expose it)
-        rtm = getattr(prog, "rtmMetrics", None)
-        # 2. fall back to parsing the progress JSON
-        if rtm is None and hasattr(prog, "json"):
-            try:
-                rtm = json.loads(prog.json).get("rtmMetrics")
-            except Exception:
-                rtm = None
-        if rtm:
-            print(
-                f"[rtm] batch={prog.batchId} mode=rtm "
-                f"rtmMetrics={json.dumps(rtm)}"
-            )
-        else:
-            d = prog.durationMs or {}
-            print(
-                f"[rtm] batch={prog.batchId} mode=durationMs-fallback "
-                f"triggerExecutionMs={d.get('triggerExecution', 'n/a')} "
-                f"addBatchMs={d.get('addBatch', 'n/a')} "
-                f"getBatchMs={d.get('getBatch', 'n/a')}"
-            )
-
-
-spark.streams.addListener(RTMLatencyLogger())

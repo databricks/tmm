@@ -1,6 +1,6 @@
 # Lakeflow SDP — Real-Time Mode Basics
 
-A minimal Lakeflow Spark Declarative Pipeline (SDP) running in **Real-Time Mode (RTM)** — the whole demo is a single file: [temperature_rtm.py](sdp-rtm-rate-source-stdimage/transformations/temperature_rtm.py). It reads a synthetic `rate` stream, runs a sliding-window aggregation, and writes to a console sink so you can see RTM working without wiring up Kafka.
+A minimal Lakeflow Spark Declarative Pipeline (SDP) running in **Real-Time Mode (RTM)** — the whole demo is a single file: [temperature_rtm.py](sdp-rtm-rate-source-stdimage/sdp-rtm-rate-source/transformations/temperature_rtm.py). It reads a synthetic `rate` stream, runs a sliding-window aggregation, and writes to a console sink so you can see RTM working without wiring up Kafka.
 
 **This demo shows *how to enable RTM* for an SDP pipeline — the three config steps you need, deployed as a Declarative Automation Bundle.** It does not measure per-record latency; that requires a Kafka-family source/sink (see the closing note).
 
@@ -26,7 +26,7 @@ All three are wired into this bundle.
 
 ## The three building blocks of the flow
 
-All defined in [temperature_rtm.py](sdp-rtm-rate-source-stdimage/transformations/temperature_rtm.py):
+All defined in [temperature_rtm.py](sdp-rtm-rate-source-stdimage/sdp-rtm-rate-source/transformations/temperature_rtm.py):
 
 ### 1. Source
 
@@ -73,18 +73,8 @@ The DAB is deployable entirely from the UI — no local CLI required.
 
 ## Verify RTM is running
 
-Open **Compute → Driver logs** in the Lakeflow Pipelines Editor. You'll see two interleaved tracks:
-
-**Console-sink batch tables** — the windowed aggregates (`window_start`, `window_end`, `event_count`, `avg_temp_c`, `min_temp_c`, `max_temp_c`) printed as formatted tables. Visual confirmation that data is flowing.
-
-**`[rtm]` listener lines** — the `RTMLatencyLogger` registered at the bottom of [temperature_rtm.py](sdp-rtm-rate-source-stdimage/transformations/temperature_rtm.py) prints one line per `StreamingQueryProgress` event:
-
-```
-[rtm] batch=460 mode=durationMs-fallback triggerExecutionMs=3705 addBatchMs=3490 getBatchMs=0
-```
-
-`mode=durationMs-fallback` means *"`rtmMetrics` unavailable for this source/sink"*, **not** *"RTM is off"*. The line is your engine heartbeat.
+Open **Compute → Driver logs** in the Lakeflow Pipelines Editor. The console sink prints the windowed aggregates (`window_start`, `window_end`, `event_count`, `avg_temp_c`, `min_temp_c`, `max_temp_c`) as formatted tables — visual confirmation that data is flowing through the RTM flow.
 
 ## A note on latency measurement
 
-RTM exposes per-record latency through `StreamingQueryProgress.rtmMetrics` (`processingLatencyMs`, `sourceQueuingLatencyMs`, `e2eLatencyMs`, each with `p50` and `p99`), but **only for the [officially-supported source/sink combos](https://docs.databricks.com/aws/en/dlt/realtime-mode#supported-sources-and-sinks): Kafka, MSK, Event Hubs (Kafka-compatible), and Kinesis EFO**. With the `rate` source and `console` sink used here, `rtmMetrics` is not populated — RTM optimizations run, but per-record instrumentation is gated. For real RTM SLA numbers, swap `rate` for Kafka/Kinesis and `console` for a Kafka-family sink; the listener will then print `mode=rtm` lines with the actual `rtmMetrics` JSON.
+RTM exposes per-record latency through `StreamingQueryProgress.rtmMetrics` (`processingLatencyMs`, `sourceQueuingLatencyMs`, `e2eLatencyMs`, each with `p50` and `p99`), but **only for the [officially-supported source/sink combos](https://docs.databricks.com/aws/en/dlt/realtime-mode#supported-sources-and-sinks): Kafka, MSK, Event Hubs (Kafka-compatible), and Kinesis EFO**. With the `rate` source and `console` sink used here, `rtmMetrics` is not populated — RTM optimizations run, but per-record instrumentation is gated. For real RTM SLA numbers, swap `rate` for Kafka/Kinesis and `console` for a Kafka-family sink to get the actual `rtmMetrics` values.
