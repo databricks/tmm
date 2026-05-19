@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=bundle_config_schema.json
 bundle:
-  name: sdp-rtm-rate-source
+  name: sdp-rtm-basic
 
 variables:
   catalog_name:
@@ -12,11 +12,11 @@ variables:
 
 resources:
   pipelines:
-    sdp_rtm_rate_source:
-      name: sdp-rtm-rate-source
+    sdp_rtm_basic:
+      name: sdp-rtm-basic
       catalog: ${var.catalog_name}
       schema: ${var.schema_name}
-      root_path: ./sdp-rtm-rate-source
+      root_path: ./sdp-rtm-basic
       continuous: true
       serverless: true
       channel: PREVIEW
@@ -24,7 +24,7 @@ resources:
         spark.databricks.streaming.realTimeMode.enabled: "true"
       libraries:
         - file:
-            path: ./sdp-rtm-rate-source/transformations/temperature_rtm.py
+            path: ./sdp-rtm-basic/transformations/temperature_rtm.py
 
 targets:
   prod:
