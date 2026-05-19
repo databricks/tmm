@@ -17,6 +17,7 @@ resources:
       name: sdp-rtm-rate-source
       catalog: ${var.catalog_name}
       schema: ${var.schema_name}
+      root_path: ./sdp-rtm-rate-source
       continuous: true
       serverless: true
       channel: PREVIEW
@@ -24,7 +25,7 @@ resources:
         spark.databricks.streaming.realTimeMode.enabled: "true"
       libraries:
         - file:
-            path: ./sdp-rtm-pipeline/transformations/temperature_rtm.py
+            path: ./sdp-rtm-rate-source/transformations/temperature_rtm.py
 
 targets:
   prod:
