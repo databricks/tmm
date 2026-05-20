@@ -1,13 +1,6 @@
 # Databricks notebook source
-# /// script
-# dependencies = [
-#   "databricks-zerobus-ingest-sdk>=1.0.0",
-# ]
-# [tool.databricks.environment]
-# environment_version = "5"
-# ///
 # MAGIC %md
-# MAGIC # Lab 3 — Send a temperature reading to Zerobus
+# MAGIC # Lab 3 — Send a city IoT reading to Zerobus
 # MAGIC
 # MAGIC You'll push one row directly into the Delta table `ops_data.zerobus.measurements`
 # MAGIC via the **official Zerobus Ingest SDK** (gRPC under the hood). The SDK handles
@@ -18,20 +11,6 @@
 # MAGIC are read at runtime from the shared UC config table `ops_data.zerobus.config`,
 # MAGIC populated by the setup notebook. You never paste them.
 # MAGIC
-# MAGIC ## SDK install — declared in the file
-# MAGIC
-# MAGIC The `databricks-zerobus-ingest-sdk` dependency is declared in this notebook's
-# MAGIC PEP 723 inline metadata at the very top of the source file. On a serverless
-# MAGIC runtime, Databricks reads that block, builds the dependency into the notebook's
-# MAGIC Environment, and the SDK is importable from the first cell — no `%pip install`,
-# MAGIC no manual click-through. The Environment is cached, so subsequent attaches are
-# MAGIC instant.
-# MAGIC
-# MAGIC If `import zerobus...` fails below, open **Environment** (top-right icon), check
-# MAGIC that the dependency is listed, and click **Apply**. The package ships a manylinux
-# MAGIC x86_64 wheel (Rust-backed gRPC core via PyO3); its only Python dep is
-# MAGIC `protobuf>=4.25,<7`. No PySpark, no compile step.
-# MAGIC
 # MAGIC Schema of the target table:
 # MAGIC
 # MAGIC | column      | type                                    |
@@ -40,6 +19,19 @@
 # MAGIC | city        | STRING                                  |
 # MAGIC | temperature | FLOAT                                   |
 # MAGIC | comment     | STRING (optional free-form note)        |
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Install the Zerobus Ingest SDK
+# MAGIC
+# MAGIC Run this cell first. It installs the SDK and restarts Python so the install takes
+# MAGIC effect (~10-30 seconds). Then run the rest of the cells in order.
+
+# COMMAND ----------
+
+# MAGIC %pip install --quiet "databricks-zerobus-ingest-sdk>=1.0.0"
+# MAGIC dbutils.library.restartPython()
 
 # COMMAND ----------
 
@@ -95,7 +87,7 @@ _SERVER_ENDPOINT = _CONFIG["zerobus_endpoint"].replace("https://", "").rstrip("/
 print(f"Config loaded for workspace_id={_WORKSPACE_ID}, endpoint={_SERVER_ENDPOINT}")
 
 
-def submit_temperature(city: str, temperature: float, comment: str = "") -> dict:
+def submit_iot_record(city: str, temperature: float, comment: str = "") -> dict:
     """Send one {id, city, temperature, comment} record via the Zerobus Ingest SDK."""
     record = {
         "id":          str(uuid.uuid4()),
@@ -121,7 +113,7 @@ def submit_temperature(city: str, temperature: float, comment: str = "") -> dict
 
 # COMMAND ----------
 
-sent = submit_temperature(CITY, TEMPERATURE, COMMENT)
+sent = submit_iot_record(CITY, TEMPERATURE, COMMENT)
 print(f"✅ Sent to {CATALOG}.{SCHEMA}.{TABLE}: {sent}")
 
 # COMMAND ----------

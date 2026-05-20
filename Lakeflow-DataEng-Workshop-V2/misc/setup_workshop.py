@@ -246,8 +246,9 @@ if not ZEROBUS_REGION:
 # MAGIC 
 # MAGIC `databricks-zerobus-ingest-sdk` is needed for the smoke test in B6 below. The setup
 # MAGIC notebook is run interactively by the workshop owner once, so an inline `%pip install`
-# MAGIC is fine. Attendee notebooks should use the **Environment side panel** instead, to
-# MAGIC avoid 1000× per-session install latency.
+# MAGIC is fine. The attendee notebook (`labs/03-Zerobus/send_city_iot_data.py`) uses the
+# MAGIC same `%pip install` + `dbutils.library.restartPython()` pattern in its first cell,
+# MAGIC so attendees just hit Run all — no Environment-panel click-through.
 
 # COMMAND ----------
 
@@ -560,5 +561,5 @@ print(f"Service principal  : {SP_DISPLAY_NAME}  (application_id: {SP_APPLICATION
 print(f"Config table ACL   : `{_grant_principal or '(not granted — see warning above)'}` → SELECT")
 print(f"Zerobus endpoint   : {ZEROBUS_ENDPOINT}")
 print(f"gRPC smoke test    : PASS")
-print(f"Attendee notebook  : labs/03-Zerobus/send_temperature.py")
+print(f"Attendee notebook  : labs/03-Zerobus/send_city_iot_data.py")
 print("=" * 70)

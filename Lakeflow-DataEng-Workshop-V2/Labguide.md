@@ -305,9 +305,9 @@ By the end of the lab you'll see every attendee's events sitting alongside your 
 
 ### Step 3a — Open the notebook from the cloned repo
 
-In the Workspace sidebar, navigate to your cloned `de-workshop-repo/Lakeflow-DataEng-Workshop-V2/labs/03-Zerobus/send_temperature.py` and click to open it. The notebook runs directly from the Git folder. 
+In the Workspace sidebar, navigate to your cloned `de-workshop-repo/Lakeflow-DataEng-Workshop-V2/labs/03-Zerobus/send_city_iot_data.py` and click to open it. The notebook runs directly from the Git folder.
 
-The notebook ships with `databricks-zerobus-ingest-sdk` already declared in its **Environment** (top-right Environment icon). On first attach, the serverless runtime builds that dependency into the notebook's cached venv — no manual click-through, no `%pip install`, no per-session install delay. 
+The first cell installs the Zerobus Ingest SDK via `%pip install` and restarts Python so the install takes effect (~10-30 seconds). Run it before the rest of the cells.
 
 ### Step 3b — Fill in the widgets at the top
 
@@ -317,7 +317,7 @@ The notebook ships with `databricks-zerobus-ingest-sdk` already declared in its 
 
 ### Step 3c — run the **Submit** cell
 
-That cell calls `submit_temperature(CITY, TEMPERATURE, COMMENT)`, which the notebook's plumbing cell defines. The plumbing cell is marked **⛔ DO NOT MODIFY** 
+That cell calls `submit_iot_record(CITY, TEMPERATURE, COMMENT)`, which the notebook's plumbing cell defines. The plumbing cell is marked **⛔ DO NOT MODIFY** 
 
 ```python
 sdk = ZerobusSdk(_SERVER_ENDPOINT, unity_catalog_url=_WORKSPACE_URL)
@@ -362,7 +362,7 @@ You should see every attendee's row, including your own. In a real production de
 - **Fine-grained OAuth — like a hotel keycard, not a master key.** The SDK mints tokens scoped via `authorization_details` to one table: even if the SP's client_secret leaked, the only thing it could do is append rows to `measurements`. No `SELECT *`, no `DELETE`, no `DROP`.
 - **SDK over REST** — the `databricks-zerobus-ingest-sdk` uses gRPC with a persistent stream and durability ACKs (higher throughput, simpler retries) and handles all the OAuth + `authorization_details` plumbing internally. The Zerobus REST API is available too.
 
-> Reference notebook: [`labs/03-Zerobus/send_temperature.py`](./labs/03-Zerobus/send_temperature.py).
+> Reference notebook: [`labs/03-Zerobus/send_city_iot_data.py`](./labs/03-Zerobus/send_city_iot_data.py).
 
 ---
 
