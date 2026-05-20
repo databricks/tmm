@@ -395,8 +395,26 @@ _sp_secret_resp = requests.post(
     timeout=30,
 )
 _sp_secret_resp.raise_for_status()
-SP_CLIENT_SECRET = _sp_secret_resp.json()["secret"]
+_sp_secret_json   = _sp_secret_resp.json()
+SP_CLIENT_SECRET  = _sp_secret_json["secret"]
+
+# Capture expireTime so the workshop owner can see when this credential stops working.
+# Databricks returns it as ISO 8601 / RFC 3339 (e.g. "2026-08-18T10:24:33Z"). Be defensive
+# in case the format ever shifts — fall back to printing whatever the API returned.
+SP_SECRET_EXPIRE_RAW    = _sp_secret_json.get("expireTime")
+SP_SECRET_EXPIRE_HUMAN  = "(expireTime not returned by API)"
+if SP_SECRET_EXPIRE_RAW:
+    try:
+        from datetime import datetime, timezone
+        # Python <3.11 doesn't parse trailing 'Z' in fromisoformat; normalise it.
+        _exp_dt    = datetime.fromisoformat(SP_SECRET_EXPIRE_RAW.replace("Z", "+00:00"))
+        _days_left = (_exp_dt - datetime.now(timezone.utc)).days
+        SP_SECRET_EXPIRE_HUMAN = f"{SP_SECRET_EXPIRE_RAW} (in {_days_left} days)"
+    except Exception as _e:
+        SP_SECRET_EXPIRE_HUMAN = f"{SP_SECRET_EXPIRE_RAW} (could not parse: {_e})"
+
 print(f"Generated new OAuth client secret for SP {SP_APPLICATION_ID} (shown once, written to config below)")
+print(f"Secret expires: {SP_SECRET_EXPIRE_HUMAN}")
 
 # COMMAND ----------
 
@@ -558,6 +576,7 @@ print(f"Data table         : {OPS_CATALOG}.zerobus.measurements")
 print(f"Config table       : {OPS_CATALOG}.zerobus.config")
 print(f"Config columns     : client_id, client_secret, workspace_url, workspace_id, zerobus_endpoint")
 print(f"Service principal  : {SP_DISPLAY_NAME}  (application_id: {SP_APPLICATION_ID})")
+print(f"OAuth secret expires: {SP_SECRET_EXPIRE_HUMAN}")
 print(f"Config table ACL   : `{_grant_principal or '(not granted — see warning above)'}` → SELECT")
 print(f"Zerobus endpoint   : {ZEROBUS_ENDPOINT}")
 print(f"gRPC smoke test    : PASS")
