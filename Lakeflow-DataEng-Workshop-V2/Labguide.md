@@ -228,7 +228,7 @@ The skill this lab teaches isn't typing SQL. It's catching the draft that *looks
 Paste the following into Genie Code Agent:
 
 ```text
-build a SQL pipeline with SDP that answers:
+build a SQL pipeline with SDP with catalog de_workshop and schema XXX that answers the question:
 "Is fraud risk related to party size and payment method?"
 
 Inputs:
