@@ -9,13 +9,13 @@
 # MAGIC %md
 # MAGIC # Lab 3 — Send a temperature reading to Zerobus
 # MAGIC
-# MAGIC You'll push one row directly into the Delta table `de_workshop.zerobus.measurements`
+# MAGIC You'll push one row directly into the Delta table `ops_data.zerobus.measurements`
 # MAGIC via the **official Zerobus Ingest SDK** (gRPC under the hood). The SDK handles
 # MAGIC OAuth, `authorization_details`, and stream lifecycle — you only edit the three
 # MAGIC widgets at the top: city, temperature, and an optional comment.
 # MAGIC
 # MAGIC Credentials (service principal client_id / secret, Zerobus endpoint, workspace URL)
-# MAGIC are read at runtime from the shared UC config table `de_workshop.zerobus.config`,
+# MAGIC are read at runtime from the shared UC config table `ops_data.zerobus.config`,
 # MAGIC populated by the setup notebook. You never paste them.
 # MAGIC
 # MAGIC ## SDK install — declared in the file
@@ -68,7 +68,7 @@ print(f"Prepared record: city={CITY!r}  temperature={TEMPERATURE}  comment={COMM
 # MAGIC %md
 # MAGIC ## ⛔ DO NOT MODIFY — Zerobus SDK client (plumbing)
 # MAGIC
-# MAGIC Reads credentials from `de_workshop.zerobus.config`, opens a stream via
+# MAGIC Reads credentials from `ops_data.zerobus.config`, opens a stream via
 # MAGIC `ZerobusSdk.create_stream(...)`, ingests one JSON record, flushes, and closes.
 # MAGIC The SDK handles OAuth and `authorization_details` for us. If anything here breaks,
 # MAGIC flag your instructor — don't edit.
@@ -81,7 +81,7 @@ import uuid
 from zerobus.sdk.sync import ZerobusSdk
 from zerobus.sdk.shared import RecordType, StreamConfigurationOptions, TableProperties
 
-CATALOG = "de_workshop"
+CATALOG = "ops_data"
 SCHEMA  = "zerobus"
 TABLE   = "measurements"
 
@@ -133,5 +133,5 @@ print(f"✅ Sent to {CATALOG}.{SCHEMA}.{TABLE}: {sent}")
 
 # MAGIC %sql
 # MAGIC SELECT id, city, temperature, comment
-# MAGIC FROM de_workshop.zerobus.measurements
+# MAGIC FROM ops_data.zerobus.measurements
 # MAGIC ORDER BY city, temperature DESC;

@@ -1,27 +1,29 @@
 # Databricks notebook source
 
 # MAGIC %md
-# MAGIC # Workshop setup — de_workshop catalog, shared landing volume, fraud-marker seed, Zerobus provisioning
+# MAGIC # Workshop setup — two catalogs (`de_workshop` for attendees, `ops_data` for shared ops assets)
 # MAGIC
 # MAGIC This setup script sets up everything that is needed by the workshop attendees. Run it as ADMIN.
 # MAGIC It's idempotent: safe to re-run. Does not touch per-attendee schemas.
 # MAGIC
-# MAGIC In Vocareum-style training environments, the `de_workshop` catalog is usually pre-provisioned; the `CREATE CATALOG IF NOT EXISTS` is a no-op there. Without Vocareum, the notebook creates the catalog itself.
+# MAGIC The workshop uses **two catalogs**:
+# MAGIC - `de_workshop` — attendee catalog. Each attendee owns a schema `de_workshop.<USER_ID>` and writes Lab 1/2/4 outputs there. In Vocareum-style training environments, this catalog is usually pre-provisioned; the `CREATE CATALOG IF NOT EXISTS` is a no-op there.
+# MAGIC - `ops_data` — shared ops catalog. Holds the shared landing volume (Lab 2 source) and the Zerobus target + config tables (Lab 3). Created by this notebook so attendees never need write access to it.
 # MAGIC
-# MAGIC **Part A — Shared assets**
-# MAGIC 1. Catalog `de_workshop` (if not exists)
-# MAGIC 2. Schema `de_workshop.shared` (if not exists)
-# MAGIC 3. Managed volume `de_workshop.shared.landing` (if not exists)
+# MAGIC **Part A — Shared assets (in `ops_data`)**
+# MAGIC 1. Catalog `de_workshop` (if not exists) and catalog `ops_data` (if not exists)
+# MAGIC 2. Schema `ops_data.shared` (if not exists)
+# MAGIC 3. Managed volume `ops_data.shared.landing` (if not exists)
 # MAGIC 4. Folder `booking_fraud_flags/` in that volume seeded with JSONL fraud markers
 # MAGIC    for **3%** of distinct `booking_id`s from `samples.wanderbricks.booking_updates`
-# MAGIC 5. `USE_SCHEMA` grant on `de_workshop.shared` to group `account users`
-# MAGIC 6. `READ_VOLUME` grant on `de_workshop.shared.landing` to group `account users`
+# MAGIC 5. `USE_SCHEMA` grant on `ops_data.shared` to group `account users`
+# MAGIC 6. `READ_VOLUME` grant on `ops_data.shared.landing` to group `account users`
 # MAGIC
-# MAGIC **Part B — Zerobus provisioning** (uses the official `databricks-zerobus-ingest-sdk` over gRPC)
-# MAGIC 1. Schema `de_workshop.zerobus` + managed Delta table `de_workshop.zerobus.measurements` (`id STRING, city STRING, temperature FLOAT, comment STRING`)
+# MAGIC **Part B — Zerobus provisioning (in `ops_data`)** (uses the official `databricks-zerobus-ingest-sdk` over gRPC)
+# MAGIC 1. Schema `ops_data.zerobus` + managed Delta table `ops_data.zerobus.measurements` (`id STRING, city STRING, temperature FLOAT, comment STRING`)
 # MAGIC 2. Service principal `workshop-zerobus-sp` with a fresh OAuth client secret
-# MAGIC 3. UC grants for that SP: `USE CATALOG` on `de_workshop`, `USE SCHEMA` on `de_workshop.zerobus`, `MODIFY + SELECT` on the table
-# MAGIC 4. Config table `de_workshop.zerobus.config` (single row: `client_id`, `client_secret`, `workspace_url`, `workspace_id`, `zerobus_endpoint`) with `SELECT` granted to `account users` — attendees read all five values from one place
+# MAGIC 3. UC grants for that SP: `USE CATALOG` on `ops_data`, `USE SCHEMA` on `ops_data.zerobus`, `MODIFY + SELECT` on the table
+# MAGIC 4. Config table `ops_data.zerobus.config` (single row: `client_id`, `client_secret`, `workspace_url`, `workspace_id`, `zerobus_endpoint`) with `SELECT` granted to `account users` — attendees read all five values from one place
 # MAGIC 5. End-to-end smoke test that opens a gRPC stream as the SP, ingests one row, deletes it, and prints PASS — so any breakage shows up here, not in 1000 attendee notebooks
 
 # COMMAND ----------
@@ -62,6 +64,11 @@ _REGION_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 CATALOG         = dbutils.widgets.get("catalog").strip()
 ZEROBUS_REGION  = dbutils.widgets.get("zerobus_region").strip()
 
+# Shared ops catalog — fixed name. Holds the shared landing volume (Lab 2 source)
+# and the Zerobus target + config tables (Lab 3). Kept separate from `CATALOG`
+# (the attendee catalog) so attendee grants and ops-asset grants don't intermingle.
+OPS_CATALOG = "ops_data"
+
 try:
     FRAUD_PCT = float(dbutils.widgets.get("fraud_pct"))
 except ValueError as e:
@@ -77,6 +84,10 @@ if not _CATALOG_RE.fullmatch(CATALOG):
         "Set 'catalog' to a simple UC identifier: letters, numbers, and underscores; "
         "it must start with a letter or underscore."
     )
+if not _CATALOG_RE.fullmatch(OPS_CATALOG):
+    raise ValueError(
+        f"OPS_CATALOG={OPS_CATALOG!r} is not a valid UC identifier."
+    )
 if not 0.0 <= FRAUD_PCT <= 100.0:
     raise ValueError("Set 'fraud_pct' between 0 and 100.")
 if NUM_FILES < 1:
@@ -84,23 +95,26 @@ if NUM_FILES < 1:
 if ZEROBUS_REGION and not _REGION_RE.fullmatch(ZEROBUS_REGION):
     raise ValueError("Set 'zerobus_region' to a region-like value such as 'us-west-2', or blank to skip Part B.")
 
-print(f"catalog={CATALOG}  fraud_pct={FRAUD_PCT}%  num_files={NUM_FILES}  zerobus_region={ZEROBUS_REGION or '(unset, Part B will be skipped)'}")
+print(f"catalog={CATALOG}  ops_catalog={OPS_CATALOG}  fraud_pct={FRAUD_PCT}%  num_files={NUM_FILES}  zerobus_region={ZEROBUS_REGION or '(unset, Part B will be skipped)'}")
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 1-2. Create catalog, shared schema, and landing volume (idempotent)
+# MAGIC ## 1-2. Create catalogs, shared schema, and landing volume (idempotent)
 
 # COMMAND ----------
 
-# Create the de_workshop catalog itself so the notebook is self-contained.
-# In Vocareum-style training environments, the catalog is usually pre-provisioned;
-# this CREATE is a no-op there.
-spark.sql(f"CREATE CATALOG IF NOT EXISTS {CATALOG} COMMENT 'Workshop catalog for Lakeflow DataEng Workshop V2'")
-spark.sql(f"CREATE SCHEMA IF NOT EXISTS {CATALOG}.shared COMMENT 'Workshop shared assets'")
-spark.sql(f"CREATE VOLUME IF NOT EXISTS {CATALOG}.shared.landing COMMENT 'Shared landing for workshop seed data'")
+# `de_workshop` is the attendee catalog. In Vocareum-style training environments it's
+# usually pre-provisioned; the CREATE is a no-op there. Outside Vocareum the notebook
+# creates it so it stays self-contained.
+spark.sql(f"CREATE CATALOG IF NOT EXISTS {CATALOG} COMMENT 'Attendee catalog for Lakeflow DataEng Workshop V2 — per-USER_ID schemas live here'")
+# `ops_data` is the shared ops catalog. Holds the shared landing volume and the
+# Zerobus target + config tables. Always created here (idempotent).
+spark.sql(f"CREATE CATALOG IF NOT EXISTS {OPS_CATALOG} COMMENT 'Workshop ops/shared assets — Zerobus targets and shared landing volume'")
+spark.sql(f"CREATE SCHEMA IF NOT EXISTS {OPS_CATALOG}.shared COMMENT 'Workshop shared assets'")
+spark.sql(f"CREATE VOLUME IF NOT EXISTS {OPS_CATALOG}.shared.landing COMMENT 'Shared landing for workshop seed data'")
 
-VOLUME_PATH = f"/Volumes/{CATALOG}/shared/landing/booking_fraud_flags"
+VOLUME_PATH = f"/Volumes/{OPS_CATALOG}/shared/landing/booking_fraud_flags"
 dbutils.fs.mkdirs(VOLUME_PATH)
 print(f"Volume folder ready: {VOLUME_PATH}")
 
@@ -187,9 +201,10 @@ for f in dbutils.fs.ls(VOLUME_PATH):
 
 # COMMAND ----------
 
-spark.sql(f"GRANT USE_SCHEMA ON SCHEMA {CATALOG}.shared TO `account users`")
-spark.sql(f"GRANT READ_VOLUME ON VOLUME {CATALOG}.shared.landing TO `account users`")
-print("Grants applied: USE_SCHEMA on shared, READ_VOLUME on shared.landing  →  `account users`")
+spark.sql(f"GRANT USE CATALOG ON CATALOG {OPS_CATALOG} TO `account users`")
+spark.sql(f"GRANT USE_SCHEMA ON SCHEMA {OPS_CATALOG}.shared TO `account users`")
+spark.sql(f"GRANT READ_VOLUME ON VOLUME {OPS_CATALOG}.shared.landing TO `account users`")
+print(f"Grants applied: USE CATALOG on {OPS_CATALOG}, USE_SCHEMA on {OPS_CATALOG}.shared, READ_VOLUME on {OPS_CATALOG}.shared.landing  →  `account users`")
 
 # COMMAND ----------
 
@@ -241,7 +256,7 @@ if not ZEROBUS_REGION:
 
 # COMMAND ----------
 
-# Re-resolve widgets after the Python restart triggered by %pip.
+# Re-resolve widgets and constants after the Python restart triggered by %pip.
 import re
 
 _CATALOG_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
@@ -249,12 +264,15 @@ _REGION_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 
 CATALOG         = dbutils.widgets.get("catalog").strip()
 ZEROBUS_REGION  = dbutils.widgets.get("zerobus_region").strip()
+OPS_CATALOG     = "ops_data"
 
 if not _CATALOG_RE.fullmatch(CATALOG):
     raise ValueError(
         "Set 'catalog' to a simple UC identifier: letters, numbers, and underscores; "
         "it must start with a letter or underscore."
     )
+if not _CATALOG_RE.fullmatch(OPS_CATALOG):
+    raise ValueError(f"OPS_CATALOG={OPS_CATALOG!r} is not a valid UC identifier.")
 if ZEROBUS_REGION and not _REGION_RE.fullmatch(ZEROBUS_REGION):
     raise ValueError("Set 'zerobus_region' to a region-like value such as 'us-west-2', or blank to skip Part B.")
 
@@ -275,12 +293,12 @@ if ZEROBUS_REGION and not _REGION_RE.fullmatch(ZEROBUS_REGION):
 # COMMAND ----------
 
 # Make sure the schema exists before we ask UC about its storage_location.
-spark.sql(f"CREATE SCHEMA IF NOT EXISTS {CATALOG}.zerobus COMMENT 'Zerobus ingest targets'")
+spark.sql(f"CREATE SCHEMA IF NOT EXISTS {OPS_CATALOG}.zerobus COMMENT 'Zerobus ingest targets'")
 
 from databricks.sdk import WorkspaceClient
 _w_pre = WorkspaceClient()
-_catalog_info = _w_pre.catalogs.get(name=CATALOG)
-_schema_info  = _w_pre.schemas.get(full_name=f"{CATALOG}.zerobus")
+_catalog_info = _w_pre.catalogs.get(name=OPS_CATALOG)
+_schema_info  = _w_pre.schemas.get(full_name=f"{OPS_CATALOG}.zerobus")
 
 _catalog_loc = getattr(_catalog_info, "storage_root",     None)
 _schema_loc  = getattr(_schema_info,  "storage_location", None) or getattr(_schema_info, "storage_root", None)
@@ -301,13 +319,13 @@ if _is_default_storage:
     raise RuntimeError(
         f"\nZerobus storage preflight FAILED.\n"
         f"\n"
-        f"Catalog '{CATALOG}' is on **workspace default storage** "
+        f"Catalog '{OPS_CATALOG}' is on **workspace default storage** "
         f"(storage_root={_effective!r}). Zerobus direct-write requires the target table to "
         f"live in customer-owned UC managed storage (S3 / ADLS / GCS) backed by a STORAGE "
         f"CREDENTIAL + EXTERNAL LOCATION. Default-storage tables get rejected with HTTP 403 "
         f"at insert.\n"
         f"\n"
-      
+
     )
 
 print(f"Storage preflight OK — effective_location={_effective!r}  (None means inherited from metastore; the B6 smoke test will confirm Zerobus accepts writes)")
@@ -315,12 +333,12 @@ print(f"Storage preflight OK — effective_location={_effective!r}  (None means 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## B1. Create `de_workshop.zerobus.measurements`
+# MAGIC ## B1. Create `ops_data.zerobus.measurements`
 
 # COMMAND ----------
 
 spark.sql(f"""
-    CREATE TABLE IF NOT EXISTS {CATALOG}.zerobus.measurements (
+    CREATE TABLE IF NOT EXISTS {OPS_CATALOG}.zerobus.measurements (
         id          STRING COMMENT 'UUID generated per submission',
         city        STRING COMMENT 'Reporting city',
         temperature FLOAT  COMMENT 'Temperature in degrees Celsius',
@@ -328,7 +346,7 @@ spark.sql(f"""
     )
     COMMENT 'Workshop Lab 3 target — one row per attendee submission via the Zerobus Ingest SDK'
 """)
-print(f"Table ready: {CATALOG}.zerobus.measurements")
+print(f"Table ready: {OPS_CATALOG}.zerobus.measurements")
 
 # COMMAND ----------
 
@@ -386,10 +404,10 @@ print(f"Generated new OAuth client secret for SP {SP_APPLICATION_ID} (shown once
 
 # COMMAND ----------
 
-spark.sql(f"GRANT USE CATALOG ON CATALOG {CATALOG} TO `{SP_APPLICATION_ID}`")
-spark.sql(f"GRANT USE SCHEMA  ON SCHEMA  {CATALOG}.zerobus TO `{SP_APPLICATION_ID}`")
-spark.sql(f"GRANT MODIFY, SELECT ON TABLE {CATALOG}.zerobus.measurements TO `{SP_APPLICATION_ID}`")
-print(f"Grants applied to SP {SP_APPLICATION_ID}: USE CATALOG, USE SCHEMA, MODIFY+SELECT on measurements")
+spark.sql(f"GRANT USE CATALOG ON CATALOG {OPS_CATALOG} TO `{SP_APPLICATION_ID}`")
+spark.sql(f"GRANT USE SCHEMA  ON SCHEMA  {OPS_CATALOG}.zerobus TO `{SP_APPLICATION_ID}`")
+spark.sql(f"GRANT MODIFY, SELECT ON TABLE {OPS_CATALOG}.zerobus.measurements TO `{SP_APPLICATION_ID}`")
+print(f"Grants applied to SP {SP_APPLICATION_ID}: USE CATALOG on {OPS_CATALOG}, USE SCHEMA on {OPS_CATALOG}.zerobus, MODIFY+SELECT on measurements")
 
 # COMMAND ----------
 
@@ -423,20 +441,27 @@ config_row = Row(
 )
 (spark.createDataFrame([config_row])
       .write.mode("overwrite")
-      .saveAsTable(f"{CATALOG}.zerobus.config"))
+      .saveAsTable(f"{OPS_CATALOG}.zerobus.config"))
 
 spark.sql(
-    f"COMMENT ON TABLE {CATALOG}.zerobus.config IS "
+    f"COMMENT ON TABLE {OPS_CATALOG}.zerobus.config IS "
     f"'Lab 3 Zerobus client config — read-only for attendees. "
     f"Contains the OAuth client_secret in cleartext; SP grants are tightly scoped "
-    f"to {CATALOG}.zerobus.measurements.'"
+    f"to {OPS_CATALOG}.zerobus.measurements.'"
 )
 
-# Grant SELECT to the broadest available group, with fallback if `account users` doesn't exist.
+# Grant attendees the read path to the Zerobus assets:
+#   USE SCHEMA ops_data.zerobus         (traverse to the tables)
+#   SELECT on ops_data.zerobus.config   (read credentials)
+#   SELECT on ops_data.zerobus.measurements (verification SELECT in the lab notebook)
+# USE CATALOG on ops_data is granted in Part A (for the shared volume) and covers this too.
+# Falls back to `users` if `account users` isn't a workspace principal.
 _grant_principal = None
 for _candidate in ("account users", "users"):
     try:
-        spark.sql(f"GRANT SELECT ON TABLE {CATALOG}.zerobus.config TO `{_candidate}`")
+        spark.sql(f"GRANT USE SCHEMA ON SCHEMA {OPS_CATALOG}.zerobus TO `{_candidate}`")
+        spark.sql(f"GRANT SELECT ON TABLE {OPS_CATALOG}.zerobus.config       TO `{_candidate}`")
+        spark.sql(f"GRANT SELECT ON TABLE {OPS_CATALOG}.zerobus.measurements TO `{_candidate}`")
         _grant_principal = _candidate
         break
     except Exception as _e:
@@ -445,10 +470,10 @@ for _candidate in ("account users", "users"):
         raise
 
 if _grant_principal:
-    print(f"Wrote config row to {CATALOG}.zerobus.config and granted SELECT to `{_grant_principal}`.")
+    print(f"Wrote config row to {OPS_CATALOG}.zerobus.config and granted USE SCHEMA + SELECT (config, measurements) to `{_grant_principal}`.")
 else:
     print(
-        f"Wrote config row to {CATALOG}.zerobus.config, but could not grant SELECT — "
+        f"Wrote config row to {OPS_CATALOG}.zerobus.config, but could not grant SELECT — "
         f"neither `account users` nor `users` exists as a workspace principal. "
         f"Grant SELECT manually."
     )
@@ -472,7 +497,7 @@ import uuid
 from zerobus.sdk.sync import ZerobusSdk
 from zerobus.sdk.shared import RecordType, StreamConfigurationOptions, TableProperties
 
-_smoke_cfg     = spark.table(f"{CATALOG}.zerobus.config").first()
+_smoke_cfg     = spark.table(f"{OPS_CATALOG}.zerobus.config").first()
 _SMOKE_CLIENT_ID     = _smoke_cfg["client_id"]
 _SMOKE_CLIENT_SECRET = _smoke_cfg["client_secret"]
 _SMOKE_WORKSPACE_URL = _smoke_cfg["workspace_url"]
@@ -480,7 +505,7 @@ _SMOKE_WORKSPACE_URL = _smoke_cfg["workspace_url"]
 _SMOKE_SERVER_ENDPOINT = _smoke_cfg["zerobus_endpoint"].replace("https://", "").rstrip("/")
 
 assert _SMOKE_CLIENT_ID and _SMOKE_CLIENT_SECRET, \
-    f"Empty credentials in {CATALOG}.zerobus.config — provisioning step above did not complete."
+    f"Empty credentials in {OPS_CATALOG}.zerobus.config — provisioning step above did not complete."
 
 _SMOKE_TEST_ID = f"setup-smoke-{uuid.uuid4()}"
 _smoke_record  = {
@@ -492,7 +517,7 @@ _smoke_record  = {
 
 _smoke_sdk    = ZerobusSdk(_SMOKE_SERVER_ENDPOINT, unity_catalog_url=_SMOKE_WORKSPACE_URL)
 _smoke_opts   = StreamConfigurationOptions(record_type=RecordType.JSON)
-_smoke_tprops = TableProperties(f"{CATALOG}.zerobus.measurements")
+_smoke_tprops = TableProperties(f"{OPS_CATALOG}.zerobus.measurements")
 
 print(f"[smoke] server_endpoint = {_SMOKE_SERVER_ENDPOINT}")
 print(f"[smoke] workspace_url   = {_SMOKE_WORKSPACE_URL}")
@@ -511,10 +536,10 @@ finally:
 
 # Cleanup — Spark runs as the user (admin), not the SP, so DELETE doesn't need an SP grant.
 for _ in range(10):
-    if spark.table(f"{CATALOG}.zerobus.measurements").filter(f"id = '{_SMOKE_TEST_ID}'").count():
+    if spark.table(f"{OPS_CATALOG}.zerobus.measurements").filter(f"id = '{_SMOKE_TEST_ID}'").count():
         break
     time.sleep(2)
-spark.sql(f"DELETE FROM {CATALOG}.zerobus.measurements WHERE id = '{_SMOKE_TEST_ID}'")
+spark.sql(f"DELETE FROM {OPS_CATALOG}.zerobus.measurements WHERE id = '{_SMOKE_TEST_ID}'")
 print(f"[smoke] cleanup OK — removed row {_SMOKE_TEST_ID}")
 
 # COMMAND ----------
@@ -527,8 +552,9 @@ print(f"[smoke] cleanup OK — removed row {_SMOKE_TEST_ID}")
 print("=" * 70)
 print("ZEROBUS SHARED PROVISIONING — SUMMARY")
 print("=" * 70)
-print(f"Data table         : {CATALOG}.zerobus.measurements")
-print(f"Config table       : {CATALOG}.zerobus.config")
+print(f"Catalogs           : {CATALOG} (attendees), {OPS_CATALOG} (shared ops assets)")
+print(f"Data table         : {OPS_CATALOG}.zerobus.measurements")
+print(f"Config table       : {OPS_CATALOG}.zerobus.config")
 print(f"Config columns     : client_id, client_secret, workspace_url, workspace_id, zerobus_endpoint")
 print(f"Service principal  : {SP_DISPLAY_NAME}  (application_id: {SP_APPLICATION_ID})")
 print(f"Config table ACL   : `{_grant_principal or '(not granted — see warning above)'}` → SELECT")
