@@ -18,9 +18,9 @@ The checkpoint interval (`pipelines.trigger.interval`) controls how often state 
 
 ## The three config steps to enable RTM
 
-1. **Continuous mode** at the pipeline level — RTM runs *on top of* continuous, not as a replacement.
+1. **Continuous mode** for the pipeline.
 2. **`spark.databricks.streaming.realTimeMode.enabled = true`** in the pipeline's Spark config (set in [databricks.yml](databricks.yml)).
-3. **An `@dp.update_flow`** (not `@dp.table` / `@dp.view`) with `pipelines.trigger: "RealTime"` set at the flow level via `spark_conf=`.
+3. **An `@dp.update_flow`** (not `@dp.table` / `@dp.view`) with `pipelines.trigger: "RealTime"` set at the flow level.
 
 All three are wired into this bundle.
 
@@ -30,7 +30,7 @@ All defined in [temperature_rtm.py](sdp-rtm-basic/transformations/temperature_rt
 
 ### 1. Source
 
-Any streaming `readStream`. RTM officially supports Kafka, MSK, Event Hubs (Kafka API), and Kinesis EFO. This demo uses `rate` for portability.
+SDP RTM officially supports Kafka, MSK, Event Hubs (Kafka API), and Kinesis EFO. This demo uses `rate` for portability.
 
 ```python
 spark.readStream.format("rate").option("rowsPerSecond", "1").load()
@@ -52,7 +52,6 @@ The bridge between source and sink. RTM **requires** `@dp.update_flow` (not `@dp
 def temperature_rtm_flow(): ...
 ```
 
-> The older flow-level keys `pipelines.execution.realTimeMode` and `pipelines.realtime.trigger.duration` are deprecated. Use `pipelines.trigger: "RealTime"` and `pipelines.trigger.interval`.
 
 ### 3. Sink
 
@@ -77,4 +76,4 @@ Open **Compute → Driver logs** in the Lakeflow Pipelines Editor. The console s
 
 ## A note on latency measurement
 
-RTM exposes per-record latency through `StreamingQueryProgress.rtmMetrics` (`processingLatencyMs`, `sourceQueuingLatencyMs`, `e2eLatencyMs`, each with `p50` and `p99`), but **only for the [officially-supported source/sink combos](https://docs.databricks.com/aws/en/dlt/realtime-mode#supported-sources-and-sinks): Kafka, MSK, Event Hubs (Kafka-compatible), and Kinesis EFO**. With the `rate` source and `console` sink used here, `rtmMetrics` is not populated — RTM optimizations run, but per-record instrumentation is gated. For real RTM SLA numbers, swap `rate` for Kafka/Kinesis and `console` for a Kafka-family sink to get the actual `rtmMetrics` values.
+RTM exposes per-record latency through `StreamingQueryProgress.rtmMetrics` (`processingLatencyMs`, `sourceQueuingLatencyMs`, `e2eLatencyMs`, each with `p50` and `p99`). 
