@@ -1,8 +1,8 @@
 # Lakeflow SDP — Real-Time Mode Basics
 
-A minimal Lakeflow Spark Declarative Pipeline (SDP) running in **Real-Time Mode (RTM)** — the whole demo is a single file: [temperature_rtm.py](sdp-rtm-basic/transformations/temperature_rtm.py). It reads a synthetic `rate` stream, runs a sliding-window aggregation, and writes to a console sink so you can see RTM working without wiring up Kafka.
+A minimal Lakeflow Spark Declarative Pipeline (SDP) running in **Real-Time Mode (RTM)** — the whole demo is a single file: [temperature_rtm.py](sdp-rtm-basic/transformations/temperature_rtm.py). It reads a synthetic `rate` stream, runs a sliding-window aggregation, and writes to a console sink so you can see RTM working without wiring up Kafka or Kinesis. 
 
-**This demo shows *how to enable RTM* for an SDP pipeline — the three config steps you need, deployed as a Declarative Automation Bundle.**. Production SDP RTM typically uses Kafka or Kinesis, this example has no such dependencies. 
+**This demo shows *how to enable RTM* for an SDP pipeline — the three config steps you need, deployed as a Declarative Automation Bundle.**
 
 > **Public Preview:** RTM for Lakeflow SDP requires DBR 18.1.2 on the SDP **preview** channel. 
 
