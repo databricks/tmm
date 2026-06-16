@@ -14,7 +14,8 @@ dp.create_sink(
     target="hot_temperatures_sink",
     spark_conf={
         "pipelines.trigger": "RealTime",
-        "pipelines.trigger.interval": "5 minutes",  # optional; defaults to 5 minutes
+        "pipelines.trigger.interval": "30 seconds",  
+        "spark.sql.shuffle.partitions": "2",
     },
 )
 def temperature_rtm_flow():
