@@ -1,0 +1,5 @@
+# Build output for the courseware payload (see voc/private/courseware/build_zips.sh)
+voc/private/courseware/dist/
+__pycache__/
+*.pyc
+.DS_Store

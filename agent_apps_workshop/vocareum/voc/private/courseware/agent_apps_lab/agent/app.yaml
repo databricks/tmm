@@ -1,0 +1,33 @@
+# Databricks Apps runtime config for the TechMart agent (OBO data tools + SP memory).
+# NOTE: user_api_scopes (user authorization / OBO) is an APP-level setting, NOT an app.yaml field.
+# The DATA tools run OBO (need sql + vector-search). Conversation MEMORY runs as the app SP via
+# the app's `postgres` RESOURCE (set at app create — see LAB_CONTEXT.md), the documented Apps +
+# Lakebase pattern; no user database scope needed. The LLM runs as the app SP via
+# AsyncDatabricksOpenAI (FMAPI pay-per-token, no grant), so the serving scope is NOT required.
+# Set on the app:
+#   - bundle apps resource: `user_api_scopes: [sql, vector-search]`
+#   - Apps UI: app -> Authorization -> User authorization -> add scopes
+#   - CLI: databricks apps update <name> --json '{"user_api_scopes":["sql","vector-search"]}'
+command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+
+env:
+  - name: WORKSHOP_CATALOG
+    value: "agent_apps_workshop"
+  - name: WORKSHOP_SCHEMA
+    value: "shared"
+  - name: WORKSHOP_VS_INDEX
+    value: "product_docs_vs"
+  - name: WAREHOUSE_NAME
+    value: "agent-apps-shared"   # setup creates this canonical name; the app resolves the id at runtime
+                                 # (portable across workspaces — no hardcoded id). Or set WAREHOUSE_ID to pin one.
+  - name: LLM_ENDPOINT
+    value: "databricks-gpt-5-4"   # bake-off 2026-06-09: fastest reliable tool-caller that still
+                                  # exhibits the planted warranty bug (sonnet-4-6 self-corrected it,
+                                  # gutting M4/M5; gemini-3-5-flash 400s on the Agents SDK path).
+  - name: LAKEBASE_AUTOSCALING_PROJECT
+    value: "agent-apps-memory"    # shared Lakebase project created by workshop setup; transcripts
+                                  # land here as the APP SP (via the app's postgres resource), in a
+                                  # per-app schema (memory_<app-name>; override with MEMORY_SCHEMA).
+                                  # Set "" to disable memory (chat degrades gracefully to single-turn).
+  - name: LAKEBASE_AUTOSCALING_BRANCH
+    value: "production"
