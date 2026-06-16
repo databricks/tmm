@@ -23,6 +23,7 @@ resources:
       channel: PREVIEW
       configuration:
         spark.databricks.streaming.realTimeMode.enabled: "true"
+        spark.shuffle.manager: "org.apache.spark.shuffle.streaming.MultiShuffleManager"
       libraries:
         - file:
             path: ./sdp-rtm-rate-source/transformations/temperature_rtm.py
