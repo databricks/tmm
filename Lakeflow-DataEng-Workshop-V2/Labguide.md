@@ -1,6 +1,6 @@
 # AI-powered data engineering with Lakeflow
 
-**Version 2.0 - May 2026**
+**Version 2.0 - DAIS 2026**
 
 👋 Welcome. This is the lab guide for the **quarterly Databricks Data Engineering workshop**. We're glad to have you here.
 
