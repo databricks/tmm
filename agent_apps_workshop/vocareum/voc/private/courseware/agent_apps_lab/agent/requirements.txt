@@ -1,0 +1,25 @@
+# Pinned for the Databricks Apps runtime (re-validated 2026-06-09 via a live deploy on the Apps image).
+# WHY THE PINS: databricks-openai==0.15.0 is the latest and the version that has AsyncDatabricksOpenAI.
+# At load it eagerly imports `VectorSearchIndex` from databricks-vectorsearch (via
+# vector_search_retriever_tool), so the vectorsearch version must still export that symbol natively or
+# the app 502s at startup with `ImportError: cannot import name 'VectorSearchIndex'`. The 0.74 build
+# dropped it (moved behind databricks-ai-search, whose mlflow/protobuf deps the Apps image doesn't
+# satisfy) and has since been YANKED from PyPI; current latest is 0.73, which still exports it natively
+# and starts clean on the Apps runtime (verified: app reached RUNNING, "App started successfully").
+# Pinning vectorsearch *lower* (e.g. 0.40) back-tracks databricks-openai to 0.2.0, which LACKS
+# AsyncDatabricksOpenAI. So pin BOTH, exactly. Note: the app queries Vector Search via the databricks-sdk
+# (WorkspaceClient.vector_search_indexes), NOT databricks-vectorsearch directly — this pin only exists to
+# satisfy databricks-openai's import-time coupling.
+databricks-sdk
+# [memory] extra gates AsyncDatabricksSession (Lakebase conversation memory) — same 0.15.0 pin.
+databricks-openai[memory]==0.15.0
+databricks-vectorsearch==0.73
+openai
+openai-agents
+fastapi
+uvicorn[standard]
+pydantic
+# Lakebase conversation memory: AsyncDatabricksSession (ships in databricks-openai above) drives
+# Postgres through SQLAlchemy's async psycopg driver. psycopg installs standalone and does NOT
+# backtrack the openai/vectorsearch pin resolution (verified 2026-06-10).
+psycopg[binary]

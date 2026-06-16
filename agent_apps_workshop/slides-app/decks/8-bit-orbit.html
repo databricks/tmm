@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- PRIMARY DECK (the deck of record). Content updates land HERE ONLY; the other
+     decks/*.html are style-comparison artifacts and are only recreated from this
+     file once content is final. See build_companion_slides.md §9.5. -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>From Prompt to Production — Lab Companion</title>
+
+<!-- === FONTS: the 8-Bit Orbit three-voice stack (never substitute) ============== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tektur:wght@700;900&family=Chakra+Petch:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+/* ===========================================================================
+   8-BIT ORBIT — THEME TOKENS
+   Deep cosmic navy lit by three neons. All measurements snap to the 4px
+   pixel unit. Change colors here to retheme the whole deck.
+   =========================================================================== */
+:root {
+    --dark-void:    #0A0E27;
+    --deep-navy:    #0F1B3D;
+    --neon-cyan:    #5EDCF4;
+    --neon-pink:    #F0A6CA;
+    --neon-yellow:  #F4D03F;
+    --soft-lavender:#E2D5F2;
+    --white:        #FFFFFF;
+
+    --font-display: 'Tektur', cursive;
+    --font-body:    'Chakra Petch', sans-serif;
+    --font-hud:     'Space Mono', monospace;
+
+    --px: 4px;                          /* the pixel unit */
+    --stage-bg: var(--dark-void);
+    --slide-bg: var(--dark-void);
+    --ease-deck: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ===========================================================================
+   FIXED 16:9 STAGE: MANDATORY BASE STYLES (viewport-base.css, verbatim)
+   Slides are authored at 1920×1080 and scaled as a whole.
+   =========================================================================== */
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+
+.deck-viewport {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+
+.deck-stage {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    transform-origin: 0 0;
+    background: var(--slide-bg, #fff);
+}
+
+.slide {
+    position: absolute;
+    inset: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    display: block;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    background: var(--slide-bg, #fff);
+}
+
+.slide.active,
+.slide.visible {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 1;
+}
+
+img, video, canvas, svg {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.deck-controls {
+    position: fixed;
+    left: 50%;
+    bottom: 22px;
+    transform: translateX(-50%);
+    z-index: 1000;
+}
+
+@media print {
+    html, body { width: 1920px; height: auto; overflow: visible; background: #fff; }
+    .deck-viewport { position: static; overflow: visible; background: #fff; }
+    .deck-stage { position: static; width: auto; height: auto; transform: none !important; background: none; }
+    .slide {
+        position: relative;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        width: 1920px; height: 1080px;
+        break-after: page; page-break-after: always;
+    }
+    .slide:last-child { break-after: auto; page-break-after: auto; }
+    .deck-controls { display: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.2s !important;
+    }
+}
+/* === end viewport-base.css ================================================ */
+
+body { cursor: crosshair; }   /* arcade signal, deck-wide */
+
+/* ===========================================================================
+   SURFACES — navy ground with etched 40px grids; colored-grid variants
+   =========================================================================== */
+.surface-dark {
+    background-color: var(--dark-void);
+    background-image:
+        linear-gradient(rgba(94, 220, 244, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(94, 220, 244, 0.07) 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+.surface-pink {
+    background-color: var(--neon-pink);
+    background-image:
+        linear-gradient(rgba(15, 27, 61, 0.10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 27, 61, 0.10) 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+.surface-lavender {
+    background-color: var(--soft-lavender);
+    background-image:
+        linear-gradient(rgba(15, 27, 61, 0.10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 27, 61, 0.10) 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+.surface-cyan {
+    background-color: var(--neon-cyan);
+    background-image:
+        linear-gradient(rgba(15, 27, 61, 0.10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 27, 61, 0.10) 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+
+/* === ATMOSPHERIC OVERLAYS — grain (::before, z49) + scanlines (::after, z50)
+       on every slide; CRT vignette via .crt-glow div (z51) on dark slides === */
+.slide::before {     /* grain */
+    content: "";
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.035;
+    pointer-events: none;
+    z-index: 49;
+}
+.slide::after {      /* scanlines */
+    content: "";
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(0deg,
+        transparent 0px, transparent 2px,
+        rgba(10, 14, 39, 0.04) 2px, rgba(10, 14, 39, 0.04) 4px);
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    z-index: 50;
+}
+.crt-glow {          /* CRT bulge vignette, dark surfaces only */
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(10, 14, 39, 0.25) 100%);
+    pointer-events: none;
+    z-index: 51;
+}
+
+/* ===========================================================================
+   TYPOGRAPHY — Tektur display · Chakra Petch body · Space Mono HUD
+   Authored at fixed 1920×1080 stage sizes (clamp() translated to px).
+   =========================================================================== */
+.pixel-hero {
+    font-family: var(--font-display);
+    font-size: 112px;
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: 0.04em;
+    color: var(--neon-cyan);
+    text-shadow: 4px 4px 0 var(--neon-yellow), 8px 8px 0 var(--deep-navy);
+}
+.headline {
+    font-family: var(--font-display);
+    font-size: 44px;
+    font-weight: 700;
+    line-height: 1.15;
+}
+.subhead {
+    font-family: var(--font-display);
+    font-size: 23px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+.stat-number {
+    font-family: var(--font-display);
+    font-size: 56px;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--neon-cyan);
+    text-shadow: 3px 3px 0 var(--deep-navy);
+}
+.body-text {
+    font-family: var(--font-body);
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.7;
+}
+.hero-tagline {
+    font-family: var(--font-body);
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* On dark surfaces */
+.surface-dark .headline { color: var(--neon-cyan); text-shadow: 3px 3px 0 var(--deep-navy); }
+.surface-dark .subhead { color: var(--white); }
+.surface-dark .body-text { color: rgba(255, 255, 255, 0.7); }
+/* On colored grids — navy text, never neon-on-neon */
+.surface-pink .headline, .surface-lavender .headline, .surface-cyan .headline { color: var(--deep-navy); }
+.surface-pink .subhead, .surface-lavender .subhead, .surface-cyan .subhead { color: var(--deep-navy); }
+.surface-pink .body-text, .surface-lavender .body-text, .surface-cyan .body-text { color: rgba(15, 27, 61, 0.75); }
+
+/* === HUD CHROME ====================================================== */
+.label-pill {
+    display: inline-block;
+    background: var(--deep-navy);
+    color: var(--neon-yellow);
+    padding: 6px 14px;
+    font-family: var(--font-hud);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+.label-pill.cyan { color: var(--neon-cyan); }
+.label-pill.pink { color: var(--neon-pink); }
+
+.hero-badge {
+    display: inline-block;
+    border: 2px solid var(--neon-yellow);
+    color: var(--neon-yellow);
+    padding: 8px 16px;
+    font-family: var(--font-hud);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+a.hero-badge { cursor: pointer; transition: background 0.15s steps(2), transform 0.1s steps(2); }
+a.hero-badge:hover { background: rgba(244, 208, 63, 0.15); transform: translate(1px, 1px); }
+
+.eyebrow {
+    font-family: var(--font-hud);
+    font-size: 14px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+}
+
+/* === SLIDE CONTENT FRAME ============================================= */
+.slide-content {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    padding: 72px 96px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* === CORNER BRACKETS — two outward L-shapes implying a frame ========= */
+.bracketed { position: relative; }
+.bracketed::before, .bracketed::after {
+    content: "";
+    position: absolute;
+    width: 24px; height: 24px;
+    border: 4px solid var(--neon-cyan);
+    z-index: 2;
+}
+.bracketed::before { top: -8px; left: -8px; border-right: none; border-bottom: none; }
+.bracketed::after  { bottom: -8px; right: -8px; border-left: none; border-top: none; }
+.bracketed.navy::before, .bracketed.navy::after { border-color: var(--deep-navy); }
+.bracketed.yellow::before, .bracketed.yellow::after { border-color: var(--neon-yellow); }
+.bracketed.pink::before, .bracketed.pink::after { border-color: var(--neon-pink); }
+
+/* === CARDS & TILES ==================================================== */
+.stat-block {                      /* dark-surface stat tile */
+    background: rgba(94, 220, 244, 0.08);
+    border: 2px solid rgba(94, 220, 244, 0.2);
+    padding: 32px 16px;
+    text-align: center;
+}
+.feature-card {                    /* light-surface frosted card */
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    border: 2px solid rgba(15, 27, 61, 0.2);
+    padding: 28px 24px;
+    box-shadow: 6px 6px 0 rgba(15, 27, 61, 0.15);
+}
+.dark-card {                       /* card on dark surfaces */
+    background: rgba(15, 27, 61, 0.65);
+    border: 2px solid rgba(94, 220, 244, 0.2);
+    padding: 28px 24px;
+}
+
+/* === PIXEL BUTTON — the six-step stacked-shadow CTA =================== */
+.pixel-button {
+    display: inline-block;
+    background: var(--neon-cyan);
+    color: var(--deep-navy);
+    padding: 16px 36px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    box-shadow:
+        4px 0 0 0 var(--deep-navy), 0 4px 0 0 var(--deep-navy), 4px 4px 0 0 var(--deep-navy),
+        8px 4px 0 0 var(--neon-yellow), 4px 8px 0 0 var(--neon-yellow), 8px 8px 0 0 var(--neon-yellow);
+    transition: transform 0.1s steps(2), box-shadow 0.1s steps(2);
+}
+.pixel-button:hover {              /* key-press effect */
+    transform: translate(2px, 2px);
+    box-shadow:
+        2px 0 0 0 var(--deep-navy), 0 2px 0 0 var(--deep-navy), 2px 2px 0 0 var(--deep-navy),
+        4px 2px 0 0 var(--neon-yellow), 2px 4px 0 0 var(--neon-yellow), 4px 4px 0 0 var(--neon-yellow);
+}
+
+/* === TIMELINE (the hardening loop) ==================================== */
+.loop-row { display: flex; align-items: stretch; gap: 16px; }
+.loop-step { flex: 1; text-align: center; position: relative; }
+.loop-node {
+    width: 24px; height: 24px;
+    background: var(--neon-cyan);
+    border: 4px solid var(--deep-navy);
+    margin: 0 auto 16px;
+}
+.loop-step.hot .loop-node { background: var(--neon-yellow); }
+.loop-rail {
+    position: absolute;
+    top: 10px; left: calc(50% + 20px); right: calc(-50% + 20px);
+    height: 4px;
+    background: repeating-linear-gradient(to right,
+        var(--deep-navy) 0px, var(--deep-navy) 16px, transparent 16px, transparent 24px);
+}
+.loop-step:last-child .loop-rail { display: none; }
+
+/* === HBAR CHART (eval results) ======================================== */
+.bar-row { display: grid; grid-template-columns: 280px 1fr 110px; align-items: center; gap: 16px; margin-bottom: 22px; }
+.bar-label { font-family: var(--font-hud); font-size: 14px; letter-spacing: 0.05em; text-transform: uppercase; color: rgba(255,255,255,0.85); }
+.bar-track { height: 32px; background: rgba(255, 255, 255, 0.08); border: 2px solid rgba(94, 220, 244, 0.15); position: relative; }
+.bar-fill {
+    height: 100%; width: 0;
+    transition: width 1s var(--ease-deck);
+    box-shadow: 4px 0 0 0 var(--deep-navy), 0 4px 0 0 var(--deep-navy), 4px 4px 0 0 var(--deep-navy);
+}
+.bar-fill.cyan { background: var(--neon-cyan); }
+.bar-fill.pink { background: var(--neon-pink); }
+.bar-fill.yellow { background: var(--neon-yellow); }
+.bar-value { font-family: var(--font-hud); font-size: 15px; font-weight: 700; color: var(--neon-yellow); text-align: right; }
+
+/* === QUOTE LINE ======================================================= */
+.quote-line { width: 60px; height: 4px; background: var(--neon-yellow); box-shadow: 4px 4px 0 var(--deep-navy); }
+
+/* === STARFIELD & PARTICLES (populated by JS on dark slides) =========== */
+.starfield { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.star { position: absolute; animation: twinkle 3s ease-in-out infinite; }
+@keyframes twinkle { 0%, 100% { opacity: 0.15; } 50% { opacity: 0.9; } }
+.pixel-particle { position: absolute; width: 8px; height: 8px; animation: floaty 8s ease-in-out infinite; z-index: 1; pointer-events: none; }
+@keyframes floaty {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-40px); }
+}
+
+/* === PIXEL LANDSCAPE (arcade horizon on title/CTA) ==================== */
+.pixel-landscape { position: absolute; bottom: 0; left: 0; right: 0; height: 120px; opacity: 0.3; z-index: 2; pointer-events: none; }
+.mountain { position: absolute; bottom: 0; background: var(--deep-navy); }
+
+/* === REVEAL ANIMATION (staggered on slide entry) ====================== */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s var(--ease-deck), transform 0.6s var(--ease-deck);
+}
+.slide.visible .reveal { opacity: 1; transform: translateY(0); }
+.reveal:nth-child(1), .r1 { transition-delay: 0.08s; }
+.reveal:nth-child(2), .r2 { transition-delay: 0.18s; }
+.reveal:nth-child(3), .r3 { transition-delay: 0.28s; }
+.reveal:nth-child(4), .r4 { transition-delay: 0.38s; }
+.reveal:nth-child(5), .r5 { transition-delay: 0.48s; }
+.reveal:nth-child(6), .r6 { transition-delay: 0.58s; }
+
+/* === DECK CHROME (outside the stage) ================================== */
+.nav-rail {
+    position: fixed;
+    right: 24px; top: 50%;
+    transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 12px;
+    z-index: 1001;
+}
+.nav-dot {
+    width: 12px; height: 12px;
+    border: 2px solid var(--neon-cyan);
+    background: transparent;
+    cursor: pointer;
+}
+.nav-dot.active { background: var(--neon-cyan); }
+.slide-counter {
+    position: fixed;
+    bottom: 24px; left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-hud);
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    color: var(--neon-cyan);
+    background: rgba(15, 27, 61, 0.8);
+    padding: 6px 14px;
+    z-index: 1001;
+}
+.nav-hint {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    font-family: var(--font-hud);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: rgba(94, 220, 244, 0.5);
+    text-transform: uppercase;
+    z-index: 1001;
+}
+
+/* === INLINE EDITING (E key / top-left hotzone) ======================== */
+.edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+.edit-toggle {
+    position: fixed; top: 16px; left: 16px;
+    z-index: 10001;
+    background: var(--deep-navy); color: var(--neon-yellow);
+    border: 2px solid var(--neon-yellow);
+    font-family: var(--font-hud); font-size: 12px;
+    padding: 8px 12px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+}
+.edit-toggle.show, .edit-toggle.active { opacity: 1; pointer-events: auto; }
+[contenteditable="true"] { outline: 2px dashed var(--neon-pink); outline-offset: 4px; }
+</style>
+</head>
+<body>
+
+<div class="deck-viewport">
+<main class="deck-stage" id="deckStage">
+
+<!-- =======================================================================
+     SLIDE 1 — TITLE · dark void, starfield, pixel landscape
+     ======================================================================= -->
+<section class="slide surface-dark active" data-starfield data-particles>
+    <div class="crt-glow"></div>
+    <div class="pixel-landscape" data-landscape></div>
+    <div class="slide-content" style="justify-content: center; align-items: center; text-align: center;">
+        <div class="reveal r1" style="margin-bottom: 32px;"><span class="label-pill">Data + AI Summit 2026 · Lab Companion</span></div>
+        <h1 class="pixel-hero reveal r2" style="margin-bottom: 16px;">FROM PROMPT<br>TO PRODUCTION</h1>
+        <p class="hero-tagline reveal r3" style="max-width: 880px; margin-bottom: 40px;">
+            Over the next 90 minutes you'll build a custom AI agent on
+            <strong style="color: var(--neon-cyan);">Databricks Apps</strong>, govern it with your own
+            identity, break it on planted data bugs, measure the damage with LLM judges, fix it —
+            and prove the fix with numbers. Keep this open as your field guide.
+        </p>
+        <div class="reveal r4" style="display: flex; gap: 16px; justify-content: center;">
+            <a class="hero-badge" href="https://docs.databricks.com/aws/en/dev-tools/databricks-apps/auth" target="_blank" rel="noopener">All-OBO</a>
+            <a class="hero-badge" href="https://docs.databricks.com/aws/en/genie-code/" target="_blank" rel="noopener">Genie Code</a>
+            <a class="hero-badge" href="https://openai.github.io/openai-agents-python/" target="_blank" rel="noopener">OpenAI Agents SDK</a>
+            <a class="hero-badge" href="https://mlflow.org/genai" target="_blank" rel="noopener">MLflow Judges</a>
+        </div>
+    </div>
+</section>
+
+<!-- =======================================================================
+     SLIDE 2 — THE MISSION · lavender grid, six-beat loop timeline
+     ======================================================================= -->
+<section class="slide surface-lavender">
+    <div class="slide-content" style="justify-content: center;">
+        <div class="reveal r1" style="margin-bottom: 20px;"><span class="label-pill">The Mission</span></div>
+        <h2 class="headline reveal r2" style="margin-bottom: 16px;">Your 90 minutes at TechMart</h2>
+        <p class="body-text reveal r3" style="max-width: 1100px; margin-bottom: 56px;">
+            You're a data engineer at a fictional electronics retailer, standing up a customer-support
+            agent against governed Unity Catalog data. Not a toy: a deployed app, with real auth, real
+            governance, real failure modes — and a measurement harness to keep it honest. Six beats:
+        </p>
+        <div class="loop-row reveal r4">
+            <div class="loop-step"><div class="loop-node"></div><div class="loop-rail"></div>
+                <div class="subhead" style="margin-bottom: 8px;">BUILD</div>
+                <p class="body-text" style="font-size: 15px;">Genie Code deploys your <span style="font-family: var(--font-hud);">agent/</span> starter as a Databricks App</p>
+            </div>
+            <div class="loop-step"><div class="loop-node"></div><div class="loop-rail"></div>
+                <div class="subhead" style="margin-bottom: 8px;">GOVERN</div>
+                <p class="body-text" style="font-size: 15px;">Every data call runs on-behalf-of <em>you</em> — PII masks follow your identity</p><!-- memory is NOT OBO (golden path: app SP + Lakebase resource) — keep this beat about DATA calls only -->
+            </div>
+            <div class="loop-step hot"><div class="loop-node"></div><div class="loop-rail"></div>
+                <div class="subhead" style="margin-bottom: 8px;">BREAK</div>
+                <p class="body-text" style="font-size: 15px;">Your agent will confidently repeat lies planted in the marketing data</p>
+            </div>
+            <div class="loop-step"><div class="loop-node"></div><div class="loop-rail"></div>
+                <div class="subhead" style="margin-bottom: 8px;">MEASURE</div>
+                <p class="body-text" style="font-size: 15px;">MLflow <span style="font-family: var(--font-hud);">Guidelines</span> judges score real traces</p>
+            </div>
+            <div class="loop-step"><div class="loop-node"></div><div class="loop-rail"></div>
+                <div class="subhead" style="margin-bottom: 8px;">FIX</div>
+                <p class="body-text" style="font-size: 15px;">One prompt change routes truth through the right tool</p>
+            </div>
+            <div class="loop-step hot"><div class="loop-node"></div><div class="loop-rail"></div>
+                <div class="subhead" style="margin-bottom: 8px;">PROVE</div>
+                <p class="body-text" style="font-size: 15px;">Judge flips ~0.8 → 1.0. Not "seems better" — numbers</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =======================================================================
+     SLIDE 3 — WHAT YOU BUILT · dark, architecture cards + zero stat
+     ======================================================================= -->
+<section class="slide surface-dark" data-starfield>
+    <div class="crt-glow"></div>
+    <div class="slide-content" style="justify-content: center;">
+        <div class="reveal r1" style="margin-bottom: 20px;"><span class="label-pill cyan">The Build</span></div>
+        <h2 class="headline reveal r2" style="margin-bottom: 40px;">What you're building — zero grants on the shared data</h2>
+        <div class="reveal r3" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 24px; margin-bottom: 44px;">
+            <div class="dark-card bracketed" style="padding: 24px 20px;">
+                <div class="subhead" style="color: var(--neon-cyan); margin-bottom: 12px;">THE RUNTIME</div>
+                <p class="body-text" style="font-size: 15px;">FastAPI + OpenAI Agents SDK, deployed as a <strong style="color:var(--white);">Databricks App</strong> by <strong style="color:var(--white);">Genie Code</strong> running the shipped <span style="font-family: var(--font-hud); font-size: 13px;">02_Deploy_App</span> recipe — one plain-English prompt. (No Genie needed: Run All on that notebook does the same.)</p>
+            </div>
+            <div class="dark-card bracketed pink" style="padding: 24px 20px;">
+                <div class="subhead" style="color: var(--neon-pink); margin-bottom: 12px;">THE TOOLS — OBO</div>
+                <p class="body-text" style="font-size: 15px;">UC functions over a shared SQL warehouse + Vector Search, all called with <em>your</em> forwarded token (<span style="font-family: var(--font-hud); font-size: 13px;">X-Forwarded-Access-Token</span>). Scopes: <span style="font-family: var(--font-hud); font-size: 13px;">sql · vector-search</span>.</p>
+            </div>
+            <div class="dark-card bracketed" style="padding: 24px 20px;">
+                <div class="subhead" style="color: var(--neon-cyan); margin-bottom: 12px;">THE MEMORY</div>
+                <p class="body-text" style="font-size: 15px;">A <strong style="color:var(--white);">Lakebase resource</strong> attached at deploy: every chat turn lands in managed Postgres, written by the app's own SP into a schema <em>it owns</em> (<span style="font-family: var(--font-hud); font-size: 13px;">memory_&lt;your-app&gt;</span>) — the documented production pattern.</p>
+            </div>
+            <div class="dark-card bracketed yellow" style="padding: 24px 20px;">
+                <div class="subhead" style="color: var(--neon-yellow); margin-bottom: 12px;">THE LLM</div>
+                <p class="body-text" style="font-size: 15px;">Foundation Model APIs, pay-per-token — the app's only service-principal call, and it needs no grant. Swap models with one line in <span style="font-family: var(--font-hud); font-size: 13px;">app.yaml</span>.</p>
+            </div>
+        </div>
+        <div class="reveal r4" style="display: flex; align-items: center; gap: 40px;">
+            <div class="stat-block bracketed" style="min-width: 280px;">
+                <div class="stat-number" data-counter="0" style="margin-bottom: 8px;">0</div>
+                <div class="eyebrow" style="color: var(--neon-pink); font-size: 12px;">Grants on the shared data</div>
+            </div>
+            <p class="body-text" style="max-width: 900px;">
+                On TechMart data there is no service account to over-permission, audit, or leak. If <em>you</em>
+                can't see a row, neither can your agent. The only thing the app owns is its own memory schema —
+                created and owned by its SP. The security constraint <em>is</em> the architecture, and
+                it's why everyone in this room, with zero admin rights, ships their own app today.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- =======================================================================
+     SLIDE 4 — GOVERNANCE · cyan grid, consent + mask story
+     ======================================================================= -->
+<section class="slide surface-cyan">
+    <div class="slide-content" style="justify-content: center;">
+        <div class="reveal r1" style="margin-bottom: 20px;"><span class="label-pill">Governance, Live</span></div>
+        <h2 class="headline reveal r2" style="margin-bottom: 40px;">Watch the mask follow you through the app</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 26px;">
+            <div class="feature-card bracketed navy reveal r3" style="padding: 24px 22px;">
+                <div class="subhead" style="margin-bottom: 14px;">1 · CONSENT, NOT CONFIG</div>
+                <p class="body-text" style="font-size: 16px;">The first time you open your app, Databricks shows a
+                <strong>"Permission Requested"</strong> screen: exactly two scopes — Databricks SQL and
+                Vector Search, the two data paths your agent uses <em>as you</em>. (Memory needs no consent:
+                it runs as the app's own service principal.) You see precisely what you delegate, and nothing
+                more is possible. Click <strong>Authorize</strong>.</p>
+            </div>
+            <div class="feature-card bracketed navy reveal r4" style="padding: 24px 22px;">
+                <div class="subhead" style="margin-bottom: 14px;">2 · THE REDACTION MOMENT</div>
+                <p class="body-text" style="font-size: 16px;">Then ask it: "What's the status of order
+                <span style="font-family: var(--font-hud); font-size: 14px;">ORD-10001</span>? Include the customer's email."
+                The order comes back — the PII comes back
+                <span style="font-family: var(--font-hud); font-size: 14px;">***REDACTED***</span>. The same Unity Catalog
+                column mask you saw in the notebook fires through your deployed agent.</p>
+            </div>
+            <div class="feature-card bracketed navy reveal r5" style="padding: 24px 22px;">
+                <div class="subhead" style="margin-bottom: 14px;">3 · IT REMEMBERS</div>
+                <p class="body-text" style="font-size: 16px;">Ask a follow-up that only makes sense with memory —
+                "and when was that order placed?" The chat header shows your <strong>session id</strong> and
+                memory schema; every turn is being stored in Lakebase under it. You'll read those exact
+                rows after the evals.</p>
+            </div>
+        </div>
+        <div class="reveal r6" style="margin-top: 40px; max-width: 1100px;">
+            <div class="quote-line" style="margin-bottom: 20px;"></div>
+            <p class="body-text" style="font-family: var(--font-body); font-size: 24px; font-weight: 500; line-height: 1.7; color: var(--deep-navy);">
+                Nobody wrote redaction logic in the app. The mask was defined once, in the catalog —
+                governance you didn't have to build.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- =======================================================================
+     SLIDE 5 — THE PLANTED BUGS · pink grid, three bug cards
+     ======================================================================= -->
+<section class="slide surface-pink">
+    <div class="slide-content" style="justify-content: center;">
+        <div class="reveal r1" style="margin-bottom: 20px;"><span class="label-pill pink">The Sabotage</span></div>
+        <h2 class="headline reveal r2" style="margin-bottom: 16px;">Three bugs are hiding in the data</h2>
+        <p class="body-text reveal r3" style="max-width: 1100px; margin-bottom: 40px;">
+            Your agent's code is fine. The <em>data</em> lies — the most common failure mode of real
+            enterprise agents. In Module 4, go hunting:
+        </p>
+        <div class="reveal r4" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 28px;">
+            <div class="feature-card bracketed navy">
+                <div class="eyebrow" style="color: var(--deep-navy); margin-bottom: 12px; font-size: 12px;">BUG 01 · AVAILABILITY</div>
+                <div class="subhead" style="margin-bottom: 12px;">Discontinued, still marketed</div>
+                <p class="body-text" style="font-size: 16px;">Somewhere, marketing docs pitch a product as "available for
+                immediate purchase" that the catalog says is <strong>Discontinued</strong>. A good agent trusts the catalog.
+                Try asking about products you saw in Module 1.</p>
+            </div>
+            <div class="feature-card bracketed navy">
+                <div class="eyebrow" style="color: var(--deep-navy); margin-bottom: 12px; font-size: 12px;">BUG 02 · WARRANTY ★</div>
+                <div class="subhead" style="margin-bottom: 12px;">The warranty lie</div>
+                <p class="body-text" style="font-size: 16px;">Every structured source agrees on the warranty term — the catalog
+                column, the official policy. Only the free-text <em>marketing copy</em> brags about something longer.
+                Ask your agent about a warranty and watch which source it trusts.</p>
+            </div>
+            <div class="feature-card bracketed navy">
+                <div class="eyebrow" style="color: var(--deep-navy); margin-bottom: 12px; font-size: 12px;">BUG 03 · POLICY</div>
+                <div class="subhead" style="margin-bottom: 12px;">The too-nice policy doc</div>
+                <p class="body-text" style="font-size: 16px;">An over-permissive "Customer Satisfaction Policy (Extended)" lives in the
+                policy <em>table itself</em>. No prompt fixes bad data — this one's for your data engineers.</p>
+            </div>
+        </div>
+        <div class="reveal r5" style="margin-top: 40px;">
+            <div class="quote-line" style="margin-bottom: 20px;"></div>
+            <p class="body-text" style="font-size: 24px; font-weight: 500; color: var(--deep-navy);">
+                Spoiler for Module 4: your structured data is right — your agent reads the marketing copy.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- =======================================================================
+     SLIDE 6 — MEASURE IT · dark, eval hbar chart baseline vs fixed
+     ======================================================================= -->
+<section class="slide surface-dark" data-starfield>
+    <div class="crt-glow"></div>
+    <div class="slide-content" style="justify-content: center;">
+        <div class="reveal r1" style="margin-bottom: 20px;"><span class="label-pill cyan">The Scoreboard</span></div>
+        <h2 class="headline reveal r2" style="margin-bottom: 16px;">Anecdotes → numbers → proof</h2>
+        <p class="body-text reveal r3" style="max-width: 1150px; margin-bottom: 40px;">
+            In Module 5, <span style="font-family: var(--font-hud); font-size: 14px;">05_Evaluate_and_Fix</span> runs your agent
+            in-process (tools still OBO as you) over a 5-question eval set, scored by three MLflow
+            <span style="font-family: var(--font-hud); font-size: 14px;">Guidelines</span> LLM judges — every row backed by a
+            <strong style="color: var(--white);">real trace</strong> with the judge's rationale attached. Expect this shape:
+        </p>
+        <div class="reveal r4" style="max-width: 1300px;">
+            <div class="bar-row">
+                <div class="bar-label">warranty · baseline</div>
+                <div class="bar-track"><div class="bar-fill pink" data-w="70"></div></div>
+                <div class="bar-value">0.6–0.8 ✗</div>
+            </div>
+            <div class="bar-row">
+                <div class="bar-label">warranty · fixed</div>
+                <div class="bar-track"><div class="bar-fill cyan" data-w="100"></div></div>
+                <div class="bar-value">1.0 ✓</div>
+            </div>
+            <div class="bar-row">
+                <div class="bar-label">availability · both runs</div>
+                <div class="bar-track"><div class="bar-fill cyan" data-w="100"></div></div>
+                <div class="bar-value">1.0 ✓</div>
+            </div>
+            <div class="bar-row">
+                <div class="bar-label">policy-grounded · fixed</div>
+                <div class="bar-track"><div class="bar-fill yellow" data-w="80"></div></div>
+                <div class="bar-value">0.8 ⚠</div>
+            </div>
+        </div>
+        <p class="body-text reveal r5" style="max-width: 1150px; margin-top: 28px;">
+            The fix is a <strong style="color: var(--white);">prompt change</strong> — warranty questions must ground in
+            <span style="font-family: var(--font-hud); font-size: 14px;">get_return_policy('warranty')</span>. And when you see the
+            yellow dip, that's the <em>lesson</em>, not a bug: the returns-policy row fails on
+            <strong style="color: var(--neon-yellow);">data</strong> no prompt can fix. Your evals tell you which is which.
+        </p>
+    </div>
+</section>
+
+<!-- =======================================================================
+     SLIDE 6½ — THE MEMORY · cyan grid, Lakebase receipts (Module 5½)
+     ======================================================================= -->
+<section class="slide surface-cyan">
+    <div class="slide-content" style="justify-content: center;">
+        <div class="reveal r1" style="margin-bottom: 20px;"><span class="label-pill">The Memory · Module 5½</span></div>
+        <h2 class="headline reveal r2" style="margin-bottom: 16px;">Your agent kept receipts — go read them</h2>
+        <p class="body-text reveal r3" style="max-width: 1150px; margin-bottom: 32px;">
+            The whole time you've been chatting, your agent has been writing every turn to
+            <strong>Lakebase</strong> — Databricks' managed Postgres — via the Lakebase resource attached
+            at deploy, into a schema it owns (your chat header shows it). Open
+            <strong>Compute → Lakebase</strong>, enter the project
+            <strong>"Agent Apps Workshop Memory"</strong>, open the SQL Editor, and run — with <em>your</em> schema name:
+        </p>
+        <div class="reveal r4" style="background: var(--deep-navy); border: 2px solid rgba(94, 220, 244, 0.3); padding: 22px 28px; max-width: 900px; margin-bottom: 36px;">
+            <p style="font-family: var(--font-hud); font-size: 16px; line-height: 1.8; color: var(--neon-cyan);">SELECT session_id, message_data, created_at<br>FROM memory_&lt;your_app_name&gt;.agent_messages<br>ORDER BY created_at DESC LIMIT 20;</p>
+        </div>
+        <div class="reveal r5" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 28px;">
+            <div class="feature-card bracketed navy" style="padding: 22px 22px;">
+                <div class="subhead" style="margin-bottom: 10px; font-size: 19px;">THAT'S YOUR CHAT</div>
+                <p class="body-text" style="font-size: 15px;">Find the session id from your app's header — every question
+                you asked is there, as OLTP rows, back in double-digit milliseconds. Real Postgres, living next to your lakehouse.</p>
+            </div>
+            <div class="feature-card bracketed navy" style="padding: 22px 22px;">
+                <div class="subhead" style="margin-bottom: 10px; font-size: 19px;">TWO AUTH PATTERNS</div>
+                <p class="body-text" style="font-size: 15px;">The rows were written by your app's <em>service principal</em>
+                into a schema it owns — its Postgres role set up by the deploy recipe. The data tools stay
+                on-behalf-of-<em>you</em>, because governance (the PII mask) must follow the human. Each where it belongs.</p>
+            </div>
+            <div class="feature-card bracketed navy" style="padding: 22px 22px;">
+                <div class="subhead" style="margin-bottom: 10px; font-size: 19px;">PRODUCTION ANGLE</div>
+                <p class="body-text" style="font-size: 15px;">These transcripts are exactly what you'd point monitoring and
+                evals at in production. (And if your chat header ever says <span style="font-family: var(--font-hud); font-size: 13px;">memory: off</span>,
+                chat still works — single-turn. The fix: re-run <span style="font-family: var(--font-hud); font-size: 13px;">02_Deploy_App</span>, Run All.)</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =======================================================================
+     SLIDE 7 — THE HARDENING LOOP · lavender, production framing
+     ======================================================================= -->
+<section class="slide surface-lavender">
+    <div class="slide-content" style="justify-content: center;">
+        <div class="reveal r1" style="margin-bottom: 20px;"><span class="label-pill">Production Mode</span></div>
+        <h2 class="headline reveal r2" style="margin-bottom: 40px;">The loop is the product</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 40px;">
+            <div class="feature-card bracketed navy reveal r3">
+                <div class="subhead" style="margin-bottom: 14px;">JUDGES AS REGRESSION GATES</div>
+                <p class="body-text">Your eval notebook is a unit-test suite for agent behavior. Package app + eval
+                as a <strong>Databricks Asset Bundle</strong>, re-run on every prompt, data, or model change, and fail
+                the pipeline when <span style="font-family: var(--font-hud); font-size: 14px;">warranty_accuracy</span> drops.</p>
+            </div>
+            <div class="feature-card bracketed navy reveal r4">
+                <div class="subhead" style="margin-bottom: 14px;">TRACES IN UNITY CATALOG</div>
+                <p class="body-text">Production traces land governed and queryable — lineage and audit on every
+                agent decision, debuggable in natural language ("which traces failed the warranty judge, and why?").</p>
+            </div>
+        </div>
+        <div class="feature-card bracketed yellow reveal r5" style="box-shadow: 8px 8px 0 var(--neon-yellow);">
+            <div class="subhead" style="margin-bottom: 14px;">EVALUATE BEFORE YOU SWAP</div>
+            <p class="body-text">Changing the model is one line in <span style="font-family: var(--font-hud); font-size: 14px;">app.yaml</span>.
+            When this lab was built, one frontier model <em>self-corrected the planted warranty bug</em>; another
+            failed tool-calling outright. Same agent, wildly different behavior — which is exactly why you'll
+            leave today owning an eval harness that settles model choices with numbers instead of vibes.</p>
+        </div>
+    </div>
+</section>
+
+<!-- =======================================================================
+     SLIDE 8 — CLOSING / CTA · dark, pixel landscape + button
+     ======================================================================= -->
+<section class="slide surface-dark" data-starfield data-particles>
+    <div class="crt-glow"></div>
+    <div class="pixel-landscape" data-landscape></div>
+    <div class="slide-content" style="justify-content: center; align-items: center; text-align: center;">
+        <div class="reveal r1" style="margin-bottom: 28px;"><span class="label-pill">Press Start</span></div>
+        <h2 class="pixel-hero reveal r2" style="font-size: 96px; margin-bottom: 28px;">BUILD IT. BREAK IT.<br>PROVE IT.</h2>
+        <p class="hero-tagline reveal r3" style="max-width: 860px; margin-bottom: 44px;">
+            Deploy governed. Trace everything. Judge continuously. The loop you run today is the same
+            one that keeps an agent alive in production — every time the data, prompt, or model changes.
+        </p>
+        <div class="reveal r4" style="display: flex; gap: 32px; align-items: center; flex-wrap: wrap; justify-content: center;">
+            <a class="pixel-button" href="/">▸ Open the Lab Guide</a>
+            <a class="hero-badge" href="https://github.com/databricks/tmm/tree/main/agent_apps_workshop" target="_blank" rel="noopener" style="border-color: var(--neon-yellow); color: var(--neon-yellow);">source ▸ github.com/databricks/tmm</a>
+            <a class="hero-badge" href="https://docs.databricks.com/aws/en/dev-tools/databricks-apps/" target="_blank" rel="noopener" style="border-color: var(--neon-cyan); color: var(--neon-cyan);">docs: databricks.com/apps</a>
+            <a class="hero-badge" href="https://mlflow.org/genai" target="_blank" rel="noopener" style="border-color: var(--neon-pink); color: var(--neon-pink);">mlflow.org/genai</a>
+        </div>
+        <p class="hero-tagline reveal r4" style="max-width: 760px; margin-top: 22px; font-size: 15px;">
+            Then head back to your Databricks workspace and open <strong style="color: var(--white);">00_Start_Here</strong> to begin.
+        </p>
+    </div>
+</section>
+
+</main>
+</div>
+
+<!-- Deck chrome: nav rail, counter, hint, edit affordance -->
+<nav class="nav-rail" id="navRail" aria-label="Slide navigation"></nav>
+<div class="slide-counter" id="slideCounter">01 / 09</div>
+<div class="nav-hint">Use keys ↑ ↓</div>
+<div class="edit-hotzone" id="editHotzone"></div>
+<button class="edit-toggle" id="editToggle" title="Edit mode (E)">✏ EDIT</button>
+
+<script>
+/* ===========================================================================
+   SLIDE PRESENTATION CONTROLLER
+   Fixed 1920×1080 stage scaled to viewport; keyboard / wheel / touch nav.
+   =========================================================================== */
+class SlidePresentation {
+    constructor() {
+        this.slides = [...document.querySelectorAll('.slide')];
+        this.stage = document.getElementById('deckStage');
+        this.counter = document.getElementById('slideCounter');
+        this.rail = document.getElementById('navRail');
+        this.current = 0;
+        this.wheelLock = false;
+        this.buildRail();
+        this.setupStageScale();
+        this.setupNav();
+        this.show(0);
+    }
+
+    /* Scale the whole 1920×1080 stage to the window; letterbox as needed */
+    setupStageScale() {
+        const scale = () => {
+            const f = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+            const x = (window.innerWidth - 1920 * f) / 2;
+            const y = (window.innerHeight - 1080 * f) / 2;
+            this.stage.style.transform = `translate(${x}px, ${y}px) scale(${f})`;
+        };
+        scale();
+        window.addEventListener('resize', scale);
+    }
+
+    buildRail() {
+        this.slides.forEach((_, i) => {
+            const dot = document.createElement('button');
+            dot.className = 'nav-dot';
+            dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+            dot.addEventListener('click', () => this.show(i));
+            this.rail.appendChild(dot);
+        });
+    }
+
+    setupNav() {
+        document.addEventListener('keydown', (e) => {
+            if (e.target.getAttribute && e.target.getAttribute('contenteditable')) return;
+            if (['ArrowDown', 'ArrowRight', ' ', 'PageDown'].includes(e.key)) { e.preventDefault(); this.show(this.current + 1); }
+            if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); this.show(this.current - 1); }
+            if (e.key === 'Home') this.show(0);
+            if (e.key === 'End') this.show(this.slides.length - 1);
+        });
+        window.addEventListener('wheel', (e) => {
+            if (this.wheelLock) return;
+            this.wheelLock = true;
+            setTimeout(() => { this.wheelLock = false; }, 800);
+            this.show(this.current + (e.deltaY > 0 ? 1 : -1));
+        }, { passive: true });
+        let touchY = null;
+        window.addEventListener('touchstart', (e) => { touchY = e.touches[0].clientY; }, { passive: true });
+        window.addEventListener('touchend', (e) => {
+            if (touchY === null) return;
+            const dy = touchY - e.changedTouches[0].clientY;
+            if (Math.abs(dy) > 50) this.show(this.current + (dy > 0 ? 1 : -1));
+            touchY = null;
+        }, { passive: true });
+    }
+
+    show(i) {
+        this.current = Math.max(0, Math.min(i, this.slides.length - 1));
+        this.slides.forEach((s, j) => {
+            const on = j === this.current;
+            s.classList.toggle('active', on);
+            s.classList.toggle('visible', on);
+            if (!on) resetCharts(s);   /* replay bar/counter animations on re-entry */
+        });
+        const n = String(this.current + 1).padStart(2, '0');
+        this.counter.textContent = `${n} / ${String(this.slides.length).padStart(2, '0')}`;
+        [...this.rail.children].forEach((d, j) => d.classList.toggle('active', j === this.current));
+        animateCharts(this.slides[this.current]);
+    }
+}
+
+/* === CHART + COUNTER ANIMATIONS (staggered on slide entry) =============== */
+function animateCharts(slide) {
+    slide.querySelectorAll('.bar-fill').forEach((bar, i) => {
+        setTimeout(() => { bar.style.width = bar.dataset.w + '%'; }, 350 + i * 150);
+    });
+    slide.querySelectorAll('[data-counter]').forEach((el) => {
+        const target = parseInt(el.dataset.counter, 10);
+        if (target === 0) { el.textContent = '0'; return; }   /* zero is the point — show it instantly */
+        let v = 0;
+        const step = Math.max(1, Math.round(target / 30));
+        const tick = setInterval(() => {
+            v = Math.min(target, v + step);
+            el.textContent = v;
+            if (v >= target) clearInterval(tick);
+        }, 33);
+    });
+}
+function resetCharts(slide) {
+    slide.querySelectorAll('.bar-fill').forEach((bar) => { bar.style.width = '0'; });
+}
+
+/* === STARFIELD + PARTICLES + LANDSCAPE (dark surfaces) ==================== */
+const NEONS = ['#5EDCF4', '#F4D03F', '#F0A6CA'];
+document.querySelectorAll('[data-starfield]').forEach((slide) => {
+    const field = document.createElement('div');
+    field.className = 'starfield';
+    for (let i = 0; i < 40; i++) {
+        const s = document.createElement('div');
+        s.className = 'star';
+        const size = 4 + (i % 2) * 2;          /* 4px or 6px — pixel unit */
+        s.style.cssText = `width:${size}px;height:${size}px;background:${NEONS[i % 3]};` +
+            `left:${(i * 47) % 100}%;top:${(i * 31) % 100}%;animation-delay:${(i % 10) * 0.3}s;`;
+        field.appendChild(s);
+    }
+    slide.prepend(field);
+});
+document.querySelectorAll('[data-particles]').forEach((slide) => {
+    for (let i = 0; i < 10; i++) {
+        const p = document.createElement('div');
+        p.className = 'pixel-particle';
+        p.style.cssText = `background:${NEONS[i % 3]};left:${5 + (i * 9.7) % 90}%;` +
+            `top:${15 + (i * 13) % 70}%;animation-delay:${i * 0.8}s;opacity:0.5;`;
+        slide.appendChild(p);
+    }
+});
+document.querySelectorAll('[data-landscape]').forEach((zone) => {
+    const heights = [30, 50, 70, 45, 90, 60, 35, 80, 55, 70, 40, 65, 85, 50, 30, 75, 45, 60, 95, 40, 55, 70, 35, 60];
+    let x = 0;
+    heights.forEach((h, i) => {
+        const w = 60 + (i % 3) * 20;
+        const m = document.createElement('div');
+        m.className = 'mountain';
+        m.style.cssText = `left:${x}px;width:${w}px;height:${h}px;`;
+        zone.appendChild(m);
+        x += w;
+    });
+});
+
+/* === INLINE EDITING (E key / hotzone hover, saves to localStorage) ======== */
+const editor = {
+    isActive: false,
+    key: 'agent-apps-recap-edits',
+    toggleEditMode() {
+        this.isActive = !this.isActive;
+        document.getElementById('editToggle').classList.toggle('active', this.isActive);
+        document.querySelectorAll('.slide h1, .slide h2, .slide p, .slide .subhead, .slide .eyebrow, .slide .bar-label, .slide .bar-value')
+            .forEach((el) => el.setAttribute('contenteditable', this.isActive ? 'true' : 'false'));
+        if (!this.isActive) this.save();
+    },
+    save() {
+        try { localStorage.setItem(this.key, document.querySelector('.deck-stage').innerHTML); } catch (e) { /* no-op */ }
+    },
+    restore() {
+        /* Edits persist per-browser only; the hosted app always serves the canonical deck. */
+        try {
+            const saved = localStorage.getItem(this.key);
+            if (saved) document.querySelector('.deck-stage').innerHTML = saved;
+        } catch (e) { /* no-op */ }
+    }
+};
+const hotzone = document.getElementById('editHotzone');
+const editToggle = document.getElementById('editToggle');
+let hideTimeout = null;
+hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); editToggle.classList.add('show'); });
+hotzone.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!editor.isActive) editToggle.classList.remove('show'); }, 400); });
+editToggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+editToggle.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!editor.isActive) editToggle.classList.remove('show'); }, 400); });
+editToggle.addEventListener('click', () => editor.toggleEditMode());
+document.addEventListener('keydown', (e) => {
+    if ((e.key === 'e' || e.key === 'E') && !(e.target.getAttribute && e.target.getAttribute('contenteditable') === 'true')) editor.toggleEditMode();
+    if ((e.ctrlKey || e.metaKey) && e.key === 's' && editor.isActive) { e.preventDefault(); editor.save(); }
+});
+
+new SlidePresentation();
+</script>
+</body>
+</html>

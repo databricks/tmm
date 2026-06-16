@@ -1,0 +1,23 @@
+{
+  "_comment": "Vocareum course config for 'Hands on: Agent Apps Workshop' (lab 216857, Marketing org). Classic / framework-native model, cloned-by-copy from the Agent Bricks lab. The framework's workspace_init() assigns a unique UC metastore + a PRO serverless warehouse, then runs the agent_apps_setup workspace_setup notebook AS THE PRIVILEGED IDENTITY on serverless job compute (host/token injected as notebook params). content (agent_apps_lab) is copied into each student's home. Everything ships from /voc/private/courseware/ only — no /scripts or /voc/private/python hooks.",
+
+  "content": {
+    "src": "agent_apps_lab.zip",
+    "entry": "00_Start_Here"
+  },
+
+  "workspace_setup": {
+    "src": "agent_apps_setup.zip",
+    "entry": "agent_apps_setup",
+    "serverless_job_cluster": true
+  },
+
+  "metastore_config": {
+    "unique": true
+  },
+
+  "warehouse_config": {
+    "warehouse_type": "PRO",
+    "enable_serverless_compute": true
+  }
+}
