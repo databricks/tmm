@@ -16,10 +16,12 @@ AS
     `kafka.sasl.login.callback.handler.class` => 'kafkashaded.org.apache.kafka.common.security.oauthbearer.secured.OAuthBearerLoginCallbackHandler',
 
 
-    `kafka.sasl.jaas.config` =>  
-         '
-          kafkashaded.org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required
-          clientId="3tedd4qhr6t5rp67s6as7pi56s"
-          clientSecret="1ph8inouq89b5lr53g0ppq3r3b9fouoic9lqdv57ebr4ruhb7qcn" ;          
-          '
+    -- Credentials are read from the Databricks secret scope `gcn_kafka`
+    -- (deployed via scripts/deploy_secret_scope.sh). secret() redacts in logs/output.
+    `kafka.sasl.jaas.config` =>
+         'kafkashaded.org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required clientId="'
+         || secret('gcn_kafka', 'client_id')
+         || '" clientSecret="'
+         || secret('gcn_kafka', 'client_secret')
+         || '" ;'
   );

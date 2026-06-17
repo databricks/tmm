@@ -1,6 +1,3 @@
-
-
-
 CREATE OR REFRESH STREAMING TABLE parsed_space_events
 AS
   SELECT

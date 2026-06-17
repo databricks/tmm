@@ -1,5 +1,5 @@
 bundle:
-  name: gcn-nasa-pipeline
+  name: dais-lakeflow-agentbricks
 
 include:
   - resources/*.yml
@@ -7,25 +7,25 @@ include:
 variables:
   catalog:
     description: Unity Catalog catalog the pipeline writes to.
-    default: main
+    default: demos1
   schema:
     description: Schema (database) for the streaming tables.
-    default: gcn_demo
+    default: gcn_kafka
 
 targets:
   dev:
     default: true
     mode: development
     workspace:
-      profile: DEFAULT
+      profile: dbc-34e8a5a4-09d1
     variables:
-      catalog: main
-      schema: gcn_demo
+      catalog: demos1
+      schema: gcn_kafka
 
   prod:
     mode: production
     workspace:
-      profile: DEFAULT
+      profile: dbc-34e8a5a4-09d1
     variables:
-      catalog: main
-      schema: gcn_prod
+      catalog: demos1
+      schema: gcn_kafka

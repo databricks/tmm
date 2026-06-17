@@ -1,10 +1,11 @@
 resources:
   pipelines:
-    gcn_pipeline:
-      name: "[${bundle.target}] GCN NASA Space Events"
+    gcn_kafka:
+      name: "gcn-kafka"
 
       catalog: ${var.catalog}
       schema: ${var.schema}
+      edition: ADVANCED
 
       # Pipeline source: the SQL transformations in gcn-pipeline/transformations/
       root_path: ../gcn-pipeline
@@ -15,7 +16,7 @@ resources:
       serverless: true
       continuous: false
       photon: true
-      channel: current
+      channel: CURRENT
 
       permissions:
         - level: CAN_VIEW
