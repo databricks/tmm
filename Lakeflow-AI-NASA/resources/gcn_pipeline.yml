@@ -1,0 +1,22 @@
+resources:
+  pipelines:
+    gcn_pipeline:
+      name: "[${bundle.target}] GCN NASA Space Events"
+
+      catalog: ${var.catalog}
+      schema: ${var.schema}
+
+      # Pipeline source: the SQL transformations in gcn-pipeline/transformations/
+      root_path: ../gcn-pipeline
+      libraries:
+        - glob:
+            include: ../gcn-pipeline/transformations/**
+
+      serverless: true
+      continuous: false
+      photon: true
+      channel: current
+
+      permissions:
+        - level: CAN_VIEW
+          group_name: "users"

@@ -1,0 +1,31 @@
+bundle:
+  name: gcn-nasa-pipeline
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog:
+    description: Unity Catalog catalog the pipeline writes to.
+    default: main
+  schema:
+    description: Schema (database) for the streaming tables.
+    default: gcn_demo
+
+targets:
+  dev:
+    default: true
+    mode: development
+    workspace:
+      profile: DEFAULT
+    variables:
+      catalog: main
+      schema: gcn_demo
+
+  prod:
+    mode: production
+    workspace:
+      profile: DEFAULT
+    variables:
+      catalog: main
+      schema: gcn_prod
