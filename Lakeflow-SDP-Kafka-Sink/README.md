@@ -1,5 +1,5 @@
-# Lakeflow Declarative Pipeline with Kafka Sink
-A LDP pipeline that reads cookie sales data and streams it to Confluent Kafka using a Kafka sink.
+# Lakeflow SDP with Kafka Sink
+A Lakeflow SDP pipeline that reads cookie sales data and streams it to Confluent Kafka using a Kafka sink.
 
 
 ![img](misc/diag.png)
@@ -29,7 +29,7 @@ databricks secrets put-secret fm-kafka-sink confluentSecret --string-value <your
 
 2. Configure Pipeline
 
-Update these variables in the pipeline source file ldp_kafka_sink (or extract them into pipeline configuration values):
+Update these variables in the pipeline source file SDP Kafka Sink (or extract them into pipeline configuration values):
 ```
 BOOTSTRAP = "your-bootstrap-server"  # From Confluent Cloud
 TOPIC = "your-topic-name"            # Your target Kafka topic
