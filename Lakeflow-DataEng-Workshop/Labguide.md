@@ -13,7 +13,7 @@ Take your time, ask questions, and don't worry about breaking anything — your 
 
 ### Overview
 
-This Labguide is available [here](https://github.com/databricks/tmm/blob/main/Lakeflow-DataEng-Workshop-V2/Labguide.md). 
+This Labguide is available [here](https://github.com/databricks/tmm/blob/main/Lakeflow-DataEng-Workshop/Labguide.md). 
 
 - **Lab 1 — Manually code an SDP pipeline**: streaming table in **Python**, materialized view in **SQL** with three data-quality expectations wired in from the start. Reference files in [`labs/01-SDP/`](./labs/01-SDP/).
 - **Lab 2 — Learn how to use Genie Code as a data engineer**: all-**SQL** pipeline (AutoCDC + Auto Loader + join gold MV), produced from a single Genie Code prompt — and verified by you before it runs. Reference files in [`labs/02-GenieCode/`](./labs/02-GenieCode/).
@@ -58,8 +58,8 @@ Clone this repo into your Workspace once at the start. You get this lab guide an
    - **Git provider**: GitHub
    - **Git folder name**: `de-workshop-repo`
    - Enable **Sparse checkout mode**
-   - **Sparse checkout path**: `Lakeflow-DataEng-Workshop-V2`
-3. Click **Create Git folder**. The `Lakeflow-DataEng-Workshop-V2/` subdirectory clones into `de-workshop-repo/` in your workspace.
+   - **Sparse checkout path**: `Lakeflow-DataEng-Workshop`
+3. Click **Create Git folder**. The `Lakeflow-DataEng-Workshop/` subdirectory clones into `de-workshop-repo/` in your workspace.
 
 
 Most of those lab folders have reference files only. Some folders include notebooks that you can run directly, as described below.
@@ -194,7 +194,7 @@ The same shape, written without SDP, would be a streaming job, a batch job, and 
 Running the pipeline with an addtional downstream action as a multi-step workflow gave you a production ready job that can be invoked by any Job trigger. 
 
 
-![Lab 1 — completed pipeline run in the Lakeflow Pipelines Editor: streaming table sales_transactions (3.3K output records) feeds materialized view sales_stats (6 output records, 3 expectations, 100% written, 0% dropped)](https://raw.githubusercontent.com/databricks/tmm/main/Lakeflow-DataEng-Workshop-V2/misc/images/lab1-ui-expectations.png)
+![Lab 1 — completed pipeline run in the Lakeflow Pipelines Editor: streaming table sales_transactions (3.3K output records) feeds materialized view sales_stats (6 output records, 3 expectations, 100% written, 0% dropped)](https://raw.githubusercontent.com/databricks/tmm/main/Lakeflow-DataEng-Workshop/misc/images/lab1-ui-expectations.png)
 
 
 
@@ -272,7 +272,7 @@ Explain the data flow in this pipeline end-to-end. Which node is incrementally m
 
 ### What you should see
 
-![Lab 2 — Genie Code generated pipeline with bronze (bookings, fraud_flags, payments), silver (bookings_with_fraud) and gold (fraud_by_party_and_method) layers in the Lakeflow Pipelines Editor](https://raw.githubusercontent.com/databricks/tmm/main/Lakeflow-DataEng-Workshop-V2/misc/images/lab2-dag.png)
+![Lab 2 — Genie Code generated pipeline with bronze (bookings, fraud_flags, payments), silver (bookings_with_fraud) and gold (fraud_by_party_and_method) layers in the Lakeflow Pipelines Editor](https://raw.githubusercontent.com/databricks/tmm/main/Lakeflow-DataEng-Workshop/misc/images/lab2-dag.png)
 
 The Lakeflow Pipelines Editor shows Genie Code's plan on the right, the generated SQL in the centre, and the resolved DAG with row counts at the bottom — three bronze streaming tables, one silver streaming table, and a gold materialized view. Use the row counts as your sanity check against the [Verify](#verify--the-step-that-matters-most) section.
 
@@ -305,7 +305,7 @@ By the end of the lab you'll see every attendee's events sitting alongside your 
 
 ### Step 3a — Open the notebook from the cloned repo
 
-In the Workspace sidebar, navigate to your cloned `de-workshop-repo/Lakeflow-DataEng-Workshop-V2/labs/03-Zerobus/send_city_iot_data.py` and click to open it. The notebook runs directly from the Git folder.
+In the Workspace sidebar, navigate to your cloned `de-workshop-repo/Lakeflow-DataEng-Workshop/labs/03-Zerobus/send_city_iot_data.py` and click to open it. The notebook runs directly from the Git folder.
 
 The first cell installs the Zerobus Ingest SDK via `%pip install` and restarts Python so the install takes effect (~10-30 seconds). Run it before the rest of the cells.
 
