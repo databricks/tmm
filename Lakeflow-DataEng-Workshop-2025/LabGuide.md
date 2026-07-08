@@ -1,7 +1,11 @@
+> [!NOTE]
+> **This workshop is no longer maintained.** It is kept here for reference only
+> and may contain outdated instructions, links, or screenshots.
+
 # AI-Powered Data Engineering with Lakeflow 
 # Lab Guide / March-13, 2026
 
-<img src="https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-DataEng-Workshop/media/pl_graph.png" alt="pipeline graph" width="75%">
+<img src="https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-DataEng-Workshop-2025/media/pl_graph.png" alt="pipeline graph" width="75%">
 
 
 
@@ -28,7 +32,7 @@ You started a new job as a data engineer last week. Congratulations! Now you are
 ## Important
 
 * This is your lab guide. Please **keep it open in a separate tab**. You will need it to follow the steps below throughout the course.
-* This lab guide is also part of the public [tmm GitHub repo](https://github.com/databricks/tmm/tree/main/Lakeflow-DataEng-Workshop), so you can easily recreate this course in your own account or even share it with your colleagues at your company.
+* This lab guide is also part of the public [tmm GitHub repo](https://github.com/databricks/tmm/tree/main/Lakeflow-DataEng-Workshop-2025), so you can easily recreate this course in your own account or even share it with your colleagues at your company.
 
 ## Very Important
 
@@ -49,9 +53,9 @@ To kick it off, let's create a git folder in your workspace and clone the existi
   * For Git Repo URL use  [`https://github.com/databricks/tmm`](https://github.com/databricks/tmm)
   * Git provider and repo name will be filled automatically (repo name is `tmm`).
   * Select **Sparse Checkout Mode** since we only need one folder (without sparse checkout, you will clone more content than necessary)
-  * Under **Cone Pattern** put `Lakeflow-DataEng-Workshop`
+  * Under **Cone Pattern** put `Lakeflow-DataEng-Workshop-2025`
   * Click **Create Repo** and the resources for this course will be cloned.
-* In the file browser, click on **Lakeflow-DataEng-Workshop**. This is the folder we will be working with in this lab.
+* In the file browser, click on **Lakeflow-DataEng-Workshop-2025**. This is the folder we will be working with in this lab.
 
 ## 2. Spark Declarative Pipelines (SDP)
 
@@ -72,7 +76,7 @@ After this module, you should be able to work with the pipelines editor and answ
 We will work with the new pipeline editor in this module
 
 
-<img src="https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-DataEng-Workshop/media/pl_details.png" alt="run your first delcarative pipeline" width="75%">
+<img src="https://raw.githubusercontent.com/databricks/tmm/refs/heads/main/Lakeflow-DataEng-Workshop-2025/media/pl_details.png" alt="run your first delcarative pipeline" width="75%">
 
 The new pipeline editor introduces several enhanced capabilities. Please familiarize yourself with these key features:
 
@@ -104,7 +108,7 @@ Remember that you created a git folder which contains the code for the pipeline?
 
 1. Under **Get started with your pipeline**, click on **Add existing assets** 
 2. Select the following:
-  - **Pipeline root folder**: `tmm / Lakeflow-DataEng-Workshop / loans-pipeline` 
+  - **Pipeline root folder**: `tmm / Lakeflow-DataEng-Workshop-2025 / loans-pipeline` 
   - For **Source code paths** use the same path as for root folder, then select the `transformations` sub folder
 and click on **Add**. 
 
