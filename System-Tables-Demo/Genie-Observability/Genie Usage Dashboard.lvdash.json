@@ -1,0 +1,4203 @@
+{
+  "datasets": [
+    {
+      "name": "genie_agents_daily",
+      "displayName": "Genie Agents Daily",
+      "queryLines": [
+        "SELECT\n",
+        "  u.usage_date,\n",
+        "  u.workspace_id,\n",
+        "  w.workspace_name,\n",
+        "  u.sku_name,\n",
+        "  CASE\n",
+        "    WHEN sku_name = 'GENIE_FREE_USAGE' THEN 'Free'\n",
+        "    ELSE 'Paid'\n",
+        "  END AS usage_type,\n",
+        "  SUM(u.usage_quantity) AS dbus\n",
+        "FROM\n",
+        "  system.billing.usage u\n",
+        "  LEFT JOIN system.access.workspaces_latest w\n",
+        "    ON u.workspace_id = w.workspace_id\n",
+        "WHERE\n",
+        "  u.billing_origin_product = 'GENIE'\n",
+        "  AND u.usage_metadata.genie.surface = 'GENIE_AGENTS'\n",
+        "  AND u.usage_date >= :date_range.min\n",
+        "  AND u.usage_date <= :date_range.max\n",
+        "GROUP BY\n",
+        "  u.usage_date,\n",
+        "  u.workspace_id,\n",
+        "  w.workspace_name,\n",
+        "  u.sku_name\n",
+        "ORDER BY\n",
+        "  u.usage_date"
+      ],
+      "parameters": [
+        {
+          "displayName": "Date Range",
+          "keyword": "date_range",
+          "dataType": "DATE",
+          "complexType": "RANGE",
+          "defaultSelection": {
+            "range": {
+              "dataType": "DATE",
+              "min": {
+                "value": "now/M"
+              },
+              "max": {
+                "value": "now/d"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "genie_code_daily",
+      "displayName": "genie_code_daily",
+      "queryLines": [
+        "SELECT\n",
+        "  u.usage_date,\n",
+        "  u.workspace_id,\n",
+        "  w.workspace_name,\n",
+        "  u.sku_name,\n",
+        "  CASE\n",
+        "    WHEN u.sku_name = 'GENIE_FREE_USAGE' THEN 'Free'\n",
+        "    ELSE 'Paid'\n",
+        "  END AS usage_type,\n",
+        "  SUM(u.usage_quantity) AS dbus,\n",
+        "  SUM(CASE WHEN u.sku_name != 'GENIE_FREE_USAGE' THEN u.usage_quantity * lp.pricing.effective_list.default ELSE 0 END) AS cost\n",
+        "FROM\n",
+        "  system.billing.usage u\n",
+        "  LEFT JOIN system.access.workspaces_latest w\n",
+        "    ON u.workspace_id = w.workspace_id\n",
+        "  LEFT JOIN system.billing.list_prices lp\n",
+        "    ON u.sku_name = lp.sku_name\n",
+        "    AND u.usage_end_time >= lp.price_start_time\n",
+        "    AND (lp.price_end_time IS NULL OR u.usage_end_time < lp.price_end_time)\n",
+        "WHERE\n",
+        "  u.billing_origin_product = 'GENIE'\n",
+        "  AND u.usage_metadata.genie.surface = 'GENIE_CODE'\n",
+        "  AND u.usage_date >= :date_range.min\n",
+        "  AND u.usage_date <= :date_range.max\n",
+        "GROUP BY\n",
+        "  u.usage_date,\n",
+        "  u.workspace_id,\n",
+        "  w.workspace_name,\n",
+        "  u.sku_name\n",
+        "ORDER BY\n",
+        "  u.usage_date"
+      ],
+      "parameters": [
+        {
+          "displayName": "Date Range",
+          "keyword": "date_range",
+          "dataType": "DATE",
+          "complexType": "RANGE",
+          "defaultSelection": {
+            "range": {
+              "dataType": "DATE",
+              "min": {
+                "value": "now/M"
+              },
+              "max": {
+                "value": "now/d"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "genie_one_daily",
+      "displayName": "genie_one_daily",
+      "queryLines": [
+        "SELECT\n",
+        "  u.usage_date,\n",
+        "  u.workspace_id,\n",
+        "  w.workspace_name,\n",
+        "  u.sku_name,\n",
+        "  CASE\n",
+        "    WHEN sku_name = 'GENIE_FREE_USAGE' THEN 'Free'\n",
+        "    ELSE 'Paid'\n",
+        "  END AS usage_type,\n",
+        "  SUM(u.usage_quantity) AS dbus\n",
+        "FROM\n",
+        "  system.billing.usage u\n",
+        "  LEFT JOIN system.access.workspaces_latest w\n",
+        "    ON u.workspace_id = w.workspace_id\n",
+        "WHERE\n",
+        "  u.billing_origin_product = 'GENIE'\n",
+        "  AND u.usage_metadata.genie.surface = 'GENIE_ONE'\n",
+        "  AND u.usage_date >= :date_range.min\n",
+        "  AND u.usage_date <= :date_range.max\n",
+        "GROUP BY\n",
+        "  u.usage_date,\n",
+        "  u.workspace_id,\n",
+        "  w.workspace_name,\n",
+        "  u.sku_name\n",
+        "ORDER BY\n",
+        "  u.usage_date"
+      ],
+      "parameters": [
+        {
+          "displayName": "Date Range",
+          "keyword": "date_range",
+          "dataType": "DATE",
+          "complexType": "RANGE",
+          "defaultSelection": {
+            "range": {
+              "dataType": "DATE",
+              "min": {
+                "value": "now/M"
+              },
+              "max": {
+                "value": "now/d"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "user_summary",
+      "displayName": "user_summary",
+      "queryLines": [
+        "SELECT\n",
+        "  u.identity_metadata.run_as AS user,\n",
+        "  SUM(\n",
+        "    CASE\n",
+        "      WHEN\n",
+        "        u.usage_metadata.genie.surface = 'GENIE_ONE'\n",
+        "        AND u.sku_name = 'GENIE_FREE_USAGE'\n",
+        "      THEN\n",
+        "        u.usage_quantity\n",
+        "      ELSE 0\n",
+        "    END\n",
+        "  ) AS genie_one_free_dbus,\n",
+        "  SUM(\n",
+        "    CASE\n",
+        "      WHEN\n",
+        "        u.usage_metadata.genie.surface = 'GENIE_ONE'\n",
+        "        AND u.sku_name != 'GENIE_FREE_USAGE'\n",
+        "      THEN\n",
+        "        u.usage_quantity * lp.pricing.effective_list.default\n",
+        "      ELSE 0\n",
+        "    END\n",
+        "  ) AS genie_one_cost,\n",
+        "  SUM(\n",
+        "    CASE\n",
+        "      WHEN\n",
+        "        u.usage_metadata.genie.surface = 'GENIE_AGENTS'\n",
+        "        AND u.sku_name = 'GENIE_FREE_USAGE'\n",
+        "      THEN\n",
+        "        u.usage_quantity\n",
+        "      ELSE 0\n",
+        "    END\n",
+        "  ) AS genie_agents_free_dbus,\n",
+        "  SUM(\n",
+        "    CASE\n",
+        "      WHEN\n",
+        "        u.usage_metadata.genie.surface = 'GENIE_AGENTS'\n",
+        "        AND u.sku_name != 'GENIE_FREE_USAGE'\n",
+        "      THEN\n",
+        "        u.usage_quantity * lp.pricing.effective_list.default\n",
+        "      ELSE 0\n",
+        "    END\n",
+        "  ) AS genie_agents_cost,\n",
+        "  SUM(\n",
+        "    CASE\n",
+        "      WHEN\n",
+        "        u.usage_metadata.genie.surface = 'GENIE_CODE'\n",
+        "        AND u.sku_name = 'GENIE_FREE_USAGE'\n",
+        "      THEN\n",
+        "        u.usage_quantity\n",
+        "      ELSE 0\n",
+        "    END\n",
+        "  ) AS genie_code_free_dbus,\n",
+        "  SUM(\n",
+        "    CASE\n",
+        "      WHEN\n",
+        "        u.usage_metadata.genie.surface = 'GENIE_CODE'\n",
+        "        AND u.sku_name != 'GENIE_FREE_USAGE'\n",
+        "      THEN\n",
+        "        u.usage_quantity\n",
+        "      ELSE 0\n",
+        "    END\n",
+        "  ) AS genie_code_paid_dbus,\n",
+        "  SUM(\n",
+        "    CASE\n",
+        "      WHEN\n",
+        "        u.usage_metadata.genie.surface = 'GENIE_CODE'\n",
+        "        AND u.sku_name != 'GENIE_FREE_USAGE'\n",
+        "      THEN\n",
+        "        u.usage_quantity * lp.pricing.effective_list.default\n",
+        "      ELSE 0\n",
+        "    END\n",
+        "  ) AS genie_code_paid_cost\n",
+        "FROM\n",
+        "  system.billing.usage u\n",
+        "    LEFT JOIN system.billing.list_prices lp\n",
+        "      ON u.sku_name = lp.sku_name\n",
+        "      AND u.usage_end_time >= lp.price_start_time\n",
+        "      AND (\n",
+        "        lp.price_end_time IS NULL\n",
+        "        OR u.usage_end_time < lp.price_end_time\n",
+        "      )\n",
+        "WHERE\n",
+        "  u.billing_origin_product = 'GENIE'\n",
+        "  AND u.usage_date >= :date_range.min\n",
+        "  AND u.usage_date <= :date_range.max\n",
+        "GROUP BY\n",
+        "  u.identity_metadata.run_as\n",
+        "ORDER BY\n",
+        "  genie_code_paid_cost DESC"
+      ],
+      "parameters": [
+        {
+          "displayName": "Date Range",
+          "keyword": "date_range",
+          "dataType": "DATE",
+          "complexType": "RANGE",
+          "defaultSelection": {
+            "range": {
+              "dataType": "DATE",
+              "min": {
+                "value": "now/M"
+              },
+              "max": {
+                "value": "now/d"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "genie_one_free_dbus",
+      "displayName": "genie_one_free_dbus",
+      "queryLines": [
+        "WITH free_usage AS (\n",
+        "  SELECT\n",
+        "    workspace_id,\n",
+        "    usage_quantity,\n",
+        "    usage_end_time\n",
+        "  FROM\n",
+        "    system.billing.usage\n",
+        "  WHERE\n",
+        "    billing_origin_product = 'GENIE'\n",
+        "    AND usage_metadata.genie.surface = 'GENIE_ONE'\n",
+        "    AND sku_name = 'GENIE_FREE_USAGE'\n",
+        "    AND usage_date >= :date_range.min\n",
+        "    AND usage_date <= :date_range.max\n",
+        "),\n",
+        "latest_real_sku AS (\n",
+        "  SELECT\n",
+        "    workspace_id,\n",
+        "    max_by(sku_name, usage_start_time) AS proxy_sku_name\n",
+        "  FROM\n",
+        "    system.billing.usage\n",
+        "  WHERE\n",
+        "    billing_origin_product = 'GENIE'\n",
+        "    AND sku_name != 'GENIE_FREE_USAGE'\n",
+        "    AND usage_date >= CURRENT_DATE - 30\n",
+        "  GROUP BY\n",
+        "    workspace_id\n",
+        ")\n",
+        "SELECT\n",
+        "  SUM(f.usage_quantity) AS free_dbus,\n",
+        "  SUM(f.usage_quantity * lp.pricing.effective_list.default * 0.75) AS estimated_cost\n",
+        "FROM\n",
+        "  free_usage f\n",
+        "    LEFT JOIN latest_real_sku r\n",
+        "      ON f.workspace_id = r.workspace_id\n",
+        "    LEFT JOIN system.billing.list_prices lp\n",
+        "      ON r.proxy_sku_name = lp.sku_name\n",
+        "      AND f.usage_end_time >= lp.price_start_time\n",
+        "      AND (\n",
+        "        lp.price_end_time IS NULL\n",
+        "        OR f.usage_end_time < lp.price_end_time\n",
+        "      )"
+      ],
+      "parameters": [
+        {
+          "displayName": "Date Range",
+          "keyword": "date_range",
+          "dataType": "DATE",
+          "complexType": "RANGE",
+          "defaultSelection": {
+            "range": {
+              "dataType": "DATE",
+              "min": {
+                "value": "now/M"
+              },
+              "max": {
+                "value": "now/d"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "genie_agents_free_dbus",
+      "displayName": "genie_agents_free_dbus",
+      "queryLines": [
+        "WITH free_usage AS (\n",
+        "  SELECT\n",
+        "    workspace_id,\n",
+        "    usage_quantity,\n",
+        "    usage_end_time\n",
+        "  FROM\n",
+        "    system.billing.usage\n",
+        "  WHERE\n",
+        "    billing_origin_product = 'GENIE'\n",
+        "    AND usage_metadata.genie.surface = 'GENIE_AGENTS'\n",
+        "    AND sku_name = 'GENIE_FREE_USAGE'\n",
+        "    AND usage_date >= :date_range.min\n",
+        "    AND usage_date <= :date_range.max\n",
+        "),\n",
+        "latest_real_sku AS (\n",
+        "  SELECT\n",
+        "    workspace_id,\n",
+        "    max_by(sku_name, usage_start_time) AS proxy_sku_name\n",
+        "  FROM\n",
+        "    system.billing.usage\n",
+        "  WHERE\n",
+        "    billing_origin_product = 'GENIE'\n",
+        "    AND sku_name != 'GENIE_FREE_USAGE'\n",
+        "    AND usage_date >= CURRENT_DATE - 30\n",
+        "  GROUP BY\n",
+        "    workspace_id\n",
+        ")\n",
+        "SELECT\n",
+        "  SUM(f.usage_quantity) AS free_dbus,\n",
+        "  SUM(f.usage_quantity * lp.pricing.effective_list.default * 0.75) AS estimated_cost\n",
+        "FROM\n",
+        "  free_usage f\n",
+        "    LEFT JOIN latest_real_sku r\n",
+        "      ON f.workspace_id = r.workspace_id\n",
+        "    LEFT JOIN system.billing.list_prices lp\n",
+        "      ON r.proxy_sku_name = lp.sku_name\n",
+        "      AND f.usage_end_time >= lp.price_start_time\n",
+        "      AND (\n",
+        "        lp.price_end_time IS NULL\n",
+        "        OR f.usage_end_time < lp.price_end_time\n",
+        "      )"
+      ],
+      "parameters": [
+        {
+          "displayName": "Date Range",
+          "keyword": "date_range",
+          "dataType": "DATE",
+          "complexType": "RANGE",
+          "defaultSelection": {
+            "range": {
+              "dataType": "DATE",
+              "min": {
+                "value": "now/M"
+              },
+              "max": {
+                "value": "now/d"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "unique_users",
+      "displayName": "unique_users",
+      "queryLines": [
+        "SELECT\n",
+        "  COUNT(DISTINCT\n",
+        "    CASE\n",
+        "      WHEN usage_metadata.genie.surface = 'GENIE_CODE' THEN identity_metadata.run_as\n",
+        "    END\n",
+        "  ) AS genie_code_users,\n",
+        "  COUNT(DISTINCT\n",
+        "    CASE\n",
+        "      WHEN usage_metadata.genie.surface = 'GENIE_AGENTS' THEN identity_metadata.run_as\n",
+        "    END\n",
+        "  ) AS genie_agents_users,\n",
+        "  COUNT(DISTINCT\n",
+        "    CASE\n",
+        "      WHEN usage_metadata.genie.surface = 'GENIE_ONE' THEN identity_metadata.run_as\n",
+        "    END\n",
+        "  ) AS genie_one_users\n",
+        "FROM\n",
+        "  system.billing.usage\n",
+        "WHERE\n",
+        "  billing_origin_product = 'GENIE'\n",
+        "  AND usage_date >= :date_range.min\n",
+        "  AND usage_date <= :date_range.max"
+      ],
+      "parameters": [
+        {
+          "displayName": "Date Range",
+          "keyword": "date_range",
+          "dataType": "DATE",
+          "complexType": "RANGE",
+          "defaultSelection": {
+            "range": {
+              "dataType": "DATE",
+              "min": {
+                "value": "now/M"
+              },
+              "max": {
+                "value": "now/d"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "user_summary_top100",
+      "displayName": "user_summary_top100",
+      "queryLines": [
+        "SELECT\n",
+        "  u.identity_metadata.run_as AS user,\n",
+        "  SUM(\n",
+        "    CASE\n",
+        "      WHEN\n",
+        "        u.usage_metadata.genie.surface = 'GENIE_ONE'\n",
+        "        AND u.sku_name = 'GENIE_FREE_USAGE'\n",
+        "      THEN\n",
+        "        u.usage_quantity\n",
+        "      ELSE 0\n",
+        "    END\n",
+        "  ) AS genie_one_free_dbus,\n",
+        "  SUM(\n",
+        "    CASE\n",
+        "      WHEN\n",
+        "        u.usage_metadata.genie.surface = 'GENIE_ONE'\n",
+        "        AND u.sku_name != 'GENIE_FREE_USAGE'\n",
+        "      THEN\n",
+        "        u.usage_quantity\n",
+        "      ELSE 0\n",
+        "    END\n",
+        "  ) AS genie_one_paid_dbus,\n",
+        "  SUM(\n",
+        "    CASE\n",
+        "      WHEN\n",
+        "        u.usage_metadata.genie.surface = 'GENIE_AGENTS'\n",
+        "        AND u.sku_name = 'GENIE_FREE_USAGE'\n",
+        "      THEN\n",
+        "        u.usage_quantity\n",
+        "      ELSE 0\n",
+        "    END\n",
+        "  ) AS genie_agents_free_dbus,\n",
+        "  SUM(\n",
+        "    CASE\n",
+        "      WHEN\n",
+        "        u.usage_metadata.genie.surface = 'GENIE_AGENTS'\n",
+        "        AND u.sku_name != 'GENIE_FREE_USAGE'\n",
+        "      THEN\n",
+        "        u.usage_quantity\n",
+        "      ELSE 0\n",
+        "    END\n",
+        "  ) AS genie_agents_paid_dbus,\n",
+        "  SUM(\n",
+        "    CASE\n",
+        "      WHEN\n",
+        "        u.usage_metadata.genie.surface = 'GENIE_CODE'\n",
+        "        AND u.sku_name = 'GENIE_FREE_USAGE'\n",
+        "      THEN\n",
+        "        u.usage_quantity\n",
+        "      ELSE 0\n",
+        "    END\n",
+        "  ) AS genie_code_free_dbus,\n",
+        "  SUM(\n",
+        "    CASE\n",
+        "      WHEN\n",
+        "        u.usage_metadata.genie.surface = 'GENIE_CODE'\n",
+        "        AND u.sku_name != 'GENIE_FREE_USAGE'\n",
+        "      THEN\n",
+        "        u.usage_quantity\n",
+        "      ELSE 0\n",
+        "    END\n",
+        "  ) AS genie_code_paid_dbus,\n",
+        "  SUM(\n",
+        "    CASE\n",
+        "      WHEN\n",
+        "        u.usage_metadata.genie.surface = 'GENIE_CODE'\n",
+        "        AND u.sku_name != 'GENIE_FREE_USAGE'\n",
+        "      THEN\n",
+        "        u.usage_quantity * lp.pricing.effective_list.default\n",
+        "      ELSE 0\n",
+        "    END\n",
+        "  ) AS genie_code_paid_cost\n",
+        "FROM\n",
+        "  system.billing.usage u\n",
+        "    LEFT JOIN system.billing.list_prices lp\n",
+        "      ON u.sku_name = lp.sku_name\n",
+        "      AND u.usage_end_time >= lp.price_start_time\n",
+        "      AND (\n",
+        "        lp.price_end_time IS NULL\n",
+        "        OR u.usage_end_time < lp.price_end_time\n",
+        "      )\n",
+        "WHERE\n",
+        "  u.billing_origin_product = 'GENIE'\n",
+        "  AND u.usage_date >= :date_range.min\n",
+        "  AND u.usage_date <= :date_range.max\n",
+        "GROUP BY\n",
+        "  u.identity_metadata.run_as\n",
+        "ORDER BY\n",
+        "  genie_code_paid_cost DESC\n",
+        "LIMIT 100"
+      ],
+      "parameters": [
+        {
+          "displayName": "Date Range",
+          "keyword": "date_range",
+          "dataType": "DATE",
+          "complexType": "RANGE",
+          "defaultSelection": {
+            "range": {
+              "dataType": "DATE",
+              "min": {
+                "value": "now/M"
+              },
+              "max": {
+                "value": "now/d"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "genie_daily_all",
+      "displayName": "Genie Daily (All Surfaces)",
+      "queryLines": [
+        "SELECT\n",
+        "  u.usage_date,\n",
+        "  usage_metadata.genie.surface AS genie_surface,\n",
+        "  u.workspace_id,\n",
+        "  w.workspace_name,\n",
+        "  SUM(u.usage_quantity) as total_dbus,\n",
+        "  SUM(CASE WHEN u.sku_name = 'GENIE_FREE_USAGE' THEN u.usage_quantity ELSE 0 END) AS free_dbus,\n",
+        "  SUM(\n",
+        "    CASE\n",
+        "      WHEN\n",
+        "        u.sku_name != 'GENIE_FREE_USAGE'\n",
+        "      THEN\n",
+        "        u.usage_quantity * lp.pricing.effective_list.default\n",
+        "      ELSE 0\n",
+        "    END\n",
+        "  ) AS cost\n",
+        "FROM\n",
+        "  system.billing.usage u\n",
+        "    LEFT JOIN system.access.workspaces_latest w\n",
+        "      ON u.workspace_id = w.workspace_id\n",
+        "    LEFT JOIN system.billing.list_prices lp\n",
+        "      ON u.sku_name = lp.sku_name\n",
+        "      AND u.usage_end_time >= lp.price_start_time\n",
+        "      AND (\n",
+        "        lp.price_end_time IS NULL\n",
+        "        OR u.usage_end_time < lp.price_end_time\n",
+        "      )\n",
+        "WHERE\n",
+        "  u.billing_origin_product = 'GENIE'\n",
+        "  AND u.usage_date >= :date_range.min\n",
+        "  AND u.usage_date <= :date_range.max\n",
+        "GROUP BY\n",
+        "  u.usage_date,\n",
+        "  genie_surface,\n",
+        "  u.workspace_id,\n",
+        "  w.workspace_name\n",
+        "ORDER BY\n",
+        "  u.usage_date"
+      ],
+      "parameters": [
+        {
+          "displayName": "Date Range",
+          "keyword": "date_range",
+          "dataType": "DATE",
+          "complexType": "RANGE",
+          "defaultSelection": {
+            "range": {
+              "dataType": "DATE",
+              "min": {
+                "value": "now/M"
+              },
+              "max": {
+                "value": "now/d"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "date_range_display",
+      "displayName": "Date Range Display",
+      "queryLines": [
+        "SELECT\n",
+        "  CAST(:date_range.min AS DATE) AS from_date,\n",
+        "  CAST(:date_range.max AS DATE) AS to_date"
+      ],
+      "parameters": [
+        {
+          "displayName": "Date Range",
+          "keyword": "date_range",
+          "dataType": "DATE",
+          "complexType": "RANGE",
+          "defaultSelection": {
+            "range": {
+              "dataType": "DATE",
+              "min": {
+                "value": "now/M"
+              },
+              "max": {
+                "value": "now/d"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "spending_percentiles",
+      "displayName": "Genie Code Spending Percentiles",
+      "queryLines": [
+        "SELECT\n",
+        "  stack(\n",
+        "    6,\n",
+        "    'P25',\n",
+        "    PERCENTILE(genie_code_paid_cost, 0.25),\n",
+        "    'P50 (Median)',\n",
+        "    PERCENTILE(genie_code_paid_cost, 0.50),\n",
+        "    'P75',\n",
+        "    PERCENTILE(genie_code_paid_cost, 0.75),\n",
+        "    'P90',\n",
+        "    PERCENTILE(genie_code_paid_cost, 0.90),\n",
+        "    'P95',\n",
+        "    PERCENTILE(genie_code_paid_cost, 0.95),\n",
+        "    'P99',\n",
+        "    PERCENTILE(genie_code_paid_cost, 0.99)\n",
+        "  ) AS (percentile, value_usd)\n",
+        "FROM\n",
+        "  (\n",
+        "    SELECT\n",
+        "      u.identity_metadata.run_as AS user,\n",
+        "      SUM(\n",
+        "        CASE\n",
+        "          WHEN\n",
+        "            u.usage_metadata.genie.surface = 'GENIE_CODE'\n",
+        "            AND u.sku_name != 'GENIE_FREE_USAGE'\n",
+        "          THEN\n",
+        "            u.usage_quantity * lp.pricing.effective_list.default\n",
+        "          ELSE 0\n",
+        "        END\n",
+        "      ) AS genie_code_paid_cost\n",
+        "    FROM\n",
+        "      system.billing.usage u\n",
+        "        LEFT JOIN system.billing.list_prices lp\n",
+        "          ON u.sku_name = lp.sku_name\n",
+        "          AND u.usage_end_time >= lp.price_start_time\n",
+        "          AND (\n",
+        "            lp.price_end_time IS NULL\n",
+        "            OR u.usage_end_time < lp.price_end_time\n",
+        "          )\n",
+        "    WHERE\n",
+        "      u.billing_origin_product = 'GENIE'\n",
+        "      AND u.usage_date >= :date_range.min\n",
+        "      AND u.usage_date <= :date_range.max\n",
+        "    GROUP BY\n",
+        "      u.identity_metadata.run_as\n",
+        "  )"
+      ],
+      "parameters": [
+        {
+          "displayName": "Date Range",
+          "keyword": "date_range",
+          "dataType": "DATE",
+          "complexType": "RANGE",
+          "defaultSelection": {
+            "range": {
+              "dataType": "DATE",
+              "min": {
+                "value": "now/M"
+              },
+              "max": {
+                "value": "now/d"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "genie_one_top_users",
+      "displayName": "Genie One — Top Users",
+      "queryLines": [
+        "WITH free_dbus AS (\n",
+        "  SELECT\n",
+        "    u.identity_metadata.run_as AS user,\n",
+        "    SUM(u.usage_quantity) AS free_dbus\n",
+        "  FROM\n",
+        "    system.billing.usage u\n",
+        "  WHERE\n",
+        "    u.billing_origin_product = 'GENIE'\n",
+        "    AND u.usage_metadata.genie.surface = 'GENIE_ONE'\n",
+        "    AND u.sku_name = 'GENIE_FREE_USAGE'\n",
+        "    AND u.usage_date >= :date_range.min\n",
+        "    AND u.usage_date <= :date_range.max\n",
+        "  GROUP BY\n",
+        "    u.identity_metadata.run_as\n",
+        "  ORDER BY\n",
+        "    free_dbus DESC\n",
+        "  LIMIT 50\n",
+        "),\n",
+        "cost_users AS (\n",
+        "  SELECT\n",
+        "    u.identity_metadata.run_as AS user,\n",
+        "    SUM(u.usage_quantity * lp.pricing.effective_list.default) AS cost\n",
+        "  FROM\n",
+        "    system.billing.usage u\n",
+        "      LEFT JOIN system.billing.list_prices lp\n",
+        "        ON u.sku_name = lp.sku_name\n",
+        "        AND u.usage_end_time >= lp.price_start_time\n",
+        "        AND (\n",
+        "          lp.price_end_time IS NULL\n",
+        "          OR u.usage_end_time < lp.price_end_time\n",
+        "        )\n",
+        "  WHERE\n",
+        "    u.billing_origin_product = 'GENIE'\n",
+        "    AND u.usage_metadata.genie.surface = 'GENIE_ONE'\n",
+        "    AND u.sku_name != 'GENIE_FREE_USAGE'\n",
+        "    AND u.usage_date >= :date_range.min\n",
+        "    AND u.usage_date <= :date_range.max\n",
+        "  GROUP BY\n",
+        "    u.identity_metadata.run_as\n",
+        "  ORDER BY\n",
+        "    cost DESC\n",
+        "  LIMIT 60\n",
+        ")\n",
+        "SELECT\n",
+        "  COALESCE(f.user, c.user) AS user,\n",
+        "  COALESCE(f.free_dbus, 0) AS free_dbus,\n",
+        "  COALESCE(c.cost, 0) AS cost\n",
+        "FROM\n",
+        "  free_dbus f\n",
+        "    FULL OUTER JOIN cost_users c\n",
+        "      ON f.user = c.user\n",
+        "ORDER BY\n",
+        "  cost DESC,\n",
+        "  free_dbus DESC"
+      ],
+      "parameters": [
+        {
+          "displayName": "Date Range",
+          "keyword": "date_range",
+          "dataType": "DATE",
+          "complexType": "RANGE",
+          "defaultSelection": {
+            "range": {
+              "dataType": "DATE",
+              "min": {
+                "value": "now/M"
+              },
+              "max": {
+                "value": "now/d"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "genie_agents_top_users",
+      "displayName": "Genie Agents — Top Users",
+      "queryLines": [
+        "WITH free_dbus AS (\n",
+        "  SELECT\n",
+        "    u.identity_metadata.run_as AS user,\n",
+        "    SUM(u.usage_quantity) AS free_dbus\n",
+        "  FROM\n",
+        "    system.billing.usage u\n",
+        "  WHERE\n",
+        "    u.billing_origin_product = 'GENIE'\n",
+        "    AND u.usage_metadata.genie.surface = 'GENIE_AGENTS'\n",
+        "    AND u.sku_name = 'GENIE_FREE_USAGE'\n",
+        "    AND u.usage_date >= :date_range.min\n",
+        "    AND u.usage_date <= :date_range.max\n",
+        "  GROUP BY\n",
+        "    u.identity_metadata.run_as\n",
+        "  ORDER BY\n",
+        "    free_dbus DESC\n",
+        "  LIMIT 50\n",
+        "),\n",
+        "cost_users AS (\n",
+        "  SELECT\n",
+        "    u.identity_metadata.run_as AS user,\n",
+        "    SUM(u.usage_quantity * lp.pricing.effective_list.default) AS cost\n",
+        "  FROM\n",
+        "    system.billing.usage u\n",
+        "      LEFT JOIN system.billing.list_prices lp\n",
+        "        ON u.sku_name = lp.sku_name\n",
+        "        AND u.usage_end_time >= lp.price_start_time\n",
+        "        AND (\n",
+        "          lp.price_end_time IS NULL\n",
+        "          OR u.usage_end_time < lp.price_end_time\n",
+        "        )\n",
+        "  WHERE\n",
+        "    u.billing_origin_product = 'GENIE'\n",
+        "    AND u.usage_metadata.genie.surface = 'GENIE_AGENTS'\n",
+        "    AND u.sku_name != 'GENIE_FREE_USAGE'\n",
+        "    AND u.usage_date >= :date_range.min\n",
+        "    AND u.usage_date <= :date_range.max\n",
+        "  GROUP BY\n",
+        "    u.identity_metadata.run_as\n",
+        "  ORDER BY\n",
+        "    cost DESC\n",
+        "  LIMIT 50\n",
+        ")\n",
+        "SELECT\n",
+        "  COALESCE(f.user, c.user) AS user,\n",
+        "  COALESCE(f.free_dbus, 0) AS free_dbus,\n",
+        "  COALESCE(c.cost, 0) AS cost\n",
+        "FROM\n",
+        "  free_dbus f\n",
+        "    FULL OUTER JOIN cost_users c\n",
+        "      ON f.user = c.user\n",
+        "ORDER BY\n",
+        "  cost DESC,\n",
+        "  free_dbus DESC"
+      ],
+      "parameters": [
+        {
+          "displayName": "Date Range",
+          "keyword": "date_range",
+          "dataType": "DATE",
+          "complexType": "RANGE",
+          "defaultSelection": {
+            "range": {
+              "dataType": "DATE",
+              "min": {
+                "value": "now/M"
+              },
+              "max": {
+                "value": "now/d"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "genie_agents_by_agent_id",
+      "displayName": "Genie Agents by Agent ID",
+      "queryLines": [
+        "SELECT\n",
+        "  u.usage_metadata.genie.agent_id AS agent_id,\n",
+        "  w.workspace_name,\n",
+        "  SUM(CASE WHEN u.sku_name = 'GENIE_FREE_USAGE' THEN u.usage_quantity ELSE 0 END) AS free_dbus,\n",
+        "  SUM(CASE WHEN u.sku_name != 'GENIE_FREE_USAGE' THEN u.usage_quantity ELSE 0 END) AS paid_dbus,\n",
+        "  COUNT(DISTINCT u.identity_metadata.run_as) AS unique_users\n",
+        "FROM\n",
+        "  system.billing.usage u\n",
+        "    LEFT JOIN system.access.workspaces_latest w\n",
+        "      ON u.workspace_id = w.workspace_id\n",
+        "WHERE\n",
+        "  u.billing_origin_product = 'GENIE'\n",
+        "  AND u.usage_metadata.genie.surface = 'GENIE_AGENTS'\n",
+        "  AND u.usage_metadata.genie.agent_id IS NOT NULL\n",
+        "  AND u.usage_date >= :date_range.min\n",
+        "  AND u.usage_date <= :date_range.max\n",
+        "GROUP BY\n",
+        "  u.usage_metadata.genie.agent_id,\n",
+        "  w.workspace_name\n",
+        "ORDER BY\n",
+        "  (free_dbus + paid_dbus) DESC\n",
+        "LIMIT 20"
+      ],
+      "parameters": [
+        {
+          "displayName": "Date Range",
+          "keyword": "date_range",
+          "dataType": "DATE",
+          "complexType": "RANGE",
+          "defaultSelection": {
+            "range": {
+              "dataType": "DATE",
+              "min": {
+                "value": "now/M"
+              },
+              "max": {
+                "value": "now/d"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "daily_unique_users",
+      "displayName": "Daily Unique Users by Surface",
+      "queryLines": [
+        "SELECT\n",
+        "  usage_date,\n",
+        "  usage_metadata.genie.surface AS genie_surface,\n",
+        "  COUNT(DISTINCT identity_metadata.run_as) AS unique_users\n",
+        "FROM\n",
+        "  system.billing.usage\n",
+        "WHERE\n",
+        "  billing_origin_product = 'GENIE'\n",
+        "  AND usage_date >= :date_range.min\n",
+        "  AND usage_date <= :date_range.max\n",
+        "GROUP BY\n",
+        "  usage_date,\n",
+        "  usage_metadata.genie.surface\n",
+        "ORDER BY\n",
+        "  usage_date"
+      ],
+      "parameters": [
+        {
+          "displayName": "Date Range",
+          "keyword": "date_range",
+          "dataType": "DATE",
+          "complexType": "RANGE",
+          "defaultSelection": {
+            "range": {
+              "dataType": "DATE",
+              "min": {
+                "value": "now/M"
+              },
+              "max": {
+                "value": "now/d"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "genie_agents_cost",
+      "displayName": "Genie Agents Cost",
+      "queryLines": [
+        "SELECT\n",
+        "  SUM(u.usage_quantity * lp.pricing.effective_list.default) AS cost\n",
+        "FROM\n",
+        "  system.billing.usage u\n",
+        "    LEFT JOIN system.billing.list_prices lp\n",
+        "      ON u.sku_name = lp.sku_name\n",
+        "      AND u.usage_end_time >= lp.price_start_time\n",
+        "      AND (\n",
+        "        lp.price_end_time IS NULL\n",
+        "        OR u.usage_end_time < lp.price_end_time\n",
+        "      )\n",
+        "WHERE\n",
+        "  u.billing_origin_product = 'GENIE'\n",
+        "  AND u.usage_metadata.genie.surface = 'GENIE_AGENTS'\n",
+        "  AND u.sku_name != 'GENIE_FREE_USAGE'\n",
+        "  AND u.usage_date >= :date_range.min\n",
+        "  AND u.usage_date <= :date_range.max"
+      ],
+      "parameters": [
+        {
+          "displayName": "Date Range",
+          "keyword": "date_range",
+          "dataType": "DATE",
+          "complexType": "RANGE",
+          "defaultSelection": {
+            "range": {
+              "dataType": "DATE",
+              "min": {
+                "value": "now/M"
+              },
+              "max": {
+                "value": "now/d"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "genie_one_cost",
+      "displayName": "Genie One Cost",
+      "queryLines": [
+        "SELECT\n",
+        "  SUM(u.usage_quantity * lp.pricing.effective_list.default) AS cost\n",
+        "FROM\n",
+        "  system.billing.usage u\n",
+        "    LEFT JOIN system.billing.list_prices lp\n",
+        "      ON u.sku_name = lp.sku_name\n",
+        "      AND u.usage_end_time >= lp.price_start_time\n",
+        "      AND (\n",
+        "        lp.price_end_time IS NULL\n",
+        "        OR u.usage_end_time < lp.price_end_time\n",
+        "      )\n",
+        "WHERE\n",
+        "  u.billing_origin_product = 'GENIE'\n",
+        "  AND u.usage_metadata.genie.surface = 'GENIE_ONE'\n",
+        "  AND u.sku_name != 'GENIE_FREE_USAGE'\n",
+        "  AND u.usage_date >= :date_range.min\n",
+        "  AND u.usage_date <= :date_range.max"
+      ],
+      "parameters": [
+        {
+          "displayName": "Date Range",
+          "keyword": "date_range",
+          "dataType": "DATE",
+          "complexType": "RANGE",
+          "defaultSelection": {
+            "range": {
+              "dataType": "DATE",
+              "min": {
+                "value": "now/M"
+              },
+              "max": {
+                "value": "now/d"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "8557610c",
+      "displayName": "Overview",
+      "layout": [
+        {
+          "widget": {
+            "name": "intro_text",
+            "multilineTextboxSpec": {
+              "lines": [
+                "### Genie Usage & Cost Monitor\n",
+                "\n",
+                "This dashboard provides analytics on Genie paid and free usage consumption based on `system.billing.usage`. By default it is set to the current month, but a custom date range can be applied using the **Date Range** global filter.\n",
+                "\n",
+                "*Note: System tables can have a lag of a few hours; so #s will not match Budgets UI refreshes much more quickly.*\n",
+                "\n",
+                "1. Free usage is only available from 07/20/26 onwards\n",
+                "2. Until 01/31/27, Genie One and Genie Agents is free (except for service principals)"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 9,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "counter_code_cost",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "genie_code_daily",
+                  "fields": [
+                    {
+                      "name": "sum(cost)",
+                      "expression": "SUM(`cost`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Genie Code Cost ($)",
+                "showTitle": true,
+                "showDescription": true,
+                "description": "Paid Genie Code costs, above per-user free allowance"
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#FFFFFF"
+                }
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(cost)",
+                  "style": {
+                    "rules": [
+                      {
+                        "condition": {
+                          "operator": ">="
+                        },
+                        "color": "#00A972"
+                      }
+                    ]
+                  },
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "USD",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 2
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#1D70B1"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "total",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "genie_agents_free_dbus",
+                  "fields": [
+                    {
+                      "name": "sum(free_dbus)",
+                      "expression": "SUM(`free_dbus`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Genie Agents Usage (Free DBUs)",
+                "showDescription": true,
+                "description": "Genie Agents is free until 01/31/27"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(free_dbus)",
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#A2C8E1"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 7,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "181a1aa5",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "genie_one_free_dbus",
+                  "fields": [
+                    {
+                      "name": "sum(free_dbus)",
+                      "expression": "SUM(`free_dbus`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Genie One Usage (Free DBUs)",
+                "showDescription": true,
+                "description": "Genie One is free until 01/31/27"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(free_dbus)",
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#B2DC80"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 7,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "ctr_unique_code",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "unique_users",
+                  "fields": [
+                    {
+                      "name": "genie_code_users",
+                      "expression": "`genie_code_users`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Unique Genie Code Users over period",
+                "showTitle": true
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#FFFFFF"
+                }
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "genie_code_users"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#1D70B1"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 10,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "unique-genie-agents",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "unique_users",
+                  "fields": [
+                    {
+                      "name": "sum(genie_agents_users)",
+                      "expression": "SUM(`genie_agents_users`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Unique Genie Agents Users over period"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(genie_agents_users)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#A2C8E1"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 10,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "63db8eb7",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "unique_users",
+                  "fields": [
+                    {
+                      "name": "sum(genie_one_users)",
+                      "expression": "SUM(`genie_one_users`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Unique Genie One Users over period"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(genie_one_users)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#B2DC80"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 10,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "chart_grouped_cost",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "genie_daily_all",
+                  "fields": [
+                    {
+                      "name": "genie_surface",
+                      "expression": "`genie_surface`"
+                    },
+                    {
+                      "name": "usage_date",
+                      "expression": "`usage_date`"
+                    },
+                    {
+                      "name": "sum(total_dbus)",
+                      "expression": "SUM(`total_dbus`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Total Genie Usage per Day",
+                "showTitle": true,
+                "showDescription": true,
+                "description": "Includes all paid and free DBUs"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "usage_date",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(total_dbus)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "genie_surface",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": false
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 13,
+            "width": 12,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "date_from",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "date_range_display",
+                  "fields": [
+                    {
+                      "name": "min(from_date)",
+                      "expression": "MIN(`from_date`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "From",
+                "showTitle": true
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "min(from_date)",
+                  "format": {
+                    "type": "date",
+                    "date": "locale-short-month"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 0,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "date_to",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "date_range_display",
+                  "fields": [
+                    {
+                      "name": "min(to_date)",
+                      "expression": "MIN(`to_date`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "To",
+                "showTitle": true
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "min(to_date)",
+                  "format": {
+                    "type": "date",
+                    "date": "locale-short-month"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 1,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "daily_unique_users_chart",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "daily_unique_users",
+                  "fields": [
+                    {
+                      "name": "genie_surface",
+                      "expression": "`genie_surface`"
+                    },
+                    {
+                      "name": "usage_date",
+                      "expression": "`usage_date`"
+                    },
+                    {
+                      "name": "sum(unique_users)",
+                      "expression": "SUM(`unique_users`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Daily Unique Users by Surface",
+                "showTitle": true,
+                "showDescription": true,
+                "description": "Note: Total users count will double count users who have used >1 surface"
+              },
+              "mark": {
+                "layout": "stack"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "usage_date",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(unique_users)",
+                  "displayName": "Unique Users",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "genie_surface",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 20,
+            "width": 12,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "ctr_code_free_dbus",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "genie_code_daily",
+                  "fields": [
+                    {
+                      "name": "sum(dbus)",
+                      "expression": "SUM(`dbus`)"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "`usage_type` IN ('Free')"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Genie Code Usage (Free DBUs)",
+                "showTitle": true,
+                "showDescription": true,
+                "description": "Free DBUs consumed within per-user allowance"
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#FFFFFF"
+                }
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(dbus)",
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#1D70B1"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 7,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "ctr_agents_cost",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "genie_agents_cost",
+                  "fields": [
+                    {
+                      "name": "sum(cost)",
+                      "expression": "SUM(`cost`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Genie Agents Cost ($)",
+                "showTitle": true,
+                "showDescription": true,
+                "description": "Paid costs, from service principals"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(cost)",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "USD",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 2
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#A2C8E1"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 4,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "ctr_one_cost",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "genie_one_cost",
+                  "fields": [
+                    {
+                      "name": "sum(cost)",
+                      "expression": "SUM(`cost`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Genie One Cost ($)",
+                "showTitle": true,
+                "showDescription": true,
+                "description": "Paid costs, from service principals"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(cost)",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "USD",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 2
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#B2DC80"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 4,
+            "width": 4,
+            "height": 3
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "per_user",
+      "displayName": "Genie Code",
+      "layout": [
+        {
+          "widget": {
+            "name": "genie-paid-usage-per",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "user_summary_top100",
+                  "fields": [
+                    {
+                      "name": "user",
+                      "expression": "`user`"
+                    },
+                    {
+                      "name": "sum(genie_code_paid_cost)",
+                      "expression": "SUM(`genie_code_paid_cost`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Genie Code Costs - top 100 users "
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "user",
+                  "scale": {
+                    "type": "categorical",
+                    "categorySize": {
+                      "type": "number-of-categories",
+                      "number": 50
+                    },
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(genie_code_paid_cost)",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "USD",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 2
+                    }
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 16,
+            "width": 12,
+            "height": 12
+          }
+        },
+        {
+          "widget": {
+            "name": "date_from",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "date_range_display",
+                  "fields": [
+                    {
+                      "name": "min(from_date)",
+                      "expression": "MIN(`from_date`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "title": "From",
+                "showTitle": true
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "min(from_date)",
+                  "format": {
+                    "type": "date",
+                    "date": "locale-short-month"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 0,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "date_to",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "date_range_display",
+                  "fields": [
+                    {
+                      "name": "min(to_date)",
+                      "expression": "MIN(`to_date`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "title": "To",
+                "showTitle": true
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "min(to_date)",
+                  "format": {
+                    "type": "date",
+                    "date": "locale-short-month"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 1,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "805785a3",
+            "multilineTextboxSpec": {
+              "lines": [
+                "### Genie Code Deep Dive\n",
+                "\n",
+                "View per-user cost distribution of Genie Code billable usage. By default it is set to the current month, but a custom date range can be applied using the **Date Range** global filter.\n",
+                "\n",
+                "To estimate what the cost of Genie One usage would be, refer to this system table query<br><br>*Note: System tables can have a lag of a few hours; so #s will not match Budgets UI refreshes much more quickly (documented here).*"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 9,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "spending_percentiles_chart",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "spending_percentiles",
+                  "fields": [
+                    {
+                      "name": "percentile",
+                      "expression": "`percentile`"
+                    },
+                    {
+                      "name": "value_usd",
+                      "expression": "`value_usd`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Genie Code Costs — Percentiles per User",
+                "showTitle": true
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "percentile",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "custom-order",
+                      "orderedValues": [
+                        "P25",
+                        "P50 (Median)",
+                        "P75",
+                        "P90",
+                        "P95",
+                        "P99"
+                      ]
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "value_usd",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "USD",
+                    "abbreviation": "none",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 2
+                    }
+                  },
+                  "displayName": "Spend (USD)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 10,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "84103572",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "user_summary",
+                  "fields": [
+                    {
+                      "name": "user",
+                      "expression": "`user`"
+                    },
+                    {
+                      "name": "genie_code_free_dbus",
+                      "expression": "`genie_code_free_dbus`"
+                    },
+                    {
+                      "name": "genie_code_paid_cost",
+                      "expression": "`genie_code_paid_cost`"
+                    }
+                  ],
+                  "disaggregated": true,
+                  "orders": [
+                    {
+                      "direction": "DESC",
+                      "expression": "`genie_code_free_dbus`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "User-level breakdown, cross-surface",
+                "showTitle": true,
+                "showDescription": true,
+                "description": "Free usage DBU was only exposed starting 07/20/26 in system tables - free usage counts are partial in this month"
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "user",
+                    "displayName": "User"
+                  },
+                  {
+                    "fieldName": "genie_code_free_dbus",
+                    "format": {
+                      "type": "number-plain",
+                      "abbreviation": "none",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 2
+                      },
+                      "hideGroupSeparator": true
+                    },
+                    "style": {
+                      "type": "basic",
+                      "rules": [
+                        {
+                          "condition": {
+                            "operand": {
+                              "type": "data-value",
+                              "value": "120"
+                            },
+                            "operator": ">="
+                          },
+                          "backgroundColor": {
+                            "themeColorType": "visualizationColors",
+                            "position": 7
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "fieldName": "genie_code_paid_cost",
+                    "format": {
+                      "type": "number-currency",
+                      "currencyCode": "USD",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 2
+                      }
+                    },
+                    "displayName": "Code Paid ($)"
+                  }
+                ],
+                "rowOrder": [
+                  {
+                    "by": "column-reversed",
+                    "field": {
+                      "index": 1
+                    }
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 28,
+            "width": 12,
+            "height": 10
+          }
+        },
+        {
+          "widget": {
+            "name": "billable-cost-by-day",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "genie_code_daily",
+                  "fields": [
+                    {
+                      "name": "workspace_name",
+                      "expression": "`workspace_name`"
+                    },
+                    {
+                      "name": "daily(usage_date)",
+                      "expression": "DATE_TRUNC(\"DAY\", `usage_date`)"
+                    },
+                    {
+                      "name": "sum(cost)",
+                      "expression": "SUM(`cost`)"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "`usage_type` IN ('Paid')"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Billable Cost by Day",
+                "showDescription": true,
+                "description": "All paid usage (only Genie Code)"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "daily(usage_date)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(cost)",
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 2
+                    }
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "workspace_name",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "edac4a83",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "genie_code_daily",
+                  "fields": [
+                    {
+                      "name": "sum(cost)",
+                      "expression": "SUM(`cost`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "style": {
+                "fontColor": {
+                  "light": "#FFFFFF"
+                }
+              },
+              "frame": {
+                "title": "Cost ($)",
+                "showTitle": true,
+                "showDescription": true
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(cost)",
+                  "style": {
+                    "rules": [
+                      {
+                        "condition": {
+                          "operator": ">="
+                        },
+                        "color": "#00A972"
+                      }
+                    ]
+                  },
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "USD",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 2
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#1D70B1"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 2,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "02882ec7",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "genie_code_daily",
+                  "fields": [
+                    {
+                      "name": "sum(dbus)",
+                      "expression": "SUM(`dbus`)"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "`usage_type` IN ('Free')"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "style": {
+                "fontColor": {
+                  "light": "#FFFFFF"
+                }
+              },
+              "frame": {
+                "title": "Free DBUs",
+                "showTitle": true,
+                "showDescription": true
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(dbus)",
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#1D70B1"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 3,
+            "width": 3,
+            "height": 1
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "global_filters",
+      "displayName": "Global Filters",
+      "layout": [
+        {
+          "widget": {
+            "name": "date_filter",
+            "queries": [
+              {
+                "name": "dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f184de2cd515fe94b4ca3717e8d559_usage_date",
+                "query": {
+                  "datasetName": "genie_one_daily",
+                  "fields": [
+                    {
+                      "name": "usage_date",
+                      "expression": "`usage_date`"
+                    },
+                    {
+                      "name": "usage_date_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f184de2c721dc3be22cb3ad04835dd_usage_date",
+                "query": {
+                  "datasetName": "genie_code_daily",
+                  "fields": [
+                    {
+                      "name": "usage_date",
+                      "expression": "`usage_date`"
+                    },
+                    {
+                      "name": "usage_date_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f184de2b7d1abebff8987b049d95d8_usage_date",
+                "query": {
+                  "datasetName": "genie_agents_daily",
+                  "fields": [
+                    {
+                      "name": "usage_date",
+                      "expression": "`usage_date`"
+                    },
+                    {
+                      "name": "usage_date_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f184de2cd515fe94b4ca3717e8d559_date_range",
+                "query": {
+                  "datasetName": "genie_one_daily",
+                  "parameters": [
+                    {
+                      "name": "date_range",
+                      "keyword": "date_range"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f184de2c721dc3be22cb3ad04835dd_date_range",
+                "query": {
+                  "datasetName": "genie_code_daily",
+                  "parameters": [
+                    {
+                      "name": "date_range",
+                      "keyword": "date_range"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f184de2b7d1abebff8987b049d95d8_date_range",
+                "query": {
+                  "datasetName": "genie_agents_daily",
+                  "parameters": [
+                    {
+                      "name": "date_range",
+                      "keyword": "date_range"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f184de2d0616038a3b5683bf30cb67_date_range",
+                "query": {
+                  "datasetName": "user_summary",
+                  "parameters": [
+                    {
+                      "name": "date_range",
+                      "keyword": "date_range"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f1859d82ef16acb3ec32d65968daab_date_range",
+                "query": {
+                  "datasetName": "unique_users",
+                  "parameters": [
+                    {
+                      "name": "date_range",
+                      "keyword": "date_range"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f185a1fe0411d1a4f2bedb75f089d9_date_range",
+                "query": {
+                  "datasetName": "user_summary_top100",
+                  "parameters": [
+                    {
+                      "name": "date_range",
+                      "keyword": "date_range"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f185a29e1c1ce694400586533022c9_date_range",
+                "query": {
+                  "datasetName": "genie_daily_all",
+                  "parameters": [
+                    {
+                      "name": "date_range",
+                      "keyword": "date_range"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f18622bd2910b29e3c5fdf8e7d5a45_date_range",
+                "query": {
+                  "datasetName": "date_range_display",
+                  "parameters": [
+                    {
+                      "name": "date_range",
+                      "keyword": "date_range"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f18668808f112aa2d751adef8bc614_date_range",
+                "query": {
+                  "datasetName": "spending_percentiles",
+                  "parameters": [
+                    {
+                      "name": "date_range",
+                      "keyword": "date_range"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f186b14cc91c61b1ee8816bff9f378_date_range",
+                "query": {
+                  "datasetName": "genie_one_top_users",
+                  "parameters": [
+                    {
+                      "name": "date_range",
+                      "keyword": "date_range"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f186b14dbf150ca04c0fb1a55141cd_date_range",
+                "query": {
+                  "datasetName": "genie_agents_top_users",
+                  "parameters": [
+                    {
+                      "name": "date_range",
+                      "keyword": "date_range"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f186b14ea610e284d22dfbef942fea_date_range",
+                "query": {
+                  "datasetName": "genie_agents_by_agent_id",
+                  "parameters": [
+                    {
+                      "name": "date_range",
+                      "keyword": "date_range"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f186c888d71c87aff86ec2818733c7_date_range",
+                "query": {
+                  "datasetName": "daily_unique_users",
+                  "parameters": [
+                    {
+                      "name": "date_range",
+                      "keyword": "date_range"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f187a06e3d166a9111f7e1fc653b4c_date_range",
+                "query": {
+                  "datasetName": "genie_agents_cost",
+                  "parameters": [
+                    {
+                      "name": "date_range",
+                      "keyword": "date_range"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f187a06f221b529d6319ad44f366f6_date_range",
+                "query": {
+                  "datasetName": "genie_one_cost",
+                  "parameters": [
+                    {
+                      "name": "date_range",
+                      "keyword": "date_range"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "title": "Date Range",
+                "showTitle": true
+              },
+              "version": 2,
+              "selection": {
+                "defaultSelection": {
+                  "range": {
+                    "dataType": "DATE",
+                    "min": {
+                      "value": "now/M"
+                    },
+                    "max": {
+                      "value": "now/d"
+                    }
+                  }
+                }
+              },
+              "widgetType": "filter-date-range-picker",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "usage_date",
+                    "queryName": "dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f184de2cd515fe94b4ca3717e8d559_usage_date"
+                  },
+                  {
+                    "fieldName": "usage_date",
+                    "queryName": "dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f184de2c721dc3be22cb3ad04835dd_usage_date"
+                  },
+                  {
+                    "fieldName": "usage_date",
+                    "queryName": "dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f184de2b7d1abebff8987b049d95d8_usage_date"
+                  },
+                  {
+                    "parameterName": "date_range",
+                    "queryName": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f184de2cd515fe94b4ca3717e8d559_date_range"
+                  },
+                  {
+                    "parameterName": "date_range",
+                    "queryName": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f184de2c721dc3be22cb3ad04835dd_date_range"
+                  },
+                  {
+                    "parameterName": "date_range",
+                    "queryName": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f184de2b7d1abebff8987b049d95d8_date_range"
+                  },
+                  {
+                    "parameterName": "date_range",
+                    "queryName": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f184de2d0616038a3b5683bf30cb67_date_range"
+                  },
+                  {
+                    "parameterName": "date_range",
+                    "queryName": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f1859d82ef16acb3ec32d65968daab_date_range"
+                  },
+                  {
+                    "parameterName": "date_range",
+                    "queryName": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f185a1fe0411d1a4f2bedb75f089d9_date_range"
+                  },
+                  {
+                    "parameterName": "date_range",
+                    "queryName": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f185a29e1c1ce694400586533022c9_date_range"
+                  },
+                  {
+                    "parameterName": "date_range",
+                    "queryName": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f18622bd2910b29e3c5fdf8e7d5a45_date_range"
+                  },
+                  {
+                    "parameterName": "date_range",
+                    "queryName": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f18668808f112aa2d751adef8bc614_date_range"
+                  },
+                  {
+                    "parameterName": "date_range",
+                    "queryName": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f186b14cc91c61b1ee8816bff9f378_date_range"
+                  },
+                  {
+                    "parameterName": "date_range",
+                    "queryName": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f186b14dbf150ca04c0fb1a55141cd_date_range"
+                  },
+                  {
+                    "parameterName": "date_range",
+                    "queryName": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f186b14ea610e284d22dfbef942fea_date_range"
+                  },
+                  {
+                    "parameterName": "date_range",
+                    "queryName": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f186c888d71c87aff86ec2818733c7_date_range"
+                  },
+                  {
+                    "parameterName": "date_range",
+                    "queryName": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f187a06e3d166a9111f7e1fc653b4c_date_range"
+                  },
+                  {
+                    "parameterName": "date_range",
+                    "queryName": "parameter_dashboards/01f184de0b7e11858e1886eb2b4da6d6/datasets/01f187a06f221b529d6319ad44f366f6_date_range"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 2
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_GLOBAL_FILTERS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "84537256",
+      "displayName": "Genie Agents",
+      "layout": [
+        {
+          "widget": {
+            "name": "141f2c47",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "genie_agents_top_users",
+                  "fields": [
+                    {
+                      "name": "user",
+                      "expression": "`user`"
+                    },
+                    {
+                      "name": "sum(free_dbus)",
+                      "expression": "SUM(`free_dbus`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Genie Agents — Top 50 Users by Free DBUs",
+                "showTitle": true
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "user",
+                  "displayName": "User",
+                  "scale": {
+                    "type": "categorical",
+                    "categorySize": {
+                      "type": "number-of-categories",
+                      "number": 50
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(free_dbus)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 33,
+            "width": 12,
+            "height": 14
+          }
+        },
+        {
+          "widget": {
+            "name": "2b4a6331",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "user_summary",
+                  "fields": [
+                    {
+                      "name": "user",
+                      "expression": "`user`"
+                    },
+                    {
+                      "name": "genie_agents_cost",
+                      "expression": "`genie_agents_cost`"
+                    },
+                    {
+                      "name": "genie_agents_free_dbus",
+                      "expression": "`genie_agents_free_dbus`"
+                    }
+                  ],
+                  "disaggregated": true,
+                  "orders": [
+                    {
+                      "direction": "DESC",
+                      "expression": "`genie_agents_cost`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "User-level breakdown, cross-surface",
+                "showTitle": true,
+                "showDescription": true,
+                "description": "Free usage DBU was only exposed starting 07/20/26 in system tables - free usage counts are partial in this month"
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "user",
+                    "displayName": "User"
+                  },
+                  {
+                    "fieldName": "genie_agents_cost"
+                  },
+                  {
+                    "fieldName": "genie_agents_free_dbus"
+                  }
+                ],
+                "rowOrder": [
+                  {
+                    "by": "column-reversed",
+                    "field": {
+                      "index": 1
+                    }
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 47,
+            "width": 12,
+            "height": 10
+          }
+        },
+        {
+          "widget": {
+            "name": "c1abf724",
+            "multilineTextboxSpec": {
+              "lines": [
+                "### Genie Agents Deep Dive\n",
+                "\n",
+                "View total usage of Genie Agents, and per-user usage distribution. By default it is set to the current month, but a custom date range can be applied using the **Date Range** global filter.\n",
+                "\n",
+                "To estimate what the cost of Genie Agents usage would be, refer to this [system table query](https://docs.databricks.com/aws/en/genie/monitor-cost#estimate-equivalent-cost-for-free-genie-usage)\n",
+                "\n",
+                "*Note: System tables can have a lag of a few hours; so #s will not match Budgets UI refreshes much more quickly (documented here).*\n",
+                "\n",
+                "**Until 01/31/27, Genie One and Genie Agents is free (except for service principals)**"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 9,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "1442750e",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "date_range_display",
+                  "fields": [
+                    {
+                      "name": "min(from_date)",
+                      "expression": "MIN(`from_date`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "title": "From",
+                "showTitle": true
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "min(from_date)",
+                  "format": {
+                    "type": "date",
+                    "date": "locale-short-month"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 0,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "1eedad81",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "date_range_display",
+                  "fields": [
+                    {
+                      "name": "min(to_date)",
+                      "expression": "MIN(`to_date`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "title": "To",
+                "showTitle": true
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "min(to_date)",
+                  "format": {
+                    "type": "date",
+                    "date": "locale-short-month"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 1,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "63c2b8bb",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "genie_daily_all",
+                  "fields": [
+                    {
+                      "name": "workspace_name",
+                      "expression": "`workspace_name`"
+                    },
+                    {
+                      "name": "usage_date",
+                      "expression": "`usage_date`"
+                    },
+                    {
+                      "name": "sum(free_dbus)",
+                      "expression": "SUM(`free_dbus`)"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "`genie_surface` IN ('GENIE_AGENTS')"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Free usage by day (DBUs)",
+                "showTitle": true,
+                "showDescription": true,
+                "description": "All free usage until 01/31/27"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "usage_date",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(free_dbus)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "workspace_name",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 26,
+            "width": 12,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "c5bc8763",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "genie_agents_by_agent_id",
+                  "fields": [
+                    {
+                      "name": "agent_id",
+                      "expression": "`agent_id`"
+                    },
+                    {
+                      "name": "sum(free_dbus)",
+                      "expression": "SUM(`free_dbus`)"
+                    },
+                    {
+                      "name": "sum(paid_dbus)",
+                      "expression": "SUM(`paid_dbus`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Top 20 Agents by DBUs (Free and Paid)",
+                "showTitle": true
+              },
+              "mark": {
+                "layout": "stack"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "agent_id",
+                  "displayName": "Agent ID",
+                  "scale": {
+                    "type": "categorical",
+                    "categorySize": {
+                      "type": "number-of-categories",
+                      "number": 20
+                    },
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fields": [
+                    {
+                      "fieldName": "sum(free_dbus)",
+                      "displayName": "Free DBUs"
+                    },
+                    {
+                      "fieldName": "sum(paid_dbus)",
+                      "displayName": "Paid DBUs"
+                    }
+                  ],
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 57,
+            "width": 12,
+            "height": 12
+          }
+        },
+        {
+          "widget": {
+            "name": "agents_cost_by_day",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "genie_daily_all",
+                  "fields": [
+                    {
+                      "name": "workspace_name",
+                      "expression": "`workspace_name`"
+                    },
+                    {
+                      "name": "usage_date",
+                      "expression": "`usage_date`"
+                    },
+                    {
+                      "name": "sum(cost)",
+                      "expression": "SUM(`cost`)"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "`genie_surface` IN ('GENIE_AGENTS')"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Genie Agents Cost by Day",
+                "showTitle": true,
+                "showDescription": true,
+                "description": "Paid Genie Agents costs per day"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "usage_date",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(cost)",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "USD",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 2
+                    }
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "workspace_name",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 5,
+            "width": 12,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "agents_top50_cost",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "genie_agents_top_users",
+                  "fields": [
+                    {
+                      "name": "user",
+                      "expression": "`user`"
+                    },
+                    {
+                      "name": "sum(cost)",
+                      "expression": "SUM(`cost`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Genie Agents — Top 50 Users by Cost",
+                "showTitle": true
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "user",
+                  "displayName": "User",
+                  "scale": {
+                    "type": "categorical",
+                    "categorySize": {
+                      "type": "number-of-categories",
+                      "number": 50
+                    },
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(cost)",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "USD",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 2
+                    }
+                  },
+                  "displayName": "Cost",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 12,
+            "width": 12,
+            "height": 14
+          }
+        },
+        {
+          "widget": {
+            "name": "359328cf",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "genie_agents_cost",
+                  "fields": [
+                    {
+                      "name": "sum(cost)",
+                      "expression": "SUM(`cost`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Cost ($)",
+                "showTitle": true,
+                "showDescription": true,
+                "description": "Paid costs, from service principals"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(cost)",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "USD",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 2
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#A2C8E1"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 2,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "ebed6b5a",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "genie_agents_free_dbus",
+                  "fields": [
+                    {
+                      "name": "sum(free_dbus)",
+                      "expression": "SUM(`free_dbus`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Free DBUs",
+                "showDescription": true
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(free_dbus)",
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#A2C8E1"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 3,
+            "width": 3,
+            "height": 1
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "3eedeb10",
+      "displayName": "Genie One",
+      "layout": [
+        {
+          "widget": {
+            "name": "89475b8b",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "user_summary",
+                  "fields": [
+                    {
+                      "name": "user",
+                      "expression": "`user`"
+                    },
+                    {
+                      "name": "genie_one_cost",
+                      "expression": "`genie_one_cost`"
+                    },
+                    {
+                      "name": "genie_one_free_dbus",
+                      "expression": "`genie_one_free_dbus`"
+                    }
+                  ],
+                  "disaggregated": true,
+                  "orders": [
+                    {
+                      "direction": "DESC",
+                      "expression": "`genie_one_cost`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "User-level breakdown, cross-surface",
+                "showTitle": true,
+                "showDescription": true,
+                "description": "Genie One is free until 01/31/27, except for service principals"
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "user",
+                    "displayName": "User"
+                  },
+                  {
+                    "fieldName": "genie_one_cost"
+                  },
+                  {
+                    "fieldName": "genie_one_free_dbus"
+                  }
+                ],
+                "rowOrder": [
+                  {
+                    "by": "column-reversed",
+                    "field": {
+                      "index": 1
+                    }
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 47,
+            "width": 12,
+            "height": 10
+          }
+        },
+        {
+          "widget": {
+            "name": "47b5b381",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "genie_daily_all",
+                  "fields": [
+                    {
+                      "name": "workspace_name",
+                      "expression": "`workspace_name`"
+                    },
+                    {
+                      "name": "usage_date",
+                      "expression": "`usage_date`"
+                    },
+                    {
+                      "name": "sum(cost)",
+                      "expression": "SUM(`cost`)"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "`genie_surface` IN ('GENIE_ONE')"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Cost by Day",
+                "showTitle": true,
+                "showDescription": true,
+                "description": "Paid Genie One costs per day"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "usage_date",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(cost)",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "USD",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 2
+                    }
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "workspace_name",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 5,
+            "width": 12,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "5efb6af0",
+            "multilineTextboxSpec": {
+              "lines": [
+                "### Genie One Deep Dive\n",
+                "\n",
+                "View total usage of Genie One, and per-user usage distribution. By default it is set to the current month, but a custom date range can be applied using the **Date Range** global filter.\n",
+                "\n",
+                "To estimate what the cost of Genie One usage would be, refer to this [system table query](https://docs.databricks.com/aws/en/genie/monitor-cost#estimate-equivalent-cost-for-free-genie-usage)\n",
+                "\n",
+                "*Note: System tables can have a lag of a few hours; so #s will not match Budgets UI refreshes much more quickly (documented here).*\n",
+                "\n",
+                "**Until 01/31/27, Genie One and Genie Agents is free (except for service principals)**"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 9,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "de6d2be9",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "date_range_display",
+                  "fields": [
+                    {
+                      "name": "min(from_date)",
+                      "expression": "MIN(`from_date`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "title": "From",
+                "showTitle": true
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "min(from_date)",
+                  "format": {
+                    "type": "date",
+                    "date": "locale-short-month"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 0,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "f4fad2e0",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "date_range_display",
+                  "fields": [
+                    {
+                      "name": "min(to_date)",
+                      "expression": "MIN(`to_date`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "title": "To",
+                "showTitle": true
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "min(to_date)",
+                  "format": {
+                    "type": "date",
+                    "date": "locale-short-month"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 1,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "7b003db9",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "genie_daily_all",
+                  "fields": [
+                    {
+                      "name": "workspace_name",
+                      "expression": "`workspace_name`"
+                    },
+                    {
+                      "name": "usage_date",
+                      "expression": "`usage_date`"
+                    },
+                    {
+                      "name": "sum(free_dbus)",
+                      "expression": "SUM(`free_dbus`)"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "`genie_surface` IN ('GENIE_ONE')"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Free usage by day (DBUs)",
+                "showTitle": true,
+                "showDescription": true,
+                "description": "All free usage until 01/31/27"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "usage_date",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(free_dbus)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "workspace_name",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 26,
+            "width": 12,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "b7f37327",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "genie_one_top_users",
+                  "fields": [
+                    {
+                      "name": "user",
+                      "expression": "`user`"
+                    },
+                    {
+                      "name": "sum(free_dbus)",
+                      "expression": "SUM(`free_dbus`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Genie One — Top 50 Users by free usage",
+                "showTitle": true
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "user",
+                  "displayName": "user",
+                  "scale": {
+                    "type": "categorical",
+                    "categorySize": {
+                      "type": "number-of-categories",
+                      "number": 60
+                    },
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(free_dbus)",
+                  "format": {
+                    "type": "number-currency",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 2
+                    },
+                    "currencyCode": "USD"
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 33,
+            "width": 12,
+            "height": 14
+          }
+        },
+        {
+          "widget": {
+            "name": "aaefd4c9",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "genie_one_top_users",
+                  "fields": [
+                    {
+                      "name": "user",
+                      "expression": "`user`"
+                    },
+                    {
+                      "name": "sum(cost)",
+                      "expression": "SUM(`cost`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Genie One Cost - top 50 users",
+                "showTitle": true
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "user",
+                  "displayName": "User",
+                  "scale": {
+                    "type": "categorical",
+                    "categorySize": {
+                      "type": "number-of-categories",
+                      "number": 50
+                    },
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(cost)",
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 2
+                    }
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 12,
+            "width": 12,
+            "height": 14
+          }
+        },
+        {
+          "widget": {
+            "name": "efdeb7f6",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "genie_one_cost",
+                  "fields": [
+                    {
+                      "name": "sum(cost)",
+                      "expression": "SUM(`cost`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Cost ($)",
+                "showTitle": true,
+                "showDescription": true
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(cost)",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "USD",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 2
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#B2DC80"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 2,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "a4b21f34",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "genie_one_free_dbus",
+                  "fields": [
+                    {
+                      "name": "sum(free_dbus)",
+                      "expression": "SUM(`free_dbus`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Free DBUs",
+                "showDescription": true
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(free_dbus)",
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#B2DC80"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 3,
+            "width": 3,
+            "height": 1
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "canvasBackgroundColor": {
+        "light": "#E6E9EA",
+        "dark": "#1E2931"
+      },
+      "widgetBackgroundColor": {
+        "light": "#FFFFFF",
+        "dark": "#15181C"
+      },
+      "widgetBorderColor": {
+        "light": "#F3F5F6",
+        "dark": "#21292F"
+      },
+      "fontColor": {
+        "light": "#1A2127",
+        "dark": "#EEF0F2"
+      },
+      "selectionColor": {
+        "light": "#0E7AB9",
+        "dark": "#41ADEC"
+      },
+      "visualizationColors": [
+        "#A6CEE3",
+        "#1F78B4",
+        "#B2DF8A",
+        "#33A02C",
+        "#FB9A99",
+        "#E31A1C",
+        "#FDBF6F",
+        "#FF7F00",
+        "#CAB2D6",
+        "#6A3D9A",
+        "#FFFF99",
+        "#B15928"
+      ],
+      "widgetHeaderAlignment": "LEFT",
+      "fontFamily": "Inter",
+      "widgetPadding": 16,
+      "widgetMargin": 8,
+      "widgetCornerRadius": 16,
+      "widgetShadow": 50,
+      "continuousGradient": {
+        "lightMode": {
+          "fromCategoricalIndex": 0
+        },
+        "darkMode": {
+          "fromCategoricalIndex": 0
+        }
+      },
+      "fontSettings": {
+        "base": {
+          "fontFamily": "Inter",
+          "fontColor": {
+            "light": "#1A2127",
+            "dark": "#EEF0F2"
+          },
+          "fontSize": 14,
+          "fontWeight": 400
+        },
+        "widgetTitle": {
+          "fontSize": 16,
+          "fontWeight": 500
+        },
+        "widgetDescription": {
+          "fontSize": 14,
+          "fontWeight": 400
+        },
+        "fieldTitle": {
+          "textCase": "TEXT_CASE_UPPERCASE",
+          "fontColor": {
+            "light": "#31373D",
+            "dark": "#D6D8DA"
+          },
+          "fontSize": 13,
+          "fontWeight": 400
+        },
+        "fieldValue": {
+          "fontColor": {
+            "light": "#31373D",
+            "dark": "#D6D8DA"
+          },
+          "fontSize": 13,
+          "fontWeight": 400
+        }
+      },
+      "gridLineColor": {
+        "light": "#D6D7D8",
+        "dark": "#3C3E42"
+      },
+      "axisLineColor": {
+        "light": "#B0B4B6",
+        "dark": "#555E64"
+      }
+    },
+    "applyModeEnabled": false
+  },
+  "variables": [
+    {
+      "name": "group_key",
+      "displayName": "group_key",
+      "field": {
+        "options": [
+          {
+            "expression": "`genie_daily_all`.`workspace_id`"
+          }
+        ]
+      }
+    }
+  ]
+}
