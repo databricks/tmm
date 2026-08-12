@@ -1,0 +1,6 @@
+# Per-environment settings — never commit. Copy .env.example -> .env.
+.env
+
+# Python
+__pycache__/
+*.pyc

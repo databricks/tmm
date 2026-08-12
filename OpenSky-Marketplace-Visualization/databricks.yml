@@ -1,0 +1,55 @@
+bundle:
+  name: opensky-europe-vis
+
+# Per-environment values come from deploy/.env via deploy.sh (--var=...) and the
+# --profile flag. The defaults below are placeholders so the file carries no
+# workspace-specific identifiers; the target host is taken from your CLI profile.
+variables:
+  warehouse_id:
+    description: SQL warehouse that runs the Marketplace regeneration queries.
+    default: "<sql-warehouse-id>"
+  volume_root:
+    description: UC volume path where regenerated artifacts are stored.
+    default: "/Volumes/<catalog>/<schema>/<volume>"
+  catalog:
+    description: Catalog the Marketplace OpenSky dataset was installed under.
+    default: marketplace
+  schema:
+    description: Schema the Marketplace OpenSky dataset was installed under.
+    default: opensky
+
+resources:
+  apps:
+    opensky_vis:
+      name: opensky-europe-vis
+      description: "A Day Over — OpenSky visualizations (2026-03-01), optionally regenerated live from Marketplace."
+      source_code_path: .
+      # Grants the app's service principal CAN_USE on the warehouse and injects its id.
+      resources:
+        - name: warehouse
+          sql_warehouse:
+            id: ${var.warehouse_id}
+            permission: CAN_USE
+      config:
+        command:
+          - python
+          - server.py
+        env:
+          # Consumed by server.py to enable the optional ingest path (see DESIGN.md).
+          - name: OPENSKY_WAREHOUSE_ID
+            value_from: warehouse
+          - name: OPENSKY_VOLUME_ROOT
+            value: ${var.volume_root}
+          - name: OPENSKY_CATALOG
+            value: ${var.catalog}
+          - name: OPENSKY_SCHEMA
+            value: ${var.schema}
+
+# Targets carry no host — the workspace comes from your CLI profile (deploy.sh
+# passes --profile from .env). TARGET selects the deployment namespace/mode.
+targets:
+  dev:
+    mode: development
+    default: true
+  dogfood:
+    mode: development

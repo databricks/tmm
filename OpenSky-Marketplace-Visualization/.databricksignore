@@ -1,0 +1,15 @@
+# Files not needed by the running app. source_code_path is this whole folder, so
+# without this the docs/scripts/.env would be uploaded to the workspace. Excluding
+# them keeps the deployed app source lean and guarantees .env never reaches the
+# workspace (there's no git repo here to honor .gitignore).
+.env
+.env.example
+.gitignore
+.databricksignore
+README.md
+CLAUDE.md
+DESIGN.md
+images/
+deploy.sh
+__pycache__/
+.databricks/

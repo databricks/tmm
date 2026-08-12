@@ -1,0 +1,3 @@
+# Only needed for the optional "Regenerate from Marketplace" ingest path.
+# Imported lazily by dbx.py, so the static app still boots if this is absent.
+databricks-sdk>=0.30
