@@ -5,7 +5,7 @@
 
 This repository provides a small, self-contained Spark Declarative Pipelines example that you can run on the Databricks Free Edition. It demonstrates how to build an IoT pipeline using SDP streaming tables, materialized views, and AI-powered queries. We use a custom PySpark data source that connects to real-time aircraft data from the OpenSky Network. You can learn how to use ingestion, aggregation, and interactive analytics — all with minimal setup and code. 
 
-Note, this example uses the standard [open-source Spark Declarative Pipelines (SDP)](https://spark.apache.org/docs/4.1.0-preview1/declarative-pipelines-programming-guide.html) that runs anywhere Spark runs. 
+Note, this example uses [Open Source Spark Declarative Pipelines (SDP)](https://spark.apache.org/docs/latest/declarative-pipelines-programming-guide.html) that runs anywhere Spark runs. 
 
 This tutorial is based on my Databrick blog about [Building Scalable Systems with Lakeflow Declarative Pipelines and PySpark Custom Data Sources](https://www.databricks.com/blog/processing-millions-events-thousands-aircraft-one-declarative-pipeline). 
 
