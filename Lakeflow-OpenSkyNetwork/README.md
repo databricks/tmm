@@ -5,9 +5,11 @@
 
 This repository provides a small, self-contained Spark Declarative Pipelines example that you can run on the Databricks Free Edition. It demonstrates how to build an IoT pipeline using SDP streaming tables, materialized views, and AI-powered queries. We use a custom PySpark data source that connects to real-time aircraft data from the OpenSky Network. You can learn how to use ingestion, aggregation, and interactive analytics — all with minimal setup and code. 
 
-Note, this example uses [Open Source Spark Declarative Pipelines (SDP)](https://spark.apache.org/docs/latest/declarative-pipelines-programming-guide.html) that runs anywhere Spark runs. 
+* Note, this example explains how to use SDP on Lakeflow with Databricks Free Edition.
+* If you are looking to use [Apache Spark Declarative Pipelines (SDP)](https://spark.apache.org/docs/latest/declarative-pipelines-programming-guide.html) on Pyspark with VSCode, follow this 
+[Open-source Apache Spark Declarative Pipelines tutorial]https://github.com/databricks/tmm/blob/main/OSS-SDP-OpenSkyNetwork/README.md
 
-This tutorial is based on my Databrick blog about [Building Scalable Systems with Lakeflow Declarative Pipelines and PySpark Custom Data Sources](https://www.databricks.com/blog/processing-millions-events-thousands-aircraft-one-declarative-pipeline). 
+Both tutorials is based on my Databrick blog about [Building Scalable Systems with Lakeflow Declarative Pipelines and PySpark Custom Data Sources](https://www.databricks.com/blog/processing-millions-events-thousands-aircraft-one-declarative-pipeline). 
 
 ---
 
@@ -43,9 +45,8 @@ This hands-on guide walks you through the entire process from data to dashboard 
 ### Step 0: Chose your Path
 
 I thought I'd give you options to learn. 
-* I recommend to learn about the Lakeflow Pipelines Editor first and then follow this "Fast Track Guide" hands-on. I am sure this will maximise your learning. 
-* If you prefer a detailed step by step walkthrough, expand the [Step-by-Step Guide to Declarative Pipelines](Lakeflow-Pipelines-StepByStep-Instructions.md)
-* Stay tuned for video tutorial...
+* I recommend to familiarize yourself with the [Lakeflow Pipelines Editor](https://docs.databricks.com/aws/en/ldp/multi-file-editor) first and then follow this "Fast Track Guide" hands-on. This will maximise your learning. 
+
 
 ### Step 1: Create Your Streaming Table (Live Aircraft Feed)
 
