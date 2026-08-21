@@ -3,9 +3,9 @@
 ### Fast Track To Spark Declarative Pipelines (SDP)
 ![Aviation Data Processing Header](misc/header.gif)
 
-This repository provides a small, self-contained Spark Declarative Pipelines example that you can run on the Databricks Free Edition. It demonstrates how to build an IoT pipeline using SDP streaming tables, materialized views, and AI-powered queries. We use a custom PySpark data source that connects to real-time aircraft data from the OpenSky Network. You can learn how to use ingestion, aggregation, and interactive analytics — all with minimal setup and code. 
+This repository provides a small, self-contained Spark Declarative Pipelines example that you can run on the Databricks Free Edition. It's part of the [How to get started with Spark Declarative Pipelines (SDP) tutorial](https://stage.databricks.com/discover/how-to-get-started-with-spark-declarative-pipelines). The repo demonstrates how to build an IoT pipeline using SDP streaming tables, materialized views, and AI-powered queries. We use a custom PySpark data source that connects to real-time aircraft data from the OpenSky Network. You can learn how to use ingestion, aggregation, and interactive analytics — all with minimal setup and code. 
 
-* Note, this example explains how to use SDP on Lakeflow with Databricks Free Edition.
+* Note: This example explains how to use SDP on Lakeflow with Databricks Free Edition.
 * [In case you are looking to use [Apache Spark Declarative Pipelines (SDP)](https://spark.apache.org/docs/latest/declarative-pipelines-programming-guide.html) on Pyspark with VSCode, follow this 
 [Open-source Apache Spark Declarative Pipelines tutorial](https://github.com/databricks/tmm/blob/main/OSS-SDP-OpenSkyNetwork/README.md)]
 
