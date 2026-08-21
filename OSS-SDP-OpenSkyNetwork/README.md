@@ -1,9 +1,11 @@
 
-# Getting Started with Open Source Spark Declarative Pipelines (SDP)  
+# Getting Started with Open Source Apache Spark™ Declarative Pipelines Tutorial (SDP)  
 
-This project builds a simple and fun Spark Declarative Pipeline consisting of just two powerful components: a streaming table and a materialized view. First, the streaming table uses a Custom PySpark Datasource to continuously fetch live flight data from the OpenSky API, building a permanent history of every aircraft position, altitude and velocity. Then, the materialized view reads that stream to create a "current state" board of the global airspace.
+This project is part of the [How to get started with Spark Declarative Pipelines (SDP) tutorial](https://stage.databricks.com/discover/how-to-get-started-with-spark-declarative-pipelines). Learn how to build a simple and fun declarative ETL data pipeline consisting of just two powerful components: a streaming table and a materialized view. First, the streaming table uses a Custom PySpark Datasource to continuously fetch live flight data from the OpenSky API, building a permanent history of every aircraft position, altitude and velocity. Then, the materialized view reads that stream to create a "current state" board of the global airspace.
 
 This guide outlines the steps to set up and run SDP with PySpark on a local machine. We will build a functional pipeline using Spark 4.1.0, Java 17, and uv for high-performance Python package management, **relying entirely on open-source tools**.
+
+
 
 ![Aviation Data Processing Header](misc/SDP_anim.gif)
 
@@ -205,3 +207,8 @@ spark.read.table("flights_stats").limit(3).show(truncate=False)
 
 * Did you like the OSS Apache SDP example above? If you are interested, you can run the same [streaming aviation data SDP tutorial on Databricks Free Edition](https://github.com/databricks/tmm/blob/main/Lakeflow-OpenSkyNetwork/README.md) which comes with the built-in pipeline editor and includes serverless compute, dashboards, natural language queries on streaming data, and governance.
 * [This blog](https://www.databricks.com/blog/processing-millions-events-thousands-aircraft-one-declarative-pipeline) provides more details about Databricks and the OpenSky Network.  
+
+
+## Changelog
+
+* August 2026. Note: Despite the availability of PySpark 4.2, I recommend running this tutorial with PySpark 4.1 as described due to a glitch in the Spark-Pipelines CLI. 
