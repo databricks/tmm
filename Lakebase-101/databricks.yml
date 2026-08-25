@@ -10,21 +10,22 @@ include:
 variables:
   warehouse_id:
     description: SQL Warehouse ID for lakehouse queries
-    default: "07111884d60ceee2"
+    default: 07111884d60ceee2
   catalog:
     description: The catalog to use
+    default: lakebase_101_catalog
   schema:
     description: The schema to use
+    default: lakebase_101_schema
   database_name:
     description: Postgres database name
-    default: shop
+    default: lakebase_101_db
   project_id:
     description: Lakebase project ID (lowercase, hyphen-delimited)
     default: lakebase-101-demo
-  # App
   app_name:
     description: Databricks App name
-    default: lakebase-101-demo
+    default: lakebase-101-app
 
 targets:
   dev:

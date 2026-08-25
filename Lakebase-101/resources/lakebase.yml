@@ -4,7 +4,7 @@ resources:
   postgres_projects:
     lakebase_101:
       project_id: ${var.project_id}
-      display_name: "Lakebase 101 Demo"
+      display_name: "Lakebase 101"
       pg_version: 17
       default_endpoint_settings:
         autoscaling_limit_min_cu: 0.5

@@ -16,7 +16,7 @@ env:
   - name: PGPORT
     value: "5432"
   - name: PGDATABASE
-    value: "shop"
+    value: "lakebase_101_db"
   - name: PGUSER
     value: "<YOUR_LAKEBASE_ROLE>"
   - name: PGPASSWORD
