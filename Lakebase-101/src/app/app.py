@@ -9,7 +9,7 @@ import psycopg2.extras
 
 from server import db, warehouse
 from server.config import (
-    IS_DATABRICKS_APP, GOLD_TABLE, SYNCED_TABLE, get_sync_pipeline_id(), DIRECTORY_TABLE, DIRECTORY_SOURCE,
+    IS_DATABRICKS_APP, GOLD_TABLE, SYNCED_TABLE, get_sync_pipeline_id, DIRECTORY_TABLE, DIRECTORY_SOURCE,
     SALES_TABLE, SALES_SOURCE, get_pg_params, get_workspace_client, WAREHOUSE_ID,
 )
 
