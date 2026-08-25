@@ -9,7 +9,7 @@ import psycopg2.extras
 
 from server import db, warehouse
 from server.config import (
-    IS_DATABRICKS_APP, GOLD_TABLE, SYNCED_TABLE, SYNC_PIPELINE_ID, DIRECTORY_TABLE, DIRECTORY_SOURCE,
+    IS_DATABRICKS_APP, GOLD_TABLE, SYNCED_TABLE, get_sync_pipeline_id(), DIRECTORY_TABLE, DIRECTORY_SOURCE,
     SALES_TABLE, SALES_SOURCE, get_pg_params, get_workspace_client, WAREHOUSE_ID,
 )
 
@@ -88,8 +88,8 @@ def trigger_sync(req: SyncReq):
     """Trigger the managed synced-table pipeline (native reverse ETL: Delta gold -> Lakebase Postgres)."""
     try:
         w = get_workspace_client()
-        upd = w.pipelines.start_update(SYNC_PIPELINE_ID, full_refresh=bool(req.full_refresh))
-        return {"triggered": True, "pipeline_id": SYNC_PIPELINE_ID,
+        upd = w.pipelines.start_update(get_sync_pipeline_id(), full_refresh=bool(req.full_refresh))
+        return {"triggered": True, "pipeline_id": get_sync_pipeline_id(),
                 "update_id": getattr(upd, "update_id", None), "full_refresh": bool(req.full_refresh)}
     except Exception as e:
         raise HTTPException(502, f"failed to trigger pipeline: {e}")
@@ -101,7 +101,7 @@ def sync_status(update_id: str = None):
     state = None
     try:
         w = get_workspace_client()
-        p = w.pipelines.get(SYNC_PIPELINE_ID)
+        p = w.pipelines.get(get_sync_pipeline_id())
         ups = p.latest_updates or []
         chosen = None
         if update_id:
@@ -115,7 +115,7 @@ def sync_status(update_id: str = None):
         total = db.query(f"SELECT count(*) AS n FROM {SYNCED_TABLE}", one=True)["n"]
     except Exception:
         total = None
-    return {"state": state, "total_in_lakebase": total, "pipeline_id": SYNC_PIPELINE_ID}
+    return {"state": state, "total_in_lakebase": total, "pipeline_id": get_sync_pipeline_id()}
 
 
 # ---------------------------- speed comparison ----------------------------

@@ -9,35 +9,18 @@ command:
   - "8000"
 
 env:
-  # Lakebase Postgres connection — fill these with your deployed endpoint details.
-  # For production, prefer OAuth via a bound Database resource.
-  - name: PGHOST
-    value: "<YOUR_LAKEBASE_ENDPOINT_HOST>"
-  - name: PGPORT
-    value: "5432"
-  - name: PGDATABASE
-    value: "lakebase_101_db"
-  - name: PGUSER
-    value: "<YOUR_LAKEBASE_ROLE>"
-  - name: PGPASSWORD
-    value: "<YOUR_LAKEBASE_ROLE_PASSWORD>"
-
-  # SQL Warehouse for the lakehouse (Delta) side: speed comparison + reverse-ETL reads
-  - name: WAREHOUSE_ID
-    value: "<YOUR_WAREHOUSE_ID>"
-
   # Lakehouse gold (reverse-ETL source) + native synced table (Postgres schema) + managed pipeline
+  - name: WAREHOUSE_ID
+    valueFrom: sql-warehouse
   - name: GOLD_TABLE
-    value: "<CATALOG>.<SCHEMA>.customer_360_gold"
+    value: "lakebase_101_catalog.lakebase_101_schema.customer_360_gold"
   - name: SYNCED_TABLE
     value: "dais_demo.customer_360_synced"
   - name: DIRECTORY_TABLE
     value: "dais_demo.customers_directory_synced"
   - name: DIRECTORY_SOURCE
-    value: "<CATALOG>.<SCHEMA>.customers_directory"
+    value: "lakebase_101_catalog.lakebase_101_schema.customers_directory"
   - name: SALES_TABLE
     value: "dais_demo.sales_events_synced"
   - name: SALES_SOURCE
-    value: "<CATALOG>.<SCHEMA>.sales_events"
-  - name: SYNC_PIPELINE_ID
-    value: "<YOUR_SYNC_PIPELINE_ID>"
+    value: "lakebase_101_catalog.lakebase_101_schema.sales_events"

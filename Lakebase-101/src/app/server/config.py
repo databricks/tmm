@@ -63,3 +63,15 @@ def get_pg_params() -> dict:
         "dbname": os.environ.get("PGDATABASE", PGDATABASE),
         "user": user,
     }
+
+@lru_cache(maxsize=1)
+def get_sync_pipeline_id() -> str:
+    """Discover the synced-table pipeline dynamically — no hardcoded ID needed."""
+    if not IS_DATABRICKS_APP:
+        return os.environ.get("SYNC_PIPELINE_ID", "")
+    w = get_workspace_client()
+    target = f"{GOLD_TABLE.replace('.', '.').rsplit('.', 1)[0]}.customer_360_synced"
+    for p in w.pipelines.list_pipelines(filter=f"name LIKE '%customer_360_synced%'"):
+        if "lakebase_101_catalog" in (p.name or ""):
+            return p.pipeline_id
+    return ""
