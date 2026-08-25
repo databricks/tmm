@@ -20,12 +20,3 @@ resources:
           sql_warehouse:
             id: ${var.warehouse_id}
             permission: CAN_USE
-        - name: gold-table
-          uc_table:
-            name: ${var.catalog}.${var.schema}.customer_360_gold
-        - name: directory-source
-          uc_table:
-            name: ${var.catalog}.${var.schema}.customers_directory
-        - name: sales-source
-          uc_table:
-            name: ${var.catalog}.${var.schema}.sales_events
