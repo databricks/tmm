@@ -41,3 +41,4 @@ resources:
       parent: ${resources.postgres_branches.production.name}
       postgres_database: ${var.database_name}
       role: ${resources.postgres_roles.app_role.id}
+      replace_existing: true

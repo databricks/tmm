@@ -4,6 +4,9 @@ resources:
     lakebase_101_app:
       name: ${var.app_name}
       description: "Lakebase 101 — Order Ops Console: reverse ETL + OLTP speed + Databricks App"
+      git_repository:
+        url: https://github.com/tgourdel/tmm
+        provider: gitHub
       source_code_path: ../src/app
       resources:
         - name: lakebase-db

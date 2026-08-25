@@ -38,8 +38,8 @@ targets:
     workspace:
       host: https://data-ai-lakehouse.cloud.databricks.com
     variables:
-      catalog: lakebase101_demo
-      schema: dais_demo
+      catalog: lakebase_101_catalog
+      schema: lakebase_101_schema
   prod:
     mode: production
     workspace:
