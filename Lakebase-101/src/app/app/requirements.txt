@@ -1,0 +1,5 @@
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+psycopg2-binary>=2.9.9
+databricks-sdk>=0.30.0
+pydantic>=2.0.0

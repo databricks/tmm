@@ -1,0 +1,43 @@
+# Lakebase infrastructure — project, branch, endpoint, database, role
+resources:
+  # Project — top-level container
+  postgres_projects:
+    lakebase_101:
+      project_id: ${var.project_id}
+      display_name: "Lakebase 101 Demo"
+      pg_version: 17
+      default_endpoint_settings:
+        autoscaling_limit_min_cu: 0.5
+        autoscaling_limit_max_cu: 2
+
+  # Production branch (auto-created with project; replace_existing adopts it)
+  postgres_branches:
+    production:
+      parent: ${resources.postgres_projects.lakebase_101.id}
+      branch_id: production
+      replace_existing: true
+
+  # Primary read-write endpoint (auto-created; replace_existing adopts it)
+  postgres_endpoints:
+    primary:
+      parent: ${resources.postgres_branches.production.id}
+      endpoint_id: primary
+      endpoint_type: ENDPOINT_TYPE_READ_WRITE
+      autoscaling_limit_min_cu: 0.5
+      autoscaling_limit_max_cu: 2
+      replace_existing: true
+
+  # App role — native login role for the Databricks App connection
+  postgres_roles:
+    app_role:
+      role_id: app-role
+      parent: ${resources.postgres_branches.production.name}
+      postgres_role: app_lakebase101
+
+  # Named database for the demo
+  postgres_databases:
+    demo_db:
+      database_id: demo-database
+      parent: ${resources.postgres_branches.production.name}
+      postgres_database: ${var.database_name}
+      role: ${resources.postgres_roles.app_role.id}

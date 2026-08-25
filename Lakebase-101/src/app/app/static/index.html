@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Lakebase 101 · Order Ops Console</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = { theme: { extend: {
+    colors: { oat:'#F9F7F4', paper:'#FFFFFF', ink:'#11171A', navy:'#1B3139',
+              lava:'#FF3621', lavadeep:'#550B07', mut:'#5B6B70', line:'#E4E1DA',
+              amber:'#B45309', grn:'#047857', blu:'#1D4ED8' },
+    fontFamily: { sans:['DM Sans','ui-sans-serif','system-ui','sans-serif'], mono:['DM Mono','ui-monospace','monospace'] }
+  } } }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{ --oat:#F9F7F4; --paper:#fff; --ink:#11171A; --mut:#5B6B70; --line:#E4E1DA; --lava:#FF3621; --lavadeep:#550B07; }
+  html,body{background:var(--oat); color:var(--ink); font-family:'DM Sans',ui-sans-serif,system-ui,sans-serif; -webkit-font-smoothing:antialiased}
+  .card{background:var(--paper); border:1px solid var(--line); border-radius:14px; box-shadow:0 1px 2px rgba(17,23,26,.04)}
+  .mut{color:var(--mut)}
+  .mono{font-family:'DM Mono',ui-monospace,monospace}
+  .eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--lava)}
+  .rule{height:3px;width:42px;background:var(--lava);border-radius:2px}
+  .btn{border-radius:8px;padding:.6rem 1rem;font-weight:700;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;transition:.15s;cursor:pointer;border:1px solid transparent;display:inline-flex;align-items:center;gap:.4rem}
+  .btn-primary{background:var(--lava);color:#fff}
+  .btn-primary:hover{background:var(--lavadeep)}
+  .btn-ghost{background:#fff;border-color:var(--ink);color:var(--ink)}
+  .btn-ghost:hover{border-color:var(--lava);color:var(--lava)}
+  .btn:disabled{opacity:.5;cursor:default}
+  input,select{background:#fff;border:1px solid var(--line);border-radius:8px;color:var(--ink);padding:.5rem .7rem;outline:none}
+  input:focus,select:focus{border-color:var(--lava)}
+  /* hide native number spinner arrows */
+  input[type=number]{-moz-appearance:textfield;appearance:textfield}
+  input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;appearance:none;margin:0}
+  .chip{font-size:.68rem;padding:.16rem .55rem;border-radius:999px;font-weight:700;letter-spacing:.02em}
+  #c-readms{display:inline-flex;align-items:baseline;gap:.28rem;padding:.24rem .7rem;border-radius:999px;line-height:1}
+  #c-readms .n{font-size:1.4rem;font-weight:900;font-family:'DM Mono',ui-monospace,monospace}
+  #c-readms .u{font-size:.72rem;font-weight:700;opacity:.85}
+  .step{display:flex;flex-direction:column;align-items:center;gap:.2rem;min-width:120px}
+  .flow{flex:1;height:3px;background:var(--lava);position:relative;margin:0 .4rem;opacity:.85}
+  .flow:after{content:"";position:absolute;right:-1px;top:-4px;border-left:9px solid var(--lava);border-top:5px solid transparent;border-bottom:5px solid transparent}
+  .pulse{animation:pulse 1.1s ease-in-out infinite}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+  .bar{height:16px;border-radius:3px;transition:width .5s ease}
+  .brick{display:inline-grid;grid-template-columns:repeat(2,1fr);gap:2px;width:24px;height:24px}
+  .brick i{background:var(--lava);display:block;transform:skewX(-11deg)}
+  .brick i:nth-child(2),.brick i:nth-child(3){background:var(--lavadeep)}
+</style>
+</head>
+<body class="min-h-screen">
+<div class="max-w-6xl mx-auto px-5 py-8">
+
+  <!-- header -->
+  <header class="flex items-center justify-between mb-7">
+    <div class="flex items-center gap-3">
+      <span class="brick"><i></i><i></i><i></i><i></i></span>
+      <div>
+        <div class="eyebrow">Data + AI Summit</div>
+        <h1 class="text-2xl font-extrabold tracking-tight leading-none mt-1">Lakebase 101 <span class="mut font-semibold">· Order Ops Console</span></h1>
+      </div>
+    </div>
+    <div class="card px-4 py-2 flex items-center gap-2.5 text-xs">
+      <span id="dot" class="w-2 h-2 rounded-full bg-gray-400 inline-block"></span>
+      <div class="leading-tight"><div id="mode" class="font-bold">connecting…</div><div id="model" class="mut mono text-[11px]"></div></div>
+    </div>
+  </header>
+
+  <!-- pipeline + sync -->
+  <section class="card p-5 mb-5">
+    <div class="flex flex-col lg:flex-row lg:items-center gap-6">
+      <div class="flex items-center flex-1 min-w-0">
+        <div class="step"><div class="text-2xl">🏞️</div><div class="font-bold text-sm">Lakehouse</div><div class="mut text-[11px] mono">Delta gold · 50k</div></div>
+        <div class="flow"></div>
+        <div class="step"><div class="text-2xl">🔁</div><div class="font-bold text-sm text-lava">Reverse&nbsp;ETL</div><div class="mut text-[11px]">managed synced table</div></div>
+        <div class="flow"></div>
+        <div class="step"><div class="text-2xl">⚡</div><div class="font-bold text-sm">Lakebase</div><div class="mut text-[11px] mono">Postgres · OLTP</div></div>
+      </div>
+      <div class="hidden lg:block w-px h-14 bg-[var(--line)]"></div>
+      <div class="flex flex-col gap-2 lg:items-end">
+        <div class="flex items-center gap-2">
+          <button id="btn-sync" class="btn btn-primary" title="Trigger the managed synced-table pipeline">🔁 Sync now</button>
+          <button id="btn-sync-full" class="btn btn-ghost" title="Full refresh of the synced table">Full refresh</button>
+        </div>
+        <div id="sync-out" class="text-sm mut min-h-[20px]"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- stats -->
+  <section id="stats" class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-5"></section>
+
+  <!-- SPEED HERO -->
+  <section class="card p-6 mb-5">
+    <div class="flex flex-col lg:flex-row gap-8 items-stretch">
+      <div class="lg:w-72 shrink-0">
+        <div class="eyebrow">Speed showdown</div>
+        <div class="rule my-2"></div>
+        <h2 class="text-2xl font-extrabold leading-tight tracking-tight">Same lookup.<br/>Two engines.</h2>
+        <p class="mut text-sm mt-2">A single customer point-lookup — Lakebase (operational) vs the lakehouse SQL Warehouse.</p>
+        <div class="flex items-center gap-2 mt-4">
+          <input id="speed-id" type="number" min="1" max="50000" value="42" placeholder="Customer # 1–50000" class="flex-1 min-w-0"/>
+          <button id="btn-speed" class="btn btn-primary shrink-0">Run lookup →</button>
+        </div>
+      </div>
+      <div class="flex-1 flex flex-col justify-center gap-4">
+        <div>
+          <div class="flex justify-between items-end text-sm mb-1"><span class="font-bold text-lava">⚡ Lakebase</span><span><b id="lb-ms" class="text-3xl font-extrabold mono">—</b> <span class="mut text-xs">ms</span></span></div>
+          <div class="w-full bg-oat rounded"><div id="lb-bar" class="bar bg-lava" style="width:2%"></div></div>
+        </div>
+        <div>
+          <div class="flex justify-between items-end text-sm mb-1"><span class="font-bold mut">🐢 SQL Warehouse</span><span><b id="wh-ms" class="text-3xl font-extrabold mono mut">—</b> <span class="mut text-xs">ms</span></span></div>
+          <div class="w-full bg-oat rounded"><div id="wh-bar" class="bar" style="width:2%;background:#C9CED1"></div></div>
+        </div>
+        <div id="speedup" class="text-center text-lg mt-1 mut">Run the lookup to compare ↑</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AGGREGATION SHOWDOWN -->
+  <section class="card p-6 mb-5">
+    <div class="flex flex-col lg:flex-row gap-8 items-stretch">
+      <div class="lg:w-72 shrink-0">
+        <div class="eyebrow">Heavy analytics · right tool</div>
+        <div class="rule my-2"></div>
+        <h2 class="text-2xl font-extrabold leading-tight tracking-tight">Big analytical query.<br/>Lakehouse territory.</h2>
+        <p class="mut text-sm mt-2">The same analytical query on both engines — join <b>5,000,000</b> sales events to the customer directory and roll it up per segment (a full-table scan + join).</p>
+        <div class="mt-4">
+          <button id="btn-agg" class="btn btn-primary">Run heavy query →</button>
+        </div>
+      </div>
+      <div class="flex-1 flex flex-col justify-center gap-4">
+        <div>
+          <div class="flex justify-between items-end text-sm mb-1"><span class="font-bold text-lava">⚡ Lakebase</span><span><b id="agg-lb-ms" class="text-3xl font-extrabold mono">—</b> <span class="mut text-xs">ms</span></span></div>
+          <div class="w-full bg-oat rounded"><div id="agg-lb-bar" class="bar bg-lava" style="width:2%"></div></div>
+        </div>
+        <div>
+          <div class="flex justify-between items-end text-sm mb-1"><span class="font-bold mut">🐢 SQL Warehouse</span><span><b id="agg-wh-ms" class="text-3xl font-extrabold mono mut">—</b> <span class="mut text-xs">ms</span></span></div>
+          <div class="w-full bg-oat rounded"><div id="agg-wh-bar" class="bar" style="width:2%;background:#C9CED1"></div></div>
+        </div>
+        <div id="agg-speedup" class="text-center text-lg mt-1 mut">Run the aggregation to compare ↑</div>
+        <div id="agg-table"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- bottom: customer 360 | place order -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+    <section class="card p-6">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="font-extrabold text-lg tracking-tight">👤 Customer 360</h2>
+        <span id="c-readms" class="chip" style="background:#FFEAE6;color:#B3260F"></span>
+      </div>
+      <div class="rule mb-3"></div>
+      <p class="mut text-sm mb-4">Served from the Lakebase synced table — the profile published from the lakehouse.</p>
+      <div class="flex items-center gap-2 mb-4">
+        <input id="cust-id" type="number" min="1" max="50000" value="42" placeholder="Customer # 1–50000" class="flex-1 min-w-0"/>
+        <button id="btn-cust" class="btn btn-ghost shrink-0">Load</button>
+      </div>
+      <div id="cust-out" class="text-sm mut">Enter a customer # to see their 360.</div>
+    </section>
+
+    <section class="card p-6">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="font-extrabold text-lg tracking-tight">🛒 Place an order</h2>
+        <span class="chip" style="background:#E6F4EE;color:#047857">live write</span>
+      </div>
+      <div class="rule mb-3"></div>
+      <p class="mut text-sm mb-4">A real transaction in Lakebase: record the order + drop stock, atomically.</p>
+
+      <!-- pickers -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+        <label class="block">
+          <span class="text-[11px] font-bold uppercase tracking-wide mut">Customer</span>
+          <input id="ord-cust" type="number" min="1" max="50000" value="42" placeholder="Customer #" class="w-full mt-1"/>
+        </label>
+        <label class="block">
+          <span class="text-[11px] font-bold uppercase tracking-wide mut">Product</span>
+          <select id="ord-prod" class="w-full mt-1"></select>
+        </label>
+      </div>
+
+      <!-- quantity + line total -->
+      <div class="rounded-xl bg-oat border border-[var(--line)] p-3 mb-3 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <span class="text-[11px] font-bold uppercase tracking-wide mut">Qty</span>
+          <div class="flex items-center gap-1">
+            <button id="qty-dec" class="btn btn-ghost !px-3 !py-1 text-base leading-none">−</button>
+            <input id="ord-qty" type="number" value="1" min="1" class="w-14 text-center"/>
+            <button id="qty-inc" class="btn btn-ghost !px-3 !py-1 text-base leading-none">+</button>
+          </div>
+        </div>
+        <div class="text-right">
+          <div class="text-[11px] mut" id="ord-stock">—</div>
+          <div class="text-lg font-extrabold mono" id="ord-total">$0</div>
+        </div>
+      </div>
+
+      <button id="btn-order" class="btn btn-primary w-full justify-center text-sm mb-3">Buy → <span class="opacity-80" id="btn-order-price"></span></button>
+      <div id="ord-out" class="text-sm min-h-[24px]"></div>
+    </section>
+
+  </div>
+
+  <!-- inventory (own section) -->
+  <section class="card p-6 mt-5">
+    <div class="flex items-end justify-between mb-3">
+      <div>
+        <div class="eyebrow">Inventory · live stock</div>
+        <div class="rule mt-2"></div>
+      </div>
+      <div class="text-right leading-tight">
+        <div id="inv-total" class="text-2xl font-extrabold mono tracking-tight">—</div>
+        <div class="text-[11px] mut">units in Lakebase · updates on every order</div>
+      </div>
+    </div>
+    <div id="inv" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5"></div>
+  </section>
+
+  <footer class="text-center text-xs mut mt-8">Lakebase + Databricks Apps · one governed copy of data, served in milliseconds</footer>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const api = async (path, opts) => { const r = await fetch(path, opts); if(!r.ok){ const t=await r.text(); throw new Error(t||r.status);} return r.json(); };
+const money = n => '$' + Number(n).toLocaleString(undefined,{maximumFractionDigits:0});
+const seg = s => { const c={VIP:'bg-[#FBEAD0] text-[#92600A]',Loyal:'bg-[#E2ECFA] text-[#1D4ED8]','At-Risk':'bg-[#FFEAE6] text-[#B3260F]',New:'bg-[#E6F4EE] text-[#047857]',Regular:'bg-[#EDEAE4] text-[#5B6B70]'}[s]||'bg-[#EDEAE4] text-[#5B6B70]'; return `<span class="chip ${c}">${s}</span>`; };
+const risk = b => ({Low:'text-grn',Medium:'text-amber',High:'text-lava'}[b]||'');
+
+async function loadHealth(){
+  try{ const h=await api('/api/health');
+    $('#dot').className='w-2 h-2 rounded-full inline-block '+(h.lakebase_ok?'bg-grn':'bg-lava');
+    $('#mode').textContent = (h.mode==='databricks-app'?'Databricks App':'local')+' · '+(h.lakebase_ok?'connected':'down');
+    $('#model').textContent = 'Postgres · '+h.pg_database+'@'+(h.pg_host||'').split('.')[0];
+  }catch(e){ $('#mode').textContent='health error'; }
+}
+async function loadStats(){
+  try{ const s=await api('/api/stats');
+    const cards=[
+      ['Customers', Number(s.synced_customers).toLocaleString(),'synced to Lakebase'],
+      ['Orders', Number(s.total_orders).toLocaleString(), s.orders_today+' today'],
+      ['Revenue', money(s.gmv),'in Lakebase'],
+      ['Products', s.products, s.units_in_stock+' units'],
+      ['Last sync', s.last_sync? new Date(s.last_sync).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):'—','from lakehouse'],
+    ];
+    $('#stats').innerHTML = cards.map(c=>`<div class="card px-4 py-3"><div class="eyebrow text-[10px]">${c[0]}</div><div class="text-2xl font-extrabold mt-1 tracking-tight">${c[1]}</div><div class="text-[11px] mut">${c[2]}</div></div>`).join('');
+  }catch(e){}
+}
+let PRODUCTS = {};
+async function loadInventory(){
+  try{ const d=await api('/api/inventory');
+    PRODUCTS = {}; d.inventory.forEach(p=>PRODUCTS[p.product_id]=p);
+    const cur = $('#ord-prod').value;
+    $('#ord-prod').innerHTML = d.inventory.map(p=>`<option value="${p.product_id}">${p.product_name} · ${money(p.price)}</option>`).join('');
+    if(cur && PRODUCTS[cur]) $('#ord-prod').value = cur;
+    const INV_MAX = 500;
+    let totalUnits = 0;
+    $('#inv').innerHTML = d.inventory.map(p=>{
+      const s = Number(p.stock_on_hand); totalUnits += s;
+      const pct = Math.max(3, Math.min(100, s/INV_MAX*100));
+      const col = s<50 ? 'var(--lava)' : (s<100 ? '#B45309' : '#047857');
+      const txt = s<50 ? 'text-lava' : (s<100 ? 'text-amber' : 'text-grn');
+      const tag = s<50 ? 'Low' : (s<100 ? 'Watch' : 'In stock');
+      const tagbg = s<50 ? 'background:#FFEAE6' : (s<100 ? 'background:#FBEAD0' : 'background:#E6F4EE');
+      return `<div class="rounded-lg border border-[var(--line)] bg-oat p-2.5 flex flex-col gap-1.5">
+        <div class="flex items-start justify-between gap-1.5">
+          <span class="text-ink font-semibold text-[11px] leading-tight">${p.product_name}</span>
+          <span class="chip ${txt} shrink-0" style="${tagbg};padding:.04rem .35rem;font-size:.6rem">${tag}</span>
+        </div>
+        <div class="text-[8px] mut uppercase tracking-wide -mt-0.5">${p.category}</div>
+        <div class="flex items-baseline gap-1"><b class="mono text-[13px] ${txt} tracking-tight">${s}</b><span class="mono text-[9px] mut">/ ${INV_MAX}</span></div>
+        <div class="h-1 rounded-full bg-[var(--paper)] overflow-hidden"><div class="h-full rounded-full" style="width:${pct}%;background:${col};transition:width .4s ease"></div></div>
+      </div>`;
+    }).join('');
+    $('#inv-total') && ($('#inv-total').textContent = totalUnits.toLocaleString());
+    updateOrderSummary();
+  }catch(e){}
+}
+function updateOrderSummary(){
+  const p = PRODUCTS[$('#ord-prod').value]; if(!p) return;
+  let q = Math.max(1, parseInt($('#ord-qty').value||'1',10)); $('#ord-qty').value=q;
+  const total = Number(p.price)*q;
+  $('#ord-total').textContent = money(total);
+  $('#btn-order-price').textContent = '· '+money(total);
+  $('#ord-stock').innerHTML = `<span class="${p.stock_on_hand<50?'text-lava':''}">${p.stock_on_hand} in stock</span> · ${money(p.price)} ea`;
+}
+
+function syncDone(){ $('#btn-sync').disabled=false; $('#btn-sync-full').disabled=false; $('#btn-sync').classList.remove('pulse'); $('#btn-sync-full').classList.remove('pulse'); }
+async function runSync(full){
+  const b = full ? $('#btn-sync-full') : $('#btn-sync');
+  $('#btn-sync').disabled=true; $('#btn-sync-full').disabled=true; b.classList.add('pulse');
+  $('#sync-out').textContent='triggering the managed synced-table pipeline…';
+  try{
+    const r=await api('/api/sync',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({full_refresh:!!full})});
+    const uid=r.update_id; let tries=0;
+    const poll=async()=>{
+      tries++;
+      let s; try{ s=await api('/api/sync/status'+(uid?('?update_id='+encodeURIComponent(uid)):'')); }catch(e){ s={state:'unknown'}; }
+      const st=(s.state||'').toUpperCase();
+      if(st.includes('COMPLETED')){ $('#sync-out').innerHTML=`✅ Synced table refreshed by the managed pipeline · <b>${Number(s.total_in_lakebase).toLocaleString()}</b> rows live in Lakebase`; loadStats(); syncDone(); return; }
+      if(st.includes('FAILED')||st.includes('CANCEL')){ $('#sync-out').innerHTML='⚠️ pipeline '+st; syncDone(); return; }
+      $('#sync-out').innerHTML=`⏳ managed pipeline running… <span class="mut">${st||'starting'}</span>`;
+      if(tries<60) setTimeout(poll,3000); else { $('#sync-out').innerHTML='⏳ still running — see Catalog Explorer'; syncDone(); }
+    };
+    setTimeout(poll,2500);
+  }catch(e){ $('#sync-out').textContent='sync failed: '+e.message; syncDone(); }
+}
+$('#btn-sync').onclick = () => runSync(false);
+$('#btn-sync-full').onclick = () => runSync(true);
+
+$('#btn-speed').onclick = async () => {
+  $('#lb-ms').textContent='…'; $('#wh-ms').textContent='…'; $('#speedup').textContent='comparing…';
+  $('#lb-bar').style.width='2%'; $('#wh-bar').style.width='2%';
+  try{ const r=await api('/api/speed/'+($('#speed-id').value||42));
+    $('#lb-ms').textContent=r.lakebase_ms; $('#wh-ms').textContent=Math.round(r.warehouse_ms);
+    $('#wh-bar').style.width='100%';
+    $('#lb-bar').style.width=Math.max(1.5, r.lakebase_ms/r.warehouse_ms*100)+'%';
+    $('#speedup').innerHTML = r.speedup ? `Lakebase is <b class="text-lava text-3xl font-extrabold mono">${r.speedup}×</b> faster` : '';
+  }catch(e){ $('#speedup').textContent='lookup failed: '+e.message; }
+};
+
+$('#btn-agg').onclick = async () => {
+  $('#agg-lb-ms').textContent='…'; $('#agg-wh-ms').textContent='…'; $('#agg-speedup').textContent='crunching 5,000,000 events on both engines…'; $('#agg-table').innerHTML='';
+  $('#agg-lb-bar').style.width='2%'; $('#agg-wh-bar').style.width='2%';
+  try{ const r=await api('/api/aggregate');
+    const lb=r.lakebase_ms, wh=r.warehouse_ms, mx=Math.max(lb||wh, wh);
+    $('#agg-lb-ms').textContent = (lb==null) ? '—' : Math.round(lb);
+    $('#agg-wh-ms').textContent = Math.round(wh);
+    $('#agg-lb-bar').style.width = (lb? Math.max(2, lb/mx*100):2)+'%';
+    $('#agg-wh-bar').style.width = Math.max(2, wh/mx*100)+'%';
+    let msg;
+    if(r.factor){
+      msg = (r.winner==='warehouse')
+        ? `🏞️ SQL Warehouse wins — <b class="text-navy text-3xl font-extrabold mono">${r.factor}×</b> faster`
+        : `⚡ Lakebase is <b class="text-lava text-3xl font-extrabold mono">${r.factor}×</b> faster`;
+    } else {
+      msg = `🏞️ SQL Warehouse ran it in <b class="text-navy text-2xl font-extrabold mono">${Math.round(wh)} ms</b>`;
+    }
+    if(r.lakebase_note) msg += ` <span class="mut">· Lakebase ${r.lakebase_note}</span>`;
+    $('#agg-speedup').innerHTML = msg;
+    const rows=r.rows||[];
+    $('#agg-table').innerHTML = `<div class="overflow-x-auto"><table class="w-full text-xs"><thead><tr class="mut text-left">`+
+      `<th class="py-1 pr-2">Segment</th><th class="py-1 px-2 text-right">Events</th><th class="py-1 px-2 text-right">Active cust</th><th class="py-1 px-2 text-right">Revenue</th><th class="py-1 pl-2 text-right">Avg amount</th></tr></thead><tbody>`+
+      rows.map(x=>`<tr class="border-t border-[var(--line)]"><td class="py-1 pr-2">${seg(x.segment)}</td><td class="py-1 px-2 text-right mono">${Number(x.events).toLocaleString()}</td><td class="py-1 px-2 text-right mono">${Number(x.active_customers).toLocaleString()}</td><td class="py-1 px-2 text-right mono">${money(x.revenue)}</td><td class="py-1 pl-2 text-right mono">$${Number(x.avg_amount).toFixed(2)}</td></tr>`).join('')+
+      `</tbody></table></div>`;
+  }catch(e){ $('#agg-speedup').textContent='query failed: '+e.message; }
+};
+
+async function loadCustomer(id){
+  try{ const r=await api('/api/customer/'+id);
+    const p=r.profile; $('#c-readms').innerHTML='<span class="n">'+r.read_ms+'</span><span class="u">ms read</span>';
+    let html=`<div class="flex items-center gap-2 mb-2"><span class="font-extrabold text-base">${p.full_name}</span>${seg(p.segment)}<span class="mut text-xs">#${p.customer_id} · ${p.city}</span></div>`;
+    html+=`<div class="grid grid-cols-3 gap-2 my-2 text-center">
+      <div class="rounded-lg bg-oat border border-[var(--line)] p-2"><div class="text-[11px] mut">Lifetime value</div><div class="font-extrabold mono">${money(p.lifetime_value)}</div></div>
+      <div class="rounded-lg bg-oat border border-[var(--line)] p-2"><div class="text-[11px] mut">Orders</div><div class="font-extrabold mono">${p.total_orders}</div></div>
+      <div class="rounded-lg bg-oat border border-[var(--line)] p-2"><div class="text-[11px] mut">Churn risk</div><div class="font-extrabold ${risk(p.churn_risk_band)}">${p.churn_risk_band}</div></div></div>`;
+    html+=`<div class="text-sm mb-2 text-ink">⭐ Recommended: <b>${p.recommended_product_name}</b> <span class="mut">(${money(p.recommended_price)})</span></div>`;
+    if(r.orders && r.orders.length){ html+=`<div class="text-xs mut mb-1">Recent orders (live):</div>`+
+      r.orders.map(o=>`<div class="flex justify-between text-xs border-b border-[var(--line)] py-1"><span class="text-ink">${o.product_name} ×${o.quantity}</span><span class="mono">${money(o.total)}</span></div>`).join('');
+    } else { html+=`<div class="text-xs mut">No orders yet — place one on the right.</div>`; }
+    $('#cust-out').innerHTML=html;
+  }catch(e){ $('#cust-out').innerHTML='<span class="text-lava">not found: '+e.message+'</span>'; }
+}
+$('#btn-cust').onclick = () => loadCustomer($('#cust-id').value||42);
+
+$('#btn-order').onclick = async () => {
+  const body={customer_id:Number($('#ord-cust').value),product_id:Number($('#ord-prod').value),quantity:Number($('#ord-qty').value)};
+  $('#ord-out').textContent='committing transaction…';
+  try{ const r=await api('/api/order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    $('#ord-out').innerHTML=`✅ Order <b>#${r.order_id}</b> · ${r.product_name} ×${r.quantity} · ${money(r.total)} · committed in <b class="text-grn text-2xl">${r.write_ms}ms</b>`;
+    loadInventory(); loadStats(); if(($('#cust-id').value||42)==body.customer_id) loadCustomer(body.customer_id);
+  }catch(e){ $('#ord-out').innerHTML='<span class="text-lava">'+e.message+'</span>'; }
+};
+
+// order panel interactions
+$('#ord-prod').onchange = updateOrderSummary;
+$('#ord-qty').oninput = updateOrderSummary;
+$('#qty-dec').onclick = () => { $('#ord-qty').value = Math.max(1,(parseInt($('#ord-qty').value||'1',10))-1); updateOrderSummary(); };
+$('#qty-inc').onclick = () => { $('#ord-qty').value = (parseInt($('#ord-qty').value||'1',10))+1; updateOrderSummary(); };
+
+// init: default to customer #42
+(async function init(){
+  loadHealth(); loadStats();
+  await loadInventory();
+  loadCustomer(42);
+})();
+</script>
+</body>
+</html>
