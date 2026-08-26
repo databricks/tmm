@@ -30,10 +30,21 @@ def get_workspace_client() -> WorkspaceClient:
     return WorkspaceClient(profile=profile)
 
 
+# Lakebase endpoint resource name (injected via app.yaml env)
+LAKEBASE_ENDPOINT = os.environ.get("LAKEBASE_ENDPOINT", "")
+
+
 def get_oauth_token() -> str:
-    """Workspace OAuth token. Doubles as the Lakebase Postgres password for this identity."""
+    """Lakebase-scoped credential via generate_database_credential.
+
+    The workspace OAuth token (w.config.authenticate()) is workspace-scoped
+    and REJECTED by Lakebase Postgres. We must mint a Lakebase JWT instead.
+    """
     w = get_workspace_client()
-    headers = w.config.authenticate()  # {'Authorization': 'Bearer <token>'}
+    if LAKEBASE_ENDPOINT:
+        return w.postgres.generate_database_credential(endpoint=LAKEBASE_ENDPOINT).token
+    # Last resort: workspace token (will likely be rejected by Lakebase)
+    headers = w.config.authenticate()
     return headers["Authorization"].replace("Bearer ", "")
 
 
