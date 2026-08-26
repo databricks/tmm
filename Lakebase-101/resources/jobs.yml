@@ -2,7 +2,7 @@ resources:
   jobs:
     setup_job:
       name: "${bundle.target}-lakebase-101-setup"
-      description: "Create Delta source tables (run BEFORE bundle deploy)."
+      description: "Create Delta source tables (run BEFORE deploy)."
       tasks:
         - task_key: setup
           notebook_task:
@@ -15,9 +15,9 @@ resources:
 
     post_deploy_job:
       name: "${bundle.target}-lakebase-101-post-deploy"
-      description: "Grant app SP pipeline permissions (run AFTER bundle deploy)."
+      description: "Grant permissions + start app (run AFTER deploy)."
       tasks:
-        - task_key: grant_permissions
+        - task_key: post_deploy
           notebook_task:
             notebook_path: ../src/01_Post_Deploy.ipynb
           environment_key: default
