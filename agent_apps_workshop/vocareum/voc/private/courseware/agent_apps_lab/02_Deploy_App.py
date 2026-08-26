@@ -5,7 +5,8 @@
 # MAGIC
 # MAGIC Genie Code typically *runs this notebook* for you in Module 2. It's also the click-through
 # MAGIC fallback: use it when you'd rather click than chat, a Genie deploy hiccuped, or the chat header
-# MAGIC says **"memory: off"** — re-running it any time is safe and repairs that.
+# MAGIC says **"memory: off"**. Re-running it is safe: it waits for any deployment already in flight,
+# MAGIC preserves the Lakebase resource, and tracks the exact deployment created by this run.
 # MAGIC
 # MAGIC The five steps: **create** the app with its Lakebase memory resource → **wait** for compute →
 # MAGIC **set up database access** for memory → **set the OBO scopes** → **deploy**, confirm memory,
@@ -75,6 +76,112 @@ def fail(step, status, body):
     )
 
 
+def deployment_state(deployment):
+    return ((deployment or {}).get("status") or {}).get("state", "")
+
+
+def wait_for_app(predicate, label, timeout_s=15 * 60, every_s=10):
+    """Poll the app until predicate(app) returns (display_state, True)."""
+    deadline = time.time() + timeout_s
+    while True:
+        status, current_app = api("GET", APP_PATH)
+        if status != 200:
+            fail(f"Polling the app while waiting for {label}", status, current_app)
+        state, done = predicate(current_app)
+        if done:
+            return current_app
+        if time.time() > deadline:
+            fail(f"Waiting for {label} ({timeout_s // 60} min timeout)", status, current_app)
+        print(f"   {label}: currently {state or '…'} — checking again in {every_s}s")
+        time.sleep(every_s)
+
+
+def wait_for_no_pending_deployment(timeout_s=20 * 60):
+    """Let a previous Run All finish instead of colliding with it."""
+    status, current_app = api("GET", APP_PATH)
+    if status != 200:
+        fail("Checking for an existing deployment", status, current_app)
+    pending = current_app.get("pending_deployment") or {}
+    if not pending:
+        return current_app
+    pending_id = pending.get("deployment_id", "")
+    print(
+        "A deployment is already in progress"
+        f"{f' ({pending_id})' if pending_id else ''} — waiting for it to finish before continuing …"
+    )
+    if pending_id:
+        wait_for_deployment(pending_id, timeout_s=timeout_s)
+    return wait_for_app(
+        lambda a: (
+            deployment_state(a.get("pending_deployment")) or "settling",
+            not bool(a.get("pending_deployment")),
+        ),
+        "previous deployment finished",
+        timeout_s=timeout_s,
+    )
+
+
+def wait_for_no_app_update(timeout_s=20 * 60):
+    """Wait for a configuration update started by an earlier Run All, if any."""
+    status, update = api("GET", f"{APP_PATH}/update")
+    if status == 404:
+        return
+    if status != 200:
+        fail("Checking for an existing app configuration update", status, update)
+    state = ((update.get("status") or {}).get("state") or "").upper()
+    if state != "IN_PROGRESS":
+        return
+    print("An app configuration update is already in progress — waiting for it to finish …")
+    deadline = time.time() + timeout_s
+    while True:
+        status, update = api("GET", f"{APP_PATH}/update")
+        if status != 200:
+            fail("Polling the existing app configuration update", status, update)
+        state = ((update.get("status") or {}).get("state") or "").upper()
+        if state in ("SUCCEEDED", "NOT_UPDATED"):
+            return
+        if state == "FAILED":
+            # The desired state is verified below; a new field-masked update can repair it.
+            print("   previous app configuration update failed — retrying the desired configuration.")
+            return
+        if time.time() > deadline:
+            fail("Waiting for existing app configuration update (20 min timeout)", status, update)
+        print(f"   app configuration update: {state or 'PENDING'} — checking again in 10s")
+        time.sleep(10)
+
+
+def wait_for_deployment(deployment_id, timeout_s=20 * 60):
+    """Wait for the deployment created by this notebook run, not an older RUNNING release."""
+    deadline = time.time() + timeout_s
+    while True:
+        status, deployment = api("GET", f"{APP_PATH}/deployments/{deployment_id}")
+        if status != 200:
+            fail(f"Polling deployment {deployment_id}", status, deployment)
+        state = deployment_state(deployment)
+        if state == "SUCCEEDED":
+            return deployment
+        if state in ("FAILED", "CANCELLED"):
+            fail(f"Deployment {deployment_id} ended in {state}", status, deployment)
+        if time.time() > deadline:
+            fail(f"Waiting for deployment {deployment_id} (20 min timeout)", status, deployment)
+        print(f"   deployment {deployment_id}: {state or 'PENDING'} — checking again in 10s")
+        time.sleep(10)
+
+
+def wait_for_deployment_to_be_active(deployment_id, timeout_s=10 * 60):
+    """Wait for the successful deployment to become active and for its pending marker to clear."""
+    return wait_for_app(
+        lambda a: (
+            (a.get("app_status") or {}).get("state", ""),
+            (a.get("active_deployment") or {}).get("deployment_id") == deployment_id
+            and not a.get("pending_deployment")
+            and (a.get("app_status") or {}).get("state") == "RUNNING",
+        ),
+        f"deployment {deployment_id} active and app RUNNING",
+        timeout_s=timeout_s,
+    )
+
+
 print(f"Signed in as: {EMAIL}")
 print(f"App name:     {APP_NAME}")
 print(f"App source:   {SOURCE_CODE_PATH}")
@@ -93,12 +200,8 @@ app_existed = status == 200
 
 if app_existed:
     print(f"App '{APP_NAME}' already exists — reusing it.")
-    if not any("postgres" in (res or {}) for res in app.get("resources") or []):
-        print("⚠️ Existing app has NO postgres resource — adding it (memory needs it).")
-        status, body = api("PATCH", APP_PATH, {"resources": [POSTGRES_RESOURCE]})
-        if status != 200:
-            fail("Adding the postgres resource to the existing app", status, body)
-        print("   postgres resource attached.")
+    if not any((res or {}).get("name") == "postgres" for res in app.get("resources") or []):
+        print("⚠️ Existing app has NO postgres resource — Step 4 will restore it safely.")
 elif status == 404:
     print(f"Creating app '{APP_NAME}' …")
     status, body = api(
@@ -115,11 +218,6 @@ elif status == 404:
     print("   created.")
 else:
     fail(f"Looking up app '{APP_NAME}'", status, app)
-
-# Did this app already serve a deployment before this run? (Decides the credential-refresh
-# bounce in step 5 — an app that ran BEFORE its Postgres role existed caches a failed credential.)
-had_prior_deployment = bool(app_existed and (app.get("active_deployment") or app.get("pending_deployment")))
-print(f"Prior deployment on this app: {'yes' if had_prior_deployment else 'no'}")
 
 # COMMAND ----------
 
@@ -231,21 +329,90 @@ def ensure_sp_role(context=""):
         fail("Postgres role creation", status, body)
 
 
-role_created_this_run = ensure_sp_role(" (pre-deploy)")
+ensure_sp_role(" (pre-deploy)")
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Step 4 — Set the OBO scopes
+# MAGIC ## Step 4 — Preserve Lakebase and set the OBO scopes
 # MAGIC `sql` + `vector-search`: the two ways your agent's tools act **as you** (that's the consent
-# MAGIC screen you'll click through on first open). Idempotent — safe to re-apply.
+# MAGIC screen you'll click through on first open). This uses a field-masked app update, so changing
+# MAGIC scopes cannot detach the `postgres` memory resource. If an earlier **Run All** is still
+# MAGIC deploying, this step waits for it rather than colliding with it.
 
 # COMMAND ----------
 
-status, body = api("PATCH", APP_PATH, {"user_api_scopes": ["sql", "vector-search"]})
+DESIRED_SCOPES = ["sql", "vector-search"]
+
+
+def postgres_resource_is_correct(resource):
+    pg = (resource or {}).get("postgres") or {}
+    desired = POSTGRES_RESOURCE["postgres"]
+    return (
+        (resource or {}).get("name") == "postgres"
+        and pg.get("branch") == desired["branch"]
+        and pg.get("database") == desired["database"]
+        and pg.get("permission") == desired["permission"]
+    )
+
+
+wait_for_no_pending_deployment()
+wait_for_no_app_update()
+status, app = api("GET", APP_PATH)
 if status != 200:
-    fail("Setting user_api_scopes", status, body)
-print("✅ user_api_scopes = ['sql', 'vector-search']")
+    fail("Reading the app before its configuration update", status, app)
+
+current_resources = app.get("resources") or []
+postgres_ok = any(postgres_resource_is_correct(res) for res in current_resources)
+scopes_ok = set(app.get("user_api_scopes") or []) == set(DESIRED_SCOPES)
+
+update_fields = []
+app_update = {}
+if not postgres_ok:
+    # Replace only the resource named "postgres" and retain every unrelated resource.
+    app_update["resources"] = [
+        res for res in current_resources if (res or {}).get("name") != "postgres"
+    ] + [POSTGRES_RESOURCE]
+    update_fields.append("resources")
+if not scopes_ok:
+    app_update["user_api_scopes"] = DESIRED_SCOPES
+    update_fields.append("user_api_scopes")
+
+if update_fields:
+    print(f"Updating app configuration: {', '.join(update_fields)} …")
+    status, body = api(
+        "POST",
+        f"{APP_PATH}/update",
+        {"update_mask": ",".join(update_fields), "app": app_update},
+    )
+    if status != 200:
+        fail("Updating the app configuration", status, body)
+
+    deadline = time.time() + 20 * 60
+    while True:
+        status, update = api("GET", f"{APP_PATH}/update")
+        if status != 200:
+            fail("Polling the app configuration update", status, update)
+        state = ((update.get("status") or {}).get("state") or "").upper()
+        if state == "SUCCEEDED":
+            break
+        if state == "FAILED":
+            fail("App configuration update", status, update)
+        if time.time() > deadline:
+            fail("Waiting for app configuration update (20 min timeout)", status, update)
+        print(f"   app configuration update: {state or 'PENDING'} — checking again in 10s")
+        time.sleep(10)
+else:
+    print("App configuration already correct — no update needed.")
+
+status, app = api("GET", APP_PATH)
+if status != 200:
+    fail("Verifying the app configuration", status, app)
+if not any(postgres_resource_is_correct(res) for res in app.get("resources") or []):
+    fail("Verifying the postgres resource after the app update", status, app)
+if set(app.get("user_api_scopes") or []) != set(DESIRED_SCOPES):
+    fail("Verifying user_api_scopes after the app update", status, app)
+print("✅ postgres resource attached; user_api_scopes = ['sql', 'vector-search']")
 
 # COMMAND ----------
 
@@ -257,45 +424,32 @@ print("✅ user_api_scopes = ['sql', 'vector-search']")
 
 # COMMAND ----------
 
-def wait_for(predicate, label, timeout_s=15 * 60, every_s=10):
-    deadline = time.time() + timeout_s
-    while True:
-        status, app = api("GET", APP_PATH)
-        if status != 200:
-            fail(f"Polling the app while waiting for {label}", status, app)
-        state, done = predicate(app)
-        if done:
-            return app
-        if time.time() > deadline:
-            fail(f"Waiting for {label} ({timeout_s // 60} min timeout)", status, app)
-        print(f"   {label}: currently {state or '…'} — checking again in {every_s}s")
-        time.sleep(every_s)
-
-
 print("Starting deployment …")
 status, body = api("POST", f"{APP_PATH}/deployments", {"source_code_path": SOURCE_CODE_PATH})
 if status != 200:
     fail("Creating the deployment", status, body)
+DEPLOYMENT_ID = (body.get("deployment_id") or "").strip()
+if not DEPLOYMENT_ID:
+    fail("Reading deployment_id from the deployment response", status, body)
 
-app = wait_for(
-    lambda a: ((a.get("app_status") or {}).get("state"), (a.get("app_status") or {}).get("state") == "RUNNING"),
-    "app RUNNING",
-)
+print(f"Deployment created: {DEPLOYMENT_ID}")
+wait_for_deployment(DEPLOYMENT_ID)
+app = wait_for_deployment_to_be_active(DEPLOYMENT_ID)
 
 # A deployment can reset database access that was set up just before it ran, so re-verify now
 # that the dust has settled and recreate the role if needed — this is what makes memory work on
 # the FIRST run.
 role_recreated_post_deploy = ensure_sp_role(" (final check)")
 
-if had_prior_deployment or role_recreated_post_deploy:
-    # An app that ran before its role existed caches a failed credential; only stop/start
-    # flushes it. Restart after post-deploy role creation and on any re-run over a
-    # previously-deployed app (this notebook IS the documented "memory: off" repair).
+if role_recreated_post_deploy:
+    # This deployment started before its final Postgres role existed, so refresh its
+    # database credential once. A normal re-run does not need an extra stop/start: the
+    # new deployment already started a fresh runtime.
     print("Restarting the app once so it picks up its database credential (routine) …")
     status, body = api("POST", f"{APP_PATH}/stop")
     if status != 200:
         fail("Stopping the app", status, body)
-    wait_for(
+    wait_for_app(
         lambda a: (
             (a.get("compute_status") or {}).get("state"),
             (a.get("compute_status") or {}).get("state") in ("STOPPED", "DELETED"),
@@ -306,7 +460,7 @@ if had_prior_deployment or role_recreated_post_deploy:
     status, body = api("POST", f"{APP_PATH}/start")
     if status != 200:
         fail("Starting the app", status, body)
-    app = wait_for(
+    app = wait_for_app(
         lambda a: ((a.get("app_status") or {}).get("state"), (a.get("app_status") or {}).get("state") == "RUNNING"),
         "app RUNNING (after restart)",
     )
