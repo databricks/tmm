@@ -299,7 +299,9 @@ async function runSync(full){
       tries++;
       let s; try{ s=await api('/api/sync/status'+(uid?('?update_id='+encodeURIComponent(uid)):'')); }catch(e){ s={state:'unknown'}; }
       const st=(s.state||'').toUpperCase();
-      if(st.includes('COMPLETED')){ $('#sync-out').innerHTML=`✅ Synced table refreshed by the managed pipeline · <b>${Number(s.total_in_lakebase).toLocaleString()}</b> rows live in Lakebase`; loadStats(); syncDone(); return; }
+      if(st.includes('COMPLETED')){
+        if(s.lakebase_error){ $('#sync-out').innerHTML=`⚠️ pipeline completed, but the app can't read Lakebase: <span class="mut">${s.lakebase_error}</span> — see <b>/api/debug</b>`; syncDone(); return; }
+        $('#sync-out').innerHTML=`✅ Synced table refreshed by the managed pipeline · <b>${Number(s.total_in_lakebase).toLocaleString()}</b> rows live in Lakebase`; loadStats(); syncDone(); return; }
       if(st.includes('FAILED')||st.includes('CANCEL')){ $('#sync-out').innerHTML='⚠️ pipeline '+st; syncDone(); return; }
       $('#sync-out').innerHTML=`⏳ managed pipeline running… <span class="mut">${st||'starting'}</span>`;
       if(tries<60) setTimeout(poll,3000); else { $('#sync-out').innerHTML='⏳ still running — see Catalog Explorer'; syncDone(); }

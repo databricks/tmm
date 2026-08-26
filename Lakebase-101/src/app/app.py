@@ -11,6 +11,7 @@ from server import db, warehouse
 from server.config import (
     IS_DATABRICKS_APP, GOLD_TABLE, SYNCED_TABLE, get_sync_pipeline_id, DIRECTORY_TABLE, DIRECTORY_SOURCE,
     SALES_TABLE, SALES_SOURCE, get_pg_params, get_workspace_client, WAREHOUSE_ID,
+    sdk_version, lakebase_diagnostics,
 )
 
 app = FastAPI(title="Lakebase 101 — Order Ops Console")
@@ -34,6 +35,7 @@ def health():
     pg = get_pg_params()
     out = {
         "mode": "databricks-app" if IS_DATABRICKS_APP else "local",
+        "sdk_version": sdk_version(),
         "pg_host": pg["host"], "pg_database": pg["dbname"], "pg_user": pg["user"],
         "warehouse_id": WAREHOUSE_ID, "gold_table": GOLD_TABLE, "synced_table": SYNCED_TABLE,
     }
@@ -41,8 +43,16 @@ def health():
         out["lakebase_ok"] = bool(db.query("SELECT 1 AS ok", one=True))
     except Exception as e:
         out["lakebase_ok"] = False
-        out["error"] = str(e)
+        out["error"] = f"{type(e).__name__}: {e}"
     return out
+
+
+@app.get("/api/debug")
+def debug():
+    """Deep connection diagnostic — SDK version, credential mint, connect, visible
+    schemas/tables, and per-table counts, with the real error at whichever step fails.
+    Hit this first whenever Lakebase access looks broken."""
+    return lakebase_diagnostics()
 
 
 @app.get("/api/customers")
@@ -111,11 +121,16 @@ def sync_status(update_id: str = None):
             state = str(chosen.state).split(".")[-1]
     except Exception as e:
         state = f"unknown ({e})"
+    lakebase_error = None
     try:
         total = db.query(f"SELECT count(*) AS n FROM {SYNCED_TABLE}", one=True)["n"]
-    except Exception:
+    except Exception as e:
+        # Don't silently swallow: a failed count here is what renders as the
+        # misleading "0 rows live in Lakebase" in the UI. Surface the real cause.
         total = None
-    return {"state": state, "total_in_lakebase": total, "pipeline_id": get_sync_pipeline_id()}
+        lakebase_error = f"{type(e).__name__}: {e}"
+    return {"state": state, "total_in_lakebase": total, "pipeline_id": get_sync_pipeline_id(),
+            "lakebase_error": lakebase_error}
 
 
 # ---------------------------- speed comparison ----------------------------
