@@ -16,6 +16,9 @@ databricks-openai[memory]==0.15.0
 databricks-vectorsearch==0.73
 openai
 openai-agents
+# databricks-openai 0.15 imports GetSessionIdCallback, which MCP 2.0 removed.
+# Pin the last MCP 1.x release so memory imports remain reproducible.
+mcp==1.29.0
 fastapi
 uvicorn[standard]
 pydantic
