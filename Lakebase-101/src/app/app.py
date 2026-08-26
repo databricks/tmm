@@ -168,7 +168,7 @@ def aggregate():
                COUNT(*)                          AS events,
                COUNT(DISTINCT e.customer_id)     AS active_customers,
                ROUND(SUM(e.amount))::bigint      AS revenue,
-               ROUND(AVG(e.amount), 2)           AS avg_amount
+               ROUND(AVG(e.amount)::numeric, 2)  AS avg_amount
         FROM {SALES_TABLE} e
         JOIN {DIRECTORY_TABLE} c ON c.customer_id = e.customer_id
         GROUP BY c.segment ORDER BY revenue DESC"""
