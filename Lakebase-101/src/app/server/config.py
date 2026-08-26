@@ -8,16 +8,16 @@ IS_DATABRICKS_APP = bool(os.environ.get("DATABRICKS_APP_NAME"))
 # ---- Demo constants (overridable via env / app resources) ----
 WAREHOUSE_ID = os.environ.get("WAREHOUSE_ID", "")
 GOLD_TABLE = os.environ.get("GOLD_TABLE", "")
-# Native Lakebase synced table (reverse ETL) — lives in Postgres schema "dais_demo", fed by a managed pipeline
-SYNCED_TABLE = os.environ.get("SYNCED_TABLE", "dais_demo.customer_360_synced")
+# Native Lakebase synced table (reverse ETL) — lives in Postgres schema "lakebase_101_schema", fed by a managed pipeline
+SYNCED_TABLE = os.environ.get("SYNCED_TABLE", "lakebase_101_schema.customer_360_synced")
 # Full 50k customer directory (id + name + fake sales) — managed synced table (Postgres name) + its UC Delta source
-DIRECTORY_TABLE = os.environ.get("DIRECTORY_TABLE", "dais_demo.customers_directory_synced")
+DIRECTORY_TABLE = os.environ.get("DIRECTORY_TABLE", "lakebase_101_schema.customers_directory_synced")
 DIRECTORY_SOURCE = os.environ.get("DIRECTORY_SOURCE", "")
 # Multi-million-row sales fact for the heavy-analytics showdown — managed synced table (PG) + its UC Delta source
-SALES_TABLE = os.environ.get("SALES_TABLE", "dais_demo.sales_events_synced")
+SALES_TABLE = os.environ.get("SALES_TABLE", "lakebase_101_schema.sales_events_synced")
 SALES_SOURCE = os.environ.get("SALES_SOURCE", "")
 SYNC_PIPELINE_ID = os.environ.get("SYNC_PIPELINE_ID", "")
-PGDATABASE = os.environ.get("PGDATABASE", "shop")
+PGDATABASE = os.environ.get("PGDATABASE", "lakebase_101_db")
 # Lakebase host — injected from app.yaml env or resource binding
 DEFAULT_PGHOST = os.environ.get("PGHOST", "")
 
