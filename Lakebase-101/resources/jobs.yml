@@ -1,0 +1,40 @@
+resources:
+  jobs:
+    setup_job:
+      name: "${bundle.target}-lakebase-101-setup"
+      description: "Create Delta source tables (run BEFORE bundle deploy)."
+      tasks:
+        - task_key: setup
+          notebook_task:
+            notebook_path: ../src/00_Setup.ipynb
+          environment_key: default
+      environments:
+        - environment_key: default
+          spec:
+            client: "1"
+
+    post_deploy_job:
+      name: "${bundle.target}-lakebase-101-post-deploy"
+      description: "Grant app SP pipeline permissions (run AFTER bundle deploy)."
+      tasks:
+        - task_key: grant_permissions
+          notebook_task:
+            notebook_path: ../src/01_Post_Deploy.ipynb
+          environment_key: default
+      environments:
+        - environment_key: default
+          spec:
+            client: "1"
+
+    cleanup_job:
+      name: "${bundle.target}-lakebase-101-cleanup"
+      description: "Tear down demo data and revoke permissions."
+      tasks:
+        - task_key: cleanup
+          notebook_task:
+            notebook_path: ../src/99_Cleanup.ipynb
+          environment_key: default
+      environments:
+        - environment_key: default
+          spec:
+            client: "1"
