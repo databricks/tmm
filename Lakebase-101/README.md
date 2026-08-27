@@ -9,7 +9,6 @@ It builds one story around a fictional "Order Ops Console":
 3. **Real transactions** — the app places orders against Lakebase (`INSERT` order + `UPDATE` stock, atomically) — genuine OLTP writes, not analytics.
 4. **Right tool for the job** — a 5M-row aggregate join shows the lakehouse (SQL Warehouse) winning heavy analytics, reinforcing *when* to use each engine.
 
-
 ## Prerequisites
 
 - A Databricks workspace with **Lakebase** and **Databricks Apps** enabled.

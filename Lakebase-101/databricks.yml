@@ -40,15 +40,3 @@ targets:
     variables:
       catalog: lakebase_101_catalog
       schema: lakebase_101_schema
-  prod:
-    mode: production
-    workspace:
-      host: https://data-ai-lakehouse.cloud.databricks.com
-      # We explicitly deploy to /Workspace/Users/thibaut.gourdel@databricks.com to make sure we only have a single copy.
-      root_path: /Workspace/Users/thibaut.gourdel@databricks.com/.bundle/${bundle.name}/${bundle.target}
-    variables:
-      catalog: lakebase_101_catalog
-      schema: prod
-    permissions:
-      - user_name: thibaut.gourdel@databricks.com
-        level: CAN_MANAGE
