@@ -12,10 +12,7 @@ It builds one story around a fictional "Order Ops Console":
 ## Prerequisites
 
 - A Databricks workspace with **Lakebase** and **Databricks Apps** enabled.
-- The **[Databricks CLI](https://docs.databricks.com/dev-tools/cli/install.html)** (v0.230+), authenticated:
-  ```bash
-  databricks configure   # or: databricks auth login --host <workspace-url>
-  ```
+- The **[Databricks CLI](https://docs.databricks.com/dev-tools/cli/install.html)** (v0.230+), authenticated
 - A **SQL Warehouse** you can use (for the speed comparison and analytics panes).
 - Permission to create a catalog, a Lakebase project, and a Databricks App.
 
