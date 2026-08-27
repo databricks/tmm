@@ -1,0 +1,22 @@
+# Databricks App — Order Ops Console
+resources:
+  apps:
+    lakebase_101_app:
+      name: ${var.app_name}
+      description: "Lakebase 101 — Order Ops Console: reverse ETL + OLTP speed + Databricks App"
+      git_repository:
+        url: https://github.com/databricks/tmm
+        provider: gitHub
+      git_source:
+        branch: main
+        source_code_path: Lakebase-101/src/app
+      resources:
+        - name: lakebase-db
+          postgres:
+            branch: ${resources.postgres_branches.production.name}
+            database: ${resources.postgres_databases.demo_db.name}
+            permission: CAN_CONNECT_AND_CREATE
+        - name: sql-warehouse
+          sql_warehouse:
+            id: ${var.warehouse_id}
+            permission: CAN_USE

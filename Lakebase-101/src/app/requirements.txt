@@ -1,0 +1,8 @@
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+psycopg2-binary>=2.9.9
+# >=0.80.0 required: the Lakebase `w.postgres.generate_database_credential`
+# API (project/branch/endpoint model) landed in 0.80.0. A lower floor lets the
+# Databricks Apps base-image SDK satisfy it and the app can't mint a PG credential.
+databricks-sdk>=0.83.0
+pydantic>=2.0.0

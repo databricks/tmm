@@ -1,0 +1,41 @@
+# Synced Tables — managed reverse ETL from Delta to Lakebase Postgres
+resources:
+  postgres_synced_tables:
+    customer_360_sync:
+      synced_table_id: "${var.catalog}.${var.schema}.customer_360_synced"
+      branch: ${resources.postgres_branches.production.name}
+      postgres_database: ${resources.postgres_databases.demo_db.postgres_database}
+      source_table_full_name: ${var.catalog}.${var.schema}.customer_360_gold
+      primary_key_columns:
+        - customer_id
+      scheduling_policy: SNAPSHOT
+      create_database_objects_if_missing: true
+      new_pipeline_spec:
+        storage_catalog: ${var.catalog}
+        storage_schema: ${var.schema}
+
+    customers_directory_sync:
+      synced_table_id: "${var.catalog}.${var.schema}.customers_directory_synced"
+      branch: ${resources.postgres_branches.production.name}
+      postgres_database: ${resources.postgres_databases.demo_db.postgres_database}
+      source_table_full_name: ${var.catalog}.${var.schema}.customers_directory
+      primary_key_columns:
+        - customer_id
+      scheduling_policy: SNAPSHOT
+      create_database_objects_if_missing: true
+      new_pipeline_spec:
+        storage_catalog: ${var.catalog}
+        storage_schema: ${var.schema}
+
+    sales_events_sync:
+      synced_table_id: "${var.catalog}.${var.schema}.sales_events_synced"
+      branch: ${resources.postgres_branches.production.name}
+      postgres_database: ${resources.postgres_databases.demo_db.postgres_database}
+      source_table_full_name: ${var.catalog}.${var.schema}.sales_events
+      primary_key_columns:
+        - event_id
+      scheduling_policy: SNAPSHOT
+      create_database_objects_if_missing: true
+      new_pipeline_spec:
+        storage_catalog: ${var.catalog}
+        storage_schema: ${var.schema}
