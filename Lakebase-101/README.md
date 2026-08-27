@@ -22,9 +22,8 @@ Edit `databricks.yml` and set these for **your** workspace — the defaults are 
 
 | Variable | Where | What to change |
 |---|---|---|
-| `workspace.host` | `targets.dev` / `targets.prod` | Your workspace URL |
 | `warehouse_id` | `variables` | Your SQL Warehouse ID |
-| `catalog` / `schema` | `variables` | Optional — rename if `lakebase_101_catalog` is taken |
+| `workspace.host` | `targets.dev` | Your workspace URL |
 
 > **App source note:** the app deploys from GitHub (`resources/apps.yml` → `git_repository` on branch `main`). If you fork this repo, point that `url`/`branch` at your fork, and remember that **local edits to `src/app/` take effect only after you commit and push** them — `databricks bundle deploy` pulls the app code from Git, not from your local working copy.
 
