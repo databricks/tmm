@@ -46,13 +46,19 @@ The setup is 5 steps steps: clone the repository, bootstrap the Delta source dat
     *   Run src/**00_Setup.ipynb** in the workspace (needs a cluster; generates ~5M rows).
 
 3. **Deploy Lakebase infra + synced tables + the app using a Databricks Bundle Asset**
+
+You can either deploy it using the CLI, clone the repository on your laptop and use the databricks CLI. Alternatively, deploy using the UI.
 ```
 databricks bundle deploy
 ```
+
 4. **Grant the app's service principal access + create/seed the Postgres OLTP tables**
     *   Run src/**01_Post_Deploy**.ipynb in the workspace.
 
-5. **Deploy and run the app**
+5. **Start the app**
+
+You can either start the AI using the CLI or start it in the UI.
+
 ```
 databricks bundle run lakebase_101_app
 ```
