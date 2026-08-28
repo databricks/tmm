@@ -41,24 +41,25 @@ The setup is 5 steps steps: clone the repository, bootstrap the Delta source dat
     *   Enable **Sparse checkout mode** and specify the path to this specific project folder ```Lakebase-101``` within the repository. This ensures you only clone the relevant project files.
     *   Click **Create Git folder**. The repository will be cloned into your workspace.
 
-2. **Bootstrap the lakehouse source tables (catalog, schema, 4 Delta tables incl. 5M-row fact)**
+Then navigate in the folder -> tmm -> Lakebase-101
 
-    *   Run src/**00_Setup.ipynb** in the workspace (needs a cluster; generates ~5M rows).
+2. Run src/**00_Setup.ipynb** (generates tables and ~5 Mrows).
 
-3. **Deploy Lakebase infra + synced tables + the app using a Databricks Bundle Asset**
+3. **Deploy Lakebase infra + synced tables + the app using a Databricks Bundle Asset (DAB)**
 
-You can either deploy it using the CLI, clone the repository on your laptop and use the databricks CLI. Alternatively, deploy using the UI.
+You can either deploy it via the UI, click on "Open in bundle edtior" next to Lakebase-101 folder or use the CLI, clone the repo on your machine and run the following in the Lakebase-101 folder:
 ```
 databricks bundle deploy
 ```
 
-4. **Grant the app's service principal access + create/seed the Postgres OLTP tables**
-    *   Run src/**01_Post_Deploy**.ipynb in the workspace.
+4. Run src/**01_Post_Deploy**.ipynb (Grant the app's service **principal access + create/seed the Postgres OLTP tables)
 
 5. **Start the app**
 
-You can either start the AI using the CLI or start it in the UI.
+You can either start the app via in the UI. First go the Databricks Apps, then click on your app name ('lakebase-101-app') and click on Start and then on Deploy (provide 'main' as the branch name and Lakebase-101/src/app for the source code path)
 
+
+Alternatively, via the CLI
 ```
 databricks bundle run lakebase_101_app
 ```
@@ -73,10 +74,15 @@ Then open the app URL provided in your terminal or in the UI:
 
 1.  **Detroy the bundle**:
 
-Similarly, you can delete the bundle
+Similarly, you can delete the bundle via the UI or the CLI. 
 
 ```
-databricks bundle destroy; databricks postgres delete-project projects/lakebase-101-demo --purge
+databricks bundle destroy
+```
+
+However, due to limitations today with DAB, Lakebase projects are soft-deleted, and can only be deleted via the CLI:
+```
+databricks postgres delete-project projects/lakebase-101-demo --purge
 ```
 
 2. **Clean up**
