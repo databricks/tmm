@@ -89,9 +89,9 @@ databricks postgres delete-project projects/lakebase-101-demo --purge
 2. **Clean up**
 
 To make sure you can redeploy safely, make sure to delete the data and remaining synced tables and table registration that may cause conflicts with further deployment.
-```
+
     *   Run src/99_Cleanup.ipynb in the workspace.
-```
+
 
 ---
 
