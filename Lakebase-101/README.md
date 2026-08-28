@@ -80,7 +80,8 @@ Similarly, you can delete the bundle via the UI or the CLI.
 databricks bundle destroy
 ```
 
-However, due to limitations today with DAB, Lakebase projects are soft-deleted, and can only be deleted via the CLI:
+However, due to limitations today with DAB, Lakebase projects are soft-deleted, and can only be hard-deleted via the CLI. If you don't do the following, you will run into an error when deploying again via the DAB.
+
 ```
 databricks postgres delete-project projects/lakebase-101-demo --purge
 ```
