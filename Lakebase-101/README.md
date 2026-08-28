@@ -72,12 +72,19 @@ Then open the app URL provided in your terminal or in the UI:
 ## Clean up
 
 1.  **Detroy the bundle**:
+
+Similarly, you can delete the bundle
+
 ```
 databricks bundle destroy; databricks postgres delete-project projects/lakebase-101-demo --purge
 ```
 
-2. **Clean up the data and remaining synced tables**
+2. **Clean up**
+
+To make sure you can redeploy safely, make sure to delete the data and remaining synced tables and table registration that may cause conflicts with further deployment.
+```
     *   Run src/99_Cleanup.ipynb in the workspace.
+```
 
 ---
 
