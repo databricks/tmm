@@ -209,3 +209,10 @@ spark.read.table("flights_stats").limit(3).show(truncate=False)
 
 * Did you like the OSS Apache SDP example above? If you are interested, you can run the same [streaming aviation data SDP tutorial on Databricks Free Edition](https://github.com/databricks/tmm/blob/main/Lakeflow-OpenSkyNetwork/README.md) which comes with the built-in pipeline editor and includes serverless compute, dashboards, natural language queries on streaming data, and governance.
 * [This blog](https://www.databricks.com/blog/processing-millions-events-thousands-aircraft-one-declarative-pipeline) provides more details about Databricks and the OpenSky Network.  
+
+
+
+## Changelog
+
+- **Latest Update:** Documentation and examples updated for PySpark 4.1.x (2024-12-15)
+
