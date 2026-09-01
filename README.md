@@ -8,21 +8,7 @@ A collection of Databricks workshops, labs, and demos.
 
 ## Tech covered
 
-- **Lakeflow Spark Declarative Pipelines (SDP / LDP)** — streaming tables, materialized views, expectations, AutoCDC (SCD 1/2), Auto Loader (`read_files`), Lakeflow Pipelines Editor
-- **Real-Time Mode (RTM)** — sub-second latency pipelines with `@dp.update_flow` and `pipelines.trigger: "RealTime"`
-- **OSS Spark Declarative Pipelines** — self-contained Apache Spark SDP examples
-- **Spark Structured Streaming + Kafka** — sources, sinks, RTM vs MicroBatch
-- **Declarative Automation Bundles (DAB)** — multi-target CI/CD via `databricks.yml`
-- **Zerobus Ingest** — direct gRPC/REST ingest into Delta tables
-- **Lakebase** — managed Postgres for OLTP and app state
-- **Apache Iceberg** — managed Iceberg tables, UC Iceberg REST Catalog, PyIceberg
-- **Genie & Genie Code** — natural-language SQL, AI-assisted pipeline authoring
-- **Agent Bricks & Mosaic AI Agents** — Knowledge Assistants, Multi-Agent Supervisors, agent eval
-- **GenAI / RAG** — retrieval pipelines, Vector Search, MLflow evaluation
-- **Unity Catalog & Governance** — system tables, lineage, audit, fine-grained access
-- **AI/BI Dashboards** — Lakeview dashboards bundled with pipelines
-- **Databricks Apps** — Streamlit/Flask front-ends with OAuth and SQL warehouse access
-- **Data formats & ingestion** — XML, JSON, CDC, Auto Loader
+The demos and workshops here cover **[Spark Declarative Pipelines on Databricks Lakeflow](https://www.databricks.com/product/data-engineering/lakeflow-declarative-pipelines)** (streaming tables, materialized views, expectations, AutoCDC), **Real-Time Mode** (RTM, sub-second latency pipelines), **[OSS Spark Declarative Pipelines](https://spark.apache.org)** (self-contained Apache Spark SDP examples), **[Spark Structured Streaming](https://spark.apache.org) + [Kafka](https://kafka.apache.org)** (sources, sinks, RTM vs MicroBatch), **Declarative Automation Bundles** (DAB, multi-target CI/CD), **Zerobus Ingest** (direct gRPC/REST ingest into Delta), **[Lakebase](https://www.databricks.com/product/lakebase)** (managed Postgres for OLTP), **[Apache Iceberg](https://iceberg.apache.org)** (managed tables, UC Iceberg REST Catalog, PyIceberg), **[Genie & Genie Code](https://www.databricks.com/product/ai-bi)** (natural-language SQL, AI-assisted authoring), **[Agent Bricks & Mosaic AI Agents](https://www.databricks.com/product/artificial-intelligence)** (Knowledge Assistants, Multi-Agent Supervisors, evaluation), **[GenAI / RAG](https://www.databricks.com/product/artificial-intelligence)** (Vector Search, MLflow evaluation), **[Unity Catalog & Governance](https://www.databricks.com/product/unity-catalog)** (system tables, lineage, audit), **[AI/BI Dashboards](https://www.databricks.com/product/ai-bi)** (Lakeview), **[Databricks Apps](https://www.databricks.com/product/databricks-apps)** (Streamlit/Flask front-ends with OAuth), and **data formats & ingestion** (XML, JSON, CDC, Auto Loader).
 
 See each subdirectory's README for details.
 
