@@ -68,11 +68,34 @@ writes and runs the SQL, summarizes the results, and explains anomalies in their
 > location at 0,0 — exclude those rows from position analysis.
 > ```
 
+## Optional: EDA with Visualizations and Genie Agent
+
+If you set up a **Genie Agent** on the dataset, you can ask
+the same questions in plain English and get a **graphical report** back — Genie writes the SQL
+*and* picks the right chart. Both visualizations below were generated automatically as part of EDA by a Genie Agent.
+
+### Altitude for airborne aircraft 
+
+clusters at cruising altitudes of **10–12 km** (a clear peak at
+11 km, ~119.7M records), with lower counts at 0–3 km for climb, descent, and regional traffic:
+
+![A Genie Agent visualization — a histogram of barometric altitude for airborne aircraft, with a strong concentration at cruising altitudes of 10–12 km (peak at 11 km, ~119.7M state-vector records) and lower counts at 0–3 km.](assets/02-genie-eda-altitude.png)
+
+### Hourly Pattern
+
+State-vector volume follows a clear **diurnal pattern** — peaking at 18:00–20:00 UTC
+(~42.4M records/hour) and bottoming out around 05:00 UTC (~17.0M records/hour), which points to
+European and North American daytime airspace:
+
+![A Genie Agent visualization — a bar chart of hourly state-vector records across the UTC day, peaking at 18:00–20:00 UTC (~42.4M records/hour) and lowest around 05:00 UTC (~17.0M records/hour).](assets/02-genie-eda-hourly.png)
+
 ## Recap
 
-You have a set of EDA findings — the **data-quality issues Genie flagged** (extreme velocities,
-extreme vertical rates, baro/geo altitude discrepancies) and what they mean in avionics terms.
+You have a set of EDA findings — the **data-quality issues Genie flagged** and what they mean in avionics terms.
 Keep these: the [Step 4](04-pipeline.md) pipeline prompt turns them into data-quality constraints.
+
+
+Remember you can always ask Genie to create you a written report which could be persisted and then reused for creating a SDP ETL pipeline later.
 
 ---
 
