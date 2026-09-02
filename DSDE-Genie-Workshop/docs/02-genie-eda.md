@@ -27,7 +27,9 @@ writes and runs the SQL, summarizes the results, and explains anomalies in their
 > Prompt template shown in the recording:
 >
 > ```text
-> Run a comprehensive EDA for @state_vectors; check the key columns for null values and any out-of-range or impossible values. Provide a list of issues with explanations in the OpenSky avionics context
+> Run a comprehensive EDA for @state_vectors; check the key columns for
+> null values and any out-of-range or impossible values. Provide a list of
+> issues with explanations in the OpenSky avionics context
 > ```
 >
 > **Step 3: Execution and Automated Analysis**
@@ -71,3 +73,11 @@ writes and runs the SQL, summarizes the results, and explains anomalies in their
 You have a set of EDA findings — the **data-quality issues Genie flagged** (extreme velocities,
 extreme vertical rates, baro/geo altitude discrepancies) and what they mean in avionics terms.
 Keep these: the [Step 4](04-pipeline.md) pipeline prompt turns them into data-quality constraints.
+
+---
+
+### Tutorial navigation
+
+| ← Previous | Overview | Next → |
+|:---|:---:|---:|
+| [1. Databricks Marketplace](01-marketplace.md) | [Table of contents](../README.md) | [3. Genie Agents — Explore](03-genie-explore.md) |

@@ -154,3 +154,11 @@ SELECT * FROM gold_apac LIMIT 10;
 
 _(Confirm the exact gold table names in the pipeline Genie Code generates — note the APAC one;
 [Step 5](05-app.md) points the app at it.)_
+
+---
+
+### Tutorial navigation
+
+| ← Previous | Overview | Next → |
+|:---|:---:|---:|
+| [3. Genie Agents — Explore](03-genie-explore.md) | [Table of contents](../README.md) | [5. Databricks App](05-app.md) |

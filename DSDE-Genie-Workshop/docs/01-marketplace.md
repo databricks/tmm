@@ -70,3 +70,11 @@ You should see ADS-B state-vector columns such as `icao24`, `callsign`, `time_po
 `latitude`, `longitude`, `baro_altitude`, `geo_altitude`, `velocity`, `true_track`,
 `vertical_rate`, and `on_ground`. **Note the exact three-part name
 `marketplace.opensky.state_vectors`** — every later step uses it.
+
+---
+
+### Tutorial navigation
+
+| ← Previous | Overview | Next → |
+|:---|:---:|---:|
+| — | [Table of contents](../README.md) | [2. Genie Agents — EDA](02-genie-eda.md) |

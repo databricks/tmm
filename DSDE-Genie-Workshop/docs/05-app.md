@@ -51,3 +51,11 @@ app with **Genie Code**.
 
 You have a live, zoomable map of APAC flight routes built on your cleaned gold data — the payoff
 of the whole workflow.
+
+---
+
+### Tutorial navigation
+
+| ← Previous | Overview | Next → |
+|:---|:---:|---:|
+| [4. Declarative Pipeline](04-pipeline.md) | [Table of contents](../README.md) | [6. Genie One](06-genie-one.md) |

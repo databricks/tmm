@@ -80,3 +80,11 @@ You received Databricks-shared data on a plain laptop with ~5 lines of Python �
 Spark, no Java. For large tables, swap `load_as_pandas` for `delta_sharing.load_as_spark(...)`,
 which adds Java 17 + PySpark (the same stack as the
 [OSS Spark Declarative Pipelines guide](https://github.com/databricks/tmm/tree/main/OSS-SDP-OpenSkyNetwork)).
+
+---
+
+### Tutorial navigation
+
+| ← Previous | Overview | Next → |
+|:---|:---:|---:|
+| [6. Genie One](06-genie-one.md) | [Table of contents](../README.md) | [8. Wrap-up & next steps](08-wrap-up.md) |

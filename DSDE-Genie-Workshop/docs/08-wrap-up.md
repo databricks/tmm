@@ -25,3 +25,11 @@ To undo everything:
 - **Schedule** the pipeline and add **alerts** on its data-quality expectations.
 - Enrich the **Genie Agent** with more instructions and example SQL, then share it.
 - Extend the app to all regions, or add near-real-time ingestion.
+
+---
+
+### Tutorial navigation
+
+| ← Previous | Overview | Next → |
+|:---|:---:|---:|
+| [7. OpenSharing](07-opensharing.md) | [Table of contents](../README.md) | — |

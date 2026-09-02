@@ -82,3 +82,11 @@ Classify each record in @state_vectors into a flight phase from vertical_rate (c
 You've explored the OpenSky data and produced visualizations with Genie Agents — no query writing,
 no dashboard setup. These views tell you what's worth operationalizing, which is exactly what the
 pipeline in [Step 4](04-pipeline.md) and the app in [Step 5](05-app.md) build on.
+
+---
+
+### Tutorial navigation
+
+| ← Previous | Overview | Next → |
+|:---|:---:|---:|
+| [2. Genie Agents — EDA](02-genie-eda.md) | [Table of contents](../README.md) | [4. Declarative Pipeline](04-pipeline.md) |

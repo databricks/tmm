@@ -41,3 +41,11 @@ including the raw `state_vectors` table and the per-region gold tables you built
 
 You've now queried the OpenSky data through **Genie One** without any per-dataset setup — a quick,
 governed way for the whole team to explore the raw and cleaned tables in plain English.
+
+---
+
+### Tutorial navigation
+
+| ← Previous | Overview | Next → |
+|:---|:---:|---:|
+| [5. Databricks App](05-app.md) | [Table of contents](../README.md) | [7. OpenSharing](07-opensharing.md) |
