@@ -1,0 +1,2 @@
+mkdocs-material>=9.5,<10
+mkdocs-callouts>=1.13   # render GitHub-style > [!NOTE] alerts as Material admonitions

@@ -1,0 +1,2 @@
+delta-sharing>=1.4
+pandas>=2.2
