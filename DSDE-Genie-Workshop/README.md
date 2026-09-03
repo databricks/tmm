@@ -3,7 +3,14 @@
 ## How to get started with Databricks Genie as a Data Scientist or Data Engineer
 
 
-A hands-on, end-to-end tutorial on Databricks Free Edition with a real data set. Start with publicly available, raw Marketplace flight data from every single plane in the air on a particular day in 2026 from the **[OpenSky Network](https://opensky-network.org/)**, run EDA, analytics, ingest pipelines and finish with a live, interactive map.
+A hands-on tutorial for data scientists and data engineers that runs start to finish on Databricks Free Edition, with real data instead of a toy dataset.
+
+You begin with raw flight data from the **[OpenSky Network](https://opensky-network.org/)** on Databricks Marketplace: almost 700 million records — one full day of telemetry data in 2026, every aircraft that was in the air. 
+
+From there you track down the anomalies, explore it with natural language, build a Spark Declarative Pipeline to clean it, and finish with a live, interactive map. You can even read the same data straight from your own laptop with [open sharing](docs/07-opensharing.md). 
+
+Genie's AI tooling handles the analysis and writes the SQL and pipeline code as you go.
+
 
 ## What you'll build
 

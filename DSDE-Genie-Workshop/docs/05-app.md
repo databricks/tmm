@@ -25,16 +25,14 @@ app with **Genie Code**.
 > Give it this prompt:
 >
 > ```text
-> Create a Databricks App with a zoomable, interactive map of APAC flight
-> routes from the APAC gold table. Plot each aircraft position
-> (latitude/longitude) colored by altitude, draw per-callsign route polylines
-> ordered by time, and let the user zoom, pan and hover a flight to see its
-> callsign, origin country, altitude (ft) and speed (knots).
+> create an application using genie app builder to visualize 100 flight
+> trajectories over APAC from @state_vectors
 > ```
 >
 > **Step 3: Connect the data**
 >
-> Point the app at your **SQL warehouse** and the **APAC gold table** from [Step 4](04-pipeline.md).
+> Point the app at your **SQL warehouse** and the Marketplace table
+> `marketplace.opensky.state_vectors` from [Step 1](01-marketplace.md).
 >
 > **Step 4: Deploy**
 >
@@ -49,8 +47,8 @@ app with **Genie Code**.
 
 ## Recap
 
-You have a live, zoomable map of APAC flight routes built on your cleaned gold data — the payoff
-of the whole workflow.
+You have a live, zoomable map of APAC flight trajectories built straight from the OpenSky
+Marketplace data — the payoff of the whole workflow.
 
 ---
 

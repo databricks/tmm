@@ -13,6 +13,9 @@ uv pip install delta-sharing pandas
 
 (Plain pip works too: `python -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt`.)
 
+In **VSCode**, open this folder and run **Python: Select Interpreter** → `.venv/bin/python` so the
+editor, integrated terminal, and Run button all use the environment you just created.
+
 ## Get a credential file
 
 - **Real data:** on the Databricks Marketplace listing, use **Download credential file** to save a

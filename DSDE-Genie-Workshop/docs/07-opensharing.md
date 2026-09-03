@@ -25,6 +25,9 @@ same data reads into any client, anywhere.
 > uv pip install delta-sharing pandas
 > ```
 >
+> Then point VSCode at the new environment: open the Command Palette and run **Python: Select
+> Interpreter** → `.venv/bin/python`, so the editor, integrated terminal, and Run button all use it.
+>
 > **Step 2: Get your credential file**
 >
 > On the Databricks Marketplace listing, choose **Download credential file** and save the `.share`

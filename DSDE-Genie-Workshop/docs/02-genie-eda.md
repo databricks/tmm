@@ -3,22 +3,22 @@
 ## What we do
 
 Before you transform, visualize, or even trust any dataset, you need to understand what the raw data
-actually looks like — that is called **[exploratory data analysis (EDA)](https://en.wikipedia.org/wiki/Exploratory_data_analysis)**: profiling each column, checking
+actually looks like. That process is called **[exploratory data analysis (EDA)](https://en.wikipedia.org/wiki/Exploratory_data_analysis)**: profiling each column, checking
 value ranges and null rates, and spotting anomalies or impossible values that would otherwise
 silently corrupt everything downstream. EDA is the necessary **first step**, because the issues you
 find here become the cleanup rules for your pipeline ([Step 4](04-pipeline.md)) and the caveats for every later
 analysis — skip it and you build on data you don't understand.
 
-**Genie Agents** are a great way to do EDA. You ask questions in plain English and the agent
-writes and runs the SQL, summarizes the results, and explains anomalies in their domain context. With Genie Agents, you can profile a brand-new dataset in minutes, without writing a single query.
+**Genie Code and Genie Agents** are a great way to do EDA. You ask questions in plain English and the agent
+writes and runs the SQL, summarizes the results, and explains anomalies in their domain context. With Genie, you can profile a brand-new dataset in minutes, without writing a single query.
 
-## Step-by-step guide
+## Step-by-step guide with Genie Code
 
 > Perform Exploratory Data Analysis (EDA) in Databricks using Genie Agents by following this workflow:
 >
 > **Step 1: Open Genie Code Interface**
 >
-> Navigate to your Databricks Workspace and open the Genie agent interface (e.g., Genie Code).
+> Navigate to your Databricks Workspace and open the Genie agent interface (e.g., click on the Genie lamp symbol top right.
 >
 > **Step 2: Enter the Prompt**
 >
@@ -52,7 +52,29 @@ writes and runs the SQL, summarizes the results, and explains anomalies in their
 
 ![The comprehensive EDA checks Genie ran on state_vectors — 67 data-quality validations across 695.7M records, grouped by category, with per-category summary statistics.](assets/02-genie-eda.png)
 
-> [!TIP]
+
+## Optional: EDA with Visualizations and Genie Agent
+
+If you set up a **Genie Agent** on the dataset, you can ask
+the same questions in plain English and get a **graphical report** back — Genie writes the SQL
+*and* picks the right chart. Both visualizations below were generated automatically as part of EDA by a Genie Agent.
+
+### Altitude for airborne aircraft 
+
+Clusters at cruising altitudes of **10–12 km** (a clear peak at
+11 km, ~119.7M records), with lower counts at 0–3 km for climb, descent, and regional traffic:
+
+![A Genie Agent visualization — a histogram of barometric altitude for airborne aircraft, with a strong concentration at cruising altitudes of 10–12 km (peak at 11 km, ~119.7M state-vector records) and lower counts at 0–3 km.](assets/02-genie-eda-altitude.png)
+
+### Hourly Pattern
+
+State-vector volume follows a clear **diurnal pattern** — peaking at 18:00–20:00 UTC
+(~42.4M records/hour) and bottoming out around 05:00 UTC (~17.0M records/hour), which points to
+European and North American daytime airspace:
+
+![A Genie Agent visualization — a bar chart of hourly state-vector records across the UTC day, peaking at 18:00–20:00 UTC (~42.4M records/hour) and lowest around 05:00 UTC (~17.0M records/hour).](assets/02-genie-eda-hourly.png)
+
+[!TIP]
 > **Feature spotlight — Instructions**
 >
 > **Instructions** — plain-language rules you give the agent so it interprets your data
@@ -67,27 +89,7 @@ writes and runs the SQL, summarizes the results, and explains anomalies in their
 > means a missing position report (aircraft outside receiver coverage), not a
 > location at 0,0 — exclude those rows from position analysis.
 > ```
-
-## Optional: EDA with Visualizations and Genie Agent
-
-If you set up a **Genie Agent** on the dataset, you can ask
-the same questions in plain English and get a **graphical report** back — Genie writes the SQL
-*and* picks the right chart. Both visualizations below were generated automatically as part of EDA by a Genie Agent.
-
-### Altitude for airborne aircraft 
-
-clusters at cruising altitudes of **10–12 km** (a clear peak at
-11 km, ~119.7M records), with lower counts at 0–3 km for climb, descent, and regional traffic:
-
-![A Genie Agent visualization — a histogram of barometric altitude for airborne aircraft, with a strong concentration at cruising altitudes of 10–12 km (peak at 11 km, ~119.7M state-vector records) and lower counts at 0–3 km.](assets/02-genie-eda-altitude.png)
-
-### Hourly Pattern
-
-State-vector volume follows a clear **diurnal pattern** — peaking at 18:00–20:00 UTC
-(~42.4M records/hour) and bottoming out around 05:00 UTC (~17.0M records/hour), which points to
-European and North American daytime airspace:
-
-![A Genie Agent visualization — a bar chart of hourly state-vector records across the UTC day, peaking at 18:00–20:00 UTC (~42.4M records/hour) and lowest around 05:00 UTC (~17.0M records/hour).](assets/02-genie-eda-hourly.png)
+## 
 
 ## Recap
 

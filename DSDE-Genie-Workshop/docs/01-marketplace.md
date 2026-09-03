@@ -7,18 +7,21 @@ We attach the **OpenSky Networks – full day avionics dataset** to our workspac
 Catalog catalog**, with no copying and no ETL required.
 
 The listing is
-real ADS-B/Mode-S telemetry: one full UTC day (2026-03-01), about **695.7 million rows** tracing
-**54,093 distinct aircraft** — one aircraft state vector per row in a table called
+real ADS-B telemetry: one full UTC day (2026-03-01), about **695.7 million rows** tracing
+**54,093 distinct aircraft** — one aircraft state vector with longitude, latitude, velocity etc.  per row in a table called
 `state_vectors`.
 
 > [!NOTE]
 > **[OpenSharing](https://opensharing.io)** is an open specification hosted by the Linux
 > Foundation that extends sharing beyond tables to AI assets, including **Genie Agent
-> sharing**. Read the announcement:
+> sharing**. For more details read the announcement:
 > [*Introducing OpenSharing: the Next Evolution of Delta Sharing for the Agentic Era*](https://www.databricks.com/blog/introducing-opensharing-next-evolution-delta-sharing-agentic-era)
 > (Databricks Blog, 16 Jun 2026).
+ 
 
-## Databricks Marketplace
+If you're mostly interested in marketplace data and accessing it with open source technology, check out the section about open sharing towards the end of the tutorial. 
+
+Databricks Marketplace
 
 ![The OpenSky Networks listing on Databricks Marketplace — free, instantly available, powered by OpenSharing.](assets/01-marketplace.png)
 
