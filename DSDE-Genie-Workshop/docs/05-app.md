@@ -3,11 +3,9 @@
 ## What we do
 
 We build an interactive visualization with **Databricks Apps** — a way to host web apps right
-next to your data, with governed access and no separate infrastructure to manage. We generate the
-app with **Genie Code**.
+next to your data, with governed access and no separate infrastructure to manage. We generate the app with **Genie Code**.
 
-> [!IMPORTANT]
-> **Free Edition:** Confirm Databricks Apps availability in your workspace before starting this step.
+
 
 ## Screenshot
 
@@ -25,30 +23,14 @@ app with **Genie Code**.
 > Give it this prompt:
 >
 > ```text
-> create an application using genie app builder to visualize 100 flight
-> trajectories over APAC from @state_vectors
+> Create a Databricks app that shows 100 APAC flight trajectories from
+> @state_vectors on a zoomable map, then deploy it.
 > ```
 >
-> **Step 3: Connect the data**
->
-> Point the app at your **SQL warehouse** and the Marketplace table
-> `marketplace.opensky.state_vectors` from [Step 1](01-marketplace.md).
->
-> **Step 4: Deploy**
->
-> Save a copy of the generated app in `code/app/`, then deploy and open it.
-
-> [!TIP]
-> **Feature spotlight — Generate whole assets**
->
-> **Generate whole assets** — the same Genie Code capability from [Step 4](04-pipeline.md), now producing a
-> *different* asset type: one prompt yields a complete, deployable Databricks App, not just a
-> code snippet.
-
+> 
 ## Recap
 
-You have a live, zoomable map of APAC flight trajectories built straight from the OpenSky
-Marketplace data — the payoff of the whole workflow.
+You have a live, zoomable map of APAC flight trajectories built straight from the OpenSky Marketplace data — the payoff of the whole workflow.
 
 ---
 
