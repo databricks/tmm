@@ -10,6 +10,8 @@ Where [the EDA step](02-genie-eda.md) focused on data quality and finding anomal
 about *insight*: ask a question and Genie returns the SQL, the result table, and
 an appropriate **chart or map**. You never have to write a query or build a dashboard manually. This is what Genie Agents does for you. 
 
+Genie Agents are highly suitable for answering both business and technical questions, because each answer is worked out in an **agentic loop** that pulls in all kinds of context — your Unity Catalog tables and their governance, curated sample queries, business rules and metrics, and verified answers — and reasons over it to return a grounded result rather than a guess.
+
 ## Step-by-step guide
 
 > **Step 1: Open your Genie Agent**
@@ -23,6 +25,8 @@ an appropriate **chart or map**. You never have to write a query or build a dash
 > by another column).
 
 ## Prompts to try
+
+Before charting anything, warm up with a few plain-text questions — Genie answers each with a single value or a small table. Try *"Which aircraft showed the fastest descent?"*, *"What's the highest-flying aircraft?"*, and *"Which aircraft was the fastest?"* Then move on to the visual prompts below.
 
 **1. Where is every plane, and how fast is it going?**
 
