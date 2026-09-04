@@ -1,6 +1,6 @@
-# 2. Genie Agents — find data anomalies with EDA
+# 2. How do I find data anomalies with Genie Agents (EDA)?
 
-## What we do
+## What you'll do
 
 Before you transform, visualize, or even trust any dataset, you need to understand what the raw data
 actually looks like. That process is called **[exploratory data analysis (EDA)](https://en.wikipedia.org/wiki/Exploratory_data_analysis)**: profiling each column, checking
@@ -18,7 +18,7 @@ writes and runs the SQL, summarizes the results, and explains anomalies in their
 >
 > **Step 1: Open Genie Code Interface**
 >
-> Navigate to your Databricks Workspace and open the Genie agent interface (e.g., click on the Genie lamp symbol top right.
+> Navigate to your Databricks Workspace and open the Genie agent interface (e.g., click the Genie lamp symbol, top right).
 >
 > **Step 2: Enter the Prompt**
 >
@@ -36,7 +36,7 @@ writes and runs the SQL, summarizes the results, and explains anomalies in their
 >
 > Submit the prompt. The Genie Agent will automatically:
 >
-> - Examine the table schema (e.g., reading column definitions for ica024, time, lat, lon, baro_altitude, velocity, etc.).
+> - Examine the table schema (e.g., reading column definitions for icao24, time, lat, lon, baro_altitude, velocity, etc.).
 > - Formulate analytical goals (evaluating key primary keys, geospatial limits, velocity bounds, and time boundaries).
 > - Execute multi-step data quality checks across the dataset.
 >
@@ -50,7 +50,7 @@ writes and runs the SQL, summarizes the results, and explains anomalies in their
 
 ## Results
 
-![The comprehensive EDA checks Genie ran on state_vectors — 67 data-quality validations across 695.7M records, grouped by category, with per-category summary statistics.](assets/02-genie-eda.png)
+![The comprehensive EDA checks Genie ran on state_vectors — 67 data-quality validations across 696M records, grouped by category, with per-category summary statistics.](assets/02-genie-eda.png)
 
 
 ## Optional: EDA with Visualizations and Genie Agent
@@ -74,7 +74,7 @@ European and North American daytime airspace:
 
 ![A Genie Agent visualization — a bar chart of hourly state-vector records across the UTC day, peaking at 18:00–20:00 UTC (~42.4M records/hour) and lowest around 05:00 UTC (~17.0M records/hour).](assets/02-genie-eda-hourly.png)
 
-[!TIP]
+> [!TIP]
 > **Feature spotlight — Instructions**
 >
 > **Instructions** — plain-language rules you give the agent so it interprets your data
@@ -89,7 +89,6 @@ European and North American daytime airspace:
 > means a missing position report (aircraft outside receiver coverage), not a
 > location at 0,0 — exclude those rows from position analysis.
 > ```
-## 
 
 ## Recap
 
@@ -106,3 +105,7 @@ Remember you can always ask Genie to create you a written report which could be 
 | ← Previous | Overview | Next → |
 |:---|:---:|---:|
 | [1. Databricks Marketplace](01-marketplace.md) | [Table of contents](../README.md) | [3. Genie Agents — Explore](03-genie-explore.md) |
+
+---
+
+_Author: Frank Munz · Updated 2026-09-04_

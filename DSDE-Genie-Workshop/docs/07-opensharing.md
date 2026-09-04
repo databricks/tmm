@@ -1,10 +1,10 @@
-# 7. OpenSharing — receive the data locally
+# 7. How do I receive shared data locally with open sharing?
 
-## What we do
+## What you'll do
 
-Everything so far ran inside Databricks. Now we go the other way: **receive** the shared OpenSky
+Everything so far ran inside Databricks. Now you go the other way: **receive** the shared OpenSky
 data on your own machine with the **open-source Delta Sharing client** — no Databricks runtime,
-and (because we read into pandas) **no Spark and no Java**. That's the point of open sharing: the
+and (because you read into pandas) **no Spark and no Java**. That's the point of open sharing: the
 same data reads into any client, anywhere.
 
 ## Step-by-step guide
@@ -59,7 +59,7 @@ same data reads into any client, anywhere.
 >
 > **Step 5: Ask a real question — the five fastest jets out of Japan**
 >
-> We don't want the whole 695M-row day on the laptop. So we **push the filter to the sharing
+> You don't want the whole 696M-row day on the laptop. So you **push the filter to the sharing
 > server** with `jsonPredicateHints`: keep only flights out of Japan, so only the matching files
 > ever cross the network. Then rank the five fastest **distinct** aircraft locally (OpenSky reports
 > `velocity` in m/s and `baro_altitude` in meters, so we convert to knots and feet):
@@ -88,7 +88,7 @@ same data reads into any client, anywhere.
 > ```
 >
 > Two things make this efficient and correct: `jsonPredicateHints` lets the server skip files that
-> can't match — so Japan-only reads and transfers a fraction of the day instead of all 695M rows —
+> can't match — so Japan-only reads and transfers a fraction of the day instead of all 696M rows —
 > and `drop_duplicates("icao24")` **after** the descending sort keeps each aircraft's single fastest
 > reading, so you get five *different* planes, not five samples of one. _(The hint is best-effort
 > file-skipping, which is why we still filter exactly in pandas.)_
@@ -109,7 +109,7 @@ same data reads into any client, anywhere.
 
 You received Databricks-shared data on a plain laptop — no cluster, no Spark, no Java — and
 answered a real question over it, letting the sharing server push the filter down so only a
-fraction of the day's 695M rows crossed the network. For large scans, swap `load_as_pandas` for
+fraction of the day's 696M rows crossed the network. For large scans, swap `load_as_pandas` for
 `delta_sharing.load_as_spark(...)`,
 which adds Java 17 + PySpark (the same stack as the
 [OSS Spark Declarative Pipelines guide](https://github.com/databricks/tmm/tree/main/OSS-SDP-OpenSkyNetwork)).
@@ -121,3 +121,7 @@ which adds Java 17 + PySpark (the same stack as the
 | ← Previous | Overview | Next → |
 |:---|:---:|---:|
 | [6. Genie One](06-genie-one.md) | [Table of contents](../README.md) | [8. Wrap-up & next steps](08-wrap-up.md) |
+
+---
+
+_Author: Frank Munz · Updated 2026-09-04_

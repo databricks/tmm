@@ -1,13 +1,13 @@
-# 1. Databricks Marketplace — get the sample data
+# 1. How do I get the OpenSky dataset from Databricks Marketplace?
 
-## What we do
+## What you'll do
 
-We attach the **OpenSky Networks – full day avionics dataset** to our workspace from
+You attach the **OpenSky Networks – full day avionics dataset** to your workspace from
 **Databricks Marketplace** — an open exchange where you get datasets as a **read-only Unity
 Catalog catalog**, with no copying and no ETL required.
 
 The listing is
-real ADS-B telemetry: one full UTC day (2026-03-01), about **695.7 million rows** tracing
+real ADS-B telemetry: one full UTC day (2026-03-01), about **696 million rows** tracing
 **54,093 distinct aircraft** — one aircraft state vector with longitude, latitude, velocity etc.  per row in a table called
 `state_vectors`.
 
@@ -17,11 +17,9 @@ real ADS-B telemetry: one full UTC day (2026-03-01), about **695.7 million rows*
 > sharing**. For more details read the announcement:
 > [*Introducing OpenSharing: the Next Evolution of Delta Sharing for the Agentic Era*](https://www.databricks.com/blog/introducing-opensharing-next-evolution-delta-sharing-agentic-era)
 > (Databricks Blog, 16 Jun 2026).
- 
 
-If you're mostly interested in marketplace data and accessing it with open source technology, check out the section about open sharing towards the end of the tutorial. 
 
-Databricks Marketplace
+If you're mostly interested in marketplace data and accessing it with open source technology, check out the section about open sharing towards the end of the tutorial.
 
 ![The OpenSky Networks listing on Databricks Marketplace — free, instantly available, powered by OpenSharing.](assets/01-marketplace.png)
 
@@ -81,3 +79,7 @@ You should see ADS-B state-vector columns such as `icao24`, `callsign`, `time_po
 | ← Previous | Overview | Next → |
 |:---|:---:|---:|
 | — | [Table of contents](../README.md) | [2. Genie Agents — EDA](02-genie-eda.md) |
+
+---
+
+_Author: Frank Munz · Updated 2026-09-04_

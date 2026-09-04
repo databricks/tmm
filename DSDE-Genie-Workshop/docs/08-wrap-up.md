@@ -1,6 +1,6 @@
 # 8. Wrap-up & next steps
 
-## What we did
+## What you did
 
 In seven steps you went from a shared dataset to a live app, self-service analytics, and data anyone can receive:
 
@@ -33,3 +33,7 @@ To undo everything:
 | ← Previous | Overview | Next → |
 |:---|:---:|---:|
 | [7. OpenSharing](07-opensharing.md) | [Table of contents](../README.md) | — |
+
+---
+
+_Author: Frank Munz · Updated 2026-09-04_

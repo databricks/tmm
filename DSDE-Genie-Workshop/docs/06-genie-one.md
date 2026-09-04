@@ -1,8 +1,8 @@
-# 6. Genie One — ask across your data
+# 6. How do I query across my data with Genie One?
 
-## What we do
+## What you'll do
 
-We ask questions across our data with **Genie (Genie One)** — the workspace-wide,
+You ask questions across your data with **Genie (Genie One)** — the workspace-wide,
 natural-language experience that finds and answers questions across your catalogs and tables,
 with no per-dataset agent to set up. Where the **Genie Agent** in [Step 2](02-genie-eda.md) was curated and scoped
 to one table, **Genie One** lets anyone open a chat and query whatever data they can access —
@@ -49,3 +49,7 @@ governed way for the whole team to explore the raw and cleaned tables in plain E
 | ← Previous | Overview | Next → |
 |:---|:---:|---:|
 | [5. Databricks App](05-app.md) | [Table of contents](../README.md) | [7. OpenSharing](07-opensharing.md) |
+
+---
+
+_Author: Frank Munz · Updated 2026-09-04_

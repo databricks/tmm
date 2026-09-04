@@ -1,9 +1,9 @@
-# 4. Spark Declarative Pipeline with Genie Code — ingest & clean
+# 4. How do I build a Spark Declarative Pipeline with Genie Code?
 
-## What we do
+## What you'll do
 
-We turn the raw table into clean, query-ready data with a **Spark Declarative Pipeline**. Declarative means you declare *what* the data should look like and Databricks manages
-orchestration, incremental refresh, and data-quality enforcement. We generate the pipeline with
+You turn the raw table into clean, query-ready data with a **Spark Declarative Pipeline**. Declarative means you declare *what* the data should look like and Databricks manages
+orchestration, incremental refresh, and data-quality enforcement. You generate the pipeline with
 **Genie Code**.
 
 > **Note — this isn't a full pipeline tutorial.** Here we focus on generating a working
@@ -23,7 +23,7 @@ orchestration, incremental refresh, and data-quality enforcement. We generate th
 >
 > **2. Submit Initial Pipeline Prompt**
 >
-> In the prompt chat input box, enter the prompt describing the end-to-end pipeline creation requirements. Make sure you have the EDA findings in the same Genie chat available or copy them over. Using the full marketplace dataset, the SDP would process close to 700 million records. To make this more suitable for Databricks free edition we reduce the amount of data ingested to the flights between 12:00 and 12:15. 
+> In the prompt chat input box, enter the prompt describing the end-to-end pipeline creation requirements. Make sure you have the EDA findings in the same Genie chat available or copy them over. Using the full marketplace dataset, the SDP would process close to 696 million records. To make this more suitable for Databricks free edition you reduce the amount of data ingested to the flights between 12:00 and 12:15. 
 >
 > ```text
 > Create an SDP pipeline to process the OpenSky data from marketplace.opensky with data-quality constraints 
@@ -106,9 +106,6 @@ Splitting at the gold layer keeps each region small and fast to query, and lets 
 share regions independently — while the shared silver table guarantees they were all cleaned with
 the same data-quality rules.
 
-
-
-## 
 ## Recap
 
 You now have three cleaned **gold** tables — `gold_americas`, `gold_emea`, and `gold_apac` — all
@@ -128,3 +125,7 @@ _(Confirm the exact gold table names in the pipeline Genie Code generates.)_
 | ← Previous | Overview | Next → |
 |:---|:---:|---:|
 | [3. Genie Agents — Explore](03-genie-explore.md) | [Table of contents](../README.md) | [5. Databricks App](05-app.md) |
+
+---
+
+_Author: Frank Munz · Updated 2026-09-04_

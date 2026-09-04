@@ -1,8 +1,8 @@
-# 3. Genie Agents — explore and visualize the data
+# 3. How do I explore and visualize data with Genie Agents?
 
-## What we do
+## What you'll do
 
-With the data profiled in [Step 2](02-genie-eda.md), we now use a **Genie Agent** to answer questions on the data and
+With the data profiled in [Step 2](02-genie-eda.md), you now use a **Genie Agent** to answer questions on the data and
 **visualize** the answers. 
 
 
@@ -10,7 +10,7 @@ Where [the EDA step](02-genie-eda.md) focused on data quality and finding anomal
 about *insight*: ask a question and Genie returns the SQL, the result table, and
 an appropriate **chart or map**. You never have to write a query or build a dashboard manually. This is what Genie Agents does for you. 
 
-Genie Agents are highly suitable for answering both business and technical questions, because each answer is worked out in an **agentic loop** that pulls in all kinds of context — your Unity Catalog tables and their governance, curated sample queries, business rules and metrics, and verified answers — and reasons over it to return a grounded result rather than a guess.
+Genie Agents answer both business and technical questions. Each answer is worked out in an **agentic loop**: it pulls in context — your Unity Catalog tables and their governance, curated sample queries, business rules and metrics, and verified answers — and reasons over it to return a grounded result, not a guess.
 
 ## Step-by-step guide
 
@@ -38,7 +38,6 @@ For each aircraft take its most recent position and plot it on a map, coloring e
 
 ![A Genie Agent map visualization — aircraft plotted at their most recent positions across North America and the Caribbean, each point colored by velocity on a red scale (0–600 m/s).](assets/03-genie-explore-velocity.png)
 
-**
 **2. Altitude vs. speed**
 
 Do faster aircraft fly higher?
@@ -62,3 +61,7 @@ pipeline in [Step 4](04-pipeline.md) and the app in [Step 5](05-app.md) build on
 | ← Previous | Overview | Next → |
 |:---|:---:|---:|
 | [2. Genie Agents — EDA](02-genie-eda.md) | [Table of contents](../README.md) | [4. Declarative Pipeline](04-pipeline.md) |
+
+---
+
+_Author: Frank Munz · Updated 2026-09-04_

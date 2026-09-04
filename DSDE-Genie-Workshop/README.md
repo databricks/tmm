@@ -5,9 +5,9 @@
 
 A hands-on tutorial for data scientists and data engineers that runs start to finish on Databricks Free Edition, with real data instead of a toy dataset.
 
-You begin with raw flight data from the **[OpenSky Network](https://opensky-network.org/)** on Databricks Marketplace: almost 700 million records — one full day of telemetry data in 2026, every aircraft that was in the air. 
+You begin with raw flight data from the **[OpenSky Network](https://opensky-network.org/)** on Databricks Marketplace: 696 million records — one full day of telemetry data in 2026, every aircraft that was in the air.
 
-From there you track down the anomalies, explore it with natural language, build a Spark Declarative Pipeline to clean it, and finish with a live, interactive map. You can even read the same data straight from your own laptop with [open sharing](docs/07-opensharing.md). 
+From there you track down the anomalies, explore it with natural language, build a Spark Declarative Pipeline to clean it, and finish with a live, interactive map. You can even read the same data straight from your own laptop with [open sharing](docs/07-opensharing.md).
 
 Genie's AI tooling handles the analysis and writes the SQL and pipeline code as you go.
 
@@ -34,3 +34,7 @@ Marketplace → Genie Agents (EDA) → Genie Agents (explore & visualize) → De
 - **Unity Catalog** enabled (default on Free Edition).
 - **Serverless compute** available (default on Free Edition).
 - The **`USE MARKETPLACE ASSETS`** privilege on the metastore (default unless your admin revoked it).
+
+---
+
+_Author: Frank Munz · Updated 2026-09-04_
