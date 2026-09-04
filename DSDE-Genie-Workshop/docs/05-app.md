@@ -23,8 +23,8 @@ next to your data, with governed access and no separate infrastructure to manage
 > Give it this prompt:
 >
 > ```text
-> Create a Databricks app that shows 100 APAC flight trajectories from
-> @state_vectors on a zoomable map, then deploy it.
+> Create a Databricks app that shows 100 distinct APAC flight trajectories from
+> marketplace.opensky.state_vectors on a zoomable map, then deploy it.
 > ```
 >
 > 
