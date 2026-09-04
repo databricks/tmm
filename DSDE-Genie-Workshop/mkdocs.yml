@@ -39,6 +39,5 @@ nav:
   - 3. Genie Agents — explore & visualize: 03-genie-explore.md
   - 4. Spark Declarative Pipeline (Genie Code): 04-pipeline.md
   - 5. Databricks App (Genie Code): 05-app.md
-  - 6. Genie One — ask across your data: 06-genie-one.md
-  - 7. OpenSharing — receive locally: 07-opensharing.md
-  - 8. Wrap-up: 08-wrap-up.md
+  - 6. OpenSharing — receive locally: 06-opensharing.md
+  - 7. Wrap-up: 07-wrap-up.md

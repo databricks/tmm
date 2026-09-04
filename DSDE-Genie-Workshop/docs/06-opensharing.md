@@ -1,4 +1,4 @@
-# 7. How do I receive shared data locally with open sharing?
+# 6. How do I receive shared data locally with open sharing?
 
 ## What you'll do
 
@@ -96,7 +96,7 @@ same data reads into any client, anywhere.
 ## Results
 
 > [!NOTE]
-> **Screenshot to be added:** the receive script running in VSCode, printing the shared tables and the five fastest aircraft out of Japan (`docs/assets/07-opensharing.png`).
+> **Screenshot to be added:** the receive script running in VSCode, printing the shared tables and the five fastest aircraft out of Japan (`docs/assets/06-opensharing.png`).
 
 > [!TIP]
 > **Feature spotlight — Open sharing, top 3**
@@ -120,7 +120,7 @@ which adds Java 17 + PySpark (the same stack as the
 
 | ← Previous | Overview | Next → |
 |:---|:---:|---:|
-| [6. Genie One](06-genie-one.md) | [Table of contents](../README.md) | [8. Wrap-up & next steps](08-wrap-up.md) |
+| [5. Databricks App](05-app.md) | [Table of contents](../README.md) | [7. Wrap-up & next steps](07-wrap-up.md) |
 
 ---
 

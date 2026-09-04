@@ -1,16 +1,15 @@
-# 8. Wrap-up & next steps
+# 7. Wrap-up & next steps
 
 ## What you did
 
-In seven steps you went from a shared dataset to a live app, self-service analytics, and data anyone can receive:
+In six steps you went from a shared dataset to a live app, self-service analytics, and data anyone can receive:
 
 1. **Databricks Marketplace** — got the OpenSky avionics data as a read-only Unity Catalog table, via Delta Sharing.
 2. **Genie Agents (EDA)** — profiled the data in plain English and surfaced the data-quality issues.
 3. **Genie Agents (explore & visualize)** — answered business questions and charted the results.
 4. **Spark Declarative Pipeline** (with **Genie Code**) — ingested and cleaned the data into per-region gold tables.
 5. **Databricks App** (with **Genie Code**) — visualized APAC routes on a zoomable map.
-6. **Genie One** — asked questions across the data with no per-dataset setup.
-7. **OpenSharing** — received the shared data locally with the open-source Python client, no Spark or Java.
+6. **OpenSharing** — received the shared data locally with the open-source Python client, no Spark or Java.
 
 ## Clean up
 
@@ -32,7 +31,7 @@ To undo everything:
 
 | ← Previous | Overview | Next → |
 |:---|:---:|---:|
-| [7. OpenSharing](07-opensharing.md) | [Table of contents](../README.md) | — |
+| [6. OpenSharing](06-opensharing.md) | [Table of contents](../README.md) | — |
 
 ---
 
