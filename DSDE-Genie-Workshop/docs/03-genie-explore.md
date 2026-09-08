@@ -62,6 +62,14 @@ Add this instruction to your Genie Agent, then ask the question again and compar
 > location at 0,0 — exclude those rows from position analysis.
 ```
 
+## Genie Agents — Beyond the Basics
+
+A few things worth knowing once the basics work:
+
+- **[Ask Genie to visualize](https://docs.databricks.com/aws/en/genie-agents/talk-to-genie)** — Genie auto-generates a chart for most answers and lets you switch to any of the ~20 [visualization types](https://docs.databricks.com/aws/en/dashboards/manage/visualizations/types) (point and choropleth maps, heatmaps, box and bubble charts, funnels, Sankey diagrams, and the usual bar/line/area/pie), then download it as PNG, export the data as CSV, or save it to a dashboard. Use it when you want to see a trend, distribution, or geography without writing plotting code.
+- **Multi-turn exploration** — follow-ups keep context, so you refine a view across several questions in one session. Use it when narrowing from an overview down to a specific slice.
+- **Suggested questions when stuck** — Genie offers alternative questions it can answer when yours won't run. Use it when you're exploring unfamiliar tables and aren't sure what's askable.
+
 ## Recap
 
 You've explored the OpenSky data and produced visualizations with Genie Agents. No query writing, no dashboard setup. These views tell you what's worth operationalizing, which is exactly what the pipeline in [Step 4](04-pipeline.md) and the app in [Step 5](05-app.md) build on.

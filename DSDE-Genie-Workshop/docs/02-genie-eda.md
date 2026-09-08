@@ -64,6 +64,14 @@ European and North American daytime airspace:
 
 ![A Genie Agent visualization: a bar chart of hourly state-vector records across the UTC day, peaking at 18:00–20:00 UTC (~42.4M records/hour) and lowest around 05:00 UTC (~17.0M records/hour).](assets/02-genie-eda-hourly.png)
 
+## Genie Agents — Beyond the Basics
+
+A few things worth knowing once the basics work:
+
+- **[Create your own skills](https://docs.databricks.com/aws/en/genie-agents/best-practices)** — teach the agent reusable instructions and example-question SQL so it answers domain questions your way every time. Use it when you keep re-explaining the same metric definitions, joins, or filters and want Genie to apply them consistently.
+- **Inspect the generated SQL** — every answer exposes the exact SQL Genie ran, so you can audit the logic or reuse it. Use it when an anomaly looks wrong and you need to check how Genie computed it.
+- **[Conversation API](https://docs.databricks.com/aws/en/genie/conversation-api)** — query the agent programmatically (`start-conversation`, `create-message`, `get-message`) and pull back the SQL, text, and rows. Use it when you want to embed Genie answers in an app or automate repeated checks.
+
 ## Recap
 
 You now have a set of EDA findings: the **data-quality issues Genie flagged** and what they mean in avionics terms.

@@ -37,6 +37,15 @@ copying and no ETL required.
 
 6. **View the table data.** In the left-hand panel under **Shares received**, expand `marketplace` > `opensky` > **Tables** and select `state_vectors`. Switch to the **Sample Data** tab in the main view to inspect rows containing UTC flight telemetry, call signs, and coordinates.
 
+## Databricks Marketplace — Beyond the Basics
+
+A few things worth knowing once the basics work:
+
+- **[Delta Sharing under the hood](https://docs.databricks.com/aws/en/delta-sharing/)** — Marketplace data is delivered by Delta Sharing, so you read the provider's live table read-only, with no copy into your own storage. Use it when you want the data to stay current without building a refresh pipeline.
+- **[Private exchanges](https://docs.databricks.com/aws/en/marketplace/private-exchange)** — a provider can restrict a listing to specific invited organizations instead of publishing it publicly. Use it when a partner shares a dataset with your org under an agreement rather than with everyone.
+- **Unity Catalog governance on shared data** — once installed, the shared dataset is a normal UC object with lineage, permissions, and audit logging. Use it when you need to control who reads it and trace how it flows downstream.
+- **Partner Connect** — pre-configured connections to Databricks technology partners from inside the workspace. Use it when you want to wire up a partner tool without manual credential setup.
+
 ## Recap
 
 You now have a read-only table at **`marketplace.opensky.state_vectors`**. Confirm it from a SQL editor:

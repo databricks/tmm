@@ -95,6 +95,15 @@ Splitting at the gold layer keeps each region small and fast to query, and lets 
 share regions independently, while the shared silver table guarantees they were all cleaned with
 the same data-quality rules.
 
+## Genie Code — Beyond the Basics
+
+A few things worth knowing once the basics work:
+
+- **[Declarative flows now in Databricks SQL](https://www.databricks.com/blog/modernizing-sql-etl-lakehouse-declarative-patterns)** — the advanced pipeline patterns run as plain SQL ETL in the lakehouse, not only inside a pipeline: **APPEND** flows incrementally add new source rows, **AUTO CDC** flows apply inserts/updates/deletes as SCD Type 1 or 2, and **REPLACE WHERE** flows refresh just a date range or partition (incrementalized by Enzyme). Use them when you want incremental ETL without hand-written scheduling or `MERGE` logic.
+- **Pick the dataset type by source freshness** — streaming tables for incremental, continuously-arriving data; [materialized views](https://docs.databricks.com/aws/en/ldp/dbsql/materialized) for batch and aggregations. Use it when deciding whether generated code should process new data continuously or refresh on a schedule.
+- **[Expectations for data quality](https://docs.databricks.com/aws/en/ldp/expectations)** — `CONSTRAINT ... EXPECT` (SQL) or `@dp.expect` (Python) validate rows and log or drop violations. Use it when the source can carry nulls, bad ranges, or schema drift you need to catch at ingest.
+- **[Auto Loader for file ingestion](https://docs.databricks.com/aws/en/ingestion/cloud-object-storage/auto-loader/)** — `read_files(...)` / `cloudFiles` picks up new files incrementally with schema inference. Use it when landing raw files from cloud storage without rescanning the whole directory each run.
+
 ## Recap
 
 You now have three cleaned **gold** tables (`gold_americas`, `gold_emea`, and `gold_apac`), all

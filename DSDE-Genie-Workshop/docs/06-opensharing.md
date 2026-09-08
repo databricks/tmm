@@ -105,6 +105,14 @@ same data reads into any client, anywhere.
 > 2. **Zero-copy, live data** — you read straight from the provider's cloud storage via short-lived scoped credentials, so nothing is replicated and you always see the latest committed version.
 > 3. **Format-agnostic (Delta, Iceberg, Parquet)** — providers can share Delta, Iceberg, or Parquet without conversion, so open sharing isn't a single-format lock-in.
 
+## Open Sharing — Beyond the Basics
+
+A few things worth knowing once the basics work:
+
+- **[Schema-level sharing](https://docs.databricks.com/aws/en/delta-sharing/)** — a provider can share a whole schema so current and future tables appear automatically. Use it when you want new tables to show up without the provider re-issuing the share.
+- **[Incremental change reads](https://docs.databricks.com/aws/en/opensharing/read-data-open)** — `load_table_changes_as_pandas(...)` returns only the rows changed between table versions instead of a full snapshot (needs Change Data Feed on the shared table). Use it when repeatedly syncing a large shared table and you don't want to re-pull everything.
+- **Batched reads for small machines** — page a large result set instead of loading the whole table into memory at once. Use it when consuming a big shared table on a laptop or memory-limited environment.
+
 ## Recap
 
 You received Databricks-shared data on a plain laptop — no cluster, no Spark, no Java — and

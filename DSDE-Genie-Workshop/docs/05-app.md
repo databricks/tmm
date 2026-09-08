@@ -32,6 +32,15 @@ Genie Code generates all kinds of visualizations and full applications from a pl
 >
 > Describe the app you want in plain English: name the dataset (`marketplace.opensky.state_vectors`), say how the data should load, list the views and how to navigate between them, and ask Genie Code to build and deploy it.
 
+## Genie Code — Beyond the Basics
+
+A few things worth knowing once the basics work:
+
+- **Workspace-aware discovery** — generated [Databricks App](https://docs.databricks.com/aws/en/dev-tools/databricks-apps/) code resolves fully-qualified Unity Catalog names and warehouse IDs from your workspace. Use it when you want the app to run without hand-editing table paths or resource IDs.
+- **Pre-wire the warehouse and endpoints** — name the SQL warehouse or serving endpoint once and the generated code binds to it. Use it when the app needs governed, consistent access to a specific warehouse or model endpoint.
+- **Runtime error diagnosis and inline fixes** — Genie Code catches errors when the app runs and proposes corrected code in place. Use it when generated queries or components fail on first run and you want the fix pinpointed.
+- **Smoke test before deploy** — a generated smoke test exercises the app's data path and UI before you ship. Use it when you want early confirmation the generated app works end to end.
+
 ## Recap
 
 You have a live, governed Databricks App, built and deployed straight from a Genie Code prompt and running right next to your data.
