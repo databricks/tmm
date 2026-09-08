@@ -15,6 +15,8 @@ If you are interested in OSS and data sharing, you can read the same data straig
   <img src="docs/assets/00-intro2-anim.gif" alt="Intro animation showing the OpenSky flight-data workshop" width="75%" />
 </p>
 
+<p align="center"><em>The animation above is built from the Marketplace dataset: a space-time prism of flights over the US, followed by aircraft trajectories across Australia and holding patterns over Sydney Airport. It runs as a Databricks App</em></p>
+
 
 ## What you'll build
 
