@@ -1,15 +1,19 @@
-# AI-powered Analytics of 700 Million OpenSky Avionics Records on Databricks Free Edition
+# AI-powered Analytics of 700 Million OpenSky Network Avionics Records 
 
-## How to get started with Databricks Genie as a Data Scientist or Data Engineer
+## How to get started with Databricks Genie as a Data Scientist or Data Engineer on Databricks Free Edition
 
 
-A hands-on tutorial for data scientists and data engineers that runs start to finish on Databricks Free Edition, with real data instead of a toy dataset.
+Welcome to this hands-on tutorial for data scientists and data engineers that runs start to finish on Databricks Free Edition, with real data from real planes instead of an AI generated toy dataset.
 
 You begin with raw flight data from the **[OpenSky Network](https://opensky-network.org/)** on Databricks Marketplace: 696 million records — one full day of telemetry data in 2026, every aircraft that was in the air.
 
-From there you track down the anomalies, explore it with natural language, build a Spark Declarative Pipeline to clean it, and finish with a live, interactive map. You can even read the same data straight from your own laptop with [open sharing](docs/06-opensharing.md).
+From there you track down the anomalies, explore it with natural language, build a Spark Declarative Pipeline to clean it, and finish with a live app. Genie handles the analysis and writes the SQL, pipeline and web app code as you go.
 
-Genie's AI tooling handles the analysis and writes the SQL and pipeline code as you go.
+If you are interested in OSS and data sharing, you can read the same data straight from your own laptop with [open sharing](docs/06-opensharing.md) and take it from there.
+
+<p align="center">
+  <img src="docs/assets/00-intro2-anim.gif" alt="Intro animation showing the OpenSky flight-data workshop" width="75%" />
+</p>
 
 
 ## What you'll build
@@ -23,7 +27,7 @@ Genie's AI tooling handles the analysis and writes the SQL and pipeline code as 
 7. **[Wrap-up & next steps](docs/07-wrap-up.md)** — clean up and where to go from here.
 
 ```text
-Marketplace → Genie Agents (EDA) → Genie Agents (explore & visualize) → Declarative Pipeline → Databricks App → OpenSharing (local)
+Marketplace → Genie Agents & Genie Code (EDA) → Genie Agents (explore & visualize) → Genie Code for Declarative Pipeline → Genie Code with Databricks App → OpenSharing with OSS only
 ```
 
 ## Before you begin
