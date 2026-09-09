@@ -2,34 +2,52 @@
 
 ## What you'll do
 
-Everything so far ran inside Databricks. Now you go the other way: **receive** the shared OpenSky
-data on your own machine with the **open-source Delta Sharing client** — no Databricks runtime,
-and (because you read into pandas) **no Spark and no Java**. That's the point of open sharing: the
+Everything so far ran inside Databricks, but often it is required to share data from Databricks to other systems. 
+
+Now you go the other way: **receive** the shared OpenSky
+data on your own local machine with the **open-source Delta Sharing client** — no Databricks runtime,
+and (because you simply use pandas) **no Spark and no Java**. That's the point of open sharing: the
 same data reads into any client, anywhere.
 
 ## Step-by-step guide
 
-> **Step 1: Create the Python environment (VSCode)**
+> **Step 1: Install the tools (one time)**
 >
-> Open the project folder in VSCode, then in the terminal create a virtual environment with `uv`
-> (same tool as the OSS-SDP guide) and install just two packages — no Spark, no Java:
+> These commands are for macOS with [Homebrew](https://brew.sh); on another OS the equivalents
+> differ slightly. You need only two tools, no Java and no Spark:
+>
+> ```bash
+> brew install uv            # fast Python package manager + virtual-environment tool
+> brew install python@3.12   # Python 3.12
+> ```
+>
+> **Step 2: Create the Python environment in VSCode**
+>
+> Open the project folder in VSCode, then in the terminal create and activate an isolated
+> environment with `uv` and install just two packages:
 >
 > ```bash
 > uv venv --python 3.12 --seed
 > source .venv/bin/activate
-> uv pip install delta-sharing pandas
+> uv pip install "delta-sharing>=1.4" "pandas>=2.2"
+> ```
+>
+> Verify the install prints two version numbers:
+>
+> ```bash
+> python -c "import delta_sharing, pandas; print(delta_sharing.__version__, pandas.__version__)"
 > ```
 >
 > Then point VSCode at the new environment: open the Command Palette and run **Python: Select
 > Interpreter** → `.venv/bin/python`, so the editor, integrated terminal, and Run button all use it.
 >
-> **Step 2: Get your credential file**
+> **Step 3: Get your credential file**
 >
 > On the Databricks Marketplace listing, choose **Download credential file** and save the `.share`
 > profile next to your script as `opensky.share`. It's a small JSON with an `endpoint` and a
 > `bearerToken` which should be treated as a secret.
 
-> **Step 3: Write the receive script**
+> **Step 4: Write the receive script**
 >
 > Create `receive_opensky.py`:
 >
@@ -48,7 +66,7 @@ same data reads into any client, anywhere.
 > print(df.head())
 > ```
 >
-> **Step 4: Run it**
+> **Step 5: Run it**
 >
 > ```bash
 > python receive_opensky.py
@@ -57,7 +75,7 @@ same data reads into any client, anywhere.
 > `list_all_tables()` prints the tables in the share; `load_as_pandas(url, limit=...)` pulls rows
 > into a pandas DataFrame you can analyze, plot, or export — all locally.
 >
-> **Step 5: Ask a real question — the five fastest jets out of Japan**
+> **Step 6: Ask a real question — the five fastest jets out of Japan**
 >
 > You don't want the whole 696M-row day on the laptop. So you **push the filter to the sharing
 > server** with `jsonPredicateHints`: keep only flights out of Japan, so only the matching files
@@ -115,14 +133,10 @@ A few things worth knowing once the basics work:
 
 ## Recap
 
-You received Databricks-shared data on a plain laptop — no cluster, no Spark, no Java — and
-answered a real question over it, letting the sharing server push the filter down so only a
-fraction of the day's 696M rows crossed the network. For large scans, swap `load_as_pandas` for
-`delta_sharing.load_as_spark(...)`,
-which adds Java 17 + PySpark (the same stack as the
-[OSS Spark Declarative Pipelines guide](https://github.com/databricks/tmm/tree/main/OSS-SDP-OpenSkyNetwork)).
+You received Databricks-shared data on a plain laptop without creating a cluster, no Spark, no Java and you answered a real question over it. In the code, the filter is pushed down to the sharing server, therefore only a fraction of the day's 696M rows crossed the network. 
 
----
+For large scans, change your architecture to Spark. Then swap `load_as_pandas` for
+`delta_sharing.load_as_spark(...)`
 
 ### Tutorial navigation
 
