@@ -28,11 +28,14 @@ editor, integrated terminal, and Run button all use the environment you just cre
 ## Run
 
 ```bash
-python receive_opensky.py
+python receive_opensky.py   # list the shared tables, push a filter to the server, pull matching rows
 ```
 
-`SharingClient(profile).list_all_tables()` lists what the share exposes; `load_as_pandas(url, limit=...)`
-pulls rows into a pandas DataFrame. Verified locally with delta-sharing 1.4.2 / pandas 2.3.3 / Python 3.12.
+`SharingClient(profile).list_all_tables()` lists what the share exposes; `load_as_pandas(url,
+jsonPredicateHints=...)` pushes a predicate to the sharing server so it skips non-matching files
+(here `baro_altitude < 3000` m), then pulls the matching rows into a pandas DataFrame. Because the
+hint is best-effort file-skipping, the script re-applies the filter in pandas for an exact result.
+Verified locally with delta-sharing 1.4.2 / pandas 2.3.3 / Python 3.12.
 
 ## Scale up (optional)
 

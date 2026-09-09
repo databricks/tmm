@@ -48,21 +48,39 @@ same data reads into any client, anywhere.
 
 > **Step 4: Write the receive script**
 >
-> Create `receive_opensky.py`:
+> Create a single `receive_opensky.py`. It lists what the share exposes, then asks a real
+> question over the data. You don't want the whole 696M-row day on the laptop, so you **push a
+> filter to the sharing server** with `jsonPredicateHints`: keep only low-altitude flights
+> (`baro_altitude < 3000` m), so only the matching files ever cross the network. The hint is
+> best-effort file-skipping, so you re-apply the same filter exactly in pandas:
 >
 > ```python
+> import json
+>
 > import delta_sharing
 >
 > PROFILE = "opensky.share"
-> TABLE = f"{PROFILE}#opensky_share.opensky.state_vectors"   # adjust <share> to your credential file
+> TABLE = f"{PROFILE}#opensky_marketplace.opensky.state_vectors"   # adjust <share> to your credential file
 >
 > client = delta_sharing.SharingClient(PROFILE)
 > for t in client.list_all_tables():          # what the share exposes
 >     print(f"{t.share}.{t.schema}.{t.name}")
 >
-> df = delta_sharing.load_as_pandas(TABLE, limit=1000)   # straight into pandas
+> # Push a predicate down to the server so it skips non-matching files:
+> # baro_altitude < 3000. It's a file-skipping hint (may return a superset),
+> # so we re-apply the filter in pandas for an exact result.
+> low_altitude = {
+>     "op": "lessThan",
+>     "children": [
+>         {"op": "column", "name": "baro_altitude", "valueType": "double"},
+>         {"op": "literal", "value": "3000", "valueType": "double"},
+>     ],
+> }
+>
+> df = delta_sharing.load_as_pandas(TABLE, jsonPredicateHints=json.dumps(low_altitude), limit=1000)
+> df = df[df["baro_altitude"] < 3000]
 > print(df.shape)
-> print(df.head())
+> print(df[["icao24", "callsign", "time_position", "latitude", "longitude", "baro_altitude"]].head())
 > ```
 >
 > **Step 5: Run it**
@@ -71,49 +89,15 @@ same data reads into any client, anywhere.
 > python receive_opensky.py
 > ```
 >
-> `list_all_tables()` prints the tables in the share; `load_as_pandas(url, limit=...)` pulls rows
-> into a pandas DataFrame you can analyze, plot, or export — all locally.
->
-> **Step 6: Ask a real question — the five fastest jets out of Japan**
->
-> You don't want the whole 696M-row day on the laptop. So you **push the filter to the sharing
-> server** with `jsonPredicateHints`: keep only flights out of Japan, so only the matching files
-> ever cross the network. Then rank the five fastest **distinct** aircraft locally (OpenSky reports
-> `velocity` in m/s and `baro_altitude` in meters, so we convert to knots and feet):
->
-> ```python
-> import json
->
-> # Server-side predicate: only Japan → less data read & transferred
-> predicate = json.dumps({"op": "equal", "children": [
->     {"op": "column", "name": "origin_country", "valueType": "string"},
->     {"op": "literal", "value": "Japan", "valueType": "string"}]})
->
-> df = delta_sharing.load_as_pandas(TABLE, jsonPredicateHints=predicate)
->
-> # Hints are best-effort file-skipping, so re-filter exactly in pandas
-> jp = df[df["origin_country"] == "Japan"].copy()
-> jp["speed_knots"] = jp["velocity"] * 1.94384       # m/s  → knots
-> jp["altitude_ft"] = jp["baro_altitude"] * 3.28084  # meters → feet
->
-> fastest = (
->     jp.sort_values("speed_knots", ascending=False)
->       .drop_duplicates("icao24")                   # one row per aircraft
->       .head(5)[["icao24", "callsign", "speed_knots", "altitude_ft"]]
-> )
-> print(fastest.round(0).to_string(index=False))
-> ```
->
-> Two things make this efficient and correct: `jsonPredicateHints` lets the server skip files that
-> can't match — so Japan-only reads and transfers a fraction of the day instead of all 696M rows —
-> and `drop_duplicates("icao24")` **after** the descending sort keeps each aircraft's single fastest
-> reading, so you get five *different* planes, not five samples of one. _(The hint is best-effort
-> file-skipping, which is why we still filter exactly in pandas.)_
+> `list_all_tables()` prints the tables in the share; `load_as_pandas(url, jsonPredicateHints=...)`
+> pulls the matching rows into a pandas DataFrame you can analyze, plot, or export — all locally.
+> `jsonPredicateHints` lets the server skip files that can't match, so a fraction of the day crosses
+> the network instead of all 696M rows. Because the hint is best-effort file-skipping (it may return
+> a superset), you re-apply `df[df["baro_altitude"] < 3000]` in pandas for an exact result.
 
 ## Results
 
-> [!NOTE]
-> **Screenshot to be added:** the receive script running in VSCode, printing the shared tables and the five fastest aircraft out of Japan (`docs/assets/06-opensharing.png`).
+![receive_opensky.py open in VSCode with its integrated terminal showing the run output: the shared table name opensky_marketplace.opensky.state_vectors, a DataFrame shape of (394, 17), and the first low-altitude rows — aircraft a03a0b (callsign N1132W) at baro_altitude around 1,650–1,775 m near 39.9°N, -105.1°W.](assets/06-opensharing-vscode.png)
 
 ## Open Sharing — Beyond the Basics
 
@@ -138,4 +122,4 @@ For large scans, change your architecture to Spark. Then swap `load_as_pandas` f
 
 ---
 
-_Author: Frank Munz · Updated 2026-09-04_
+_Author: Frank Munz · Updated 2026-09-09_
