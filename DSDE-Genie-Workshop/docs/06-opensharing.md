@@ -11,20 +11,19 @@ same data reads into any client, anywhere.
 
 ## Step-by-step guide
 
-> **Step 1: Install the tools (one time)**
+> **Step 1: Install uv (one time)**
 >
-> These commands are for macOS with [Homebrew](https://brew.sh); on another OS the equivalents
-> differ slightly. You need only two tools, no Java and no Spark:
+> This command is for macOS with [Homebrew](https://brew.sh); on another OS the equivalent differs slightly. You only need `uv` — it downloads Python 3.12 for you in the next step, so there's nothing else to install (no Java, no Spark, not even a system Python):
 >
 > ```bash
-> brew install uv            # fast Python package manager + virtual-environment tool
-> brew install python@3.12   # Python 3.12
+> brew install uv   # fast Python package manager + virtual-environment tool
 > ```
 >
 > **Step 2: Create the Python environment in VSCode**
 >
 > Open the project folder in VSCode, then in the terminal create and activate an isolated
-> environment with `uv` and install just two packages:
+> environment with `uv` (the `--python 3.12` flag makes uv fetch Python 3.12 if you don't already
+> have it) and install just two packages:
 >
 > ```bash
 > uv venv --python 3.12 --seed
@@ -115,13 +114,6 @@ same data reads into any client, anywhere.
 
 > [!NOTE]
 > **Screenshot to be added:** the receive script running in VSCode, printing the shared tables and the five fastest aircraft out of Japan (`docs/assets/06-opensharing.png`).
-
-> [!TIP]
-> **Feature spotlight — Open sharing, top 3**
->
-> 1. **Cross-platform, no Databricks account** — recipients read shared data from any client (pandas, Spark, Power BI, Excel, Tableau) with just a credential file — no Databricks workspace or license required.
-> 2. **Zero-copy, live data** — you read straight from the provider's cloud storage via short-lived scoped credentials, so nothing is replicated and you always see the latest committed version.
-> 3. **Format-agnostic (Delta, Iceberg, Parquet)** — providers can share Delta, Iceberg, or Parquet without conversion, so open sharing isn't a single-format lock-in.
 
 ## Open Sharing — Beyond the Basics
 

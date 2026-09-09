@@ -50,18 +50,6 @@ Create a scatter plot of altitude versus speed use vertical speed for color code
 
 ![A Genie Agent scatter plot: altitude versus speed for state vectors, each point colored by vertical speed (climb in blue, descent in red), showing altitude rising with speed up to cruising levels around 10–12 km.](assets/03-genie-explore-altitude-speed.png)
 
-**Feature spotlight: Instructions**
-
- Instructions are plain-language rules you give the agent so it interprets your data correctly, which is what keeps its generated SQL and answers trustworthy on a domain-specific schema.
-
-Add this instruction to your Genie Agent, then ask the question again and compare the answers:
-```text
-> Altitudes (baro_altitude, geo_altitude) are in meters and velocity is in
-> m/s — report altitude in feet and speed in knots. A null latitude/longitude
-> means a missing position report (aircraft outside receiver coverage), not a
-> location at 0,0 — exclude those rows from position analysis.
-```
-
 ## Genie Agents — Beyond the Basics
 
 A few things worth knowing once the basics work:
