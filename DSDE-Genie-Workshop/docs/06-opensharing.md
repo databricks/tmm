@@ -5,9 +5,11 @@
 Everything so far ran inside Databricks, but often it is required to share data from Databricks to other systems. 
 
 Now you go the other way: **receive** the shared OpenSky
-data on your own local machine with the **open-source Delta Sharing client** — no Databricks runtime,
+data on your own local machine with the **open-source Delta Sharing client**: no Databricks runtime,
 and (because you simply use pandas) **no Spark and no Java**. That's the point of open sharing: the
 same data reads into any client, anywhere.
+
+This module stays entirely open source, so the code below is given to you to copy, paste and run rather than generated with AI tools. Genie Code is actually very good at writing client code like this: if you ever need to produce your own, it is the recommended way. Here the code is handed to you so the focus stays on VSCode, PySpark and the open Delta Sharing client.
 
 ## Step-by-step guide
 
@@ -122,4 +124,4 @@ For large scans, change your architecture to Spark. Then swap `load_as_pandas` f
 
 ---
 
-_Author: Frank Munz · Updated 2026-09-09_
+_Author: Frank Munz · Updated 2026-09-10_

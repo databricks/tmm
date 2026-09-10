@@ -6,6 +6,8 @@ You build an interactive **Databricks App** with **Genie Code**, a way to host w
 to your data, with governed access and no separate infrastructure to manage. You describe the app
 you want in plain English, and Genie Code generates, builds, and deploys it.
 
+You build the app on top of one of the gold tables from the SDP pipeline, so it sits on cleaned, query-ready data. If you just want to try app creation with Genie Code, you can skip the pipeline and point the app at the raw table for a quick proof of concept, though that shortcut isn't meant for anything more serious.
+
 ## What Databricks Apps our team built based on the Avionics data set
 
 Genie Code generates all kinds of visualizations and full applications from a plain-English prompt, the same way coding agents such as Codex and Claude Code do. Our Solutions Architects have used this OpenSky dataset for several proofs of concept. **Each one below runs as a [Databricks App](https://www.databricks.com/blog/announcing-general-availability-databricks-apps)** — hosted next to the data, with governed access and no separate infrastructure: one plots Flight DNA, one an [H3](https://docs.databricks.com/aws/en/sql/language-manual/sql-ref-h3-geospatial-functions) flight-density map of Australia, and one the holding patterns over Sydney Airport.
@@ -55,4 +57,4 @@ You have a live, governed Databricks App, built and deployed straight from a Gen
 
 ---
 
-_Author: Frank Munz · Updated 2026-09-09_
+_Author: Frank Munz · Updated 2026-09-10_

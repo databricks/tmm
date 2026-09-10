@@ -16,8 +16,9 @@ orchestration, incremental refresh, and data-quality enforcement. You generate t
 
 1. **Open the Genie Code interface.** Navigate to your Databricks workspace and open the Genie Code panel on the right side of your workspace.
 
-2. **Submit the initial pipeline prompt.** In the prompt chat input box, enter the prompt describing the end-to-end pipeline creation requirements. Make sure you have the EDA findings in the same Genie chat available or copy them over. Using the full marketplace dataset, the SDP would process close to 696 million records which isn't a problem at all, but too much for [Free Edition](https://docs.databricks.com/aws/en/getting-started/free-edition-limitations). 
-3. While there are cleverer ways to subsample a dataset, we deliberately go the easy way here: to make this more suitable for Databricks Free Edition, you reduce the amount of data ingested to the flights between 12:00 and 12:15.
+2. **Submit the initial pipeline prompt.** In the prompt chat input box, enter the prompt describing the end-to-end pipeline creation requirements. Make sure you have the EDA findings in the same Genie chat available or copy them over. Using the full marketplace dataset, the SDP would process close to 696 million records which isn't a problem at all, but too much for [Free Edition](https://docs.databricks.com/aws/en/getting-started/free-edition-limitations).
+
+   While there are cleverer ways to subsample a dataset, we deliberately go the easy way here: to make this more suitable for Databricks Free Edition, you reduce the amount of data ingested to the flights between 12:00 and 12:15. We want to keep the prompt short here, but feel free to add more requirements regarding missing data values from the previous EDA step 
 
    ```text
    Create an SDP pipeline to process the OpenSky data from marketplace.opensky with data-quality constraints 
