@@ -1,6 +1,6 @@
 # AI-powered Analytics of 700 Million OpenSky Network Avionics Records 
 
-## How to get started with Databricks Genie as a Data Scientist or Data Engineer on Databricks Free Edition
+## Tutorial: How to get started with Databricks Genie as a Data Scientist or Data Engineer on Databricks Free Edition
 
 
 Welcome to this hands-on tutorial for data scientists and data engineers that runs start to finish on Databricks Free Edition, with real data from real planes instead of an AI generated toy dataset.
