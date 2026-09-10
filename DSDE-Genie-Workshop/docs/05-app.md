@@ -8,7 +8,7 @@ you want in plain English, and Genie Code generates, builds, and deploys it.
 
 ## What Databricks Apps our team built based on the Avionics data set
 
-Genie Code generates all kinds of visualizations and full applications from a plain-English prompt, the same way coding agents such as Codex and Claude Code do. Our Solutions Architects have used this OpenSky dataset for several proofs of concept. **Each one below runs as a Databricks App** — hosted next to the data, with governed access and no separate infrastructure: one plots Flight DNA, one an H3 flight-density map of Australia, and one the holding patterns over Sydney Airport.
+Genie Code generates all kinds of visualizations and full applications from a plain-English prompt, the same way coding agents such as Codex and Claude Code do. Our Solutions Architects have used this OpenSky dataset for several proofs of concept. **Each one below runs as a [Databricks App](https://www.databricks.com/blog/announcing-general-availability-databricks-apps)** — hosted next to the data, with governed access and no separate infrastructure: one plots Flight DNA, one an [H3](https://docs.databricks.com/aws/en/sql/language-manual/sql-ref-h3-geospatial-functions) flight-density map of Australia, and one the holding patterns over Sydney Airport.
 
 <img src="assets/05-flights-dna.png" alt="A Databricks App showing Flight DNA: a grid of radial glyphs, one per aircraft, each encoding a plane's day by time of day, altitude, and cruise level." width="100%">
 

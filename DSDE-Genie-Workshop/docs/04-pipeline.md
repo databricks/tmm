@@ -1,6 +1,8 @@
 # 4. Build a Spark Declarative Pipeline with Genie Code
 
-Creating robust, maintainable data pipelines is hard, and it means getting orchestration, incremental processing, and data-quality enforcement all right. AI-powered tooling has made this far easier: you declare what you want and let Spark Declarative Pipelines handle the rest, so Genie Code generates most of the mechanical work from a plain-English prompt.
+The [EDA](02-genie-eda.md) and [data-exploration](03-genie-explore.md) chapters taught you about the data and surfaced its data-quality issues. Based on those findings, you now write an ETL pipeline to clean the data for downstream use. 
+
+But creating robust, maintainable pipelines is hard: orchestration, incremental processing, and data-quality enforcement all have to be right. AI-powered tooling makes it far easier: you declare what you want, Spark Declarative Pipelines handle the rest, and Genie Code generates most of the mechanical work from a plain-English prompt.
 
 ## How to generate an Apache Spark Declarative Data Pipeline with Genie Code?
 
@@ -14,7 +16,8 @@ orchestration, incremental refresh, and data-quality enforcement. You generate t
 
 1. **Open the Genie Code interface.** Navigate to your Databricks workspace and open the Genie Code panel on the right side of your workspace.
 
-2. **Submit the initial pipeline prompt.** In the prompt chat input box, enter the prompt describing the end-to-end pipeline creation requirements. Make sure you have the EDA findings in the same Genie chat available or copy them over. Using the full marketplace dataset, the SDP would process close to 696 million records which isn't a problem at all, but too much for [Free Edition](https://docs.databricks.com/aws/en/getting-started/free-edition-limitations). While there are cleverer ways to subsample a dataset, we deliberately go the easy way here: to make this more suitable for Databricks Free Edition, you reduce the amount of data ingested to the flights between 12:00 and 12:15.
+2. **Submit the initial pipeline prompt.** In the prompt chat input box, enter the prompt describing the end-to-end pipeline creation requirements. Make sure you have the EDA findings in the same Genie chat available or copy them over. Using the full marketplace dataset, the SDP would process close to 696 million records which isn't a problem at all, but too much for [Free Edition](https://docs.databricks.com/aws/en/getting-started/free-edition-limitations). 
+3. While there are cleverer ways to subsample a dataset, we deliberately go the easy way here: to make this more suitable for Databricks Free Edition, you reduce the amount of data ingested to the flights between 12:00 and 12:15.
 
    ```text
    Create an SDP pipeline to process the OpenSky data from marketplace.opensky with data-quality constraints 
@@ -55,9 +58,15 @@ expectations) → the three regional gold materialized views → `gold_analytics
 
 The silver table is where the **EDA findings from [Step 2](02-genie-eda.md) become enforced rules**. A Spark
 Declarative Pipeline lets you attach *expectations* (named boolean constraints) to a table;
-Databricks evaluates every row and tracks pass/fail counts in the pipeline UI. `expect_all_or_drop`
-drops any row that fails a **hard** rule (so it never reaches the gold tables), while `expect`
-**warns** but keeps the row, used here for softer outlier checks. This is the generated silver
+Databricks evaluates every row and tracks pass/fail counts in the pipeline UI. 
+
+* `expect_all_or_drop`
+drops any row that fails a **hard** rule (so it never reaches the gold tables)
+
+* while `expect`
+**warns** but keeps the row, used here for softer outlier checks. 
+ 
+This is the generated silver
 definition, with the EDA anomalies encoded as constraints:
 
 ```python
@@ -106,7 +115,7 @@ A few things worth knowing once the basics work:
 
 ## Recap
 
-You now have three cleaned **gold** tables (`gold_americas`, `gold_emea`, and `gold_apac`), all
+You created three cleaned **gold** tables (`gold_americas`, `gold_emea`, and `gold_apac`), all
 built on the same quality-checked silver table, plus the `gold_analytics_regional_summary`
 materialized view with analytics across all three. Verify the APAC one:
 
@@ -126,4 +135,4 @@ _(Confirm the exact gold table names in the pipeline Genie Code generates.)_
 
 ---
 
-_Author: Frank Munz · Updated 2026-09-04_
+_Author: Frank Munz · Updated 2026-09-10_
