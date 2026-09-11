@@ -9,3 +9,6 @@ venv/
 
 # macOS
 .DS_Store
+
+# Community blog draft (not part of the published docs site)
+genie-for-data-engineers.md
