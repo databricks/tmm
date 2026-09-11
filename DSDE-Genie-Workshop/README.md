@@ -29,9 +29,9 @@ If you are interested in OSS and data sharing, you can read the same data straig
 7. **[Wrap-up & next steps](docs/07-wrap-up.md)** — clean up and where to go from here.
 
 ```text
-Marketplace → Genie Agents & Genie Code (EDA) → Genie Agents (explore & visualize) 
+TL;DR: Marketplace → Genie Agents & Genie Code (EDA) → Genie Agents (explore & visualize) 
 → Genie Code for Declarative Pipeline → Genie Code with Databricks App 
-→ OpenSharing with OSS only
+→ OpenSharing with OSS
 ```
 
 ## How to use this tutorial
