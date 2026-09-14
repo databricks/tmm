@@ -38,6 +38,6 @@ nav:
   - 2. Genie Agents — find data anomalies: 02-genie-eda.md
   - 3. Genie Agents — explore & visualize: 03-genie-explore.md
   - 4. Spark Declarative Pipeline (Genie Code): 04-pipeline.md
-  - 5. Databricks App (Genie Code): 05-app.md
+  - 5. Databricks App: 05-app.md
   - 6. OpenSharing — receive locally: 06-opensharing.md
   - 7. Wrap-up: 07-wrap-up.md

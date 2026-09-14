@@ -24,19 +24,19 @@ If you are interested in OSS and data sharing, you can read the same data straig
 2. **[Genie Agents - EDA](docs/02-genie-eda.md)** — find data anomalies.
 3. **[Genie Agents - explore & visualize](docs/03-genie-explore.md)** — explore and visualize the data.
 4. **[Genie Code - Spark Declarative Pipeline](docs/04-pipeline.md)** — ingest and clean the data into per-region gold tables.
-5. **[Genie Code - create a Databricks App](docs/05-app.md)** — visualize APAC flight routes on a zoomable map.
+5. **[Databricks App](docs/05-app.md)** — build a governed app on a gold table and visualize APAC flight routes on a zoomable map.
 6. **[OpenSharing](docs/06-opensharing.md)** — receive the shared data locally with the open-source client and VSCode.
 7. **[Wrap-up & next steps](docs/07-wrap-up.md)** — clean up and where to go from here.
 
 ```text
-TL;DR: Marketplace → Genie Agents & Genie Code (EDA) → Genie Agents (explore & visualize) 
-→ Genie Code for Declarative Pipeline → Genie Code with Databricks App 
+TL;DR what this tutorial shows: Marketplace → Genie Agents & Genie Code (EDA) → Genie Agents (explore & visualize) 
+→ Genie Code for Declarative Pipeline → Databricks App 
 → OpenSharing with OSS
 ```
 
 ## How to use this tutorial
 
-This is a guided overview, not a click-by-click manual. Each page sketches the path and highlights the prompts that matter, rather than documenting every button and menu. It's suitable for a workshop: an instructor demos each step live while the audience follows along. Working on your own is fine too — treat each page as the map, explore, and let Genie do the driving.
+This is a guided overview, not a click-by-click manual. Each page sketches the path and highlights the prompts that matter, rather than documenting every button and menu. It's suitable for a workshop: an instructor demos each step live while the audience follows along. Working on your own is fine too. Then treat each page as the map, explore, and let Genie do the AI-powered driving.
 
 ## Before you begin
 
@@ -48,4 +48,4 @@ This is a guided overview, not a click-by-click manual. Each page sketches the p
 
 ---
 
-_Author: Frank Munz · Updated 2026-09-10_
+_Author: Frank Munz · Updated 2026-09-14_

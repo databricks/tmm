@@ -58,7 +58,6 @@ Canonical row count set to **696 million** across all pages.
 - GEO: H1 → searchable question.
 - GEO: row count → "696M" (two spots).
 - GEO: added provenance footer.
-- TODO (cannot auto-apply): add screenshot `docs/assets/05-app.png` — placeholder left in place.
 
 ## docs/06-genie-one.md — REMOVED
 - The Genie One step was removed from the tutorial. Deleted `docs/06-genie-one.md`, dropped it from the README agenda and flow diagram and from the wrap-up recap, and rewired nav so the Databricks App (5) links straight to OpenSharing.

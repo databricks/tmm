@@ -41,6 +41,36 @@ orchestration, incremental refresh, and data-quality enforcement. You generate t
 
 4. **Review the pipeline graph.** Upon execution completion, Genie Code automatically builds the project files and generates the interactive Pipeline graph. Verify that the streaming tables flow from bronze_state_vectors → silver_state_vectors_clean (with applied expectations) → regional Gold outputs (gold_apac, gold_americas, gold_emea) → gold_analytics_regional_summary.
 
+## Lakeflow Jobs with Genie Code
+
+A pipeline that runs only when you click **Run** not a data product. In production, a pipeline usually runs inside a **job**: a Lakeflow workflow that orchestrates any number of tasks, such as notebooks, SQL queries, and other pipelines, with a schedule, retries, and alerts. Your SDP pipeline becomes one task in that workflow.
+
+**[Lakeflow Jobs](https://docs.databricks.com/aws/en/jobs)** is the orchestration layer on Databricks: it schedules the pipeline, retries it on failure, and notifies you when a run breaks. You generate the job the same way you generated the pipeline, from a plain-English prompt to Genie Code.
+
+### Step-by-step: create a job that runs the pipeline
+
+1. Use the **same Genie Code** panel you used to build the pipeline.
+
+2. **Prompt Genie Code to create the job.** Name the pipeline you built above so the job references it, and describe the schedule, retry, and notification:
+
+   ```text
+   Create a Lakeflow Job with the pipeline task that runs my OpenSky SDP
+   pipeline on an hourly schedule. Retry once on failure and send an email
+   notification when a run fails.
+   ```
+
+3. **Review the proposed job.** Genie Code returns a job definition. Check that it has a **pipeline task** pointing at your SDP pipeline (by name or pipeline ID), the **schedule** you asked for, and a **retry policy** with a **failure notification**.
+
+4. The job then appears under **Jobs & Pipelines** in the workspace.
+
+5. **Run it and verify.** Trigger **Run now**, then open the run to confirm the pipeline task starts your SDP pipeline and finishes. Free Edition allows up to five concurrent job tasks.
+
+What a job adds on top of the pipeline:
+
+- **Schedule or trigger:** run on a cron schedule, or start the moment new data lands with a file-arrival trigger.
+- **Multi-task orchestration:** chain the pipeline with downstream work, such as a notebook or a SQL refresh, in one dependency graph.
+- **Retries and notifications:** retry transient failures automatically and alert the right people when a run fails.
+
 ## Results
 
 Genie Code's **proposed architecture** ([Step 3](#step-by-step-guide)), then the **Pipeline graph** it builds on execution
@@ -136,4 +166,4 @@ _(Confirm the exact gold table names in the pipeline Genie Code generates.)_
 
 ---
 
-_Author: Frank Munz · Updated 2026-09-10_
+_Author: Frank Munz · Updated 2026-09-14_

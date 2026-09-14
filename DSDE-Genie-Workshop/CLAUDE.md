@@ -1,6 +1,6 @@
 # CLAUDE.md — DSDE Genie Workshop
 
-> **Last updated: 2026-09-08**
+> **Last updated: 2026-09-14**
 > When you load this file, compare that date to today. If it is **more than 30 days old**,
 > remind Frank that this CLAUDE.md may be stale and offer to refresh it. Bump the date
 > whenever you meaningfully change this file.
@@ -62,5 +62,4 @@ Pipeline → Genie Code for a Databricks App → OpenSharing to a local OSS clie
 - Preview docs locally with `mkdocs serve` (deps in `requirements.txt`).
 - Known stale references to fix opportunistically: `code/pipeline/README.md` and
   `code/app/README.md` still link to old step numbers (`03-pipeline.md`, `04-app.md`).
-- Open TODOs (see `docs/CHANGELOG.md`): add missing screenshots `docs/assets/05-app.png` and
-  `docs/assets/06-opensharing.png`.
+- Open TODOs (see `docs/CHANGELOG.md`): add missing screenshot `docs/assets/06-opensharing.png`.
