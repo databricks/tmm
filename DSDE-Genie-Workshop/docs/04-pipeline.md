@@ -117,15 +117,15 @@ A few things worth knowing once the basics work:
 - **[Expectations for data quality](https://docs.databricks.com/aws/en/ldp/expectations)** — `CONSTRAINT ... EXPECT` (SQL) or `@dp.expect` (Python) validate rows and log or drop violations. Use it when the source can carry nulls, bad ranges, or schema drift you need to catch at ingest.
 - **[Auto Loader for file ingestion](https://docs.databricks.com/aws/en/ingestion/cloud-object-storage/auto-loader/)** — `read_files(...)` / `cloudFiles` picks up new files incrementally with schema inference. Use it when landing raw files from cloud storage without rescanning the whole directory each run.
 
-## Lakeflow Jobs with Genie Code
+## How to create a Lakeflow Job with Genie Code?
 
-A pipeline that runs only when you click **Run** is not a data product. In production, a pipeline usually runs inside a **job**: a Lakeflow workflow that orchestrates any number of tasks, such as notebooks, SQL queries, and other pipelines, with a schedule, retries, and alerts. Your SDP pipeline becomes one task in that workflow.
+A pipeline that runs only when you click **Run** is not a data product. In production it runs inside a **job**: a Lakeflow workflow that orchestrates any number of tasks, such as notebooks, SQL queries, and other pipelines. You generate that job the same way you generated the pipeline, from a plain-English prompt to Genie Code.
 
-**[Lakeflow Jobs](https://docs.databricks.com/aws/en/jobs)** is the orchestration layer on Databricks: it schedules the pipeline, retries it on failure, and notifies you when a run breaks. You generate the job the same way you generated the pipeline, from a plain-English prompt to Genie Code.
+**[Lakeflow Jobs](https://docs.databricks.com/aws/en/jobs)** is the orchestration layer on Databricks: it schedules the pipeline, retries it on failure, and notifies you when a run breaks. Your SDP pipeline becomes one task in that workflow.
 
 Here you build a **multi-task job**: the pipeline runs first, then a notebook runs after it. The notebook is a placeholder for the downstream work you would add later, such as post-processing or a report.
 
-### Step-by-step: create a multi-task job
+### Step-by-step: create a multi-task job with Genie Code
 
 1. Use the **same Genie Code** panel you used to build the pipeline.
 
