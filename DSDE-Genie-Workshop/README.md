@@ -24,7 +24,7 @@ If you are interested in OSS and data sharing, you can read the same data straig
 2. **[Genie Agents - EDA](docs/02-genie-eda.md)** — find data anomalies.
 3. **[Genie Agents - explore & visualize](docs/03-genie-explore.md)** — explore and visualize the data.
 4. **[Genie Code - Spark Declarative Pipeline](docs/04-pipeline.md)** — ingest and clean the data into per-region gold tables.
-5. **[Databricks App](docs/05-app.md)** — build a governed app on a gold table and visualize APAC flight routes on a zoomable map.
+5. **[Databricks Apps](docs/05-app.md)** — build a governed app on a gold table and visualize APAC flight routes on a zoomable map.
 6. **[OpenSharing](docs/06-opensharing.md)** — receive the shared data locally with the open-source client and VSCode.
 7. **[Wrap-up & next steps](docs/07-wrap-up.md)** — clean up and where to go from here.
 

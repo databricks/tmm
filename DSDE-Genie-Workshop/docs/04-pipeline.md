@@ -44,41 +44,6 @@ orchestration, incremental refresh, and data-quality enforcement. You generate t
 > [!TIP]
 > As you refine the generated pipeline code, we recommend turning on **[Databricks Assistant autocomplete](https://docs.databricks.com/aws/en/notebooks/notebook-editor)**: it gives you inline, context-aware code and SQL suggestions as you type, based on the surrounding code and your available Unity Catalog tables.
 
-## Lakeflow Jobs with Genie Code
-
-A pipeline that runs only when you click **Run** is not a data product. In production, a pipeline usually runs inside a **job**: a Lakeflow workflow that orchestrates any number of tasks, such as notebooks, SQL queries, and other pipelines, with a schedule, retries, and alerts. Your SDP pipeline becomes one task in that workflow.
-
-**[Lakeflow Jobs](https://docs.databricks.com/aws/en/jobs)** is the orchestration layer on Databricks: it schedules the pipeline, retries it on failure, and notifies you when a run breaks. You generate the job the same way you generated the pipeline, from a plain-English prompt to Genie Code.
-
-Here you build a **multi-task job**: the pipeline runs first, then a notebook runs after it. The notebook is a placeholder for the downstream work you would add later, such as post-processing or a report.
-
-### Step-by-step: create a multi-task job
-
-1. Use the **same Genie Code** panel you used to build the pipeline.
-
-2. **Prompt Genie Code to create the job.** Name the pipeline you built above so the job references it, then describe the schedule, retry, notification, and a second task: a notebook that runs after the pipeline.
-
-   ```text
-   Create a Lakeflow Job with the pipeline task that runs my OpenSky SDP
-   pipeline on an hourly schedule. Retry once on failure and send an email
-   notification when a run fails. Also add a notebook that is executed
-   after the pipeline.
-   ```
-
-3. **Review the proposed job.** Genie Code returns a job with two tasks: a **pipeline task** pointing at your SDP pipeline (by name or pipeline ID), and a **notebook task** set to run after it. Confirm the task order, the **schedule** you asked for, and the **retry policy** with its **failure notification**.
-
-4. The job then appears under **Jobs & Pipelines** in the workspace.
-
-5. **Run it and verify.** Trigger **Run now**, then open the run to confirm the pipeline task runs first and the notebook task runs after it. Free Edition allows up to five concurrent job tasks.
-
-![A Lakeflow Job in Jobs & Pipelines: a pipeline task that runs the OpenSky SDP pipeline followed by a notebook task, on an hourly schedule with retry and a failure email notification.](assets/04-sdp-jobs.png)
-
-What a job adds on top of the pipeline:
-
-- **Schedule or trigger:** run on a cron schedule, or start the moment new data lands with a file-arrival trigger.
-- **Multi-task orchestration:** chain the pipeline with downstream work, such as a notebook or a SQL refresh, in one dependency graph.
-- **Retries and notifications:** retry transient failures automatically and alert the right people when a run fails.
-
 ## Results
 
 Genie Code's **proposed architecture** ([Step 3](#step-by-step-guide)), then the **Pipeline graph** it builds on execution
@@ -151,6 +116,41 @@ A few things worth knowing once the basics work:
 - **Pick the dataset type by source freshness** — streaming tables for incremental, continuously-arriving data; [materialized views](https://docs.databricks.com/aws/en/ldp/dbsql/materialized) for batch and aggregations. Use it when deciding whether generated code should process new data continuously or refresh on a schedule.
 - **[Expectations for data quality](https://docs.databricks.com/aws/en/ldp/expectations)** — `CONSTRAINT ... EXPECT` (SQL) or `@dp.expect` (Python) validate rows and log or drop violations. Use it when the source can carry nulls, bad ranges, or schema drift you need to catch at ingest.
 - **[Auto Loader for file ingestion](https://docs.databricks.com/aws/en/ingestion/cloud-object-storage/auto-loader/)** — `read_files(...)` / `cloudFiles` picks up new files incrementally with schema inference. Use it when landing raw files from cloud storage without rescanning the whole directory each run.
+
+## Lakeflow Jobs with Genie Code
+
+A pipeline that runs only when you click **Run** is not a data product. In production, a pipeline usually runs inside a **job**: a Lakeflow workflow that orchestrates any number of tasks, such as notebooks, SQL queries, and other pipelines, with a schedule, retries, and alerts. Your SDP pipeline becomes one task in that workflow.
+
+**[Lakeflow Jobs](https://docs.databricks.com/aws/en/jobs)** is the orchestration layer on Databricks: it schedules the pipeline, retries it on failure, and notifies you when a run breaks. You generate the job the same way you generated the pipeline, from a plain-English prompt to Genie Code.
+
+Here you build a **multi-task job**: the pipeline runs first, then a notebook runs after it. The notebook is a placeholder for the downstream work you would add later, such as post-processing or a report.
+
+### Step-by-step: create a multi-task job
+
+1. Use the **same Genie Code** panel you used to build the pipeline.
+
+2. **Prompt Genie Code to create the job.** Name the pipeline you built above so the job references it, then describe the schedule, retry, notification, and a second task: a notebook that runs after the pipeline.
+
+   ```text
+   Create a Lakeflow Job with the pipeline task that runs my OpenSky SDP
+   pipeline on an hourly schedule. Retry once on failure and send an email
+   notification when a run fails. Also add a notebook that is executed
+   after the pipeline.
+   ```
+
+3. **Review the proposed job.** Genie Code returns a job with two tasks: a **pipeline task** pointing at your SDP pipeline (by name or pipeline ID), and a **notebook task** set to run after it. Confirm the task order, the **schedule** you asked for, and the **retry policy** with its **failure notification**.
+
+4. The job then appears under **Jobs & Pipelines** in the workspace.
+
+5. **Run it and verify.** Trigger **Run now**, then open the run to confirm the pipeline task runs first and the notebook task runs after it. Free Edition allows up to five concurrent job tasks.
+
+![A Lakeflow Job in Jobs & Pipelines: a pipeline task that runs the OpenSky SDP pipeline followed by a notebook task, on an hourly schedule with retry and a failure email notification.](assets/04-sdp-jobs.png)
+
+What a job adds on top of the pipeline:
+
+- **Schedule or trigger:** run on a cron schedule, or start the moment new data lands with a file-arrival trigger.
+- **Multi-task orchestration:** chain the pipeline with downstream work, such as a notebook or a SQL refresh, in one dependency graph.
+- **Retries and notifications:** retry transient failures automatically and alert the right people when a run fails.
 
 ## Recap
 
