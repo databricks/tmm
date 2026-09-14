@@ -6,7 +6,7 @@ You build an interactive **Databricks App**: a governed web app hosted right nex
 
 You build the app on top of a **gold table** from the [Spark Declarative Pipeline](04-pipeline.md) in Step 4. This is the common pattern: Databricks Apps sit on the gold tables an SDP pipeline produces, so it reads cleaned, query-ready data instead of raw records. If you only want to try the app quickly, you can point it at the raw table for a proof of concept, but that shortcut is not meant for anything more serious.
 
-You describe the app you want in plain English and a coding agent writes, builds, and deploys it. Any coding agent works here: **Claude Code**, **Codex**, or Databricks **Genie Code** inside the workspace. This walkthrough uses Genie Code because it runs in the workspace on Free Edition with nothing to install. Coding-agent support for Databricks Apps keeps improving across recent releases, so expect the in-workspace path to get smoother over time.
+You describe the app you want in plain English and a coding agent writes, builds, and deploys it. Any coding agent works here: **Claude Code**, **Codex**, or Databricks **Genie Code** inside the workspace. Coding-agent support for Databricks Apps keeps improving across recent releases, so expect the in-workspace path to get smoother over time.
 
 ## What Databricks Apps can you build on the OpenSky data?
 
