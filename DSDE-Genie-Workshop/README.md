@@ -9,7 +9,7 @@ You begin with raw flight data from the **[OpenSky Network](https://opensky-netw
 
 From there you track down the anomalies, explore it with natural language, build a Spark Declarative Pipeline to clean it, and finish with a live app. Genie handles the analysis and writes the SQL, pipeline and web app code as you go.
 
-If you are interested in OSS and data sharing, you can read the same data straight from your own laptop with [open sharing](docs/06-opensharing.md) and take it from there.
+If you are interested in OSS and data sharing, you can read the same data straight from your own laptop with [open sharing](docs/70-opensharing.md) and take it from there.
 
 <p align="center">
   <img src="docs/assets/00-intro2-anim.gif" alt="Intro animation showing the OpenSky flight-data workshop" width="75%" />
@@ -20,17 +20,18 @@ If you are interested in OSS and data sharing, you can read the same data straig
 
 ## What you'll build
 
-1. **[Databricks Marketplace](docs/01-marketplace.md)** — get the data as a read-only Unity Catalog table.
-2. **[Genie Agents - EDA](docs/02-genie-eda.md)** — find data anomalies.
-3. **[Genie Agents - explore & visualize](docs/03-genie-explore.md)** — explore and visualize the data.
-4. **[Genie Code - Spark Declarative Pipeline and Lakeflow Jobs](docs/04-pipeline.md)** — ingest and clean the data into per-region gold tables.
-5. **[Databricks Apps](docs/05-app.md)** — build a governed app on a gold table and visualize APAC flight routes on a zoomable map.
-6. **[OpenSharing](docs/06-opensharing.md)** — receive the shared data locally with the open-source client and VSCode.
-7. **[Wrap-up & next steps](docs/07-wrap-up.md)** — clean up and where to go from here.
+1. **[Databricks Marketplace](docs/10-marketplace.md)** — get the data as a read-only Unity Catalog table.
+2. **[Genie Agents - EDA](docs/20-genie-eda.md)** — find data anomalies.
+3. **[Genie Agents - explore & visualize](docs/30-genie-explore.md)** — explore and visualize the data.
+4. **[Genie Code - Spark Declarative Pipeline](docs/40-pipeline.md)** — ingest and clean the data into per-region gold tables.
+5. **[Genie Code - Lakeflow Job](docs/50-job.md)** — schedule and orchestrate the pipeline as a multi-task job.
+6. **[Databricks Apps](docs/60-app.md)** — build a governed app on a gold table and visualize APAC flight routes on a zoomable map.
+7. **[OpenSharing](docs/70-opensharing.md)** — receive the shared data locally with the open-source client and VSCode.
+8. **[Wrap-up & next steps](docs/80-wrap-up.md)** — clean up and where to go from here.
 
 ```text
 TL;DR what this tutorial shows: Marketplace → Genie Agents & Genie Code (EDA) → Genie Agents (explore & visualize) 
-→ Genie Code for Declarative Pipeline → Databricks App 
+→ Genie Code for Declarative Pipeline → Genie Code for a Lakeflow Job → Databricks App 
 → OpenSharing with OSS
 ```
 
@@ -48,4 +49,4 @@ This is a guided overview, not a click-by-click manual. Each page sketches the p
 
 ---
 
-_Author: Frank Munz · Updated 2026-09-14_
+_Author: Frank Munz · Updated 2026-09-15_

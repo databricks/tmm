@@ -4,7 +4,7 @@ Before you transform, visualize, or even trust any dataset, you need to understa
 actually looks like. That process is called **[exploratory data analysis (EDA)](https://en.wikipedia.org/wiki/Exploratory_data_analysis)**: profiling each column, checking
 value ranges and null rates, and spotting anomalies or impossible values that would otherwise
 silently corrupt everything downstream. EDA is the necessary **first step**, because the issues you
-find here become the cleanup rules for your pipeline ([Step 4](04-pipeline.md)) and the caveats for every later
+find here become the cleanup rules for your [pipeline](40-pipeline.md) and the caveats for every later
 analysis. Skip it and you build on data you don't understand.
 
 ## How to run EDA with Genie Agents or Genie Code?
@@ -41,7 +41,7 @@ query.
 
 ## Results
 
-![The comprehensive EDA checks Genie ran on state_vectors: 67 data-quality validations across 696M records, grouped by category, with per-category summary statistics.](assets/02-genie-eda.png)
+![The comprehensive EDA checks Genie ran on state_vectors: 67 data-quality validations across 696M records, grouped by category, with per-category summary statistics.](assets/20-genie-eda.png)
 
 ## Optional: EDA with Visualizations and Genie Agent
 
@@ -54,7 +54,7 @@ the same questions in plain English and get a **graphical report** back. Genie w
 Clusters at cruising altitudes of **10–12 km** (a clear peak at
 11 km, ~119.7M records), with lower counts at 0–3 km for climb, descent, and regional traffic:
 
-![A Genie Agent visualization: a histogram of barometric altitude for airborne aircraft, with a strong concentration at cruising altitudes of 10–12 km (peak at 11 km, ~119.7M state-vector records) and lower counts at 0–3 km.](assets/02-genie-eda-altitude.png)
+![A Genie Agent visualization: a histogram of barometric altitude for airborne aircraft, with a strong concentration at cruising altitudes of 10–12 km (peak at 11 km, ~119.7M state-vector records) and lower counts at 0–3 km.](assets/20-genie-eda-altitude.png)
 
 ### Hourly Pattern
 
@@ -62,7 +62,7 @@ State-vector volume follows a clear **diurnal pattern**: it peaks at 18:00–20:
 (~42.4M records/hour) and bottoms out around 05:00 UTC (~17.0M records/hour), pointing to
 European and North American daytime airspace:
 
-![A Genie Agent visualization: a bar chart of hourly state-vector records across the UTC day, peaking at 18:00–20:00 UTC (~42.4M records/hour) and lowest around 05:00 UTC (~17.0M records/hour).](assets/02-genie-eda-hourly.png)
+![A Genie Agent visualization: a bar chart of hourly state-vector records across the UTC day, peaking at 18:00–20:00 UTC (~42.4M records/hour) and lowest around 05:00 UTC (~17.0M records/hour).](assets/20-genie-eda-hourly.png)
 
 ## Genie Agents — Beyond the Basics
 
@@ -75,9 +75,9 @@ A few things worth knowing once the basics work:
 ## Recap
 
 You now have a set of EDA findings: the **data-quality issues Genie flagged** and what they mean in avionics terms.
-Keep these: the [Step 4](04-pipeline.md) pipeline prompt turns them into data-quality constraints.
+Keep these: the [pipeline](40-pipeline.md) prompt turns them into data-quality constraints.
 
-You can also ask Genie for a written report, then save it and reuse it to build the SDP ETL pipeline in [Step 4](04-pipeline.md).
+You can also ask Genie for a written report, then save it and reuse it to build the [SDP ETL pipeline](40-pipeline.md).
 
 ---
 
@@ -85,7 +85,7 @@ You can also ask Genie for a written report, then save it and reuse it to build 
 
 | ← Previous | Overview | Next → |
 |:---|:---:|---:|
-| [1. Databricks Marketplace](01-marketplace.md) | [Table of contents](../README.md) | [3. Genie Agents — Explore](03-genie-explore.md) |
+| [1. Databricks Marketplace](10-marketplace.md) | [Table of contents](index.md) | [3. Genie Agents — Explore](30-genie-explore.md) |
 
 ---
 

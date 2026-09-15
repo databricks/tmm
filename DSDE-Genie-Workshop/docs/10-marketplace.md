@@ -24,7 +24,7 @@ copying and no ETL required.
 
 2. **Search for the OpenSky dataset.** In the Marketplace search bar, type `opensky` and press **Enter**, then select the product result titled **OpenSky Networks - full day avionics dataset**.
 
-   ![The OpenSky Networks listing on Databricks Marketplace: free, instantly available, and powered by OpenSharing.](assets/01-marketplace.png)
+   ![The OpenSky Networks listing on Databricks Marketplace: free, instantly available, and powered by OpenSharing.](assets/10-marketplace.png)
 
 3. **Request access to the data.** On the dataset listing page, click the blue **Get instant access** button in the top right corner.
 
@@ -66,7 +66,7 @@ You should see ADS-B state-vector columns such as `icao24`, `callsign`, `time_po
 > **What is OpenSharing?** This dataset is delivered over **[OpenSharing](https://opensharing.io)**,
 > an open specification hosted by the Linux Foundation that extends sharing beyond tables to AI
 > assets, including **Genie Agent sharing**. If you're mostly interested in accessing marketplace
-> data with open source technology, see the [open sharing section](06-opensharing.md) later in this
+> data with open source technology, see the [open sharing section](70-opensharing.md) later in this
 > tutorial, or read the announcement:
 > [*Introducing OpenSharing: the Next Evolution of Delta Sharing for the Agentic Era*](https://www.databricks.com/blog/introducing-opensharing-next-evolution-delta-sharing-agentic-era)
 > (Databricks Blog, 16 Jun 2026).
@@ -77,8 +77,8 @@ You should see ADS-B state-vector columns such as `icao24`, `callsign`, `time_po
 
 | ← Previous | Overview | Next → |
 |:---|:---:|---:|
-| — | [Table of contents](../README.md) | [2. Genie Agents — EDA](02-genie-eda.md) |
+| — | [Table of contents](index.md) | [2. Genie Agents — EDA](20-genie-eda.md) |
 
 ---
 
-_Author: Frank Munz · Updated 2026-09-04_
+_Author: Frank Munz · Updated 2026-09-15_

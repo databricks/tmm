@@ -1,6 +1,6 @@
 # 4. Build a Spark Declarative Pipeline with Genie Code
 
-The [EDA](02-genie-eda.md) and [data-exploration](03-genie-explore.md) chapters taught you about the data and surfaced its data-quality issues. Based on those findings, you now write an ETL pipeline to clean the data for downstream use. 
+The [EDA](20-genie-eda.md) and [data-exploration](30-genie-explore.md) chapters taught you about the data and surfaced its data-quality issues. Based on those findings, you now write an ETL pipeline to clean the data for downstream use. 
 
 But creating robust, maintainable pipelines is hard: orchestration, incremental processing, and data-quality enforcement all have to be right. AI-powered tooling makes it far easier: you declare what you want, Spark Declarative Pipelines handle the rest, and Genie Code generates most of the mechanical work from a plain-English prompt.
 
@@ -12,7 +12,7 @@ orchestration, incremental refresh, and data-quality enforcement. You generate t
 
 **This isn't a full ETL data pipeline tutorial.** Here you focus on creating a working Spark Declarative Pipeline with Genie Code, not on learning SDP from the ground up. For a deeper, hands-on walkthrough of Spark Declarative Pipelines covering both open source and Lakeflow, see [How to get started with Spark Declarative Pipelines](https://www.databricks.com/discover/how-to-get-started-with-spark-declarative-pipelines). That tutorial is built on the *same avionics data*, but consumes it as a **live stream**, so you can literally track and visualize the planes flying over your head right now.
 
-## Step-by-step guide: Apache SDP with Genie Code
+## Step-by-step guide: Apache SDP with Genie Code { #step-by-step-guide }
 
 1. **Open the Genie Code interface.** Navigate to your Databricks workspace and open the Genie Code panel on the right side of your workspace.
 
@@ -46,21 +46,21 @@ orchestration, incremental refresh, and data-quality enforcement. You generate t
 
 ## Results
 
-Genie Code's **proposed architecture** ([Step 3](#step-by-step-guide)), then the **Pipeline graph** it builds on execution
-([Step 4](#step-by-step-guide)): `bronze_state_vectors` → `silver_state_vectors_clean` (with its data-quality
+Genie Code's **proposed architecture**, then the **Pipeline graph** it builds on execution:
+`bronze_state_vectors` → `silver_state_vectors_clean` (with its data-quality
 expectations) → the three regional gold materialized views → `gold_analytics_regional_summary`:
 
 ### Medallion Architecture
 
-![Genie Code's proposed pipeline architecture: a bronze streaming table ingesting marketplace.opensky.state_vectors, a silver table applying data-quality constraints, and gold_americas / gold_emea / gold_apac regional tables.](assets/04-pipeline.png)
+![Genie Code's proposed pipeline architecture: a bronze streaming table ingesting marketplace.opensky.state_vectors, a silver table applying data-quality constraints, and gold_americas / gold_emea / gold_apac regional tables.](assets/40-pipeline.png)
 
 ### Pipeline Graph
 
-![Pipeline graph after a completed run: bronze_state_vectors (6.1M rows) flows into silver_state_vectors_clean (5.5M rows after data-quality expectations), which fans out to the gold_apac (801K), gold_emea (2.9M), and gold_americas (1.7M) regional materialized views, which in turn feed the gold_analytics_regional_summary materialized view.](assets/04-pipeline-graph.png)
+![Pipeline graph after a completed run: bronze_state_vectors (6.1M rows) flows into silver_state_vectors_clean (5.5M rows after data-quality expectations), which fans out to the gold_apac (801K), gold_emea (2.9M), and gold_americas (1.7M) regional materialized views, which in turn feed the gold_analytics_regional_summary materialized view.](assets/40-pipeline-graph.png)
 
 ### Silver layer with data-quality expectations
 
-The silver table is where the **EDA findings from [Step 2](02-genie-eda.md) become enforced rules**. A Spark
+The silver table is where the **[EDA findings](20-genie-eda.md) become enforced rules**. A Spark
 Declarative Pipeline lets you attach *expectations* (named boolean constraints) to a table;
 Databricks evaluates every row and tracks pass/fail counts in the pipeline UI. 
 
@@ -108,7 +108,7 @@ Splitting at the gold layer keeps each region small and fast to query, and lets 
 share regions independently, while the shared silver table guarantees they were all cleaned with
 the same data-quality rules.
 
-## Genie Code — Beyond the Basics
+## Spark Declarative Pipelines — Beyond the Basics
 
 A few things worth knowing once the basics work:
 
@@ -116,41 +116,6 @@ A few things worth knowing once the basics work:
 - **Pick the dataset type by source freshness** — streaming tables for incremental, continuously-arriving data; [materialized views](https://docs.databricks.com/aws/en/ldp/dbsql/materialized) for batch and aggregations. Use it when deciding whether generated code should process new data continuously or refresh on a schedule.
 - **[Expectations for data quality](https://docs.databricks.com/aws/en/ldp/expectations)** — `CONSTRAINT ... EXPECT` (SQL) or `@dp.expect` (Python) validate rows and log or drop violations. Use it when the source can carry nulls, bad ranges, or schema drift you need to catch at ingest.
 - **[Auto Loader for file ingestion](https://docs.databricks.com/aws/en/ingestion/cloud-object-storage/auto-loader/)** — `read_files(...)` / `cloudFiles` picks up new files incrementally with schema inference. Use it when landing raw files from cloud storage without rescanning the whole directory each run.
-
-## How to create a Lakeflow Job with Genie Code?
-
-A pipeline that runs only when you click **Run** is not a data product. In production it runs inside a **job**: a Lakeflow workflow that orchestrates any number of tasks, such as notebooks, SQL queries, and other pipelines. You generate that job the same way you generated the pipeline, from a plain-English prompt to Genie Code.
-
-**[Lakeflow Jobs](https://docs.databricks.com/aws/en/jobs)** is the orchestration layer on Databricks: it schedules the pipeline, retries it on failure, and notifies you when a run breaks. Your SDP pipeline becomes one task in that workflow.
-
-Here you build a **multi-task job**: the pipeline runs first, then a notebook runs after it. The notebook is a placeholder for the downstream work you would add later, such as post-processing or a report.
-
-### Step-by-step: create a multi-task job with Genie Code
-
-1. Use the **same Genie Code** panel you used to build the pipeline.
-
-2. **Prompt Genie Code to create the job.** Name the pipeline you built above so the job references it, then describe the schedule, retry, notification, and a second task: a notebook that runs after the pipeline.
-
-   ```text
-   Create a Lakeflow Job with the pipeline task that runs my OpenSky SDP
-   pipeline on an hourly schedule. Retry once on failure and send an email
-   notification when a run fails. Also add a notebook that is executed
-   after the pipeline.
-   ```
-
-3. **Review the proposed job.** Genie Code returns a job with two tasks: a **pipeline task** pointing at your SDP pipeline (by name or pipeline ID), and a **notebook task** set to run after it. Confirm the task order, the **schedule** you asked for, and the **retry policy** with its **failure notification**.
-
-4. The job then appears under **Jobs & Pipelines** in the workspace.
-
-5. **Run it and verify.** Trigger **Run now**, then open the run to confirm the pipeline task runs first and the notebook task runs after it. Free Edition allows up to five concurrent job tasks.
-
-![A Lakeflow Job in Jobs & Pipelines: a pipeline task that runs the OpenSky SDP pipeline followed by a notebook task, on an hourly schedule with retry and a failure email notification.](assets/04-sdp-jobs.png)
-
-What a job adds on top of the pipeline:
-
-- **Schedule or trigger:** run on a cron schedule, or start the moment new data lands with a file-arrival trigger.
-- **Multi-task orchestration:** chain the pipeline with downstream work, such as a notebook or a SQL refresh, in one dependency graph.
-- **Retries and notifications:** retry transient failures automatically and alert the right people when a run fails.
 
 ## Recap
 
@@ -164,14 +129,16 @@ SELECT * FROM gold_apac LIMIT 10;
 
 _(Confirm the exact gold table names in the pipeline Genie Code generates.)_
 
+Next, you wrap this pipeline in a **[Lakeflow Job](50-job.md)** so it runs on a schedule, retries on failure, and chains into downstream tasks.
+
 ---
 
 ### Tutorial navigation
 
 | ← Previous | Overview | Next → |
 |:---|:---:|---:|
-| [3. Genie Agents — Explore](03-genie-explore.md) | [Table of contents](../README.md) | [5. Databricks App](05-app.md) |
+| [3. Genie Agents — Explore](30-genie-explore.md) | [Table of contents](index.md) | [5. Lakeflow Job](50-job.md) |
 
 ---
 
-_Author: Frank Munz · Updated 2026-09-14_
+_Author: Frank Munz · Updated 2026-09-15_

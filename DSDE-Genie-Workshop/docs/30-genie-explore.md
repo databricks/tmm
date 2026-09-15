@@ -6,11 +6,11 @@ Whether you are dealing with complex enterprise data spread across many differen
 
 ## How can I gain insights without writing SQL?
 
-With the data profiled in [Step 2](02-genie-eda.md), you now use a **Genie Agent** to answer questions and **visualize** the results.
+With the data profiled in the [EDA step](20-genie-eda.md), you now use a **Genie Agent** to answer questions and **visualize** the results.
 Genie Agents answer both business and technical questions. Each answer is worked out in an **agentic loop**: it pulls in context (your Unity Catalog tables and their governance, curated sample queries, business rules and metrics, and verified answers), then reasons over it to return a grounded result, not a guess.
 
 
-Where [the EDA step](02-genie-eda.md) was focused on data quality and finding anomalies, this step is about *insight*: ask a question and Genie returns the SQL, the result table, and an appropriate **chart or map**. You never write a query or build a dashboard by hand.
+Where [the EDA step](20-genie-eda.md) was focused on data quality and finding anomalies, this step is about *insight*: ask a question and Genie returns the SQL, the result table, and an appropriate **chart or map**. You never write a query or build a dashboard by hand.
 
 ## Step-by-step guide
 
@@ -38,7 +38,7 @@ Plot each aircraft's last known position on a map, colored by speed.
 For each aircraft take its most recent position and plot it on a map, coloring each point by velocity. Use a red color scale.
 ```
 
-![A Genie Agent map visualization: aircraft plotted at their most recent positions across North America and the Caribbean, each point colored by velocity on a red scale (0–600 m/s).](assets/03-genie-explore-velocity.png)
+![A Genie Agent map visualization: aircraft plotted at their most recent positions across North America and the Caribbean, each point colored by velocity on a red scale (0–600 m/s).](assets/30-genie-explore-velocity.png)
 
 **2. Altitude vs. speed**
 
@@ -48,7 +48,7 @@ Do faster aircraft fly higher?
 Create a scatter plot of altitude versus speed use vertical speed for color code.
 ```
 
-![A Genie Agent scatter plot: altitude versus speed for state vectors, each point colored by vertical speed (climb in blue, descent in red), showing altitude rising with speed up to cruising levels around 10–12 km.](assets/03-genie-explore-altitude-speed.png)
+![A Genie Agent scatter plot: altitude versus speed for state vectors, each point colored by vertical speed (climb in blue, descent in red), showing altitude rising with speed up to cruising levels around 10–12 km.](assets/30-genie-explore-altitude-speed.png)
 
 ## Genie Agents — Beyond the Basics
 
@@ -60,7 +60,7 @@ A few things worth knowing once the basics work:
 
 ## Recap
 
-You've explored the OpenSky data and produced visualizations with Genie Agents. No query writing, no dashboard setup. These views tell you what's worth operationalizing, which is exactly what the pipeline in [Step 4](04-pipeline.md) and the app in [Step 5](05-app.md) build on.
+You've explored the OpenSky data and produced visualizations with Genie Agents. No query writing, no dashboard setup. These views tell you what's worth operationalizing, which is exactly what the [pipeline](40-pipeline.md) and the [app](60-app.md) build on.
 
 ---
 
@@ -68,8 +68,8 @@ You've explored the OpenSky data and produced visualizations with Genie Agents. 
 
 | ← Previous | Overview | Next → |
 |:---|:---:|---:|
-| [2. Genie Agents — EDA](02-genie-eda.md) | [Table of contents](../README.md) | [4. Declarative Pipeline](04-pipeline.md) |
+| [2. Genie Agents — EDA](20-genie-eda.md) | [Table of contents](index.md) | [4. Declarative Pipeline](40-pipeline.md) |
 
 ---
 
-_Author: Frank Munz · Updated 2026-09-04_
+_Author: Frank Munz · Updated 2026-09-15_

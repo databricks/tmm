@@ -1,4 +1,4 @@
-# 6. How do I receive shared data locally with open sharing?
+# 7. How do I receive shared data locally with open sharing?
 
 ## What you'll do
 
@@ -99,7 +99,7 @@ This module stays entirely open source, so the code below is given to you to cop
 
 ## Results
 
-![receive_opensky.py open in VSCode with its integrated terminal showing the run output: the shared table name opensky_marketplace.opensky.state_vectors, a DataFrame shape of (394, 17), and the first low-altitude rows — aircraft a03a0b (callsign N1132W) at baro_altitude around 1,650–1,775 m near 39.9°N, -105.1°W.](assets/06-opensharing-vscode.png)
+![receive_opensky.py open in VSCode with its integrated terminal showing the run output: the shared table name opensky_marketplace.opensky.state_vectors, a DataFrame shape of (394, 17), and the first low-altitude rows — aircraft a03a0b (callsign N1132W) at baro_altitude around 1,650–1,775 m near 39.9°N, -105.1°W.](assets/70-opensharing-vscode.png)
 
 ## Open Sharing — Beyond the Basics
 
@@ -120,8 +120,8 @@ For large scans, change your architecture to Spark. Then swap `load_as_pandas` f
 
 | ← Previous | Overview | Next → |
 |:---|:---:|---:|
-| [5. Databricks App](05-app.md) | [Table of contents](../README.md) | [7. Wrap-up & next steps](07-wrap-up.md) |
+| [6. Databricks App](60-app.md) | [Table of contents](index.md) | [8. Wrap-up & next steps](80-wrap-up.md) |
 
 ---
 
-_Author: Frank Munz · Updated 2026-09-10_
+_Author: Frank Munz · Updated 2026-09-15_

@@ -6,7 +6,7 @@ then pushes a predicate to the sharing server so only matching files cross the
 network (baro_altitude < 3000 m), and re-applies the filter in pandas for an exact
 result.
 
-Setup (see ./README.md or Module 7):
+Setup (see ./README.md or Step 7):
     uv venv --python 3.12 --seed
     source .venv/bin/activate
     uv pip install delta-sharing pandas

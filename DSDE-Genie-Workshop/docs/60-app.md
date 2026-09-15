@@ -1,10 +1,10 @@
-# 5. How do I build a Databricks App from a gold table?
+# 6. How do I build a Databricks App from a gold table?
 
 ## What you'll do
 
 You build an interactive **Databricks App**: a governed web app hosted right next to your data, with no separate infrastructure to run. It reads from Unity Catalog through a SQL warehouse, runs on serverless compute, and is available on [Databricks Free Edition](https://docs.databricks.com/getting-started/free-edition-limitations) (up to three apps, each running for 24 hours before it stops).
 
-You build the app on top of a **gold table** from the [Spark Declarative Pipeline](04-pipeline.md) in Step 4. This is the common pattern: Databricks Apps sit on the gold tables an SDP pipeline produces, so it reads cleaned, query-ready data instead of raw records. If you only want to try the app quickly, you can point it at the raw table for a proof of concept, but that shortcut is not meant for anything more serious.
+You build the app on top of a **gold table** from the [Spark Declarative Pipeline](40-pipeline.md). This is the common pattern: Databricks Apps sit on the gold tables an SDP pipeline produces, so it reads cleaned, query-ready data instead of raw records. If you only want to try the app quickly, you can point it at the raw table for a proof of concept, but that shortcut is not meant for anything more serious.
 
 You describe the app you want in plain English and a coding agent writes, builds, and deploys it. Any coding agent works here: **Claude Code**, **Codex**, or Databricks **Genie Code** inside the workspace. Coding-agent support for Databricks Apps keeps improving across recent releases, so expect the in-workspace path to get smoother over time.
 
@@ -12,15 +12,15 @@ You describe the app you want in plain English and a coding agent writes, builds
 
 Coding agents such as **Claude Code**, **Codex**, and Databricks **Genie Code** turn a plain-English prompt into full visualizations and applications. Our Solutions Architects have used this OpenSky dataset for several proofs of concept. Each one below runs as a [Databricks App](https://www.databricks.com/blog/announcing-general-availability-databricks-apps): hosted next to the data, with governed access and no separate infrastructure. One plots Flight DNA, one an [H3](https://docs.databricks.com/aws/en/sql/language-manual/sql-ref-h3-geospatial-functions) flight-density map of Australia, and one the holding patterns over Sydney Airport.
 
-<img src="assets/05-flights-dna.png" alt="A Databricks App showing Flight DNA: a grid of radial glyphs, one per aircraft, each encoding a plane's day by time of day, altitude, and cruise level." width="100%">
+<img src="assets/60-flights-dna.png" alt="A Databricks App showing Flight DNA: a grid of radial glyphs, one per aircraft, each encoding a plane's day by time of day, altitude, and cruise level." width="100%">
 
-*Flight DNA: each glyph is one aircraft's day. The angle is time of day (12 o'clock is midnight), the radius is altitude, and the hue is cruise level. A short hop is one arc, a long-hauler a long sweep, and a busy regional a flower of petals. Click one to expand its real track. Runs as a Databricks App.*
+*Flight DNA: each glyph is one aircraft's day. The angle is time of day (12 o'clock is midnight), the radius is altitude, and the hue is cruise level. A short hop is one arc, a long-hauler a long sweep, and a busy regional a flower of petals. Runs as a Databricks App.*
 
-<img src="assets/05-h3-heatmap-AUS.png" alt="A Databricks App showing an H3 hexagon flight-density map over Australia: extruded hexagons colored and raised by flight density, with a time scrubber at 23:38 UTC and 1x–12x playback controls." width="100%">
+<img src="assets/60-h3-heatmap-AUS.png" alt="A Databricks App showing an H3 hexagon flight-density map over Australia: extruded hexagons colored and raised by flight density, with 1x–12x playback controls." width="100%">
 
 *H3 flight-density map of Australia: flights binned into H3 hexagons, extruded and colored by density, with a time scrubber to play the day forward. Runs as a Databricks App.*
 
-<img src="assets/05-holding-patterns-SYD.png" alt="A Databricks App showing zoomed-in flight trajectories over Sydney Airport: thousands of colored flight paths weaving over the city, with orange holding-pattern loops on approach." width="100%">
+<img src="assets/60-holding-patterns-SYD.png" alt="A Databricks App showing zoomed-in flight trajectories over Sydney Airport: thousands of colored flight paths weaving over the city, with orange holding-pattern loops on approach." width="100%">
 
 *Holding patterns over Sydney Airport. The tight loops are aircraft circling as they wait to land. Runs as a Databricks App.*
 
@@ -54,8 +54,8 @@ You have a live, governed **Databricks App**: built on a gold table from your SD
 
 | ← Previous | Overview | Next → |
 |:---|:---:|---:|
-| [4. Declarative Pipeline](04-pipeline.md) | [Table of contents](../README.md) | [6. OpenSharing](06-opensharing.md) |
+| [5. Lakeflow Job](50-job.md) | [Table of contents](index.md) | [7. OpenSharing](70-opensharing.md) |
 
 ---
 
-_Author: Frank Munz · Updated 2026-09-14_
+_Author: Frank Munz · Updated 2026-09-15_

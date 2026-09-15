@@ -1,4 +1,4 @@
-# GEO & Writing-Style Review — Changelog (2026-09-04)
+# GEO & Writing-Style Review — Changelog
 
 Applied by the `geo-writing-review` skill. Prose, headings, and front-matter only —
 **no code blocks, commands, or output were changed**. Cross-cutting item #3 (gold
@@ -82,3 +82,37 @@ Canonical row count set to **696 million** across all pages.
 ## Still open (author action needed)
 - Add the 2 missing screenshots (05-app, 06-opensharing) — these cap those pages' projected GEO score.
 - Optional: add a one-line key-facts block to the README (not applied).
+
+---
+
+## 2026-09-15 — Structural: split the pipeline module into Pipeline (4) + Lakeflow Job (5)
+
+- Split `docs/04-pipeline.md` (which covered both the SDP pipeline and Lakeflow Jobs) into two pages: `04-pipeline.md` keeps the pipeline; new `05-job.md` ("Build a Lakeflow Job with Genie Code") holds the jobs content, mirroring the pipeline page's structure and question-style headings.
+- Renumbered downstream steps: Databricks App 05 → 06 (`06-app.md`), OpenSharing 06 → 07 (`07-opensharing.md`), Wrap-up 07 → 08 (`08-wrap-up.md`). Files renamed via `git mv`; nav, H1 numbers, and all cross-references updated.
+- Renamed page-numbered assets to match: `04-sdp-jobs.png` → `05-sdp-jobs.png`; `05-flights-dna` / `05-h3-heatmap-AUS` / `05-holding-patterns-SYD.png` → `06-*`; `06-opensharing-vscode.png` → `07-*`.
+- Added a "Lakeflow Jobs — Beyond the Basics" section to `05-job.md` (serverless compute, conditional/data-driven orchestration, Genie Code as a job task), each verified against live Databricks docs.
+- Updated `README.md` agenda + TL;DR flow, `mkdocs.yml` nav, the wrap-up recap/cleanup, and the `code/pipeline` & `code/app` READMEs (also fixed the stale `03-pipeline.md` link); bumped touched pages' footers to 2026-09-15.
+
+## 2026-09-15 — Orphan / consistency cleanup
+
+- Removed orphaned files: `docs/assets/00-intro_anim.gif` (unused older intro GIF), `test.md` and `genie-for-data-engineers.md` (obsolete root drafts).
+- Consolidated the two changelogs: merged the separate `docs/CHANGELOG.md` detailed em-dash / de-AI pass (below) into this file and deleted the duplicate.
+- Added `code/job/README.md` to match `code/pipeline` and `code/app`; standardized `code/opensharing/README.md` "Module 7" → "Step 7".
+- Gave the MkDocs site a real home page (`docs/index.md`, the table of contents) and repointed every page's "Table of contents" nav link from `../README.md` (which 404s on the published site) to `index.md`.
+
+### Merged from docs/CHANGELOG.md — detailed em-dash / de-AI pass
+
+#### 01-marketplace.md
+- Rewrote the lede: replaced the em dash with a period + colon so the synthetic-vs-real contrast survives without an AI-tell dash.
+- Dropped the "Specifically," filler connector and turned the em dash in the "You attach…" sentence into a comma; unbolded "read-only Unity Catalog catalog" to cut bold density.
+- Fact-table "Resulting table" row: removed the em dash and the `…` ellipsis; listed columns as "(longitude, latitude, velocity, and more)".
+- IMPORTANT callout: split the em dash into two sentences.
+- Image alt text: replaced the em dash with a colon.
+
+#### 02-genie-eda.md
+- Converted the fake step blockquote into a real numbered list; kept the prompt code block and Step 3/4 bullets verbatim.
+- Fixed terminology drift: "Genie agent interface" → "Genie Code interface".
+- De-fluffed the lede: "are a great way to do EDA" → "run your EDA for you".
+- Recap grammar/wordiness fix; also "a SDP" → "the SDP".
+- Removed em dashes (author preference / de-AI) across intro, optional-viz, hourly-pattern, recap, and three image alt strings. Numeric-range en dashes left intact.
+- GEO: added an answer-first "The short version:" lead under the H1.

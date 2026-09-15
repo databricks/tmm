@@ -1,6 +1,6 @@
 # CLAUDE.md — DSDE Genie Workshop
 
-> **Last updated: 2026-09-14**
+> **Last updated: 2026-09-15**
 > When you load this file, compare that date to today. If it is **more than 30 days old**,
 > remind Frank that this CLAUDE.md may be stale and offer to refresh it. Bump the date
 > whenever you meaningfully change this file.
@@ -14,7 +14,7 @@ synthetic toy dataset.
 
 The tutorial runs entirely on **Databricks Free Edition** and walks through: Marketplace →
 Genie Agents (EDA) → Genie Agents (explore & visualize) → Genie Code for a Spark Declarative
-Pipeline → Genie Code for a Databricks App → OpenSharing to a local OSS client → wrap-up.
+Pipeline → Genie Code for a Lakeflow Job → Genie Code for a Databricks App → OpenSharing to a local OSS client → wrap-up.
 
 ## Goals
 
@@ -29,9 +29,9 @@ Pipeline → Genie Code for a Databricks App → OpenSharing to a local OSS clie
 ## Layout
 
 - `README.md` — landing page / agenda / prerequisites.
-- `docs/01..07-*.md` — the seven tutorial steps (ordered; nav lives in `mkdocs.yml`).
+- `docs/10..80-*.md` (gap-numbered by tens) — the eight tutorial steps (ordered; nav lives in `mkdocs.yml`).
 - `docs/assets/` — screenshots and intro GIFs referenced by the docs.
-- `code/pipeline/`, `code/app/` — reference source for the Genie-generated pipeline and app
+- `code/pipeline/`, `code/job/`, `code/app/` — reference source for the Genie-generated pipeline, job, and app
   (filled in during live-test against a real workspace).
 - `code/opensharing/` — standalone local Delta Sharing client (pure Python, no Spark/Java).
 - `mkdocs.yml` — site config **and the canonical page order** (reorder here, not by renaming).
@@ -53,6 +53,14 @@ Pipeline → Genie Code for a Databricks App → OpenSharing to a local OSS clie
   metadata — PEP 723 on serverless still needs a manual **Apply** click on first attach.
 - **OpenSharing step is intentionally OSS-only** — pure-Python `delta-sharing` client, no Spark
   and no Java, so it runs on a laptop from a `.share` credential file.
+- **Page-numbering convention (adopted 2026-09-15): gap numbering + link by name.** Page files are
+  gap-numbered by tens (`10-`, `20-`, … `80-`); **insert a new page into a gap** (e.g. `45-`) so no
+  downstream files are renamed. Reader-facing "Step N" numbers stay dense 1..N (nav labels, agenda,
+  TOC, recap, code-README titles) and are **decoupled from the filename**. In prose, **cross-reference
+  by name, never by step number** (`[Databricks App](60-app.md)`, not `[Step 6](…)`).
+- **Still paused (not pursued now):** semantic number-free slugs, `mkdocs-redirects` (so gap-renumber
+  changed the published URLs), a `mkdocs build --strict` CI gate, and DRY'd agenda/TOC includes.
+  Don't re-pitch or implement these unless Frank reopens them.
 
 ## Working in this repo
 
@@ -60,6 +68,4 @@ Pipeline → Genie Code for a Databricks App → OpenSharing to a local OSS clie
   `main`; do not branch** — branch pushes trip a pre-existing secret-scan false positive.
   Never bypass the secret hook.
 - Preview docs locally with `mkdocs serve` (deps in `requirements.txt`).
-- Known stale references to fix opportunistically: `code/pipeline/README.md` and
-  `code/app/README.md` still link to old step numbers (`03-pipeline.md`, `04-app.md`).
-- Open TODOs (see `docs/CHANGELOG.md`): add missing screenshot `docs/assets/06-opensharing.png`.
+- Open TODOs (see `CHANGELOG.md`): add missing screenshot `docs/assets/70-opensharing.png`.
