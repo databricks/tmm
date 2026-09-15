@@ -41,8 +41,8 @@ A few things worth knowing once the basics work:
 - **Workspace-aware discovery:** generated [Databricks App](https://docs.databricks.com/dev-tools/databricks-apps/) code resolves fully-qualified Unity Catalog names and warehouse IDs from your workspace, so the app runs without hand-editing table paths or resource IDs.
 - **Pre-wired warehouse and endpoints:** name the SQL warehouse or serving endpoint once and the generated code binds to it, so the app gets governed, consistent access.
 - **Smoke test before deploy:** a generated smoke test exercises the app's data path and UI before you ship, so you get early confirmation it works end to end.
-- **From static data to streaming:** this workshop uses static data from Databricks Marketplace, but streaming is where Databricks leads. The same kind of feed can be ingested into an SDP pipeline from a custom PySpark data source, as shown in [Processing millions of events from thousands of aircraft in one Declarative Pipeline](https://www.databricks.com/blog/processing-millions-events-thousands-aircraft-one-declarative-pipeline).
-- **Real-time in production:** Databricks works with some of the world's largest avionics organizations to build real-time streaming applications such as air-traffic-control systems. See the [air-traffic-control with Spark Structured Streaming (Real-Time Mode)](https://www.databricks.com/resources/demos/videos/air-traffic-control-with-apache-spark-structured-streaming-real-time-mode?itm_data=demo_center) demo in the Databricks Demo Center.
+- **Serverless micro apps:** the prompt-to-app flow is maturing into [*governed vibe coding*](https://www.databricks.com/blog/enabling-governed-vibe-coding-enterprise-apps-databricks) that respect your data governance by default. They run as **serverless micro apps** (scale-to-zero VMs, pay only for use), so even small internal tools are worth shipping. 
+
 
 ## Recap
 
