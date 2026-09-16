@@ -1,10 +1,10 @@
-# AI-powered data engineering with Lakeflow
+# AI-powered Data Engineering with Lakeflow
 
 **Version 2.1 - Sept 2026**
 
-👋 Welcome. This is the lab guide for the **quarterly Databricks Data Engineering workshop**. We're glad to have you here.
+👋 Welcome. This is the lab guide for the **quarterly Databricks Data Engineering workshop**. We're exctite to have you here!
 
-Over the next 90 minutes we'll work through the core data engineering knowledge every data engineer should have — **ingestion, transformation, and orchestration** — using the core technologies and OSS frameworks listed in the labs.
+Over the next 90 minutes we'll work through the core data engineering knowledge every data engineer should have — **ingestion, transformation, and orchestration** — using the core technologies, newes Databricks products and OSS frameworks listed in the labs.
 
 Take your time, ask questions, and don't worry about breaking anything — your schema is yours alone. Let's build. 🚀
 
@@ -31,7 +31,7 @@ Throughout this guide, replace `USER_ID` with that exact value. Your pre-assigne
 
 ## Prerequisites (already done by the setup notebook)
 
-- Your catalog `de_workshop` / your schema `de_workshop.USER_ID` already exists and is writable.
+- Your catalog `de_workshop` / your schema `de_workshop.USER_ID` already exists and is writable for you only.
 - A shared volume exists at `/Volumes/ops_data/shared/landing/` with a seeded subdirectory `booking_fraud_flags/` containing JSON fraud markers keyed by `booking_id`. The volume is **read-only** for attendees (every attendee has `READ_VOLUME`, nobody has `WRITE_VOLUME`), so one attendee cannot disrupt another.
 - The Zerobus target table `ops_data.zerobus.measurements` (`id, city, temperature, comment`), the shared service principal `workshop-zerobus-sp` (with `USE CATALOG` on `ops_data`, `USE SCHEMA` on `ops_data.zerobus`, and `MODIFY + SELECT` on the table), and the config table `ops_data.zerobus.config` (single row holding `client_id`, `client_secret`, `workspace_url`, `workspace_id`, `zerobus_endpoint`) are all pre-provisioned for Lab 3.
 - This lab runs completely serverless.
@@ -68,7 +68,7 @@ Most of those lab folders have reference files only. Some folders include notebo
 ## Lab 1 — Manually code a Lakeflow SDP pipeline and Job
 
 
-In this lab you'll hand-code an end-to-end SDP pipeline: one **streaming table** in Python over the well-known Bakehouse sample dataset, and a **materialized view** implemented in SQL with three data quality constraints. One pipeline. Two files only. 
+In this lab you'll hand-code an end-to-end SDP pipeline: one **streaming table** in Python over the well-known Bakehouse sample dataset which is available in every Databricks workspace, and a **materialized view** implemented in SQL with three data quality constraints. One pipeline. Two files only. 
 
 ### Set up the pipeline in the Lakeflow Pipelines Editor
 
