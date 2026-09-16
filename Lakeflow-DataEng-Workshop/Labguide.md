@@ -76,10 +76,7 @@ Before you write a single line, create the pipeline that hosts Steps 1a and 1b:
 
 1. Workspace sidebar → **New** → **ETL pipeline**. The **Lakeflow Pipelines Editor** opens with a default name `New Pipeline <date> <time>`.
 
-2. a. **Update pipeline name** Click the name of the pipeline, next to the pipeline symbol at the top of the editor → rename to `pipeline_USER_ID`. Note you must have a unique pipeline name, this is why we use the USER_ID here.  
-
-    b. The editor automatically created a pipeline root folder under your home (`/Workspace/Users/<your-email>/New Pipeline DATE TIME`). Although not necessary, you may decide to rename it to something prettier, such as `pipeline-lab1`.  
-
+2. **Update pipeline name and root folder** Click the name of the pipeline, next to the pipeline symbol at the topp of the editor → rename to `pipeline_USER_ID`. Note you must have a unique pipeline name, this is why we use the USER_ID here. If asked to rename the root folder that was automatically created under your home, confirm that too. 
 3. **Update catalog/schema** Right of the pipeline name, click the catalog/schema selector. Set it to the following values:
    - **Default catalog**: `de_workshop`
    - **Default schema**: copy your `USER_ID` and click **Save**. Make sure to use your correct schema name, since it is writable for you but other schemas aren't writable. **So the pipeline will only run if you select the correct schema.** 
@@ -110,7 +107,7 @@ def sales_transactions():
 
 Rename the file to `sales_transactions.py` by clicking the file name in the **tab bar** (the title preceding the editor cell) and typing the new name.
 
-Click **Run file**. The DAG sidebar shows one node `sales_transactions` (~3,333 rows). Run file run this transformation only, and not the whole pipeline. 
+Click **Run file**. Select pipeline graph at the bottom, and you will see one node `sales_transactions` (~3,333 rows) with its source Delta Note,. **Run file** only runs this transformation, and not the whole pipeline which will have several transfromations typically. 
 
 ### Step 1b — materialized view with data-quality expectations (SQL, copy and paste)
 
@@ -480,8 +477,7 @@ Open the driver log to confirm the pipeline is producing output:
 ```
 
 
-* You can opt to register a `StreamingQueryListener` to display the [latency of RTM](https://docs.databricks.com/aws/en/structured-streaming/stream-monitoring).
-* Alternatively, check the log4j output for entries with the substring `e2eLatencyMs`. Each entry reports per-record latency percentiles (P0/P50/P90/P95/P99) for three stages of the pipeline:
+Then, check the log4j output for entries with the substring `e2eLatencyMs`. Each entry reports per-record latency percentiles (P0/P50/P90/P95/P99) for three stages of the pipeline:
 
 ```json
 "latencies" : {
@@ -509,7 +505,11 @@ Open the driver log to confirm the pipeline is producing output:
   }
 ```
 
-`e2eLatencyMs` is the sum of `sourceQueuingLatencyMs` (time records waited in the source) + `processingLatencyMs` (time the engine spent on them). These metrics are only emitted for RTM.
+`e2eLatencyMs` is the sum of `sourceQueuingLatencyMs` (time records waited in the source) + `processingLatencyMs` (time the engine spent on them). These metrics are only emitted for RTM. 
+
+You can optionally to register a `StreamingQueryListener` to display the [latency of RTM](https://docs.databricks.com/aws/en/structured-streaming/stream-monitoring).
+
+**Why this matters.** Latencies in this range are exactly what used to push teams onto a dedicated low-latency engine such as Apache Flink running alongside Spark. Now that Real-Time Mode brings Spark Structured Streaming to millisecond-scale end-to-end latencies, that separate engine is no longer required for these operational workloads — a single Spark Declarative Pipeline handles both high-throughput batch and sub-second streaming on one engine, with one codebase to maintain instead of a second streaming stack.
 
 ### Step 4e — Stop the pipeline when you're done and remove it 
 
