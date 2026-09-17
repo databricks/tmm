@@ -1,4 +1,4 @@
-# CLAUDE.md — DSDE Genie Workshop
+# CLAUDE.md — DSDE Genie Tutorial
 
 > **Last updated: 2026-09-15**
 > When you load this file, compare that date to today. If it is **more than 30 days old**,

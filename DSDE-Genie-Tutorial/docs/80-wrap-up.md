@@ -1,4 +1,4 @@
-# 8. How do I wrap up and take this workshop further?
+# 8. How do I wrap up and take this tutorial further?
 
 ## What you did
 
@@ -27,7 +27,7 @@ To undo everything on Free Edition:
 - **Extend the Lakeflow Job:** add **alerts** on the pipeline's data-quality expectations and chain in more downstream tasks.
 - **Enrich the Genie Agent** with your own instructions and example SQL, then share it.
 - **Extend the app** to all three regions, not just APAC.
-- **From static data to streaming:** this workshop uses static data from Databricks Marketplace, but streaming is where Databricks leads. The same kind of feed can be ingested into an SDP pipeline from a custom PySpark data source, as shown in [Processing millions of events from thousands of aircraft in one Declarative Pipeline](https://www.databricks.com/blog/processing-millions-events-thousands-aircraft-one-declarative-pipeline).
+- **From static data to streaming:** this tutorial uses static data from Databricks Marketplace, but streaming is where Databricks leads. The same kind of feed can be ingested into an SDP pipeline from a custom PySpark data source, as shown in [Processing millions of events from thousands of aircraft in one Declarative Pipeline](https://www.databricks.com/blog/processing-millions-events-thousands-aircraft-one-declarative-pipeline).
 - **Real-time in production:** Databricks works with some of the world's largest avionics organizations to build real-time streaming applications such as air-traffic-control systems. See the [air-traffic-control with Spark Structured Streaming (Real-Time Mode)](https://www.databricks.com/resources/demos/videos/air-traffic-control-with-apache-spark-structured-streaming-real-time-mode?itm_data=demo_center) demo in the Databricks Demo Center.
 
 ---
