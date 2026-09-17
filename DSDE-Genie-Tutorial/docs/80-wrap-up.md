@@ -4,6 +4,8 @@
 
 In seven steps you went from a shared Marketplace dataset to a governed app, self-service analytics, and data anyone can receive locally, mostly from plain-English prompts instead of hand-written code:
 
+![Reference architecture for the tutorial: the OpenSky Marketplace listing (696M rows, one UTC day) attaches as the read-only Unity Catalog table marketplace.opensky.state_vectors; Genie Code and a Genie Agent explore and design against it; a Lakeflow Spark Declarative Pipeline runs bronze → silver (with data-quality expectations) → gold_americas / gold_emea / gold_apac → gold_analytics_regional_summary; a Lakeflow Job orchestrates the pipeline and a follow-on notebook on an hourly schedule; a SQL Warehouse and a Databricks App serve gold_apac to technical users; and an optional OpenSharing path filters a sample at the source into a local pandas DataFrame — all under the Unity Catalog governance plane.](assets/80-wrapup-flow.png)
+
 1. **[Databricks Marketplace](10-marketplace.md):** attached the OpenSky avionics data (696M rows, one full UTC day, 54,093 aircraft) as a read-only Unity Catalog table over Delta Sharing, with no copy and no ETL.
 2. **[Genie Agents, EDA](20-genie-eda.md):** profiled the data in plain English and surfaced its data-quality issues across 696M records.
 3. **[Genie Agents, explore & visualize](30-genie-explore.md):** answered business questions and got back charts and maps, with no dashboard to build.
