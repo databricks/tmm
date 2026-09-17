@@ -2,9 +2,9 @@
 
 **Version 2.1 - Sept 2026**
 
-👋 Welcome. This is the lab guide for the **quarterly Databricks Data Engineering workshop**. We're exctite to have you here!
+👋 Welcome. This is the lab guide for the **quarterly Databricks Data Engineering workshop**. We're excited to have you here!
 
-Over the next 90 minutes we'll work through the core data engineering knowledge every data engineer should have — **ingestion, transformation, and orchestration** — using the core technologies, newes Databricks products and OSS frameworks listed in the labs.
+Over the next 90 minutes we'll work through the core data engineering knowledge every data engineer should have — **ingestion, transformation, and orchestration** — using the core technologies, newest Databricks products and OSS frameworks listed in the labs.
 
 Take your time, ask questions, and don't worry about breaking anything — your schema is yours alone. Let's build. 🚀
 
@@ -31,7 +31,7 @@ Throughout this guide, replace `USER_ID` with that exact value. Your pre-assigne
 
 ## Prerequisites (already done by the setup notebook)
 
-- Your catalog `de_workshop` / your schema `de_workshop.USER_ID` already exists and is writable for you only.
+- Your catalog `de_workshop` / your schema `de_workshop.USER_ID` is created by the lab environment and is writable for you only.
 - A shared volume exists at `/Volumes/ops_data/shared/landing/` with a seeded subdirectory `booking_fraud_flags/` containing JSON fraud markers keyed by `booking_id`. The volume is **read-only** for attendees (every attendee has `READ_VOLUME`, nobody has `WRITE_VOLUME`), so one attendee cannot disrupt another.
 - The Zerobus target table `ops_data.zerobus.measurements` (`id, city, temperature, comment`), the shared service principal `workshop-zerobus-sp` (with `USE CATALOG` on `ops_data`, `USE SCHEMA` on `ops_data.zerobus`, and `MODIFY + SELECT` on the table), and the config table `ops_data.zerobus.config` (single row holding `client_id`, `client_secret`, `workspace_url`, `workspace_id`, `zerobus_endpoint`) are all pre-provisioned for Lab 3.
 - This lab runs completely serverless.
@@ -76,8 +76,8 @@ Before you write a single line, create the pipeline that hosts Steps 1a and 1b:
 
 1. Workspace sidebar → **New** → **ETL pipeline**. The **Lakeflow Pipelines Editor** opens with a default name `New Pipeline <date> <time>`.
 
-2. **Update pipeline name and root folder** Click the name of the pipeline, next to the pipeline symbol at the topp of the editor → rename to `pipeline_USER_ID`. Note you must have a unique pipeline name, this is why we use the USER_ID here. If asked to rename the root folder that was automatically created under your home, confirm that too. 
-3. **Update catalog/schema** Right of the pipeline name, click the catalog/schema selector. Set it to the following values:
+2. **Update pipeline name and root folder** Click the name of the pipeline, next to the pipeline symbol at the top of the editor → rename to `pipeline_USER_ID`. Note you must have a unique pipeline name, this is why we use the USER_ID here. If asked to rename the root folder that was automatically created under your home, confirm that too. 
+3. **Update catalog/schema** Right of the pipeline name, click the catalog/schema selector (it opens the **Default location** dialog). Set it to the following values:
    - **Default catalog**: `de_workshop`
    - **Default schema**: copy your `USER_ID` and click **Save**. Make sure to use your correct schema name, since it is writable for you but other schemas aren't writable. **So the pipeline will only run if you select the correct schema.** 
    
@@ -90,7 +90,7 @@ Before you write a single line, create the pipeline that hosts Steps 1a and 1b:
 
 Use the **copy** button at the top-right of the code block to grab the snippet, then paste it into the editor. 
 
-(If you ever see an `unexpected indent` error, it's because the editor auto-indented an empty leading line, then use Genie with /fix to correct the data set).
+(If you ever see an `unexpected indent` error, it's because the editor auto-indented an empty leading line; use Genie's /fix to correct the code).
 
 ```python
 from pyspark import pipelines as dp
@@ -107,11 +107,11 @@ def sales_transactions():
 
 Rename the file to `sales_transactions.py` by clicking the file name in the **tab bar** (the title preceding the editor cell) and typing the new name.
 
-Click **Run file**. Select pipeline graph at the bottom, and you will see one node `sales_transactions` (~3,333 rows) with its source Delta Note,. **Run file** only runs this transformation, and not the whole pipeline which will have several transfromations typically. 
+Click **Run file**. Select pipeline graph at the bottom, and you will see one node `sales_transactions` (~3,333 rows) with its source Delta table. **Run file** only runs this transformation, not the whole pipeline, which typically has several transformations. 
 
 ### Step 1b — materialized view with data-quality expectations (SQL, copy and paste)
 
-Asset browser (the "+" symbol) → **Add → Transformation** → name it `sales_stats`, language **SQL** → **Create**. Paste the block below; it's the materialized view with three expectations wired in:
+Click **Create pipeline asset** (the "+" in the asset browser) → **Transformation** → name it `sales_stats`, language **SQL** → **Create**. Paste the block below; it's the materialized view with three expectations wired in:
 
 ```sql
 CREATE OR REFRESH MATERIALIZED VIEW sales_stats (
@@ -140,11 +140,11 @@ FROM sales_transactions
 GROUP BY product;
 ```
 
-Click **Run pipeline**, this run the entire pipeline. The DAG now shows `sales_transactions → sales_stats` (6 rows, one per product). Under Tables in the Expectations column you can see the data quality constraints and open the side panel.
+Click **Run pipeline**; this runs the entire pipeline. The DAG now shows `sales_transactions → sales_stats` (6 rows, one per product). Under Tables in the Expectations column you can see the data quality constraints and open the side panel.
 
 SDP has **one** constraint syntax — `CONSTRAINT <name> EXPECT (<predicate>)` — and **three** violation behaviors: *log* (default), *drop row*, and *fail update*. For didactic reasons, we are wiring all three into one data set.
 
-You might notice, that when running the pipeline the streaming table is not updated again (because it was run run before) since it append new data only once. You could run the pipeline with a full refresh to see this data loaded again or explicitly run that file again. 
+You might notice, that when running the pipeline the streaming table is not updated again (because it was run before) since it appends new data only once. You could run the pipeline with a full refresh to see this data loaded again or explicitly run that file again. 
 
 **Key teaching points**
 - Python for the streaming table 
@@ -183,12 +183,12 @@ Wrap the SDP pipeline and a downstream consumer notebook into a two-task job:
 
 ### Lab 1 take-away
 
-In a few lines, you've built a streaming table ingest of bakehouse transactions, a materialized view that summarizes sales by product, and three data-quality expecations with different actions. 
+In a few lines, you've built a streaming table ingest of bakehouse transactions, a materialized view that summarizes sales by product, and three data-quality expectations with different actions. 
 
 
 The same shape, written without SDP, would be a streaming job, a batch job, and a scheduler — three separate systems to wire together and keep in sync. Here it lives in one pipeline, expressed as the *target table* you want, and the platform owns the rest.
 
-Running the pipeline with an addtional downstream action as a multi-step workflow gave you a production ready job that can be invoked by any Job trigger. 
+Running the pipeline with an additional downstream action as a multi-step workflow gave you a production ready job that can be invoked by any Job trigger. 
 
 
 ![Lab 1 — completed pipeline run in the Lakeflow Pipelines Editor: streaming table sales_transactions (3.3K output records) feeds materialized view sales_stats (6 output records, 3 expectations, 100% written, 0% dropped)](https://raw.githubusercontent.com/databricks/tmm/main/Lakeflow-DataEng-Workshop/misc/images/lab1-ui-expectations.png)
@@ -217,21 +217,21 @@ The skill this lab teaches isn't typing SQL. It's catching the draft that *looks
 ### Open Genie Code
 
 1. Upper-right of the workspace → click **Genie Code**. The side panel opens.
-2. At the bottom of the Genie Code pane, confirm the **Agent** mode selector is set to **Agent** (not **Chat**).
-3. Expect approval prompts (Allow / Decline / Allow in this thread / Always allow) whenever Genie Code wants to create a file or run code — **never** click *Always allow* in this lab; reviewing each diff is the point.
+2. Genie Code always runs as an agent — there is no Agent/Chat toggle. The selector at the bottom of the pane sets response **quality** (**Auto** = highest quality, **Low** = lower cost); leave it on **Auto**.
+3. Genie Code **auto-approves safe actions** (such as writing the SQL files) and only prompts before it *runs* code, showing **Allow** / **Skip** buttons plus an **Ask every time** dropdown. Reviewing the generated SQL *before* you let the pipeline run is the whole point of this lab — read each file, then **Allow** the run.
 
 ### The prompt
 
 Paste the following into Genie Code Agent:
 
 ```text
-build a SQL pipeline with SDP with catalog de_workshop and schema XXX that answers the question:
+build a SQL pipeline with SDP with catalog de_workshop and schema USER_ID that answers the question:
 "Is fraud risk related to party size and payment method?"
 
 Inputs:
 1. samples.wanderbricks.booking_updates — a CDC stream of booking state-update events 
 2. samples.wanderbricks.payments streaming data 
-3. /Volumes/ops_data/shared/landing/booking_fraud_flags/with JSON files marking fraudulent bookings 
+3. /Volumes/ops_data/shared/landing/booking_fraud_flags/ with JSON files marking fraudulent bookings 
 
 * mark all bookings with fraud in bookings_with_fraud.
 * gold materialized view fraud_by_party_and_method: use bookings_with_fraud and payments 
@@ -246,7 +246,7 @@ This prompt is deliberately higher-level — it states the *business question* a
 
 Because the prompt is rather high-level, Genie Code has room to make choices. **Don't worry if your solution looks slightly different, Genie Code is continuously improved.**
 
-Before clicking **Allow** on each proposed file, check it against the reference SQL below. Expected properties of a good generation:
+Before you approve the pipeline **run**, open each generated file and check it against the reference SQL below. Expected properties of a good generation:
 
 - `bronze/bookings.sql` uses the **AutoCDC** pattern from `samples.wanderbricks.booking_updates`
 - `bronze/fraud_flags.sql` uses Auto Loader with `STREAM(read_files(...))` on the JSON volume
@@ -255,13 +255,15 @@ Before clicking **Allow** on each proposed file, check it against the reference 
 
 - A gold table joins data from all three input sources
 
-Note, that AutoCDC with SDC1 is a time-lapse, not a scrapbook. Every update collapses into one current row per `booking_id` — the latest state wins, history fades.
+Note that AutoCDC with SCD1 is a time-lapse, not a scrapbook. Every update collapses into one current row per `booking_id` — the latest state wins, history fades.
 
 **`SCD TYPE 1` vs `SCD TYPE 2`.** Type 1 keeps only the current row per `booking_id` — every update overwrites in place, no history. Type 2 keeps every historical version with `__START_AT` / `__END_AT` columns so you can query *as of* a past time. The lab uses Type 1 because the gold question asks about current state.
 
-### Ask Genie Code in chat mode
+> **Two runs, two approvals.** Genie Code first does a **dry run** (validation only — it shows as completed but creates no tables), then prompts again to run the real **pipeline update** that materializes the tables and produces row counts. Approve **both**; if you stop after the dry run, your schema stays empty and there are no row counts to report.
 
-Switch Genie Code to **Chat** mode and ask:
+### Ask Genie Code a follow-up
+
+In the same Genie Code chat, ask a follow-up question:
 
 ```text
 Explain the data flow in this pipeline end-to-end. Which node is incrementally maintained versus fully recomputed on refresh, and why?
@@ -464,7 +466,7 @@ If you do click **Run** but the pipeline is running already, you might see *"An 
 
 Open the driver log to confirm the pipeline is producing output:
 
-1. In the Lakeflow Pipelines Editor, with your `sdp-rtm-rate-source` pipeline open, click **Compute** at the top.
+1. In the Lakeflow Pipelines Editor, with your `sdp-rtm-rate-source` pipeline open, click **Pipeline compute** at the top.
 2. In the compute pane, click **Driver logs**.
 
 **Console sink batch tables — the windowed aggregate landing in the sink.** These are visual confirmation that data is flowing through the RTM flow:
@@ -507,16 +509,16 @@ Then, check the log4j output for entries with the substring `e2eLatencyMs`. Each
 
 `e2eLatencyMs` is the sum of `sourceQueuingLatencyMs` (time records waited in the source) + `processingLatencyMs` (time the engine spent on them). These metrics are only emitted for RTM. 
 
-You can optionally to register a `StreamingQueryListener` to display the [latency of RTM](https://docs.databricks.com/aws/en/structured-streaming/stream-monitoring).
+You can optionally register a `StreamingQueryListener` to display the [latency of RTM](https://docs.databricks.com/aws/en/structured-streaming/stream-monitoring).
 
-**Why this matters.** Latencies in this range are exactly what used to push teams onto a dedicated low-latency engine such as Apache Flink running alongside Spark. Now that Real-Time Mode brings Spark Structured Streaming to millisecond-scale end-to-end latencies, that separate engine is no longer required for these operational workloads — a single Spark Declarative Pipeline handles both high-throughput batch and sub-second streaming on one engine, with one codebase to maintain instead of a second streaming stack.
+**Why this matters.** Latencies in this range are exactly what sometimes pushed teams onto a separate, dedicated, low-latency engine such as Apache Flink running alongside Spark. Now that Real-Time Mode brings Spark Structured Streaming to millisecond-scale end-to-end latencies, that separate engine is no longer required for these operational workloads — a single Spark Declarative Pipeline handles both high-throughput batch and sub-second streaming on one engine, with one codebase to maintain instead of a second streaming stack.
 
 ### Step 4e — Stop the pipeline when you're done and remove it 
 
 The pipeline is **continuous and serverless**, so it keeps consuming compute until you stop it. Always stop it when you've finished observing latency:
 
 - In the Lakeflow Pipelines Editor with the pipeline open, click **Stop** at the top, **or**
-- Remove the deployment using the same UI with the rocket symbol that was used for deployement. 
+- Remove the deployment using the same UI with the rocket symbol that was used for deployment. 
 
 
 ---
@@ -527,7 +529,7 @@ The pipeline is **continuous and serverless**, so it keeps consuming compute unt
 
 A modern data application lives in more than one place — a pipeline, a job, a dashboard, a connector flow. A **Declarative Automation Bundle** (DAB — formerly *Databricks Asset Bundle*) collapses all of that into one folder: `databricks.yml` plus `resources/`, versioned like code. No shell recipes, no drift between envs, no screenshot-driven promotion.
 
-You'll sparse-clone `databricks/tmm/Lakeflow-Gourmet-Pipeline` into your workspace, retarget two variables, and deploy, run it. 
+You'll sparse-clone `databricks/tmm/Lakeflow-Gourmet-Pipeline` into your workspace, retarget two variables, and deploy and run it. 
 
 The Gourmet Pipeline lab showcases a global restaurant chain that is seeking AI insights based on live data for their marketing campaigns
  — SQL medallion architecture 
@@ -569,7 +571,7 @@ variables:
                                # leave as-is unless your USER_ID schema differs
 ```
 
-If your `USER_ID` schema doesn't match `${workspace.current_user.short_name}`, override `schema_name` to the literal `USER_ID` value. Also check `targets.presenter` — if it overrides `schema_name`, point it at the same value.
+If your `USER_ID` schema doesn't match `${workspace.current_user.short_name}`, override `schema_name` to the literal `USER_ID` value. Also check `targets.presenter` — if it overrides `schema_name`, point it at the same value. **The target-level `schema_name` wins**, so if your `short_name` differs from your `USER_ID`, set the literal `USER_ID` in **both** the top-level `variables` block **and** under `targets.presenter`.
 
 > **Retargeting is mandatory, not optional.** The default catalog `daiwt_gourmet` does not exist in the workshop workspace, so the deploy fails unless you change `catalog_name` to `de_workshop` (and supply a real `prod_warehouse_id`).
 
