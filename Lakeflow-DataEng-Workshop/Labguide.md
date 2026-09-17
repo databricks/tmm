@@ -191,7 +191,7 @@ The same shape, written without SDP, would be a streaming job, a batch job, and 
 Running the pipeline with an additional downstream action as a multi-step workflow gave you a production ready job that can be invoked by any Job trigger. 
 
 
-![Lab 1 — completed pipeline run in the Lakeflow Pipelines Editor: streaming table sales_transactions (3.3K output records) feeds materialized view sales_stats (6 output records, 3 expectations, 100% written, 0% dropped)](https://raw.githubusercontent.com/databricks/tmm/main/Lakeflow-DataEng-Workshop/misc/images/lab1-ui-expectations.png)
+![Lab 1 — completed pipeline run in the Lakeflow Pipelines Editor: streaming table sales_transactions (3.3K output records) feeds materialized view sales_stats (6 output records, 3 expectations, 100% written, 0% dropped)](https://raw.githubusercontent.com/databricks/tmm/main/Lakeflow-DataEng-Workshop/misc/images/lab1-ui.png)
 
 
 
