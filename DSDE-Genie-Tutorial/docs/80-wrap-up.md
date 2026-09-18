@@ -42,4 +42,4 @@ To undo everything on Free Edition:
 
 ---
 
-_Author: Frank Munz · Updated 2026-09-15_
+_Author: Frank Munz · Updated 2026-09-15 ·  [anchor page: "Tutorial: Databricks Genie for Data Engineers and Data Scientists"](https://community.databricks.com/t5/technical-blog/tutorial-databricks-genie-for-data-engineers-and-data-scientists/ba-p/168969)_
