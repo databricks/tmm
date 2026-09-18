@@ -42,13 +42,57 @@ For each aircraft take its most recent position and plot it on a map, coloring e
 
 **2. Altitude vs. speed**
 
-Do faster aircraft fly higher?
-
+How is the speed of an aircraft correlated to altitude and the flight phase? Let's try the following prompt with Genie Agents:
 ```text
-Create a scatter plot of altitude versus speed use vertical speed for color code.
+For each aircraft (icao24), pick one random row where baro_altitude and velocity are not null. 
+Plot baro_altitude (y) vs velocity (x) as a scatter, colored by flight phase: 
+
+"Ground" if on_ground, 
+"Climb" if vertical_rate > 1.5, 
+"Descent" if vertical_rate < -1.5, 
+else "Cruise". 
+
+Zoom in on the main cluster: 
+only include baro_altitude between 0 and 13000 meters and velocity between 0 and 300 m/s.
 ```
 
-![A Genie Agent scatter plot: altitude versus speed for state vectors, each point colored by vertical speed (climb in blue, descent in red), showing altitude rising with speed up to cruising levels around 10–12 km.](assets/30-genie-explore-altitude-speed.png)
+![A Genie Agent scatter plot: altitude versus speed for state vectors, each point colored by flight phase. The zoomed view focuses on the main operational envelope, clearly separating the four flight phases with cruise forming the densest cluster at high altitude and speed.](assets/30-altitude-speed-phase.png) 
+
+The process is transparent and you can always check the underlying SQL code:
+```SQL
+WITH one_row_per_aircraft AS (
+  SELECT
+    `icao24`,
+    `baro_altitude`,
+    `velocity`,
+    `on_ground`,
+    `vertical_rate`,
+    ROW_NUMBER() OVER (PARTITION BY `icao24` ORDER BY RAND()) AS rn
+  FROM
+    `marketplace`.`opensky`.`state_vectors`
+  WHERE
+    `baro_altitude` IS NOT NULL
+    AND `velocity` IS NOT NULL
+)
+SELECT
+  `icao24`,
+  `baro_altitude`,
+  `velocity`,
+  CASE
+    WHEN `on_ground` = true THEN 'Ground'
+    WHEN `vertical_rate` > 1.5 THEN 'Climb'
+    WHEN `vertical_rate` < -1.5 THEN 'Descent'
+    ELSE 'Cruise'
+  END AS flight_phase
+FROM
+  one_row_per_aircraft
+WHERE
+  rn = 1
+  AND `baro_altitude` BETWEEN 0 AND 13000
+  AND `velocity` BETWEEN 0 AND 300
+Altitude vs Speed by Flight Phase (Main Cluster)
+
+```
 
 ## Genie Agents — Beyond the Basics
 
@@ -72,4 +116,4 @@ You've explored the OpenSky data and produced visualizations with Genie Agents. 
 
 ---
 
-_Author: Frank Munz · Updated 2026-09-15_
+_Author: Frank Munz · Updated 2026-09-18_
