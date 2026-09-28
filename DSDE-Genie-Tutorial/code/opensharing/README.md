@@ -1,4 +1,4 @@
-# Receive shared data locally (Step 7)
+# Receive shared data locally (Step 8)
 
 Minimal local client that **receives** Databricks-shared OpenSky data over the open Delta Sharing
 / OpenSharing protocol — pure Python, **no Spark and no Java**.

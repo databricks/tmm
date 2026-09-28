@@ -1,4 +1,4 @@
-# 7. How do I receive shared data locally with open sharing?
+# 8. How do I receive shared data locally with open sharing?
 
 ## What you'll do
 
@@ -120,8 +120,8 @@ For large scans, change your architecture to Spark. Then swap `load_as_pandas` f
 
 | ← Previous | Overview | Next → |
 |:---|:---:|---:|
-| [6. Databricks App](60-app.md) | [Table of contents](index.md) | [8. Wrap-up & next steps](80-wrap-up.md) |
+| [7. Databricks App](60-app.md) | [Table of contents](index.md) | [9. Wrap-up & next steps](80-wrap-up.md) |
 
 ---
 
-_Author: Frank Munz · Updated 2026-09-15_
+_Author: Frank Munz · Updated 2026-09-18_

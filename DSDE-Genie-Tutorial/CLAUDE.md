@@ -1,6 +1,6 @@
 # CLAUDE.md — DSDE Genie Tutorial
 
-> **Last updated: 2026-09-15**
+> **Last updated: 2026-09-28**
 > When you load this file, compare that date to today. If it is **more than 30 days old**,
 > remind Frank that this CLAUDE.md may be stale and offer to refresh it. Bump the date
 > whenever you meaningfully change this file.
@@ -14,7 +14,7 @@ synthetic toy dataset.
 
 The tutorial runs entirely on **Databricks Free Edition** and walks through: Marketplace →
 Genie Agents (EDA) → Genie Agents (explore & visualize) → Genie Code for a Spark Declarative
-Pipeline → Genie Code for a Lakeflow Job → Genie Code for a Databricks App → OpenSharing to a local OSS client → wrap-up.
+Pipeline → Genie Code for a Lakeflow Job → Genie One on mobile → Genie Code for a Databricks App → OpenSharing to a local OSS client → wrap-up.
 
 ## Goals
 
@@ -29,7 +29,7 @@ Pipeline → Genie Code for a Lakeflow Job → Genie Code for a Databricks App �
 ## Layout
 
 - `README.md` — landing page / agenda / prerequisites.
-- `docs/10..80-*.md` (gap-numbered by tens) — the eight tutorial steps (ordered; nav lives in `mkdocs.yml`).
+- `docs/10..80-*.md` (gap-numbered by tens) — the nine tutorial steps, incl. `55-mobile.md` (ordered; nav lives in `mkdocs.yml`).
 - `docs/assets/` — screenshots and intro GIFs referenced by the docs.
 - `code/pipeline/`, `code/job/`, `code/app/` — reference source for the Genie-generated pipeline, job, and app
   (filled in during live-test against a real workspace).
@@ -66,6 +66,8 @@ Pipeline → Genie Code for a Lakeflow Job → Genie Code for a Databricks App �
 
 - This folder lives inside the `tmm` repo (`/Users/frank.munz/tmm`). **Commit directly to
   `main`; do not branch** — branch pushes trip a pre-existing secret-scan false positive.
-  Never bypass the secret hook.
+  Never bypass the secret hook. One-off exception: the Genie One mobile module was staged on the
+  remote branch `genie-one-mobile` (2026-09-28) and is merged to `main` on publish day; see
+  `PENDING-genie-one-mobile.md` (delete that file and this note in the publish commit).
 - Preview docs locally with `mkdocs serve` (deps in `requirements.txt`).
 - Open TODOs (see `CHANGELOG.md`): add missing screenshot `docs/assets/70-opensharing.png`.

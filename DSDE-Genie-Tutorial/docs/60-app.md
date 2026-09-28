@@ -1,4 +1,4 @@
-# 6. How do I build a Databricks App from a gold table?
+# 7. How do I build a Databricks App from a gold table?
 
 ## What you'll do
 
@@ -54,8 +54,8 @@ You have a live, governed **Databricks App**: built on a gold table from your SD
 
 | ← Previous | Overview | Next → |
 |:---|:---:|---:|
-| [5. Lakeflow Job](50-job.md) | [Table of contents](index.md) | [7. OpenSharing](70-opensharing.md) |
+| [6. Genie One on mobile](55-mobile.md) | [Table of contents](index.md) | [8. OpenSharing](70-opensharing.md) |
 
 ---
 
-_Author: Frank Munz · Updated 2026-09-15_
+_Author: Frank Munz · Updated 2026-09-18_

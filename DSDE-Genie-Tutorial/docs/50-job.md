@@ -57,8 +57,8 @@ You wrapped the Spark Declarative Pipeline in a **Lakeflow Job**: a scheduled, m
 
 | ← Previous | Overview | Next → |
 |:---|:---:|---:|
-| [4. Declarative Pipeline](40-pipeline.md) | [Table of contents](index.md) | [6. Databricks App](60-app.md) |
+| [4. Declarative Pipeline](40-pipeline.md) | [Table of contents](index.md) | [6. Genie One on mobile](55-mobile.md) |
 
 ---
 
-_Author: Frank Munz · Updated 2026-09-15_
+_Author: Frank Munz · Updated 2026-09-28_

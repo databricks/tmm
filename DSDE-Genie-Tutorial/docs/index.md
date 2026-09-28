@@ -11,10 +11,11 @@ Genie handles the analysis and writes the SQL, pipeline, job, and app code as yo
 3. **[Genie Agents - explore & visualize](30-genie-explore.md)** — explore and visualize the data.
 4. **[Spark Declarative Pipeline (Genie Code)](40-pipeline.md)** — ingest and clean the data into per-region gold tables.
 5. **[Lakeflow Job (Genie Code)](50-job.md)** — schedule and orchestrate the pipeline as a multi-task job.
-6. **[Databricks App](60-app.md)** — build a governed app on a gold table and visualize APAC flight routes on a zoomable map.
-7. **[OpenSharing](70-opensharing.md)** — receive the shared data locally with the open-source client and VSCode.
-8. **[Wrap-up & next steps](80-wrap-up.md)** — clean up and where to go from here.
+6. **[Genie One on mobile](55-mobile.md)** — query the data from your phone with the Genie One mobile app.
+7. **[Databricks App](60-app.md)** — build a governed app on a gold table and visualize APAC flight routes on a zoomable map.
+8. **[OpenSharing](70-opensharing.md)** — receive the shared data locally with the open-source client and VSCode.
+9. **[Wrap-up & next steps](80-wrap-up.md)** — clean up and where to go from here.
 
 ---
 
-_Author: Frank Munz · Updated 2026-09-15_
+_Author: Frank Munz · Updated 2026-09-18_

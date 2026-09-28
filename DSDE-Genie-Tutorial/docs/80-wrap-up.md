@@ -1,8 +1,8 @@
-# 8. How do I wrap up and take this tutorial further?
+# 9. How do I wrap up and take this tutorial further?
 
 ## What you did
 
-In seven steps you went from a shared Marketplace dataset to a governed app, self-service analytics, and data anyone can receive locally, mostly from plain-English prompts instead of hand-written code:
+In eight steps you went from a shared Marketplace dataset to a governed app, self-service analytics, and data anyone can receive locally, mostly from plain-English prompts instead of hand-written code:
 
 ![Reference architecture for the tutorial: the OpenSky Marketplace listing (696M rows, one UTC day) attaches as the read-only Unity Catalog table marketplace.opensky.state_vectors; Genie Code and a Genie Agent explore and design against it; a Lakeflow Spark Declarative Pipeline runs bronze → silver (with data-quality expectations) → gold_americas / gold_emea / gold_apac → gold_analytics_regional_summary; a Lakeflow Job orchestrates the pipeline and a follow-on notebook on an hourly schedule; a SQL Warehouse and a Databricks App serve gold_apac to technical users; and an optional OpenSharing path filters a sample at the source into a local pandas DataFrame — all under the Unity Catalog governance plane.](assets/80-wrapup-flow.png)
 
@@ -11,8 +11,9 @@ In seven steps you went from a shared Marketplace dataset to a governed app, sel
 3. **[Genie Agents, explore & visualize](30-genie-explore.md):** answered business questions and got back charts and maps, with no dashboard to build.
 4. **[Spark Declarative Pipeline](40-pipeline.md):** turned the EDA findings into enforced expectations and cleaned the data into per-region gold tables (`gold_americas`, `gold_emea`, `gold_apac`) plus an analytics summary.
 5. **[Lakeflow Job](50-job.md):** wrapped the pipeline in a scheduled, multi-task job that runs it, retries on failure, and notifies you when a run breaks.
-6. **[Databricks App](60-app.md):** built a governed app on a gold table and visualized APAC flight routes on a zoomable map.
-7. **[OpenSharing](70-opensharing.md):** received the shared data on a plain laptop with the open-source Python client, no Spark and no Java.
+6. **[Genie One on mobile](55-mobile.md):** queried the data from your phone with the Genie One mobile app, same governance as the web.
+7. **[Databricks App](60-app.md):** built a governed app on a gold table and visualized APAC flight routes on a zoomable map.
+8. **[OpenSharing](70-opensharing.md):** received the shared data on a plain laptop with the open-source Python client, no Spark and no Java.
 
 ## Clean up
 
@@ -38,8 +39,8 @@ To undo everything on Free Edition:
 
 | ← Previous | Overview | Next → |
 |:---|:---:|---:|
-| [7. OpenSharing](70-opensharing.md) | [Table of contents](index.md) | — |
+| [8. OpenSharing](70-opensharing.md) | [Table of contents](index.md) | — |
 
 ---
 
-_Author: Frank Munz · Updated 2026-09-15 ·  [anchor page: "Tutorial: Databricks Genie for Data Engineers and Data Scientists"](https://community.databricks.com/t5/technical-blog/tutorial-databricks-genie-for-data-engineers-and-data-scientists/ba-p/168969)_
+_Author: Frank Munz · Updated 2026-09-18 ·  [anchor page: "Tutorial: Databricks Genie for Data Engineers and Data Scientists"](https://community.databricks.com/t5/technical-blog/tutorial-databricks-genie-for-data-engineers-and-data-scientists/ba-p/168969)_

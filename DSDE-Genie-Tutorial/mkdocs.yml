@@ -40,6 +40,7 @@ nav:
   - 3. Genie Agents — explore & visualize: 30-genie-explore.md
   - 4. Spark Declarative Pipeline (Genie Code): 40-pipeline.md
   - 5. Lakeflow Job (Genie Code): 50-job.md
-  - 6. Databricks App: 60-app.md
-  - 7. OpenSharing — receive locally: 70-opensharing.md
-  - 8. Wrap-up: 80-wrap-up.md
+  - 6. Genie One on mobile: 55-mobile.md
+  - 7. Databricks App: 60-app.md
+  - 8. OpenSharing — receive locally: 70-opensharing.md
+  - 9. Wrap-up: 80-wrap-up.md
