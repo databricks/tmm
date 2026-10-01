@@ -1,0 +1,412 @@
+name: Deploy Lakebase Preview
+
+# For every open pull request, deploy an ephemeral preview app to Databricks
+# Apps, backed by a fresh Lakebase branch cloned from production.
+#
+#   - The Lakebase branch (pr-<number>) is a copy-on-write clone of production,
+#     so the preview runs against real-shaped data in full isolation.
+#   - Drizzle migrations are applied to that branch (npm run migrate) before the
+#     app deploys, so the app starts against an up-to-date schema.
+#   - The preview app (appkit-lakebase-pr-<number>) deploys the PR's head
+#     branch and connects to the pr-<number> Lakebase branch.
+#
+# Both the app and the branch are torn down by the `Cleanup Lakebase Branch`
+# workflow when the PR is closed or merged.
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+# Cancel an in-flight deploy when a newer commit is pushed to the same PR.
+concurrency:
+  group: lakebase-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+
+    env:
+      # Databricks auth via OAuth M2M (service principal client id + secret).
+      DATABRICKS_AUTH_TYPE: oauth-m2m
+      DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+      DATABRICKS_CLIENT_ID: ${{ vars.DATABRICKS_CLIENT_ID }}
+      DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
+
+      LAKEBASE_PROJECT_ID: ${{ vars.LAKEBASE_PROJECT_ID }}
+      LAKEBASE_PARENT_BRANCH: production
+      LAKEBASE_DATABASE_ID: databricks-postgres
+
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      GIT_BRANCH: ${{ github.event.pull_request.head.ref }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Check out the PR head so migrations and the deploy use its code.
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: databricks/setup-cli@main
+        with:
+          # Pin >= the version that owns the bundle's direct-engine state.
+          # Downgrading (e.g. to 1.13.0) makes the CLI panic reading newer state.
+          version: 1.17.0
+
+      - name: Resolve preview identifiers
+        id: preview
+        shell: bash
+        run: |
+          LAKEBASE_BRANCH="pr-${PR_NUMBER}"
+          APP_NAME="appkit-lakebase-pr-${PR_NUMBER}"
+          echo "lakebase_branch=$LAKEBASE_BRANCH" >> "$GITHUB_OUTPUT"
+          echo "app_name=$APP_NAME" >> "$GITHUB_OUTPUT"
+          echo "branch_resource=projects/${LAKEBASE_PROJECT_ID}/branches/${LAKEBASE_BRANCH}" >> "$GITHUB_OUTPUT"
+
+      # Show reviewers exactly what schema change this PR applies, before the app
+      # even deploys. Drizzle migrations are append-only files under
+      # app/migrations/, so the files present on HEAD but not on the PR base are
+      # precisely this PR's schema delta. Informational only — never blocks the
+      # deploy (continue-on-error).
+      - name: Comment schema diff on the PR
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Fetch the PR base so its committed migrations are visible locally.
+          # Explicit refspec: checkout only configures the PR head's tracking
+          # ref, so a bare `fetch origin <base>` would not create origin/<base>.
+          git fetch --no-tags --depth=1 origin \
+            "+refs/heads/${BASE_REF}:refs/remotes/origin/${BASE_REF}"
+
+          git ls-tree -r --name-only "origin/${BASE_REF}" -- app/migrations 2>/dev/null \
+            | grep '\.sql$' | sort > /tmp/base_migrations.txt || true
+          git ls-tree -r --name-only HEAD -- app/migrations 2>/dev/null \
+            | grep '\.sql$' | sort > /tmp/head_migrations.txt || true
+          NEW_MIGRATIONS="$(comm -13 /tmp/base_migrations.txt /tmp/head_migrations.txt || true)"
+
+          MARKER="<!-- lakebase-schema-diff -->"
+          if [[ -z "$NEW_MIGRATIONS" ]]; then
+            BODY="$(printf '### 🗂️ Schema changes\n\nNo new database migrations in this PR — the schema is unchanged.\n%s\n' "$MARKER")"
+          else
+            SQL=""
+            while IFS= read -r f; do
+              [[ -z "$f" ]] && continue
+              SQL="${SQL}-- ${f}"$'\n'"$(git show "HEAD:${f}")"$'\n\n'
+            done <<< "$NEW_MIGRATIONS"
+            BODY="$(printf '### 🗂️ Schema changes\n\nThis PR adds the following migration(s), applied to `pr-%s` now and to `production` on merge:\n\n```sql\n%s```\n%s\n' "$PR_NUMBER" "$SQL" "$MARKER")"
+          fi
+
+          # Upsert a single comment identified by MARKER, via REST so it targets
+          # the exact comment (not merely "the last one this actor posted").
+          CID="$(gh api --paginate "repos/${REPO}/issues/${PR_NUMBER}/comments" \
+            --jq ".[] | select(.body | contains(\"${MARKER}\")) | .id" | head -n1)"
+          if [[ -n "$CID" ]]; then
+            gh api -X PATCH "repos/${REPO}/issues/comments/${CID}" -f body="$BODY" >/dev/null
+          else
+            gh api -X POST "repos/${REPO}/issues/${PR_NUMBER}/comments" -f body="$BODY" >/dev/null
+          fi
+          echo "Posted schema-diff comment."
+
+      - name: Create Lakebase branch (fresh clone of production)
+        shell: bash
+        env:
+          BRANCH_RESOURCE: ${{ steps.preview.outputs.branch_resource }}
+          LAKEBASE_BRANCH: ${{ steps.preview.outputs.lakebase_branch }}
+        run: |
+          PROJECT="projects/${LAKEBASE_PROJECT_ID}"
+          PARENT="${PROJECT}/branches/${LAKEBASE_PARENT_BRANCH}"
+
+          if databricks postgres get-branch "$BRANCH_RESOURCE" >/dev/null 2>&1; then
+            echo "Lakebase branch already exists: $LAKEBASE_BRANCH"
+          else
+            echo "Creating Lakebase branch $LAKEBASE_BRANCH from $LAKEBASE_PARENT_BRANCH"
+            databricks postgres create-branch \
+              "$PROJECT" \
+              "$LAKEBASE_BRANCH" \
+              --json "{
+                \"spec\": {
+                  \"source_branch\": \"${PARENT}\",
+                  \"ttl\": \"2505600s\"
+                }
+              }"
+          fi
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          # The app (package.json / lockfile) lives in app/.
+          cache-dependency-path: app/package-lock.json
+
+      - name: Run database migrations (only if the PR ships a migrate script)
+        shell: bash
+        # npm and the lockfile live in the app/ subdirectory. The databricks
+        # CLI calls below are cwd-independent, so running them from app/ is fine.
+        working-directory: app
+        env:
+          BRANCH_RESOURCE: ${{ steps.preview.outputs.branch_resource }}
+          LAKEBASE_BRANCH: ${{ steps.preview.outputs.lakebase_branch }}
+        run: |
+          set -euo pipefail
+          if ! npm run 2>/dev/null | grep -qE '^  migrate$'; then
+            echo "No migrate script in this PR — skipping migrations."
+            exit 0
+          fi
+
+          # Fast-fail if the committed lockfile points at the internal npm proxy,
+          # which GitHub-hosted runners cannot reach (npm ci would otherwise hang
+          # and eventually ETIMEDOUT). Fix: `npm run lockfile:fix` and commit.
+          if grep -q 'npm-proxy.dev.databricks.com' package-lock.json; then
+            echo "::error::package-lock.json references npm-proxy.dev.databricks.com (unreachable from CI). Run 'npm run lockfile:fix' and commit." >&2
+            exit 1
+          fi
+
+          # Resolve THIS branch's Postgres connection. Each branch has its own
+          # endpoint host, so a static PGHOST won't work; @databricks/lakebase
+          # needs the ENDPOINT path (not the database path), and the real
+          # Postgres database name is databricks_postgres (underscore), not the
+          # UC resource id databricks-postgres.
+          EP="$(databricks postgres list-endpoints "$BRANCH_RESOURCE" -o json \
+            | jq -r 'if type=="array" then . else (.endpoints // []) end
+                     | (map(select((.spec.type // .type)=="ENDPOINT_TYPE_READ_WRITE")) | .[0].name)
+                       // .[0].name')"
+          HOST="$(databricks postgres get-endpoint "$EP" -o json | jq -r '.status.hosts.host')"
+          PGDB="$(databricks postgres get-database "${BRANCH_RESOURCE}/databases/databricks-postgres" -o json \
+            | jq -r '.status.postgres_database // "databricks_postgres"')"
+
+          echo "Applying migrations to ${LAKEBASE_BRANCH}"
+          npm ci
+          PGHOST="$HOST" PGPORT=5432 PGSSLMODE=require PGDATABASE="$PGDB" \
+            PGUSER="$DATABRICKS_CLIENT_ID" LAKEBASE_ENDPOINT="$EP" \
+            npm run migrate
+
+      - name: Deploy preview app
+        shell: bash
+        run: |
+          # --force-lock is safe here: each PR has its own bundle state (see the
+          # preview target's root_path), and the workflow's concurrency group
+          # cancels any superseded run for this PR — so a lock still held at this
+          # point is a stale one left by that cancelled run, not a live deploy.
+          databricks bundle deploy -t preview --force-lock \
+            --var "pr_number=${PR_NUMBER}" \
+            --var "git_branch=${GIT_BRANCH}"
+
+          # Trigger the app deployment/start from the git source.
+          databricks bundle run app -t preview \
+            --var "pr_number=${PR_NUMBER}" \
+            --var "git_branch=${GIT_BRANCH}"
+
+      # -----------------------------------------------------------------------
+      # Grant the preview app access to the schema.
+      #
+      # Each preview app runs as its OWN service principal (not the CI SP), so it
+      # must be made a member of `app_schema_owner` — the role that owns the
+      # `app`/`appkit` schemas — to inherit read/write (and ALTER) on them.
+      # The CI SP performs the GRANT; it needs ADMIN OPTION on `app_schema_owner`
+      # (granted once, out of band). No superuser is required.
+      #
+      # PREREQUISITES (one-time, see README):
+      #   - the `app` and `appkit` schemas are OWNED BY `app_schema_owner`;
+      #   - the CI service principal is a member of `app_schema_owner` WITH ADMIN
+      #     OPTION (so it can grant membership to each preview app SP).
+      # -----------------------------------------------------------------------
+      - name: Grant preview app membership in app_schema_owner
+        shell: bash
+        env:
+          APP_NAME: ${{ steps.preview.outputs.app_name }}
+          BRANCH_RESOURCE: ${{ steps.preview.outputs.branch_resource }}
+        run: |
+          set -euo pipefail
+          command -v psql >/dev/null 2>&1 || { sudo apt-get update && sudo apt-get install -y postgresql-client; }
+
+          PREVIEW_SP="$(databricks apps get "$APP_NAME" -o json | jq -r '.service_principal_client_id')"
+          if [[ -z "$PREVIEW_SP" || "$PREVIEW_SP" == "null" ]]; then
+            echo "Could not resolve the preview app service principal." >&2
+            exit 1
+          fi
+
+          EP="$(databricks postgres list-endpoints "$BRANCH_RESOURCE" -o json \
+            | jq -r 'if type=="array" then . else (.endpoints // []) end
+                     | (map(select((.spec.type // .type)=="ENDPOINT_TYPE_READ_WRITE")) | .[0].name)
+                       // .[0].name')"
+          HOST="$(databricks postgres get-endpoint "$EP" -o json | jq -r '.status.hosts.host')"
+          PGDB="$(databricks postgres get-database "${BRANCH_RESOURCE}/databases/databricks-postgres" -o json \
+            | jq -r '.status.postgres_database // "databricks_postgres"')"
+          TOKEN="$(databricks postgres generate-database-credential "$EP" -o json | jq -r '.token')"
+
+          echo "Granting app_schema_owner to preview app SP ${PREVIEW_SP}"
+          # Runs as the CI SP, which holds ADMIN OPTION on app_schema_owner — no
+          # superuser needed. Idempotent: re-granting an existing membership is a
+          # no-op.
+          #
+          # The role name is embedded directly (double-quoted identifier) rather
+          # than via psql's :"var" interpolation: a `-c` string that fully parses
+          # as SQL is sent to the server verbatim, so psql never expands :"sp".
+          # PREVIEW_SP is a service-principal UUID (hex + hyphens), so quoting it
+          # as an identifier is safe.
+          PGPASSWORD="$TOKEN" psql \
+            "host=${HOST} port=5432 user=${DATABRICKS_CLIENT_ID} dbname=${PGDB} sslmode=require" \
+            -v ON_ERROR_STOP=1 \
+            -c "GRANT app_schema_owner TO \"${PREVIEW_SP}\";"
+
+      - name: Restart preview app so it picks up schema access
+        shell: bash
+        env:
+          APP_NAME: ${{ steps.preview.outputs.app_name }}
+        run: |
+          set -euo pipefail
+          # The app's startup schema setup ran before the grant (with fresh DB
+          # connections that predate the new membership); restart so it re-runs
+          # with access.
+          databricks apps stop "$APP_NAME"
+          databricks apps start "$APP_NAME"
+
+      - name: Read preview app URL
+        id: url
+        shell: bash
+        env:
+          APP_NAME: ${{ steps.preview.outputs.app_name }}
+        run: |
+          APP_URL="$(databricks apps get "$APP_NAME" -o json | jq -r '.url')"
+          echo "app_url=$APP_URL" >> "$GITHUB_OUTPUT"
+
+      # Smoke-test the LIVE preview before advertising it. A single call to the
+      # todos API exercises the whole chain end to end: the app is up, it
+      # reached the pr-<n> Lakebase branch, the app_schema_owner grant took, and
+      # the migration created app.todos. We do a full write round-trip
+      # (POST -> GET -> DELETE) so it also proves write access, not just read.
+      #
+      # Databricks Apps sit behind the workspace OAuth proxy, so the request
+      # must carry a bearer token (the CI SP deployed the app, so it may call
+      # it); an unauthenticated curl would get a login redirect, not the API.
+      # This step is intentionally BLOCKING: a broken preview should fail the
+      # job (turning gh pr checks red), unlike the informational comments above.
+      - name: Smoke test the preview app
+        shell: bash
+        env:
+          APP_URL: ${{ steps.url.outputs.app_url }}
+        run: |
+          set -euo pipefail
+
+          if [[ -z "$APP_URL" || "$APP_URL" == "null" ]]; then
+            echo "::error::No preview app URL to smoke test." >&2
+            exit 1
+          fi
+
+          # Workspace OAuth token for the CI service principal.
+          #
+          # Use the M2M client-credentials grant directly, NOT `databricks auth
+          # token`: that command only reads credentials cached by an interactive
+          # `databricks auth login` (U2M), so under oauth-m2m it fails with
+          # "OAuth is not configured for this host. no cached credentials".
+          # Here we exchange the SP client id/secret at the workspace OIDC token
+          # endpoint, which is what M2M auth does under the hood.
+          TOKEN="$(curl -sS --fail --request POST \
+            "${DATABRICKS_HOST%/}/oidc/v1/token" \
+            --user "${DATABRICKS_CLIENT_ID}:${DATABRICKS_CLIENT_SECRET}" \
+            --data 'grant_type=client_credentials' \
+            --data 'scope=all-apis' | jq -r '.access_token')"
+          if [[ -z "$TOKEN" || "$TOKEN" == "null" ]]; then
+            echo "::error::Could not obtain an OAuth token for the CI service principal." >&2
+            exit 1
+          fi
+          API="${APP_URL%/}/api/lakebase/todos"
+
+          # The app was just restarted; poll until it serves. ~2.5 min budget.
+          echo "Waiting for the preview to serve ${API}"
+          CODE=000
+          for i in $(seq 1 30); do
+            CODE="$(curl -sS -o /tmp/todos.json -w '%{http_code}' \
+              -H "Authorization: Bearer ${TOKEN}" "$API" || echo 000)"
+            [[ "$CODE" == "200" ]] && break
+            echo "  attempt ${i}: HTTP ${CODE} — retrying in 5s"; sleep 5
+          done
+          if [[ "$CODE" != "200" ]]; then
+            echo "::error::Preview did not return 200 from ${API} (last: ${CODE})" >&2
+            cat /tmp/todos.json || true
+            exit 1
+          fi
+
+          # Guard against a 200 that is actually a login/HTML page: the todos
+          # endpoint must return a JSON array.
+          if ! jq -e 'type == "array"' /tmp/todos.json >/dev/null 2>&1; then
+            echo "::error::GET ${API} returned 200 but not a JSON array (auth redirect?)." >&2
+            head -c 500 /tmp/todos.json || true
+            exit 1
+          fi
+          echo "GET todos OK."
+
+          # Write round-trip on the disposable pr-<n> branch (safe to mutate).
+          MARKER="ci-smoke-${PR_NUMBER}-${GITHUB_RUN_ID}"
+          CREATED="$(curl -sS -X POST "$API" \
+            -H "Authorization: Bearer ${TOKEN}" \
+            -H 'Content-Type: application/json' \
+            -d "{\"title\":\"${MARKER}\"}")"
+          NEW_ID="$(printf '%s' "$CREATED" | jq -r '.id // empty')"
+          if [[ -z "$NEW_ID" ]]; then
+            echo "::error::POST ${API} did not return a created todo with an id." >&2
+            printf '%s\n' "$CREATED"
+            exit 1
+          fi
+          echo "POST todos OK (id=${NEW_ID})."
+
+          # It must be readable back...
+          if ! curl -sS -H "Authorization: Bearer ${TOKEN}" "$API" \
+                | jq -e --arg m "$MARKER" 'any(.[]; .title == $m)' >/dev/null; then
+            echo "::error::Created todo (${MARKER}) was not returned by GET." >&2
+            exit 1
+          fi
+
+          # ...and cleaned up so the smoke row never lingers on the branch.
+          DEL_CODE="$(curl -sS -o /dev/null -w '%{http_code}' -X DELETE \
+            "${API}/${NEW_ID}" -H "Authorization: Bearer ${TOKEN}" || echo 000)"
+          if [[ "$DEL_CODE" != "200" && "$DEL_CODE" != "204" ]]; then
+            echo "::warning::Could not delete smoke todo ${NEW_ID} (HTTP ${DEL_CODE}); it will vanish with the branch on PR close."
+          fi
+          echo "Smoke test passed (POST -> GET -> DELETE round-trip)."
+
+      - name: Comment preview URL on the PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          APP_NAME: ${{ steps.preview.outputs.app_name }}
+          APP_URL: ${{ steps.url.outputs.app_url }}
+          LAKEBASE_BRANCH: ${{ steps.preview.outputs.lakebase_branch }}
+        shell: bash
+        run: |
+          BODY="$(cat <<EOF
+          ### 🚀 Lakebase preview deployed
+
+          | | |
+          | --- | --- |
+          | **Preview app** | [\`${APP_NAME}\`](${APP_URL}) |
+          | **Lakebase branch** | \`${LAKEBASE_BRANCH}\` (fresh clone of \`production\`) |
+          | **Deployed commit** | \`${{ github.event.pull_request.head.sha }}\` |
+
+          This preview and its database branch are deleted automatically when the PR is closed.
+          EOF
+          )"
+
+          # Upsert a single comment identified by MARKER, via REST so it targets
+          # the exact comment (this PR also carries a separate schema-diff
+          # comment, so "edit the last one" would clobber the wrong one).
+          MARKER="<!-- lakebase-preview -->"
+          BODY="${BODY}"$'\n'"${MARKER}"
+          CID="$(gh api --paginate "repos/${REPO}/issues/${PR_NUMBER}/comments" \
+            --jq ".[] | select(.body | contains(\"${MARKER}\")) | .id" | head -n1)"
+          if [[ -n "$CID" ]]; then
+            gh api -X PATCH "repos/${REPO}/issues/comments/${CID}" -f body="$BODY" >/dev/null
+          else
+            gh api -X POST "repos/${REPO}/issues/${PR_NUMBER}/comments" -f body="$BODY" >/dev/null
+          fi

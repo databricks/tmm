@@ -1,0 +1,98 @@
+name: Migrate Lakebase Production
+
+# When migrations land on main (i.e. a PR merges), apply any pending database
+# migrations to the PRODUCTION Lakebase branch. This keeps production's schema
+# in sync with the merged code — and, because every per-PR preview branch is a
+# copy-on-write clone of production, it ensures new preview branches inherit the
+# change. Without this step a merged schema change never reaches production, so
+# future clones start from a stale schema.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'app/migrations/**'
+      - 'app/scripts/migrate.ts'
+      - 'app/package.json'
+
+# Never run two production migrations concurrently.
+concurrency:
+  group: lakebase-migrate-prod
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  migrate-prod:
+    runs-on: ubuntu-latest
+
+    env:
+      # Databricks auth via OAuth M2M (service principal client id + secret).
+      DATABRICKS_AUTH_TYPE: oauth-m2m
+      DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+      DATABRICKS_CLIENT_ID: ${{ vars.DATABRICKS_CLIENT_ID }}
+      DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
+
+      LAKEBASE_PROJECT_ID: ${{ vars.LAKEBASE_PROJECT_ID }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: databricks/setup-cli@main
+        with:
+          version: 1.17.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          # The app (package.json / lockfile) lives in app/.
+          cache-dependency-path: app/package-lock.json
+
+      - name: Resolve production connection
+        id: prod
+        shell: bash
+        run: |
+          set -euo pipefail
+          EP="projects/${LAKEBASE_PROJECT_ID}/branches/production/endpoints/primary"
+          HOST="$(databricks postgres get-endpoint "$EP" -o json | jq -r '.status.hosts.host')"
+          PGDB="$(databricks postgres get-database \
+            "projects/${LAKEBASE_PROJECT_ID}/branches/production/databases/databricks-postgres" -o json \
+            | jq -r '.status.postgres_database // "databricks_postgres"')"
+          if [[ -z "$HOST" || "$HOST" == "null" ]]; then
+            echo "Could not resolve the production endpoint host." >&2
+            exit 1
+          fi
+          echo "endpoint=$EP" >> "$GITHUB_OUTPUT"
+          echo "host=$HOST" >> "$GITHUB_OUTPUT"
+          echo "pgdb=$PGDB" >> "$GITHUB_OUTPUT"
+
+      - name: Apply migrations to production
+        shell: bash
+        # npm and the lockfile live in the app/ subdirectory.
+        working-directory: app
+        env:
+          # @databricks/lakebase resolves the connection from these plus the
+          # OAuth M2M env above, refreshing the short-lived DB token itself.
+          PGHOST: ${{ steps.prod.outputs.host }}
+          PGPORT: "5432"
+          PGSSLMODE: require
+          PGDATABASE: ${{ steps.prod.outputs.pgdb }}
+          PGUSER: ${{ vars.DATABRICKS_CLIENT_ID }}
+          LAKEBASE_ENDPOINT: ${{ steps.prod.outputs.endpoint }}
+        run: |
+          set -euo pipefail
+          if npm run 2>/dev/null | grep -qE '^  migrate$'; then
+            # Fast-fail if the lockfile points at the internal npm proxy, which
+            # CI cannot reach (npm ci would otherwise hang). Fix with
+            # `npm run lockfile:fix` and commit.
+            if grep -q 'npm-proxy.dev.databricks.com' package-lock.json; then
+              echo "::error::package-lock.json references npm-proxy.dev.databricks.com (unreachable from CI). Run 'npm run lockfile:fix' and commit." >&2
+              exit 1
+            fi
+            echo "Applying pending migrations to the production branch"
+            npm ci
+            npm run migrate
+          else
+            echo "No migrate script present in this commit — nothing to apply."
+          fi

@@ -1,0 +1,121 @@
+name: Cleanup Lakebase Branch
+
+# When a PR is closed (merged or not), tear down everything the PR created:
+#   - the per-PR preview app (appkit-lakebase-pr-<number>), deployed by the
+#     `Deploy Lakebase Preview` workflow;
+#   - the preview Lakebase branch (pr-<number>), cloned from production by that
+#     same workflow;
+#   - the per-worktree Lakebase branch that the local Claude session created
+#     from the Git branch name (see scripts/branch-name.sh);
+#   - the PR's Git head branch on GitHub (on both merge AND close — the native
+#     "automatically delete head branches" setting only fires on merge).
+on:
+  pull_request:
+    types:
+      - closed
+
+permissions:
+  contents: write   # required to delete the PR head branch
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+
+    env:
+      # Databricks auth via OAuth M2M (service principal client id + secret).
+      DATABRICKS_AUTH_TYPE: oauth-m2m
+      DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+      DATABRICKS_CLIENT_ID: ${{ vars.DATABRICKS_CLIENT_ID }}
+      DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
+
+      LAKEBASE_PROJECT_ID: ${{ vars.LAKEBASE_PROJECT_ID }}
+
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      GIT_BRANCH: ${{ github.event.pull_request.head.ref }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Use the PR head's databricks.yml so `bundle destroy` resolves the
+          # same per-PR root_path the preview was deployed with.
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: databricks/setup-cli@main
+        with:
+          version: 1.17.0
+
+      - name: Destroy preview app and its bundle state
+        shell: bash
+        run: |
+          set -euo pipefail
+          APP_NAME="appkit-lakebase-pr-${PR_NUMBER}"
+
+          # Prefer `bundle destroy`: it removes the app AND the per-PR bundle
+          # state under .bundle/.../preview/pr-<n>. Fall back to deleting the app
+          # by name if there is no matching state (e.g. the deploy never ran).
+          if databricks bundle destroy -t preview --auto-approve --force-lock \
+               --var "pr_number=${PR_NUMBER}" --var "git_branch=${GIT_BRANCH}"; then
+            echo "Destroyed preview bundle for pr-${PR_NUMBER}"
+          elif databricks apps get "$APP_NAME" >/dev/null 2>&1; then
+            echo "bundle destroy did not apply; deleting app by name: $APP_NAME"
+            databricks apps delete "$APP_NAME"
+          else
+            echo "Preview app already gone: $APP_NAME"
+          fi
+
+      - name: Delete Lakebase branches
+        shell: bash
+        run: |
+          PROJECT="projects/${LAKEBASE_PROJECT_ID}"
+
+          # Both the per-PR preview branch and the per-worktree dev branch.
+          WORKTREE_BRANCH="$(bash scripts/branch-name.sh "$GIT_BRANCH")"
+          PREVIEW_BRANCH="pr-${PR_NUMBER}"
+
+          for BRANCH_ID in "$PREVIEW_BRANCH" "$WORKTREE_BRANCH"; do
+            BRANCH="${PROJECT}/branches/${BRANCH_ID}"
+            if databricks postgres get-branch "$BRANCH" >/dev/null 2>&1; then
+              echo "Deleting Lakebase branch: $BRANCH_ID"
+              databricks postgres delete-branch "$BRANCH"
+            else
+              echo "Lakebase branch already deleted: $BRANCH_ID"
+            fi
+          done
+
+      - name: Delete the PR head branch
+        # Only same-repo branches (a fork's branch can't be deleted from here),
+        # and never the default branch.
+        if: >-
+          github.event.pull_request.head.repo.full_name == github.repository &&
+          github.event.pull_request.head.ref != github.event.repository.default_branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        shell: bash
+        run: |
+          if gh api "repos/${REPO}/git/refs/heads/${HEAD_REF}" >/dev/null 2>&1; then
+            echo "Deleting Git branch: $HEAD_REF"
+            gh api -X DELETE "repos/${REPO}/git/refs/heads/${HEAD_REF}"
+          else
+            echo "Git branch already deleted: $HEAD_REF"
+          fi
+
+      - name: Delete Lakebase branches
+        shell: bash
+        run: |
+          PROJECT="projects/${LAKEBASE_PROJECT_ID}"
+
+          # Both the per-PR preview branch and the per-worktree dev branch.
+          WORKTREE_BRANCH="$(bash scripts/branch-name.sh "$GIT_BRANCH")"
+          PREVIEW_BRANCH="pr-${PR_NUMBER}"
+
+          for BRANCH_ID in "$PREVIEW_BRANCH" "$WORKTREE_BRANCH"; do
+            BRANCH="${PROJECT}/branches/${BRANCH_ID}"
+            if databricks postgres get-branch "$BRANCH" >/dev/null 2>&1; then
+              echo "Deleting Lakebase branch: $BRANCH_ID"
+              databricks postgres delete-branch "$BRANCH"
+            else
+              echo "Lakebase branch already deleted: $BRANCH_ID"
+            fi
+          done

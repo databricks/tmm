@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.shared.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.server.tsbuildinfo",
+    "target": "ES2020",
+    "lib": ["ES2020"],
+    "noEmit": true,
+    "rootDir": "./"
+  },
+  "include": ["server/**/*", "shared/**/*", "config/**/*", "scripts/**/*.ts"],
+  "exclude": ["node_modules", "dist", "client"]
+}

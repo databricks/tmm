@@ -1,0 +1,9 @@
+version: 1
+name: "AppKit - Lakebase"
+description: "A Node.js CRUD app with Lakebase Autoscaling (Postgres) for persistent data storage, built with AppKit."
+
+resource_specs:
+  - name: "postgres"
+    description: "The Lakebase Autoscaling database the app uses for persistent CRUD storage."
+    postgres_spec:
+      permission: "CAN_CONNECT_AND_CREATE"

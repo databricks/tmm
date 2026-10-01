@@ -1,0 +1,423 @@
+{
+  "$schema": "https://databricks.github.io/appkit/schemas/template-plugins.schema.json",
+  "version": "2.0",
+  "plugins": {
+    "agents": {
+      "name": "agents",
+      "displayName": "Agents Plugin",
+      "description": "AI agents driven by markdown configs or code, with auto-tool-discovery from registered plugins",
+      "package": "@databricks/appkit",
+      "resources": {
+        "required": [],
+        "optional": [
+          {
+            "type": "serving_endpoint",
+            "alias": "Default LLM for agents",
+            "resourceKey": "agents-serving-endpoint",
+            "description": "Default streaming-capable LLM endpoint for agents that don't pin their own model",
+            "permission": "CAN_QUERY",
+            "fields": {
+              "name": {
+                "env": "DATABRICKS_SERVING_ENDPOINT_NAME",
+                "description": "Default LLM serving endpoint name",
+                "origin": "user"
+              }
+            }
+          },
+          {
+            "type": "experiment",
+            "alias": "MLflow experiment for agent traces",
+            "resourceKey": "agents-mlflow-experiment",
+            "description": "When bound, agent turns and tool calls are traced to this MLflow experiment via OpenTelemetry. Tracing is a no-op when unset.",
+            "permission": "CAN_EDIT",
+            "fields": {
+              "experimentId": {
+                "env": "MLFLOW_EXPERIMENT_ID",
+                "description": "MLflow experiment id traces are logged to",
+                "origin": "user"
+              }
+            }
+          }
+        ]
+      },
+      "stability": "beta"
+    },
+    "aiSearch": {
+      "name": "aiSearch",
+      "displayName": "AI Search Plugin",
+      "description": "Query Databricks Vector Search indexes with built-in hybrid search, reranking, and pagination",
+      "package": "@databricks/appkit",
+      "resources": {
+        "required": [
+          {
+            "type": "vector_search_index",
+            "alias": "Vector Search Index",
+            "resourceKey": "vector-search-index",
+            "description": "A Databricks Vector Search index to query. Index names configured via plugin config.",
+            "permission": "SELECT",
+            "fields": {
+              "id": {
+                "env": "DATABRICKS_VS_INDEX_NAME",
+                "description": "Three-level UC name of the default index (catalog.schema.index_name)",
+                "origin": "user"
+              }
+            }
+          }
+        ],
+        "optional": []
+      },
+      "stability": "beta",
+      "scaffolding": {
+        "rules": {
+          "must": [
+            "List the vector search index's source-table columns (unity-catalog tables API) so the user can pick which to return",
+            "Ask the user which of those columns the search should return",
+            "Write aiSearch({ indexes: { default: { columns: [...] } } }) in the server file; the client queries the 'default' alias"
+          ]
+        }
+      }
+    },
+    "analytics": {
+      "name": "analytics",
+      "displayName": "Analytics Plugin",
+      "description": "SQL query execution against Databricks SQL Warehouses",
+      "package": "@databricks/appkit",
+      "resources": {
+        "required": [
+          {
+            "type": "sql_warehouse",
+            "alias": "SQL Warehouse",
+            "resourceKey": "sql-warehouse",
+            "description": "SQL Warehouse for executing analytics queries",
+            "permission": "CAN_USE",
+            "fields": {
+              "id": {
+                "env": "DATABRICKS_WAREHOUSE_ID",
+                "description": "SQL Warehouse ID",
+                "discovery": {
+                  "type": "kind",
+                  "resourceKind": "warehouse"
+                },
+                "origin": "user"
+              }
+            }
+          }
+        ],
+        "optional": []
+      },
+      "scaffolding": {
+        "rules": {
+          "must": [
+            "Before init, ensure the SQL Warehouse passed via --set analytics.sql-warehouse.id is running"
+          ],
+          "should": [
+            "After init, ensure config/queries/ has at least one .sql file before running npm run typegen"
+          ]
+        }
+      }
+    },
+    "files": {
+      "name": "files",
+      "displayName": "Files Plugin",
+      "description": "File operations against Databricks Volumes and Unity Catalog",
+      "package": "@databricks/appkit",
+      "resources": {
+        "required": [
+          {
+            "type": "volume",
+            "alias": "Files",
+            "resourceKey": "files",
+            "description": "Permission to write to volumes",
+            "permission": "WRITE_VOLUME",
+            "fields": {
+              "path": {
+                "env": "DATABRICKS_VOLUME_FILES",
+                "description": "Volume path for file storage (e.g. /Volumes/catalog/schema/volume_name)",
+                "discovery": {
+                  "type": "kind",
+                  "resourceKind": "volume",
+                  "select": "full_name"
+                },
+                "origin": "user"
+              }
+            }
+          }
+        ],
+        "optional": []
+      },
+      "scaffolding": {
+        "rules": {
+          "must": [
+            "Before init, verify your Unity Catalog volume exists and you have WRITE_VOLUME permission"
+          ]
+        }
+      }
+    },
+    "genie": {
+      "name": "genie",
+      "displayName": "Genie Plugin",
+      "description": "AI/BI Genie space integration for natural language data queries",
+      "package": "@databricks/appkit",
+      "resources": {
+        "required": [
+          {
+            "type": "genie_space",
+            "alias": "Genie Space",
+            "resourceKey": "genie-space",
+            "description": "Genie Space for AI-powered data queries. Space IDs configured via plugin config.",
+            "permission": "CAN_RUN",
+            "fields": {
+              "id": {
+                "env": "DATABRICKS_GENIE_SPACE_ID",
+                "description": "Default Genie Space ID",
+                "discovery": {
+                  "type": "kind",
+                  "resourceKind": "genie_space"
+                },
+                "origin": "user"
+              },
+              "name": {
+                "description": "Genie Space display name",
+                "origin": "user"
+              }
+            }
+          }
+        ],
+        "optional": []
+      },
+      "scaffolding": {
+        "rules": {
+          "must": [
+            "After init, configure the 'spaces' map in plugin config with alias-to-Space-ID mappings"
+          ]
+        }
+      }
+    },
+    "jobs": {
+      "name": "jobs",
+      "displayName": "Jobs Plugin",
+      "description": "Manage Databricks Lakeflow Jobs.",
+      "package": "@databricks/appkit",
+      "resources": {
+        "required": [
+          {
+            "type": "job",
+            "alias": "Job",
+            "resourceKey": "job",
+            "description": "A Databricks job to trigger and monitor",
+            "permission": "CAN_MANAGE_RUN",
+            "fields": {
+              "id": {
+                "env": "DATABRICKS_JOB_ID",
+                "description": "Numeric Databricks job ID. Find it in the Jobs UI or via `databricks jobs list`.",
+                "origin": "user"
+              }
+            }
+          }
+        ],
+        "optional": []
+      }
+    },
+    "lakebase": {
+      "name": "lakebase",
+      "displayName": "Lakebase",
+      "description": "SQL query execution against Databricks Lakebase Autoscaling",
+      "package": "@databricks/appkit",
+      "resources": {
+        "required": [
+          {
+            "type": "postgres",
+            "alias": "Postgres",
+            "resourceKey": "postgres",
+            "description": "Lakebase Postgres database for persistent storage",
+            "permission": "CAN_CONNECT_AND_CREATE",
+            "fields": {
+              "project": {
+                "description": "Full Lakebase Postgres project resource name. Obtain by running `databricks postgres list-projects`, select the desired item from the output array and use its .name value.",
+                "examples": [
+                  "projects/{project-id}"
+                ],
+                "discovery": {
+                  "type": "kind",
+                  "resourceKind": "postgres_project",
+                  "select": "name"
+                },
+                "origin": "user"
+              },
+              "branch": {
+                "description": "Full Lakebase Postgres branch resource name. Obtain by running `databricks postgres list-branches {project-name}`, select the desired item from the output array and use its .name value. Requires the project resource name.",
+                "examples": [
+                  "projects/{project-id}/branches/{branch-id}"
+                ],
+                "discovery": {
+                  "type": "kind",
+                  "resourceKind": "postgres_branch",
+                  "select": "name",
+                  "dependsOn": "project"
+                },
+                "origin": "user"
+              },
+              "database": {
+                "description": "Full Lakebase Postgres database resource name. Obtain by running `databricks postgres list-databases {branch-name}`, select the desired item from the output array and use its .name value. Requires the branch resource name.",
+                "examples": [
+                  "projects/{project-id}/branches/{branch-id}/databases/{database-id}"
+                ],
+                "discovery": {
+                  "type": "kind",
+                  "resourceKind": "postgres_database",
+                  "select": "name",
+                  "dependsOn": "branch"
+                },
+                "origin": "user"
+              },
+              "host": {
+                "env": "PGHOST",
+                "description": "Postgres host for local development. Auto-injected by the platform at deploy time.",
+                "localOnly": true,
+                "resolve": "postgres:host",
+                "origin": "platform"
+              },
+              "databaseName": {
+                "env": "PGDATABASE",
+                "description": "Postgres database name for local development. Auto-injected by the platform at deploy time.",
+                "localOnly": true,
+                "resolve": "postgres:databaseName",
+                "origin": "platform"
+              },
+              "endpointPath": {
+                "env": "LAKEBASE_ENDPOINT",
+                "description": "Lakebase endpoint resource name. Auto-injected at runtime via app.yaml valueFrom: postgres. For local development, obtain by running `databricks postgres list-endpoints {branch-name}`, select the desired item from the output array and use its .name value.",
+                "bundleIgnore": true,
+                "examples": [
+                  "projects/{project-id}/branches/{branch-id}/endpoints/{endpoint-id}"
+                ],
+                "resolve": "postgres:endpointPath",
+                "origin": "cli"
+              },
+              "port": {
+                "env": "PGPORT",
+                "description": "Postgres port. Auto-injected by the platform at deploy time.",
+                "localOnly": true,
+                "value": "5432",
+                "origin": "platform"
+              },
+              "sslmode": {
+                "env": "PGSSLMODE",
+                "description": "Postgres SSL mode. Auto-injected by the platform at deploy time.",
+                "localOnly": true,
+                "value": "require",
+                "origin": "platform"
+              }
+            }
+          }
+        ],
+        "optional": []
+      },
+      "scaffolding": {
+        "rules": {
+          "should": [
+            "After init, run any database migrations for your chosen ORM before first request",
+            "After init, verify Lakebase connectivity with 'psql $PGHOST -c \"select 1\"'"
+          ]
+        }
+      },
+      "requiredByTemplate": true
+    },
+    "server": {
+      "name": "server",
+      "displayName": "Server Plugin",
+      "description": "HTTP server with Express, static file serving, and Vite dev mode support",
+      "package": "@databricks/appkit",
+      "resources": {
+        "required": [],
+        "optional": []
+      },
+      "requiredByTemplate": true
+    },
+    "serving": {
+      "name": "serving",
+      "displayName": "Model Serving Plugin",
+      "description": "Authenticated proxy to Databricks Model Serving endpoints",
+      "package": "@databricks/appkit",
+      "resources": {
+        "required": [
+          {
+            "type": "serving_endpoint",
+            "alias": "Serving Endpoint",
+            "resourceKey": "serving-endpoint",
+            "description": "Model Serving endpoint for inference",
+            "permission": "CAN_QUERY",
+            "fields": {
+              "name": {
+                "env": "DATABRICKS_SERVING_ENDPOINT_NAME",
+                "description": "Serving endpoint name",
+                "origin": "user"
+              }
+            }
+          }
+        ],
+        "optional": []
+      }
+    }
+  },
+  "scaffolding": {
+    "command": "databricks apps init",
+    "flags": {
+      "--name": {
+        "description": "Project name — sets {{.projectName}} in package.json, databricks.yml, and .env. Required for non-interactive scaffolding.",
+        "required": true,
+        "pattern": "^[a-z][a-z0-9-]*$"
+      },
+      "--template": {
+        "description": "Template path (local directory or GitHub URL)",
+        "required": false
+      },
+      "--version": {
+        "description": "AppKit version to use; defaults to auto-detected",
+        "required": false
+      },
+      "--features": {
+        "description": "Plugins to enable (comma-separated, no spaces; must match keys in this manifest's plugins map)",
+        "required": false,
+        "pattern": "^[a-zA-Z0-9_-]+(,[a-zA-Z0-9_-]+)*$"
+      },
+      "--set": {
+        "description": "Set resource values (format: plugin.resourceKey.field=value, repeatable)",
+        "required": false
+      },
+      "--output-dir": {
+        "description": "Directory to write the project to",
+        "required": false
+      },
+      "--description": {
+        "description": "App description",
+        "required": false
+      },
+      "--run": {
+        "description": "Run the app after creation (none, dev, dev-remote)",
+        "required": false
+      },
+      "--auto-approve": {
+        "description": "Pass as a bare flag (no value) to skip prompts for optional resources. Not recommended for agent-driven init — conflicts with the 'ask user when in doubt' rule.",
+        "required": false
+      },
+      "--profile": {
+        "description": "Databricks CLI profile to use for authentication (global flag)",
+        "required": false
+      }
+    },
+    "rules": {
+      "must": [
+        "Treat `databricks apps init` output as starter code, not requirements; adapt or replace it to match the requested app",
+        "Keep all secrets and credentials only in app.yaml, databricks.yml, and/or .env"
+      ],
+      "should": [
+        "ask user when in doubt of resource to use for plugin"
+      ],
+      "never": [
+        "guess resources when multiple or no options are available",
+        "embed secrets in files that will go to the client-bundle"
+      ]
+    }
+  }
+}
