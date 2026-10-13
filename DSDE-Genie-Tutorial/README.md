@@ -1,4 +1,4 @@
-# [Tutorial: How to get started with Databricks Genie as a Data Scientist or Data Engineer on Databricks Free Edition](https://community.databricks.com/t5/technical-blog/tutorial-databricks-genie-for-data-engineers-and-data-scientists/ba-p/168969)
+# [Tutorial: Databricks Genie for Data Engineers and Data Scientists](https://community.databricks.com/t5/technical-blog/tutorial-databricks-genie-for-data-engineers-and-data-scientists/ba-p/168969)
 
 ## AI-powered Analytics of 700 Million OpenSky Network Avionics Records 
 

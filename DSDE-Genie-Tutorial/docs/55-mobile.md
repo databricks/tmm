@@ -52,7 +52,7 @@ You put Genie One in your pocket: installed the mobile app, signed in, and ran a
 
 Here, you queried IoT telemetry, but every day tens of thousands of business users open Genie One on their commute to check their company's strategic financial data. 
 
-The analysis travels with you, whether you're on a tram or a plane. 
+The power to ask Genie One questions travels with you, whether you're on a tram or a plane. 
 
 ---
 
