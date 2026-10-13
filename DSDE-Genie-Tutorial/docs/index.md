@@ -18,4 +18,4 @@ Genie handles the analysis and writes the SQL, pipeline, job, and app code as yo
 
 ---
 
-_Author: Frank Munz · Updated 2026-09-18_
+_Author: Frank Munz · Updated 2026-10-13_

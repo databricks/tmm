@@ -90,6 +90,7 @@ Canonical row count set to **696 million** across all pages.
 - Added `docs/55-mobile.md` ("6. Databricks Genie One on mobile"): install the Genie mobile app, sign in, and run the cruise-altitude prompt from a phone (sawtooth histogram at standardized flight levels). Screenshots `55-mobile-qr.png`, `55-mobile-prompt.png`, `55-mobile-result.png`.
 - Inserted into the gap after the Lakeflow Job; renumbered downstream steps: Databricks App 6 → 7, OpenSharing 7 → 8, Wrap-up 8 → 9 (H1s, nav, agenda, TOC, TL;DR, wrap-up recap "eight steps", prev/next links, `code/app` and `code/opensharing` README titles). No files renamed.
 - Style pass on the new page to match the other modules: "Beyond the Basics" bullets use the `— … Use it when …` pattern; cruise-altitude callback links to the EDA step; recap no longer claims the SQL is shown.
+- Published 2026-10-13: merged to `main`; bumped touched pages' footers to 2026-10-13.
 
 ## 2026-09-15 — Structural: split the pipeline module into Pipeline (4) + Lakeflow Job (5)
 

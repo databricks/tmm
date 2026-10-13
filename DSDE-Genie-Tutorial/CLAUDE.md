@@ -1,6 +1,6 @@
 # CLAUDE.md — DSDE Genie Tutorial
 
-> **Last updated: 2026-09-28**
+> **Last updated: 2026-10-13**
 > When you load this file, compare that date to today. If it is **more than 30 days old**,
 > remind Frank that this CLAUDE.md may be stale and offer to refresh it. Bump the date
 > whenever you meaningfully change this file.
@@ -66,8 +66,6 @@ Pipeline → Genie Code for a Lakeflow Job → Genie One on mobile → Genie Cod
 
 - This folder lives inside the `tmm` repo (`/Users/frank.munz/tmm`). **Commit directly to
   `main`; do not branch** — branch pushes trip a pre-existing secret-scan false positive.
-  Never bypass the secret hook. One-off exception: the Genie One mobile module was staged on the
-  remote branch `genie-one-mobile` (2026-09-28) and is merged to `main` on publish day; see
-  `PENDING-genie-one-mobile.md` (delete that file and this note in the publish commit).
+  Never bypass the secret hook.
 - Preview docs locally with `mkdocs serve` (deps in `requirements.txt`).
 - Open TODOs (see `CHANGELOG.md`): add missing screenshot `docs/assets/70-opensharing.png`.

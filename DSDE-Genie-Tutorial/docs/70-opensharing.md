@@ -124,4 +124,4 @@ For large scans, change your architecture to Spark. Then swap `load_as_pandas` f
 
 ---
 
-_Author: Frank Munz · Updated 2026-09-18_
+_Author: Frank Munz · Updated 2026-10-13_

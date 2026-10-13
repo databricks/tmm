@@ -60,4 +60,4 @@ You put Genie One in your pocket: installed the mobile app, signed in, and ran a
 
 ---
 
-_Author: Frank Munz · Updated 2026-09-28_
+_Author: Frank Munz · Updated 2026-10-13_

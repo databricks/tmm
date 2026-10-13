@@ -58,4 +58,4 @@ You have a live, governed **Databricks App**: built on a gold table from your SD
 
 ---
 
-_Author: Frank Munz · Updated 2026-09-18_
+_Author: Frank Munz · Updated 2026-10-13_
