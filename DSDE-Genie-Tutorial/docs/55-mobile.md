@@ -15,7 +15,7 @@ The app runs on **iOS** (iPhone and iPad) and **Android** (all device sizes). In
 
 When you open the app, sign in one of two ways:
 
-- **Log in** with your Databricks credentials. The app finds your account, then signs you in to your workspace.
+- **Log in** with your Databricks credentials for Free Edition. The app finds your account, then signs you in to your workspace.
 - **Enter workspace link**: type your workspace URL to sign in directly. Use this when the standard login doesn't work for your account, for example when account SSO or email verification is missing.
 
 ## Step-by-step guide
@@ -48,7 +48,11 @@ A few things worth knowing once the basics work:
 
 ## Recap
 
-You put Genie One in your pocket: installed the mobile app, signed in, and ran a natural-language query against `marketplace.opensky.state_vectors` from your phone. You got back a chart that exposes the standardized flight levels, under the same governance as the web. The analysis travels with you.
+You put Genie One in your pocket: installed the mobile app, signed in, and ran a natural-language query against `marketplace.opensky.state_vectors` from your phone. You got back a chart that exposes the standardized flight levels, under the same governance as the web. 
+
+Here, you queried IoT telemetry, but every day tens of thousands of business users open Genie One on their commute to check their company's strategic financial data. 
+
+The analysis travels with you, whether you're on a tram or a plane. 
 
 ---
 
