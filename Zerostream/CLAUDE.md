@@ -40,7 +40,7 @@ The backend has **two separate views with different data sources**:
 
 ## Quick Start
 
-1. **Setup Database** ([ZEROBUS_SETUP_GUIDE.md](ZEROBUS_SETUP_GUIDE.md)):
+1. **Setup Database** ([ZEROBUS_SETUP_GUIDE.md](docs/ZEROBUS_SETUP_GUIDE.md)):
    - Create Unity Catalog (catalog.schema.table)
    - Create service principal
    - Configure SQL warehouse
@@ -279,7 +279,7 @@ The backend provides distinct views:
 
 ## Troubleshooting
 
-See [DEBUG_GUIDE.md](DEBUG_GUIDE.md) for common issues.
+See [DEBUG_GUIDE.md](docs/DEBUG_GUIDE.md) for common issues.
 
 ### ZeroBus Errors
 
@@ -292,7 +292,7 @@ See [DEBUG_GUIDE.md](DEBUG_GUIDE.md) for common issues.
 - Use `int(dt.timestamp() * 1_000_000)`
 
 **Backend shows "Table not found"**:
-- Run setup SQL from ZEROBUS_SETUP_GUIDE.md
+- Run setup SQL from docs/ZEROBUS_SETUP_GUIDE.md
 - Verify catalog/schema/table names in config.env
 
 ### Lakebase Autoscaling Errors
