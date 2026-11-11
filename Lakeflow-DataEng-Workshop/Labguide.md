@@ -1,21 +1,21 @@
 # AI-powered Data Engineering with Lakeflow
 
-**Version 2.1 - Sept 2026**
+**Version 2.2 - Nov 2026**
 
 👋 Welcome. This is the lab guide for the **quarterly Databricks Data Engineering workshop**. We're excited to have you here!
 
-Over the next 90 minutes we'll work through the core data engineering knowledge every data engineer should have — **ingestion, transformation, and orchestration** — using the core technologies, newest Databricks products and OSS frameworks listed in the labs.
+Over the next 90 minutes, we'll explore three core data engineering skills — **ingestion, transformation, and orchestration** — using Databricks products and open-source frameworks.
 
 Take your time, ask questions, and don't worry about breaking anything — your schema is yours alone. Let's build. 🚀
 
-> **Audience**: entry- to mid-level data engineers, with little or some prior Databricks knowledge. The environment is already set up for you — you have an empty workspace in an account with a pre-assigned schema `de_workshop.USER_ID`.
-> This is an instructor-led course. Not a DIY manual. 
+> **Audience**: entry- to mid-level data engineers, with little or no prior Databricks knowledge. The environment is already set up for you — you have an empty workspace in an account with a pre-assigned schema `de_workshop.USER_ID`.
+> This is an instructor-led course, not a DIY manual.
 
 ### Overview
 
-This Labguide is available [here](https://github.com/databricks/tmm/blob/main/Lakeflow-DataEng-Workshop/Labguide.md). 
+This lab guide is available [here](https://github.com/databricks/tmm/blob/main/Lakeflow-DataEng-Workshop/Labguide.md).
 
-- **Lab 1 — Manually code an SDP pipeline**: streaming table in **Python**, materialized view in **SQL** with three data-quality expectations wired in from the start. Reference files in [`labs/01-SDP/`](./labs/01-SDP/).
+- **Lab 1 — Manually code a Lakeflow SDP pipeline and job**: streaming table in **Python**, materialized view in **SQL** with three data-quality expectations wired in from the start. Reference files in [`labs/01-SDP/`](./labs/01-SDP/).
 - **Lab 2 — Learn how to use Genie Code as a data engineer**: all-**SQL** pipeline (AutoCDC + Auto Loader + join gold MV), produced from a single Genie Code prompt — and verified by you before it runs. Reference files in [`labs/02-GenieCode/`](./labs/02-GenieCode/).
 - **Lab 3 — Work with Zerobus Ingest to push IoT data** *(live instructor demo; attendees may follow along)*: one `ingest_record(...)` call via the official `databricks-zerobus-ingest-sdk` (gRPC) lands a row in `ops_data.zerobus.measurements`, with credentials fetched from a shared UC config table. Reference files in [`labs/03-Zerobus/`](./labs/03-Zerobus/).
 - **Lab 4 — Real-Time Mode for SDP** *(optional)*: deploy a continuous pipeline running in Real-Time Mode (RTM), watch sub-second latency aggregates land in the driver console, and read the engine latency from the driver logs. Reference bundle in [`labs/04-SDP-RTM/`](./labs/04-SDP-RTM/).
@@ -39,7 +39,7 @@ Throughout this guide, replace `USER_ID` with that exact value. Your pre-assigne
 
 ### Substitutions
 
-Three placeholders show up throughout — resolve them once here, then paste blocks run as-is.
+The table below lists the substitutions and fixed catalog names used throughout this guide. Resolve the substitutions before copying and running the code blocks.
 
 | Placeholder | What to use |
 |---|---|
@@ -50,7 +50,7 @@ Three placeholders show up throughout — resolve them once here, then paste blo
 
 ## One-time setup — Clone this workshop repo
 
-Clone this repo into your Workspace once at the start. You get this lab guide and all the labs locally. We use **sparse checkout** so you only pull the workshop subdirectory, not the entire `databricks/tmm` repo.
+At the start of the workshop, clone this repository into your Databricks workspace. This makes the lab guide and all lab files available in your workspace. We use **sparse checkout** so you only pull the workshop subdirectory, not the entire `databricks/tmm` repo.
 
 1. Workspace sidebar → **Workspace** → **Create** → **Git folder**.
 2. In the **Create Git folder** dialog:
@@ -62,13 +62,13 @@ Clone this repo into your Workspace once at the start. You get this lab guide an
 3. Click **Create Git folder**. The `Lakeflow-DataEng-Workshop/` subdirectory clones into `de-workshop-repo/` in your workspace.
 
 
-Most of those lab folders have reference files only. Some folders include notebooks that you can run directly, as described below.
+Most of the lab folders contain reference files only. Some folders include notebooks that you can run directly, as described below.
 
 
-## Lab 1 — Manually code a Lakeflow SDP pipeline and Job
+## Lab 1 — Manually code a Lakeflow SDP pipeline and job
 
 
-In this lab you'll hand-code an end-to-end SDP pipeline: one **streaming table** in Python over the well-known Bakehouse sample dataset which is available in every Databricks workspace, and a **materialized view** implemented in SQL with three data quality constraints. One pipeline. Two files only. 
+In this lab you'll hand-code an end-to-end SDP pipeline: one **streaming table** in Python over the well-known Bakehouse sample dataset, which is available in every Databricks workspace, and a **materialized view** implemented in SQL with three data-quality constraints. One pipeline. Two files only.
 
 ### Set up the pipeline in the Lakeflow Pipelines Editor
 
@@ -76,10 +76,10 @@ Before you write a single line, create the pipeline that hosts Steps 1a and 1b:
 
 1. Workspace sidebar → **New** → **ETL pipeline**. The **Lakeflow Pipelines Editor** opens with a default name `New Pipeline <date> <time>`.
 
-2. **Update pipeline name and root folder** Click the name of the pipeline, next to the pipeline symbol at the top of the editor → rename to `pipeline_USER_ID`. Note you must have a unique pipeline name, this is why we use the USER_ID here. If asked to rename the root folder that was automatically created under your home, confirm that too. 
-3. **Update catalog/schema** Right of the pipeline name, click the catalog/schema selector (it opens the **Default location** dialog). Set it to the following values:
+2. **Update pipeline name and root folder:** Click the name of the pipeline, next to the pipeline symbol at the top of the editor → rename to `pipeline_USER_ID`. Note that the pipeline name must be unique; that's why we use `USER_ID` here. If asked to rename the root folder that was automatically created under your home, confirm that too.
+3. **Update catalog/schema:** To the right of the pipeline name, click the catalog/schema selector (it opens the **Default location** dialog). Set it to the following values:
    - **Default catalog**: `de_workshop`
-   - **Default schema**: copy your `USER_ID` and click **Save**. Make sure to use your correct schema name, since it is writable for you but other schemas aren't writable. **So the pipeline will only run if you select the correct schema.** 
+   - **Default schema**: enter your `USER_ID` and click **Save**. Make sure to use your correct schema name, since it is writable for you but other schemas aren't writable. **So the pipeline will only run if you select the correct schema.**
    
    The dropdown sometimes only offers *"Create schema"* even though your `USER_ID` schema already exists — ignore that, the typed/copied literal is accepted. 
 
@@ -90,7 +90,7 @@ Before you write a single line, create the pipeline that hosts Steps 1a and 1b:
 
 Use the **copy** button at the top-right of the code block to grab the snippet, then paste it into the editor. 
 
-(If you ever see an `unexpected indent` error, it's because the editor auto-indented an empty leading line; use Genie's /fix to correct the code).
+(If you ever see an `unexpected indent` error, it's because the editor auto-indented an empty leading line; use Genie Code's `/fix` to correct the code.)
 
 ```python
 from pyspark import pipelines as dp
@@ -107,11 +107,11 @@ def sales_transactions():
 
 Rename the file to `sales_transactions.py` by clicking the file name in the **tab bar** (the title preceding the editor cell) and typing the new name.
 
-Click **Run file**. Select pipeline graph at the bottom, and you will see one node `sales_transactions` (~3,333 rows) with its source Delta table. **Run file** only runs this transformation, not the whole pipeline, which typically has several transformations. 
+Click **Run file**. Select the pipeline graph at the bottom, and you will see one node `sales_transactions` (~3,333 rows) with its source Delta table. **Run file** only runs this transformation, not the whole pipeline, which typically has several transformations.
 
 ### Step 1b — materialized view with data-quality expectations (SQL, copy and paste)
 
-Click **Create pipeline asset** (the "+" in the asset browser) → **Transformation** → name it `sales_stats`, language **SQL** → **Create**. Paste the block below; it's the materialized view with three expectations wired in:
+Click **Create pipeline asset** (the "+" in the asset browser) → **Transformation**. The editor immediately creates a timestamped Python file; there is no name/language dialog. Rename the file to `sales_stats.sql` by clicking its name in the **tab bar**; the `.sql` extension switches the editor to SQL. Then paste the block below — the materialized view with three expectations wired in:
 
 ```sql
 CREATE OR REFRESH MATERIALIZED VIEW sales_stats (
@@ -144,7 +144,7 @@ Click **Run pipeline**; this runs the entire pipeline. The DAG now shows `sales_
 
 SDP has **one** constraint syntax — `CONSTRAINT <name> EXPECT (<predicate>)` — and **three** violation behaviors: *log* (default), *drop row*, and *fail update*. For didactic reasons, we are wiring all three into one data set.
 
-You might notice, that when running the pipeline the streaming table is not updated again (because it was run before) since it appends new data only once. You could run the pipeline with a full refresh to see this data loaded again or explicitly run that file again. 
+You might notice that the streaming table isn't updated again when you run the whole pipeline: a streaming table processes each source row only once, and **Run file** already processed them. Run the pipeline with a full refresh to load the data again, or explicitly run that file again.
 
 **Key teaching points**
 - Python for the streaming table 
@@ -156,29 +156,28 @@ You might notice, that when running the pipeline the streaming table is not upda
 
 A materialized view is either *incrementally maintained* (only the rows that changed are reprocessed) or *fully recomputed* on refresh, depending on whether the SDP planner can rewrite the query as an incremental update. Simple projections, filters, and many aggregations qualify for incremental maintenance; `COUNT(DISTINCT …)` — which `sales_stats` uses twice — typically forces a **COMPLETE refresh** because distinct tracking isn't incrementally maintainable without a lot more state.
 
-See Tables / Expectations for the details if a table is incrementalized or not. 
+See the **Tables / Expectations** panel to check whether a table is incrementally maintained.
 
-### Step 1c (Optional) — use Lakeflow Jobs to create a Workflow with SDP and a downstream action
+### Step 1c (Optional) — Use Lakeflow Jobs to create a workflow with SDP and a downstream action
 
 Wrap the SDP pipeline and a downstream consumer notebook into a two-task job:
 
-1. Workspace sidebar → **Jobs & Pipelines** → **Create** → **Job**. 
-* Name it `workflow_USER_ID`.
+1. Workspace sidebar → **Jobs & Pipelines** → **Create** → **Job**. Click the default job name at the top and rename it to `workflow_USER_ID`.
 2. **Task 1**
-* Select **Add another task type** and **ETL Pipeline**
-    * Task name **my_pipeline**
-    * Type **Pipeline**
-    * For **Pipeline** select your `pipeline_USER_ID` from Lab 1. 
-    * Save Task
+   - Select **Add another task type** and choose **ETL Pipeline**.
+   - Task name: `my_pipeline`.
+   - Type: **Pipeline**.
+   - For **Pipeline**, select your `pipeline_USER_ID` from Lab 1.
+   - Click **Save**.
 3. **Task 2**
-    * Click on **Add task** select Notebook. 
-    * Task name: `downstream`. 
-    * Type **Notebook**
-    * path `labs/01-SDP/downstream.py`  
-    * Under **Depends on**, select `pipeline`.
-4. Click **Run now**. 
-* Verify the job executes. The pipeline runs first; on success the notebook fires and prints to its task log.
-* Check out the possible triggers for a job
+   - Click **Add a new task** (+) and select **Notebook**.
+   - Task name: `downstream`.
+   - Type: **Notebook**.
+   - For **Path**, use the **Select Notebook** file browser. Starting in your home folder, browse to `de-workshop-repo/Lakeflow-DataEng-Workshop/labs/01-SDP/downstream`. The picker shows `downstream` without the `.py` extension.
+   - Under **Depends on**, ensure `my_pipeline` is selected; it is normally pre-filled.
+4. Click **Run now**.
+   - Verify that the job executes. The pipeline runs first; on success, the notebook fires and prints to its task log.
+   - Check out the possible triggers for a job.
 
 
 ### Lab 1 take-away
@@ -188,7 +187,7 @@ In a few lines, you've built a streaming table ingest of bakehouse transactions,
 
 The same shape, written without SDP, would be a streaming job, a batch job, and a scheduler — three separate systems to wire together and keep in sync. Here it lives in one pipeline, expressed as the *target table* you want, and the platform owns the rest.
 
-Running the pipeline with an additional downstream action as a multi-step workflow gave you a production ready job that can be invoked by any Job trigger. 
+Running the pipeline with an additional downstream action as a multi-step workflow gave you a production-ready job that can be invoked by any job trigger.
 
 
 ![Lab 1 — completed pipeline run in the Lakeflow Pipelines Editor: streaming table sales_transactions (3.3K output records) feeds materialized view sales_stats (6 output records, 3 expectations, 100% written, 0% dropped)](https://raw.githubusercontent.com/databricks/tmm/main/Lakeflow-DataEng-Workshop/misc/images/lab1-ui.png)
@@ -197,9 +196,9 @@ Running the pipeline with an additional downstream action as a multi-step workfl
 
 ---
 
-## Lab 2 — learn how to use Genie Code as a data engineer
+## Lab 2 — Learn how to use Genie Code as a data engineer
 
-In Lab 1 you typed every line. Lab 2 you type *one* — the prompt. Genie Code is the AI-powered tooling that builds an entire SDP pipeline. It ingests from three different sources in SQL, creates JOINs and a gold table:
+In Lab 1 you typed every line. In Lab 2 you type *one* — the prompt. Genie Code is the AI-powered tooling that builds an entire SDP pipeline. It ingests from three different sources in SQL, creates JOINs and a gold table:
 * AutoCDC on the `booking_updates` CDC feed
 * Auto Loader on a JSON volume of fraud markers for certain bookings
 * a plain streaming table on payments
@@ -218,11 +217,11 @@ The skill this lab teaches isn't typing SQL. It's catching the draft that *looks
 
 1. Upper-right of the workspace → click **Genie Code**. The side panel opens.
 2. Genie Code always runs as an agent — there is no Agent/Chat toggle. The selector at the bottom of the pane sets response **quality** (**Auto** = highest quality, **Low** = lower cost); leave it on **Auto**.
-3. Genie Code **auto-approves safe actions** (such as writing the SQL files) and only prompts before it *runs* code, showing **Allow** / **Skip** buttons plus an **Ask every time** dropdown. Reviewing the generated SQL *before* you let the pipeline run is the whole point of this lab — read each file, then **Allow** the run.
+3. When the plan card appears, check its approval dropdown. **Auto-approve** may be selected by default, allowing Genie Code to generate files and run the pipeline without an **Allow** / **Skip** prompt. For the intended review-first flow, select **Ask every time** before approving execution. Reviewing the generated SQL *before* you let the pipeline run is the whole point of this lab — read each file, then **Allow** the run. Genie Code may also leave an **Accept all / Reject all** review bar for the generated files; review the changes before accepting them.
 
 ### The prompt
 
-Paste the following into Genie Code Agent:
+Paste the following into Genie Code:
 
 ```text
 build a SQL pipeline with SDP with catalog de_workshop and schema USER_ID that answers the question:
@@ -244,7 +243,7 @@ This prompt is deliberately higher-level — it states the *business question* a
 
 ### Verify — the step that matters most
 
-Because the prompt is rather high-level, Genie Code has room to make choices. **Don't worry if your solution looks slightly different, Genie Code is continuously improved.**
+Because the prompt is rather high-level, Genie Code has room to make choices. **Don't worry if your solution looks slightly different: Genie Code is continually being improved.**
 
 Before you approve the pipeline **run**, open each generated file and check it against the reference SQL below. Expected properties of a good generation:
 
@@ -259,7 +258,7 @@ Note that AutoCDC with SCD1 is a time-lapse, not a scrapbook. Every update colla
 
 **`SCD TYPE 1` vs `SCD TYPE 2`.** Type 1 keeps only the current row per `booking_id` — every update overwrites in place, no history. Type 2 keeps every historical version with `__START_AT` / `__END_AT` columns so you can query *as of* a past time. The lab uses Type 1 because the gold question asks about current state.
 
-> **Two runs, two approvals.** Genie Code first does a **dry run** (validation only — it shows as completed but creates no tables), then prompts again to run the real **pipeline update** that materializes the tables and produces row counts. Approve **both**; if you stop after the dry run, your schema stays empty and there are no row counts to report.
+> **Dry run versus pipeline update.** Genie Code may perform a validation-only **dry run** followed by a separate **pipeline update**, or combine validation and execution into one update. The number of approval prompts depends on the approval mode, and a dry run may not appear as a separate update in the pipeline's update history. Confirm that a non-validation update completed and that the tables and row counts exist; do not assume there will be two runs or two approval prompts.
 
 ### Ask Genie Code a follow-up
 
@@ -273,21 +272,21 @@ Explain the data flow in this pipeline end-to-end. Which node is incrementally m
 
 ![Lab 2 — Genie Code generated pipeline with bronze (bookings, fraud_flags, payments), silver (bookings_with_fraud) and gold (fraud_by_party_and_method) layers in the Lakeflow Pipelines Editor](https://raw.githubusercontent.com/databricks/tmm/main/Lakeflow-DataEng-Workshop/misc/images/lab2-dag.png)
 
-The Lakeflow Pipelines Editor shows Genie Code's plan on the right, the generated SQL in the centre, and the resolved DAG with row counts at the bottom — three bronze streaming tables, one silver streaming table, and a gold materialized view. Use the row counts as your sanity check against the [Verify](#verify--the-step-that-matters-most) section.
+The Lakeflow Pipelines Editor shows Genie Code's plan on the right, the generated SQL in the center, and the resolved DAG with row counts at the bottom — three bronze streaming tables, one silver streaming table, and a gold materialized view. Use the row counts as your sanity check against the [Verify](#verify--the-step-that-matters-most) section.
 
 ---
 
 ## Lab 3 — Work with Zerobus Ingest to push IoT data
 
-Lab 3 flips the script: until now you ingested data that was available to you (sample tables, a JSON volume, a CDC stream). Now **you** are the IoT producer, emitting IoTs events to Zerobus Ingest which stores data in a Delta table in the Lakehouse.
+Lab 3 flips the script: until now you ingested data that was available to you (sample tables, a JSON volume, a CDC stream). Now **you** are the IoT producer, emitting IoT events to Zerobus Ingest, which stores data in a Delta table in the Lakehouse.
 
 **What's already provisioned for you:**
 
 - **Zerobus table** — a Delta table `ops_data.zerobus.measurements` (`id STRING, city STRING, temperature FLOAT, comment STRING`). Every event lands here. The table lives in the shared `ops_data` catalog (separate from your attendee catalog `de_workshop`) so attendee schemas and shared ops assets stay cleanly governed.
 - **Producer identity** — a service principal `workshop-zerobus-sp` with `USE CATALOG` on `ops_data`, `USE SCHEMA` on `ops_data.zerobus`, and `MODIFY + SELECT` on that one table. The SDK authenticates as this SP from your notebook (the full UC chain is required for the OAuth `authorization_details` payload).
-- **Config table** — This is only required to execute the lab. Typically these values are available in your IoT producer. We use the table `ops_data.zerobus.config`, a single row holding `client_id`, `client_secret`, `workspace_url`, `workspace_id`, and `zerobus_endpoint`. The notebook (IoT producer) reads its config data from here.
+- **Config table** — this is only required to execute the lab. Typically these values are available in your IoT producer. We use the table `ops_data.zerobus.config`, a single row holding `client_id`, `client_secret`, `workspace_url`, `workspace_id`, and `zerobus_endpoint`. The notebook (IoT producer) reads its config data from here.
 
-**Overview of what you do:** open the notebook, set three parameters (city, temperature, comment), use the official **Databricks Zerobus Ingest SDK**, which opens a gRPC stream, ingests one event with a fresh UUID, flushes for durability, closes. 
+**Overview of what you do:** Open the notebook, set three parameters (city, temperature, and comment), and submit an event using the official **Databricks Zerobus Ingest SDK**. The SDK opens a gRPC stream, ingests the event with a fresh UUID, flushes the stream for durability, and closes it.
 
 Then you verify the event landed — first inside the notebook, then from a SQL warehouse as a downstream consumer.
 
@@ -314,9 +313,9 @@ The first cell installs the Zerobus Ingest SDK via `%pip install` and restarts P
 - **Temperature (°C)** — any float (e.g. `21.5`)
 - **Comment (optional)** — a free-form note (e.g. `Hello Zerobus`); leave the default or blank if you don't care.
 
-### Step 3c — run the **Submit** cell
+### Step 3c — Run the **Submit** cell
 
-That cell calls `submit_iot_record(CITY, TEMPERATURE, COMMENT)`, which the notebook's plumbing cell defines. The plumbing cell is marked **⛔ DO NOT MODIFY** 
+That cell calls `submit_iot_record(CITY, TEMPERATURE, COMMENT)`, which the notebook's plumbing cell defines. The plumbing cell is marked **⛔ DO NOT MODIFY**.
 
 ```python
 sdk = ZerobusSdk(_SERVER_ENDPOINT, unity_catalog_url=_WORKSPACE_URL)
@@ -358,7 +357,7 @@ You should see every attendee's row, including your own. In a real production de
 ### What to take away
 
 - **Direct-to-Delta ingest** — one `ingest_record` call, one row, no intermediate bus. The SDK holds a gRPC stream with durability ACKs, so it scales from a single-record demo like this to high-throughput production producers.
-- **Fine-grained OAuth — like a hotel keycard, not a master key.** The SDK mints tokens scoped via `authorization_details` to one table: even if the SP's client_secret leaked, the only thing it could do is append rows to `measurements`. No `SELECT *`, no `DELETE`, no `DROP`.
+- **Table-scoped OAuth — like a hotel keycard, not a master key.** The SDK mints tokens scoped via `authorization_details` to the `measurements` table. That limits the token's scope, but it does not make the shared service principal append-only: the workshop grants it `MODIFY + SELECT`, and attendees can read its client secret from `ops_data.zerobus.config`. Treat this shared-secret pattern as a workshop convenience, not a production credential-handling design.
 - **SDK over REST** — the `databricks-zerobus-ingest-sdk` uses gRPC with a persistent stream and durability ACKs (higher throughput, simpler retries) and handles all the OAuth + `authorization_details` plumbing internally. The Zerobus REST API is available too.
 
 > Reference notebook: [`labs/03-Zerobus/send_city_iot_data.py`](./labs/03-Zerobus/send_city_iot_data.py).
@@ -373,7 +372,7 @@ Standard SDP runs as micro-batches. The new **Real-Time Mode (RTM)** pushes end-
 
 **Public Preview:** Currently, RTM for Lakeflow SDP requires the SDP **PREVIEW** channel.
 
-_This lab assumes that the latest update with the syntax used in the pipeline code is rolled out (end of May 2026)._
+_This lab requires the SDP release from the end of May 2026 that supports the syntax used in the pipeline code._
 
 ### The three config steps to enable RTM
 
@@ -454,11 +453,11 @@ def temperature_rtm_flow():
 ```
 
 
-### Step 4c — deploy and run from the Workspace UI
+### Step 4c — Deploy and run from the Workspace UI
 
-1. Open the `labs/04-SDP-RTM/` folder in your Workspace. Because `databricks.yml` is present, the **Deployments** icon (🚀) appears in the left pane.
-2. Click **Deployments** → pick the **`prod`** target (the only one defined in this bundle) → **Deploy**.
-3. After validation and deployment finish, open the deployed `sdp-rtm-rate-source` pipeline. **Note:** because the pipeline is `continuous: true`, the deploy already auto-started the first update — there's nothing to click. 
+1. Open the `labs/04-SDP-RTM/` folder in your Workspace and click **Open in bundle editor**. This opens a new browser tab with the **Deployments** icon (🚀) in the left pane.
+2. Click **Deployments** → pick the **`prod`** target (the only one defined in this bundle) → **Deploy**. Confirm the **Deploy to prod** dialog, which lists the pipeline resource to be created.
+3. After validation and deployment finish, open the deployed `sdp-rtm-rate-source` pipeline's monitoring page. **Note:** because the pipeline is `continuous: true`, the deploy already auto-started the first update — there's nothing to click.
 
 If you do click **Run** but the pipeline is running already, you might see *"An active update already exists for pipeline …"*, which is expected. Just leave the existing update running.
 
@@ -466,8 +465,8 @@ If you do click **Run** but the pipeline is running already, you might see *"An 
 
 Open the driver log to confirm the pipeline is producing output:
 
-1. In the Lakeflow Pipelines Editor, with your `sdp-rtm-rate-source` pipeline open, click **Pipeline compute** at the top.
-2. In the compute pane, click **Driver logs**.
+1. Open the deployed `sdp-rtm-rate-source` pipeline's monitoring page. Do not click **Edit pipeline**: the `prod` target deploys in production mode, so the bundle-managed pipeline is locked for direct editing.
+2. In the right-hand **Compute** panel, click **Logs**, then open **Driver logs**.
 
 **Console sink batch tables — the windowed aggregate landing in the sink.** These are visual confirmation that data is flowing through the RTM flow:
 
@@ -513,12 +512,12 @@ You can optionally register a `StreamingQueryListener` to display the [latency o
 
 **Why this matters.** Latencies in this range are exactly what sometimes pushed teams onto a separate, dedicated, low-latency engine such as Apache Flink running alongside Spark. Now that Real-Time Mode brings Spark Structured Streaming to millisecond-scale end-to-end latencies, that separate engine is no longer required for these operational workloads — a single Spark Declarative Pipeline handles both high-throughput batch and sub-second streaming on one engine, with one codebase to maintain instead of a second streaming stack.
 
-### Step 4e — Stop the pipeline when you're done and remove it 
+### Step 4e — Stop or remove the pipeline when you're done
 
 The pipeline is **continuous and serverless**, so it keeps consuming compute until you stop it. Always stop it when you've finished observing latency:
 
-- In the Lakeflow Pipelines Editor with the pipeline open, click **Stop** at the top, **or**
-- Remove the deployment using the same UI with the rocket symbol that was used for deployment. 
+- On the pipeline monitoring page, click **Stop**, **or**
+- Remove the deployment from the bundle editor's **Deployments** pane.
 
 
 ---
@@ -531,13 +530,15 @@ A modern data application lives in more than one place — a pipeline, a job, a 
 
 You'll sparse-clone `databricks/tmm/Lakeflow-Gourmet-Pipeline` into your workspace, retarget two variables, and deploy and run it. 
 
-The Gourmet Pipeline lab showcases a global restaurant chain that is seeking AI insights based on live data for their marketing campaigns
- — SQL medallion architecture 
- - SDP pipeline, `gourmet-workflow` 
- - job with `ai_query` enrichment, if/then, SDP, notebooks etc. 
- - AI/BI dashboard 
- -  all deployed entirely from the **Workspace UI**. 
- 
+The Gourmet Pipeline lab showcases a global restaurant chain seeking AI insights from live data for its marketing campaigns. It includes:
+
+- A SQL medallion architecture
+- An SDP pipeline, `gourmet-workflow`
+- A job with `ai_query` enrichment, if/then logic, SDP, notebooks, and more
+- An AI/BI dashboard
+
+All of it is deployed from the **Workspace UI**.
+
  
 ### Prerequisites
 
@@ -634,4 +635,4 @@ To use these, install the Databricks CLI and authenticate once (`databricks auth
 * Complete [Lakeflow Demo: From messy sales data to AI insights](https://www.databricks.com/resources/demos/videos/lakeflow-action-gourmet-pipeline-demo-daiwt) (source for Lab 5)
 * Getting Started with [OSS Apache SDP, VS Code](https://github.com/databricks/tmm/tree/main/OSS-SDP-OpenSkyNetwork)
 * RTM demo to watch: [Air Traffic Control with Apache Spark Structured Streaming — Real-Time Mode](https://www.databricks.com/resources/demos/videos/air-traffic-control-with-apache-spark-structured-streaming-real-time-mode)
-* Looking for the next Data Engineering workshop, or other [Databricks workshops](https://www.databricks.com/events?event_type=workshop&region=all) for DBSQL, AI, Unity Catalog
+* Looking for the next Data Engineering workshop? See other [Databricks workshops](https://www.databricks.com/events?event_type=workshop&region=all) for DBSQL, AI, and Unity Catalog.
