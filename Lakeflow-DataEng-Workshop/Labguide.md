@@ -286,6 +286,8 @@ Lab 3 flips the script: until now you ingested data that was available to you (s
 - **Producer identity** — a service principal `workshop-zerobus-sp` with `USE CATALOG` on `ops_data`, `USE SCHEMA` on `ops_data.zerobus`, and `MODIFY + SELECT` on that one table. The SDK authenticates as this SP from your notebook (the full UC chain is required for the OAuth `authorization_details` payload).
 - **Config table** — this is only required to execute the lab. Typically these values are available in your IoT producer. We use the table `ops_data.zerobus.config`, a single row holding `client_id`, `client_secret`, `workspace_url`, `workspace_id`, and `zerobus_endpoint`. The notebook (IoT producer) reads its config data from here.
 
+![Zerobus Ingest service principal](https://raw.githubusercontent.com/databricks/tmm/main/Lakeflow-DataEng-Workshop/misc/images/lab3-service-principal.png)
+
 **Overview of what you do:** Open the notebook, set three parameters (city, temperature, and comment), and submit an event using the official **Databricks Zerobus Ingest SDK**. The SDK opens a gRPC stream, ingests the event with a fresh UUID, flushes the stream for durability, and closes it.
 
 Then you verify the event landed — first inside the notebook, then from a SQL warehouse as a downstream consumer.
@@ -631,6 +633,8 @@ To use these, install the Databricks CLI and authenticate once (`databricks auth
 
 ## References and other demos
 
+
+* [Genie Tutorial for Data Engineers](https://www.databricks.com/resources/demos/videos/genie-for-data-scientists-engineers-everybody-else)
 * [Get to know Genie Code: Lakeflow and Analytics](https://www.databricks.com/resources/demos/videos/get-know-genie-code)
 * Complete [Lakeflow Demo: From messy sales data to AI insights](https://www.databricks.com/resources/demos/videos/lakeflow-action-gourmet-pipeline-demo-daiwt) (source for Lab 5)
 * Getting Started with [OSS Apache SDP, VS Code](https://github.com/databricks/tmm/tree/main/OSS-SDP-OpenSkyNetwork)
