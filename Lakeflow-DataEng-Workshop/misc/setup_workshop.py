@@ -54,7 +54,7 @@ print(f"Admin check passed: {_me.user_name} is a workspace admin.")
 dbutils.widgets.text("catalog", "de_workshop", "Workshop catalog")
 dbutils.widgets.text("fraud_pct", "3.0", "% of bookings to flag as fraud")
 dbutils.widgets.text("num_files", "5", "Number of JSONL files to split the seed across")
-dbutils.widgets.text("zerobus_region", "us-west-2", "Zerobus region (e.g. us-west-2) — set to blank to skip Part B")
+dbutils.widgets.text("zerobus_region", "auto", "auto = detect from metastore, blank = skip Part B, or a region to override")
 
 import re
 
@@ -92,10 +92,16 @@ if not 0.0 <= FRAUD_PCT <= 100.0:
     raise ValueError("Set 'fraud_pct' between 0 and 100.")
 if NUM_FILES < 1:
     raise ValueError("Set 'num_files' to at least 1.")
-if ZEROBUS_REGION and not _REGION_RE.fullmatch(ZEROBUS_REGION):
-    raise ValueError("Set 'zerobus_region' to a region-like value such as 'us-west-2', or blank to skip Part B.")
+if ZEROBUS_REGION and ZEROBUS_REGION.lower() != "auto" and not _REGION_RE.fullmatch(ZEROBUS_REGION):
+    raise ValueError("Set 'zerobus_region' to 'auto', a region such as 'us-east-1', or blank to skip Part B.")
 
-print(f"catalog={CATALOG}  ops_catalog={OPS_CATALOG}  fraud_pct={FRAUD_PCT}%  num_files={NUM_FILES}  zerobus_region={ZEROBUS_REGION or '(unset, Part B will be skipped)'}")
+# The actual region is resolved from the metastore in Part B (after the %pip restart).
+_zb_display = (
+    "(unset, Part B will be skipped)" if not ZEROBUS_REGION
+    else "auto (resolved from metastore in Part B)" if ZEROBUS_REGION.lower() == "auto"
+    else f"{ZEROBUS_REGION} (manual override, checked against metastore in Part B)"
+)
+print(f"catalog={CATALOG}  ops_catalog={OPS_CATALOG}  fraud_pct={FRAUD_PCT}%  num_files={NUM_FILES}  zerobus_region={_zb_display}")
 
 # COMMAND ----------
 
@@ -233,6 +239,12 @@ print(f"Expected ~{int(47726 * FRAUD_PCT / 100)} at {FRAUD_PCT}% of ~47,726 dist
 # MAGIC Creates the target table, a shared service principal, UC grants, a UC config table,
 # MAGIC and runs an end-to-end gRPC SDK smoke test. Skip by leaving the `zerobus_region`
 # MAGIC widget blank.
+# MAGIC
+# MAGIC The Zerobus region defaults to `auto`: it is read from `current_metastore()`
+# MAGIC (`<cloud>:<region>:<uuid>`), since a workspace's metastore is always in the workspace's region.
+# MAGIC An explicit region is accepted as an override but must match the metastore region.
+# MAGIC **Note:** widgets keep their previously saved value — if yours still shows an old region
+# MAGIC (e.g. `us-west-2`), set it to `auto` or run `dbutils.widgets.removeAll()` first.
 
 # COMMAND ----------
 
@@ -274,8 +286,52 @@ if not _CATALOG_RE.fullmatch(CATALOG):
     )
 if not _CATALOG_RE.fullmatch(OPS_CATALOG):
     raise ValueError(f"OPS_CATALOG={OPS_CATALOG!r} is not a valid UC identifier.")
-if ZEROBUS_REGION and not _REGION_RE.fullmatch(ZEROBUS_REGION):
-    raise ValueError("Set 'zerobus_region' to a region-like value such as 'us-west-2', or blank to skip Part B.")
+if ZEROBUS_REGION and ZEROBUS_REGION.lower() != "auto" and not _REGION_RE.fullmatch(ZEROBUS_REGION):
+    raise ValueError("Set 'zerobus_region' to 'auto', a region such as 'us-east-1', or blank to skip Part B.")
+
+# Resolve the Zerobus region + cloud from the workspace's metastore. A workspace can only be
+# attached to a metastore in its own region, so the metastore region IS the Zerobus region.
+def _detect_metastore_region():
+    """Return (cloud, region, source) or (None, None, None) if detection fails."""
+    try:
+        _parts = spark.sql("SELECT current_metastore()").first()[0].split(":")  # <cloud>:<region>:<uuid>
+        if len(_parts) == 3 and _parts[0] and _parts[1]:
+            return _parts[0].lower(), _parts[1].lower(), f"current_metastore() {_parts[0]}:{_parts[1]}:…"
+    except Exception as _e:
+        print(f"current_metastore() lookup failed ({_e}); falling back to metastores.summary()")
+    try:
+        from databricks.sdk import WorkspaceClient
+        _s = WorkspaceClient().metastores.summary()
+        if _s.cloud and _s.region:
+            return _s.cloud.lower(), _s.region.lower(), f"metastores.summary() {_s.cloud}:{_s.region}"
+    except Exception as _e:
+        print(f"metastores.summary() lookup failed ({_e})")
+    return None, None, None
+
+_det_cloud, _det_region, _det_src = _detect_metastore_region()
+if _det_region and not _REGION_RE.fullmatch(_det_region):
+    print(f"Detected metastore region {_det_region!r} does not look like a region; ignoring it.")
+    _det_cloud = _det_region = None
+
+if ZEROBUS_REGION.lower() == "auto":
+    if not _det_region:
+        raise RuntimeError(
+            "Could not detect the metastore region (current_metastore() and metastores.summary() both failed). "
+            "Set the 'zerobus_region' widget by hand, e.g. 'us-east-1'."
+        )
+    ZEROBUS_REGION, ZEROBUS_CLOUD = _det_region, _det_cloud
+    ZEROBUS_REGION_SOURCE = f"auto-detected from {_det_src}"
+else:
+    ZEROBUS_CLOUD = _det_cloud
+    if _det_region and _det_region != ZEROBUS_REGION.lower():
+        raise ValueError(
+            f"widget={ZEROBUS_REGION} but metastore is in {_det_region}; the Zerobus connection would fail. "
+            f"Set 'zerobus_region' to 'auto' (or '{_det_region}')."
+        )
+    ZEROBUS_REGION = ZEROBUS_REGION.lower()
+    ZEROBUS_REGION_SOURCE = "manual override" + ("" if _det_region else ", metastore region could not be verified")
+
+print(f"zerobus_region={ZEROBUS_REGION}  cloud={ZEROBUS_CLOUD}  ({ZEROBUS_REGION_SOURCE})")
 
 # COMMAND ----------
 
@@ -438,7 +494,15 @@ print(f"Grants applied to SP {SP_APPLICATION_ID}: USE CATALOG on {OPS_CATALOG}, 
 ctx              = dbutils.notebook.entry_point.getDbutils().notebook().getContext()
 WORKSPACE_URL    = "https://" + spark.conf.get("spark.databricks.workspaceUrl")
 WORKSPACE_ID     = ctx.workspaceId().getOrElse(None)
-ZEROBUS_ENDPOINT = f"https://{WORKSPACE_ID}.zerobus.{ZEROBUS_REGION}.cloud.databricks.com"
+# Zerobus host domain per cloud. Only AWS is verified; Azure/GCP formats must be checked
+# against the Zerobus docs before adding them here.
+_ZB_DOMAINS = {"aws": "cloud.databricks.com"}
+if ZEROBUS_CLOUD not in _ZB_DOMAINS:
+    raise NotImplementedError(
+        f"Zerobus endpoint for cloud={ZEROBUS_CLOUD!r} is not supported/verified in this notebook yet; "
+        f"check the Zerobus docs and extend _ZB_DOMAINS."
+    )
+ZEROBUS_ENDPOINT = f"https://{WORKSPACE_ID}.zerobus.{ZEROBUS_REGION}.{_ZB_DOMAINS[ZEROBUS_CLOUD]}"
 
 print(f"WORKSPACE_URL    = {WORKSPACE_URL}")
 print(f"WORKSPACE_ID     = {WORKSPACE_ID}")
@@ -509,6 +573,8 @@ else:
 
 # COMMAND ----------
 
+SMOKE_STATUS = "FAIL"  # flipped to PASS on the last line; any exception leaves it at FAIL
+
 import json
 import time
 import uuid
@@ -560,6 +626,7 @@ for _ in range(10):
     time.sleep(2)
 spark.sql(f"DELETE FROM {OPS_CATALOG}.zerobus.measurements WHERE id = '{_SMOKE_TEST_ID}'")
 print(f"[smoke] cleanup OK — removed row {_SMOKE_TEST_ID}")
+SMOKE_STATUS = "PASS"
 
 # COMMAND ----------
 
@@ -578,7 +645,9 @@ print(f"Config columns     : client_id, client_secret, workspace_url, workspace_
 print(f"Service principal  : {SP_DISPLAY_NAME}  (application_id: {SP_APPLICATION_ID})")
 print(f"OAuth secret expires: {SP_SECRET_EXPIRE_HUMAN}")
 print(f"Config table ACL   : `{_grant_principal or '(not granted — see warning above)'}` → SELECT")
+print(f"Zerobus region     : {ZEROBUS_REGION}  ({ZEROBUS_REGION_SOURCE})")
+print(f"Zerobus cloud      : {ZEROBUS_CLOUD}")
 print(f"Zerobus endpoint   : {ZEROBUS_ENDPOINT}")
-print(f"gRPC smoke test    : PASS")
+print(f"gRPC smoke test    : {globals().get('SMOKE_STATUS', 'NOT RUN')}")
 print(f"Attendee notebook  : labs/03-Zerobus/send_city_iot_data.py")
 print("=" * 70)
