@@ -1,4 +1,4 @@
-# 6. Databricks Genie One on mobile
+# 9. Databricks Genie One on mobile
 
 So far, all the analysis ran at a desk, but data questions come up away from it too. The **Databricks Genie mobile app** puts Genie One on your phone: ask data questions in natural language, view and interact with dashboards, and run Databricks Apps from iOS or Android, away from your laptop.
 
@@ -42,7 +42,7 @@ The tall peaks land on even thousand-foot levels (30,000 ft, 31,000 ft, 32,000 f
 
 A few things worth knowing once the basics work:
 
-- **[View and chat with dashboards](https://docs.databricks.com/aws/en/genie-one/mobile)** — open existing AI/BI dashboards optimized for mobile, then ask follow-up questions and do root-cause analysis directly inside a dashboard with **Ask Genie**. Use it when you want to interrogate a dashboard, not just read it.
+- **[View and chat with dashboards](https://docs.databricks.com/aws/en/genie-one/mobile)** — open AI/BI dashboards optimized for mobile, such as the **OpenSky Flights** [dashboard](35-dashboard.md) you built earlier, then ask follow-up questions and do root-cause analysis directly inside it with **Ask Genie**. Use it when you want to interrogate a dashboard, not just read it.
 - **[Run Databricks Apps](https://docs.databricks.com/aws/en/dev-tools/databricks-apps/)** — launch custom apps that combine analytics, AI, and workflows. Apps built with the **Databricks AppKit** are optimized for mobile rendering. Use it when you want the [app you build next](60-app.md) in your pocket too.
 - **[Scheduled tasks](https://docs.databricks.com/aws/en/genie-one/mobile)** — create and manage tasks that run on a schedule and post results to a chat thread, the same as on the web. On **iOS**, a **push notification** fires whenever a scheduled task runs. Use it when you want to know the moment a metric crosses a threshold, without opening a laptop.
 
@@ -60,8 +60,8 @@ The power to ask Genie One questions travels with you, whether you're on a tram 
 
 | ← Previous | Overview | Next → |
 |:---|:---:|---:|
-| [5. Lakeflow Job](50-job.md) | [Table of contents](index.md) | [7. Databricks App](60-app.md) |
+| [8. ML model](54-ml.md) | [Table of contents](index.md) | [10. Databricks App](60-app.md) |
 
 ---
 
-_Author: Frank Munz · Updated 2026-10-13_
+_Author: [Frank Munz](https://www.linkedin.com/in/frankmunz/) · Updated 2026-11-15_

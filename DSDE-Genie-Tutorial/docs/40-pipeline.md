@@ -1,4 +1,4 @@
-# 4. Build a Spark Declarative Pipeline with Genie Code
+# 5. Build a Spark Declarative Pipeline with Genie Code
 
 The [EDA](20-genie-eda.md) and [data-exploration](30-genie-explore.md) chapters taught you about the data and surfaced its data-quality issues. Based on those findings, you now write an ETL pipeline to clean the data for downstream use. 
 
@@ -21,7 +21,7 @@ orchestration, incremental refresh, and data-quality enforcement. You generate t
    While there are cleverer ways to subsample a dataset, we deliberately go the easy way here: to make this more suitable for Databricks Free Edition, you reduce the amount of data ingested to the flights between 12:00 and 12:15. We want to keep the prompt short here, but feel free to add more requirements regarding missing data values from the previous EDA step 
 
    ```text
-   Create an SDP pipeline to process the OpenSky data from marketplace.opensky with data-quality constraints 
+   Create an SDP pipeline named opensky_pipeline to process the OpenSky data from marketplace.opensky with data-quality constraints 
    based on the findings above. Create a separate gold table with data for each of 
    the regions Americas, EMEA, and APAC.
    Add a materialized view that provides analytics summary for all the gold tables.
@@ -33,7 +33,7 @@ orchestration, incremental refresh, and data-quality enforcement. You generate t
 
    - Bronze Layer (bronze_state_vectors): Ingests raw OpenSky state vector data using streaming tables.
    - Silver Layer (silver_state_vectors_clean): Applies quality constraints (filtering invalid locations, velocities, and extreme values).
-   - Gold Layer (Regional Tables): Creates individual tables partitioned by geographic coordinates:
+   - Gold Layer (Regional Tables): Creates individual tables, one per region, filtered by longitude:
        - gold_americas
        - gold_emea
        - gold_apac
@@ -70,8 +70,10 @@ drops any row that fails a **hard** rule (so it never reaches the gold tables)
 * while `expect`
 **warns** but keeps the row, used here for softer outlier checks. 
  
-This is the generated silver
-definition, with the EDA anomalies encoded as constraints:
+This is the silver definition Genie Code generated for this tutorial (abridged), with EDA anomalies
+encoded as constraints. Your expectations reflect the findings you pass into the prompt: rules from
+the newer two-prompt EDA, such as velocity above 400 m/s or `on_ground` rows that report altitude,
+appear only if you include them.
 
 ```python
 from pyspark import pipelines as dp
@@ -102,7 +104,7 @@ the exact table names and boundaries in the generated pipeline; they'll look rou
 |---|---|---|
 | `gold_americas` | −170° to −30° | North & South America |
 | `gold_emea` | −30° to +75° | Europe, Middle East, Africa |
-| `gold_apac` | +60° to +180° and −180° to −120° | Asia-Pacific |
+| `gold_apac` | +75° to +180° and −180° to −170° | Asia-Pacific |
 
 Splitting at the gold layer keeps each region small and fast to query, and lets you govern or
 share regions independently, while the shared silver table guarantees they were all cleaned with
@@ -129,7 +131,7 @@ SELECT * FROM gold_apac LIMIT 10;
 
 _(Confirm the exact gold table names in the pipeline Genie Code generates.)_
 
-Next, you wrap this pipeline in a **[Lakeflow Job](50-job.md)** so it runs on a schedule, retries on failure, and chains into downstream tasks.
+Next, you wrap `opensky_pipeline` in a **[Lakeflow Job](50-job.md)** so it runs on a schedule, retries on failure, and chains into downstream tasks.
 
 ---
 
@@ -137,8 +139,8 @@ Next, you wrap this pipeline in a **[Lakeflow Job](50-job.md)** so it runs on a 
 
 | ← Previous | Overview | Next → |
 |:---|:---:|---:|
-| [3. Genie Agents — Explore](30-genie-explore.md) | [Table of contents](index.md) | [5. Lakeflow Job](50-job.md) |
+| [4. AI/BI Dashboard](35-dashboard.md) | [Table of contents](index.md) | [6. Lakeflow Job](50-job.md) |
 
 ---
 
-_Author: Frank Munz · Updated 2026-09-15_
+_Author: [Frank Munz](https://www.linkedin.com/in/frankmunz/) · Updated 2026-11-15_

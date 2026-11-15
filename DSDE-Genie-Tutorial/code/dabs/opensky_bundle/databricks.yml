@@ -1,0 +1,25 @@
+# Reference Declarative Automation Bundle for the DSDE Genie Tutorial (step 7).
+# Deploys opensky_pipeline (step 5) and opensky_job (step 6).
+# Set catalog/schema to where you want the pipeline tables; defaults match Free Edition.
+bundle:
+  name: opensky_bundle
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog:
+    description: Catalog for the pipeline tables (must be writable, not the Marketplace catalog)
+    default: workspace
+  schema:
+    description: Schema for the pipeline tables
+    default: default
+
+targets:
+  dev:
+    default: true
+    mode: development
+  prod:
+    mode: production
+    workspace:
+      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}

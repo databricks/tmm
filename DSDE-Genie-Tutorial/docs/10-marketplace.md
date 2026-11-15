@@ -81,4 +81,4 @@ You should see ADS-B state-vector columns such as `icao24`, `callsign`, `time_po
 
 ---
 
-_Author: Frank Munz · Updated 2026-09-15_
+_Author: [Frank Munz](https://www.linkedin.com/in/frankmunz/) · Updated 2026-09-15_

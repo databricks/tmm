@@ -1,0 +1,24 @@
+resources:
+  jobs:
+    opensky_job:
+      name: opensky_job
+      schedule:
+        quartz_cron_expression: "0 0 * * * ?"
+        timezone_id: UTC
+      email_notifications:
+        on_failure:
+          - ${workspace.current_user.userName}
+      tasks:
+        - task_key: run_pipeline
+          max_retries: 1
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.opensky_pipeline.id}
+        - task_key: post_process
+          depends_on:
+            - task_key: run_pipeline
+          max_retries: 1
+          notebook_task:
+            notebook_path: ../src/post_process.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}

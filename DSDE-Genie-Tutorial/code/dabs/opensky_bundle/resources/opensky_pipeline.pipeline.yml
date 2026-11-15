@@ -1,0 +1,11 @@
+resources:
+  pipelines:
+    opensky_pipeline:
+      name: opensky_pipeline
+      catalog: ${var.catalog}
+      schema: ${var.schema}
+      serverless: true
+      root_path: ../src/opensky_pipeline
+      libraries:
+        - glob:
+            include: ../src/opensky_pipeline/transformations/**

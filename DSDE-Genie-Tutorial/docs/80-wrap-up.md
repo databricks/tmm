@@ -1,27 +1,33 @@
-# 9. How do I wrap up and take this tutorial further?
+# 12. How do I wrap up and take this tutorial further?
 
 ## What you did
 
-In eight steps you went from a shared Marketplace dataset to a governed app, self-service analytics, and data anyone can receive locally, mostly from plain-English prompts instead of hand-written code:
+In eleven steps you went from a shared Marketplace dataset to a governed app, self-service analytics, and data anyone can receive locally, mostly from plain-English prompts instead of hand-written code:
 
-![Reference architecture for the tutorial: the OpenSky Marketplace listing (696M rows, one UTC day) attaches as the read-only Unity Catalog table marketplace.opensky.state_vectors; Genie Code and a Genie Agent explore and design against it; a Lakeflow Spark Declarative Pipeline runs bronze → silver (with data-quality expectations) → gold_americas / gold_emea / gold_apac → gold_analytics_regional_summary; a Lakeflow Job orchestrates the pipeline and a follow-on notebook on an hourly schedule; a SQL Warehouse and a Databricks App serve gold_apac to technical users; and an optional OpenSharing path filters a sample at the source into a local pandas DataFrame — all under the Unity Catalog governance plane.](assets/80-wrapup-flow.png)
+![Reference architecture for the tutorial: the OpenSky Marketplace listing (696M rows, one UTC day) attaches as the read-only Unity Catalog table marketplace.opensky.state_vectors; Genie Code and a Genie Agent explore it, and an AI/BI Dashboard with Ask Genie reads it through a SQL warehouse; a Declarative Automation Bundle wraps the Lakeflow Job, which orchestrates the Spark Declarative Pipeline (bronze → silver with data-quality expectations → gold_americas / gold_emea / gold_apac → gold_analytics_regional_summary) and a follow-on notebook on an hourly schedule; an ML step trains on the silver table, compares three models in MLflow, registers flight_phase_model @prod in Unity Catalog, and batch-scores gold_flight_phase_predictions; a SQL Warehouse and a Databricks App serve gold_apac; and an optional OpenSharing path filters a sample at the source into a local pandas DataFrame — all under the Unity Catalog governance plane.](assets/80-wrapup-flow.png)
 
 1. **[Databricks Marketplace](10-marketplace.md):** attached the OpenSky avionics data (696M rows, one full UTC day, 54,093 aircraft) as a read-only Unity Catalog table over Delta Sharing, with no copy and no ETL.
-2. **[Genie Agents, EDA](20-genie-eda.md):** profiled the data in plain English and surfaced its data-quality issues across 696M records.
-3. **[Genie Agents, explore & visualize](30-genie-explore.md):** answered business questions and got back charts and maps, with no dashboard to build.
-4. **[Spark Declarative Pipeline](40-pipeline.md):** turned the EDA findings into enforced expectations and cleaned the data into per-region gold tables (`gold_americas`, `gold_emea`, `gold_apac`) plus an analytics summary.
-5. **[Lakeflow Job](50-job.md):** wrapped the pipeline in a scheduled, multi-task job that runs it, retries on failure, and notifies you when a run breaks.
-6. **[Genie One on mobile](55-mobile.md):** queried the data from your phone with the Genie One mobile app, same governance as the web.
-7. **[Databricks App](60-app.md):** built a governed app on a gold table and visualized APAC flight routes on a zoomable map.
-8. **[OpenSharing](70-opensharing.md):** received the shared data on a plain laptop with the open-source Python client, no Spark and no Java.
+2. **[Genie Agents, EDA](20-genie-eda.md):** profiled the data in plain English, confirmed the key columns, and surfaced its data-quality issues across 696M records.
+3. **[Genie Agents, explore & visualize](30-genie-explore.md):** created the **OpenSky Genie** agent from a prompt, answered business questions, and got back charts and maps.
+4. **[AI/BI Dashboard](35-dashboard.md):** generated the **OpenSky Flights** dashboard with Genie Code and linked the Genie Agent in as **Ask Genie**.
+5. **[Spark Declarative Pipeline](40-pipeline.md):** turned the EDA findings into enforced expectations and cleaned the data into per-region gold tables (`gold_americas`, `gold_emea`, `gold_apac`) plus an analytics summary.
+6. **[Lakeflow Job](50-job.md):** wrapped `opensky_pipeline` in `opensky_job`, a scheduled, multi-task job that retries on failure and notifies you when a run breaks.
+7. **[Declarative Automation Bundle](52-dabs.md):** turned the pipeline and job into version-controlled YAML and deployed it to `dev` from the workspace.
+8. **[ML model](54-ml.md):** trained a flight-phase classifier on the silver table, compared three models in MLflow, and registered the winner in Unity Catalog as `flight_phase_model@prod`.
+9. **[Genie One on mobile](55-mobile.md):** queried the data from your phone with the Genie One mobile app, same governance as the web.
+10. **[Databricks App](60-app.md):** built a governed app on a gold table and visualized APAC flight routes on a zoomable map.
+11. **[OpenSharing](70-opensharing.md):** received the shared data on a plain laptop with the open-source Python client, no Spark and no Java.
 
 ## Clean up
 
 To undo everything on Free Edition:
 
-- Delete the **[Databricks App](60-app.md)**.
-- Delete the **[Lakeflow Job](50-job.md)**.
-- Delete the **[pipeline](40-pipeline.md)** and its gold tables.
+- Delete the **[Databricks Apps](60-app.md)** (`opensky-flights`, and `opensky-flight-dna` if you built it).
+- Delete the `flight_phase_model` model, its MLflow experiment, and `gold_flight_phase_predictions` from the **[ML step](54-ml.md)**.
+- Delete the `[dev]` pipeline and job deployed by the **[bundle](52-dabs.md)**, then the `opensky_bundle` Git folder.
+- Delete the **[Lakeflow Job](50-job.md)** (`opensky_job`).
+- Delete the **[pipeline](40-pipeline.md)** (`opensky_pipeline`) and its gold tables.
+- Delete the **OpenSky Flights** [dashboard](35-dashboard.md), the **OpenSky Genie** agent, and any metric views it created in `workspace.default`.
 - Remove the **[Marketplace](10-marketplace.md)** catalog (`marketplace`) from Catalog Explorer.
 - On your laptop, delete the `opensky.share` credential file from [OpenSharing](70-opensharing.md). It carries a bearer token, so treat it as a secret.
 
@@ -39,8 +45,8 @@ To undo everything on Free Edition:
 
 | ← Previous | Overview | Next → |
 |:---|:---:|---:|
-| [8. OpenSharing](70-opensharing.md) | [Table of contents](index.md) | — |
+| [11. OpenSharing](70-opensharing.md) | [Table of contents](index.md) | — |
 
 ---
 
-_Author: Frank Munz · Updated 2026-10-13 ·  [anchor page: "Tutorial: Databricks Genie for Data Engineers and Data Scientists"](https://community.databricks.com/t5/technical-blog/tutorial-databricks-genie-for-data-engineers-and-data-scientists/ba-p/168969)_
+_Author: [Frank Munz](https://www.linkedin.com/in/frankmunz/) · Updated 2026-11-15 ·  [anchor page: "Tutorial: Databricks Genie for Data Engineers and Data Scientists"](https://community.databricks.com/t5/technical-blog/tutorial-databricks-genie-for-data-engineers-and-data-scientists/ba-p/168969)_

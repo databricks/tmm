@@ -1,7 +1,8 @@
 site_name: OpenSky Avionics on Databricks
 site_description: >-
-  A hands-on tutorial — Databricks Marketplace, Genie Agents, Spark Declarative
-  Pipelines, Lakeflow Jobs, and Databricks Apps on the OpenSky full-day avionics dataset.
+  A hands-on tutorial — Databricks Marketplace, Genie Agents, AI/BI Dashboards, Spark
+  Declarative Pipelines, Lakeflow Jobs, Declarative Automation Bundles, MLflow, and
+  Databricks Apps on the OpenSky full-day avionics dataset.
 
 theme:
   name: material
@@ -38,9 +39,12 @@ nav:
   - 1. Databricks Marketplace: 10-marketplace.md
   - 2. Genie Agents — find data anomalies: 20-genie-eda.md
   - 3. Genie Agents — explore & visualize: 30-genie-explore.md
-  - 4. Spark Declarative Pipeline (Genie Code): 40-pipeline.md
-  - 5. Lakeflow Job (Genie Code): 50-job.md
-  - 6. Genie One on mobile: 55-mobile.md
-  - 7. Databricks App: 60-app.md
-  - 8. OpenSharing — receive locally: 70-opensharing.md
-  - 9. Wrap-up: 80-wrap-up.md
+  - 4. AI/BI Dashboard (Genie Code): 35-dashboard.md
+  - 5. Spark Declarative Pipeline (Genie Code): 40-pipeline.md
+  - 6. Lakeflow Job (Genie Code): 50-job.md
+  - 7. Declarative Automation Bundle (Genie Code): 52-dabs.md
+  - 8. ML model (Genie Code): 54-ml.md
+  - 9. Genie One on mobile: 55-mobile.md
+  - 10. Databricks App: 60-app.md
+  - 11. OpenSharing — receive locally: 70-opensharing.md
+  - 12. Wrap-up: 80-wrap-up.md

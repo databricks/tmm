@@ -1,4 +1,4 @@
-# 7. How do I build a Databricks App from a gold table?
+# 10. How do I build a Databricks App from a gold table?
 
 ## What you'll do
 
@@ -28,11 +28,41 @@ Coding agents such as **Claude Code**, **Codex**, and Databricks **Genie Code** 
 
 > **Step 1: Create the Databricks App**
 >
-> In your workspace, create a new **Databricks App**. On Free Edition you can run up to three at once.
+> In your workspace, create a new **Databricks App** named `opensky-flights`. On Free Edition you can run up to three at once.
 >
 > **Step 2: Generate and deploy it from a prompt**
 >
 > Open **Genie Code** in the app and describe what you want in plain English: name the dataset (your pipeline's gold table, or `marketplace.opensky.state_vectors` for a quick proof of concept), say how the data should load, list the views and how to navigate between them, then ask it to build and deploy.
+
+### Ready-to-use prompt: the Flight DNA app
+
+The first app in the gallery above, one radial glyph per aircraft, comes from a single prompt. Paste
+it into **Genie Code** or any coding agent, such as Claude Code or Codex, to build, smoke-test, and
+deploy it end to end:
+
+```text
+Build, smoke-test, and deploy a Databricks App named opensky-flight-dna.
+Use marketplace.opensky.state_vectors to create a responsive, dark-themed "Flight DNA" visualization:
+- Add a SQL warehouse as an app resource.
+- Query it with the Databricks SQL Connector, authenticated as the app's service principal.
+- Identify the 120 busiest aircraft by state-vector count where baro_altitude IS NOT NULL.
+- Retrieve their full-day tracks using icao24, callsign, time_position, baro_altitude, latitude, and longitude.
+- Keep the app responsive by filtering early, limiting total rows, and downsampling tracks when necessary.
+Display each aircraft as a radial glyph:
+- Angle: UTC time of day, with midnight at the top and time moving clockwise.
+- Radius: barometric altitude normalized across the selected dataset.
+- Color: altitude band—orange for low, yellow for medium, and green/blue for high.
+- Connect points chronologically to form each aircraft's daily flight pattern.
+Render the glyphs in a responsive grid using inline SVG or Plotly, labeled by callsign. When a user
+selects a glyph, expand it to show the aircraft's latitude/longitude route on an interactive map.
+Handle loading, empty states, and query errors gracefully. Follow the repository's existing app
+structure and deployment conventions.
+```
+
+> [!TIP]
+> Flight DNA plots each aircraft's **whole day**, so this prompt reads the raw Marketplace table. Your
+> gold tables only cover the 12:00 to 12:15 window the [pipeline](40-pipeline.md) ingests. The app
+> counts as one of your three apps on Free Edition, next to `opensky-flights`.
 
 ## Going further with Databricks Apps
 
@@ -41,7 +71,7 @@ A few things worth knowing once the basics work:
 - **Workspace-aware discovery:** generated [Databricks App](https://docs.databricks.com/dev-tools/databricks-apps/) code resolves fully-qualified Unity Catalog names and warehouse IDs from your workspace, so the app runs without hand-editing table paths or resource IDs.
 - **Pre-wired warehouse and endpoints:** name the SQL warehouse or serving endpoint once and the generated code binds to it, so the app gets governed, consistent access.
 - **Smoke test before deploy:** a generated smoke test exercises the app's data path and UI before you ship, so you get early confirmation it works end to end.
-- **Serverless micro apps:** the prompt-to-app flow is maturing into [*governed vibe coding*](https://www.databricks.com/blog/enabling-governed-vibe-coding-enterprise-apps-databricks) that respect your data governance by default. They run as **serverless micro apps** (scale-to-zero VMs, pay only for use), so even small internal tools are worth shipping. 
+- **Serverless micro apps:** the prompt-to-app flow is maturing into [*governed vibe coding*](https://www.databricks.com/blog/enabling-governed-vibe-coding-enterprise-apps-databricks) that respects your data governance by default. They run as **serverless micro apps** (scale-to-zero VMs, pay only for use), so even small internal tools are worth shipping. 
 
 
 ## Recap
@@ -54,8 +84,8 @@ You have a live, governed **Databricks App**: built on a gold table from your SD
 
 | ← Previous | Overview | Next → |
 |:---|:---:|---:|
-| [6. Genie One on mobile](55-mobile.md) | [Table of contents](index.md) | [8. OpenSharing](70-opensharing.md) |
+| [9. Genie One on mobile](55-mobile.md) | [Table of contents](index.md) | [11. OpenSharing](70-opensharing.md) |
 
 ---
 
-_Author: Frank Munz · Updated 2026-10-13_
+_Author: [Frank Munz](https://www.linkedin.com/in/frankmunz/) · Updated 2026-11-15_

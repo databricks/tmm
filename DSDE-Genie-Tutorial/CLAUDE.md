@@ -1,6 +1,6 @@
 # CLAUDE.md — DSDE Genie Tutorial
 
-> **Last updated: 2026-10-13**
+> **Last updated: 2026-11-15**
 > When you load this file, compare that date to today. If it is **more than 30 days old**,
 > remind Frank that this CLAUDE.md may be stale and offer to refresh it. Bump the date
 > whenever you meaningfully change this file.
@@ -13,8 +13,10 @@ Avionics Records."** It teaches data scientists and data engineers how to get st
 synthetic toy dataset.
 
 The tutorial runs entirely on **Databricks Free Edition** and walks through: Marketplace →
-Genie Agents (EDA) → Genie Agents (explore & visualize) → Genie Code for a Spark Declarative
-Pipeline → Genie Code for a Lakeflow Job → Genie One on mobile → Genie Code for a Databricks App → OpenSharing to a local OSS client → wrap-up.
+Genie Code (two-prompt EDA) → Genie Agents (explore & visualize) → Genie Code for an AI/BI Dashboard →
+Genie Code for a Spark Declarative Pipeline → Genie Code for a Lakeflow Job → Genie Code for a
+Declarative Automation Bundle → Genie Code for an ML model → Genie One on mobile → Genie Code for a
+Databricks App → OpenSharing to a local OSS client → wrap-up (12 steps).
 
 ## Goals
 
@@ -29,10 +31,13 @@ Pipeline → Genie Code for a Lakeflow Job → Genie One on mobile → Genie Cod
 ## Layout
 
 - `README.md` — landing page / agenda / prerequisites.
-- `docs/10..80-*.md` (gap-numbered by tens) — the nine tutorial steps, incl. `55-mobile.md` (ordered; nav lives in `mkdocs.yml`).
+- `docs/10..80-*.md` (gap-numbered) — the twelve tutorial steps: 10, 20, 30, 35 dashboard, 40, 50,
+  52 DABs, 54 ML, 55 mobile, 60, 70, 80 (ordered; nav lives in `mkdocs.yml`). Pages 35/52/54 were
+  contributed by Te Chen and carry the footer `_Author: Te Chen & [Frank Munz](…)_`.
 - `docs/assets/` — screenshots and intro GIFs referenced by the docs.
-- `code/pipeline/`, `code/job/`, `code/app/` — reference source for the Genie-generated pipeline, job, and app
-  (filled in during live-test against a real workspace).
+- `code/dabs/opensky_bundle/` — tested reference Declarative Automation Bundle (pipeline + job); its
+  pipeline source is the Genie-generated code. `code/pipeline/` and `code/job/` point to it.
+  `code/app/`, `code/dashboard/`, `code/ml/` are placeholders.
 - `code/opensharing/` — standalone local Delta Sharing client (pure Python, no Spark/Java).
 - `mkdocs.yml` — site config **and the canonical page order** (reorder here, not by renaming).
 - `.github/workflows/deploy.yml` — on push to `main`, runs `mkdocs gh-deploy` to GitHub Pages.
@@ -61,6 +66,12 @@ Pipeline → Genie Code for a Lakeflow Job → Genie One on mobile → Genie Cod
 - **Still paused (not pursued now):** semantic number-free slugs, `mkdocs-redirects` (so gap-renumber
   changed the published URLs), a `mkdocs build --strict` CI gate, and DRY'd agenda/TOC includes.
   Don't re-pitch or implement these unless Frank reopens them.
+
+- **Screenshots come from real runs only.** New screenshots and measured numbers were captured on
+  2026-11-15 in Frank's Free Edition workspace (CLI profile `eb2d7b79`; test objects live in
+  `workspace.opensky_tutorial` and the `opensky_tutorial` folder). Never mock up UI screenshots.
+- **Architecture diagram** `docs/assets/80-wrapup-flow.png` is rendered from an HTML source kept outside
+  the repo (`~/ccode/genie-demo-v2/diagram/80-wrapup-flow.html`); the pre-2026-11 version is `80-wrapup-flow-v1.png`.
 
 ## Working in this repo
 

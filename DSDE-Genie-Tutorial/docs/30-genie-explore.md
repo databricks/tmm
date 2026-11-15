@@ -14,9 +14,23 @@ Where [the EDA step](20-genie-eda.md) was focused on data quality and finding an
 
 ## Step-by-step guide
 
-1. **Open your Genie Agent.** Create a new Genie Agent on the table `marketplace.opensky.state_vectors`.
+1. **Open the Genie Agents section.** In your Databricks workspace, click **Genie Agents** in the left-hand navigation.
 
-2. **Ask for a visualization.** Enter one of the prompts below in the chat box. Genie returns the generated SQL, the result set, and a chart or map. Then ask follow-ups to refine it: change the chart type, add a filter, or split by another column.
+2. **Create and configure the agent from a prompt.** Click **New**. The dialog asks *"What should your Genie agent do?"*. Enter the prompt below:
+
+   ```text
+   Create a new Genie Agent named OpenSky Genie on marketplace.opensky.state_vectors.
+   Implement all the important configurations, and create any supporting metric
+   views it needs in workspace.default.
+   ```
+
+   Genie Code then walks the agent through a four-step setup checklist (**Define agent details**, **Identify relevant data**, **Prepare business context**, **Add initial benchmarks**) and fills in each part for you: a description, synonyms and value indexing on key columns, SQL filters, derived columns such as an airline operator code taken from the callsign, measures such as tracked flights, plain-language instructions, starter questions, and a metric view definition. It finishes by running benchmark questions against the 696M-row table and fixes its own instructions when one fails.
+
+   ![The OpenSky Genie agent after the prompt-driven setup: the agent page shows its generated description and common questions, and the Genie Code panel summarizes the configuration (table description, value indexing, per-column plausibility filters taken from the EDA cleanup rules, measures, instructions, starter questions), a validated metric view definition, and a benchmark run with three of three questions correct.](assets/30-genie-agent-created.png)
+
+   Two things to check. First, Genie Code remembers your earlier work: the plausibility filters it adds come from the cleanup rules of the [EDA step](20-genie-eda.md). Second, the Marketplace catalog is read-only, so a metric view has to live in a schema you can write to; Genie Code validates the definition, and you save it with **Export to Metric View**, choosing `workspace.default` on Free Edition.
+
+3. **Ask for a visualization.** Enter one of the prompts below in the chat box. Genie returns the generated SQL, the result set, and a chart or map. Then ask follow-ups to refine it: change the chart type, add a filter, or split by another column.
 
 ## Prompts to try
 
@@ -90,7 +104,6 @@ WHERE
   rn = 1
   AND `baro_altitude` BETWEEN 0 AND 13000
   AND `velocity` BETWEEN 0 AND 300
-Altitude vs Speed by Flight Phase (Main Cluster)
 
 ```
 
@@ -104,7 +117,7 @@ A few things worth knowing once the basics work:
 
 ## Recap
 
-You've explored the OpenSky data and produced visualizations with Genie Agents. No query writing, no dashboard setup. These views tell you what's worth operationalizing, which is exactly what the [pipeline](40-pipeline.md) and the [app](60-app.md) build on.
+You've explored the OpenSky data and produced visualizations with Genie Agents. No query writing, no dashboard setup. These views tell you what's worth operationalizing, which is exactly what the [dashboard](35-dashboard.md), the [pipeline](40-pipeline.md), and the [app](60-app.md) build on. Keep the **OpenSky Genie** agent: the dashboard step links it in as **Ask Genie**.
 
 ---
 
@@ -112,8 +125,8 @@ You've explored the OpenSky data and produced visualizations with Genie Agents. 
 
 | ← Previous | Overview | Next → |
 |:---|:---:|---:|
-| [2. Genie Agents — EDA](20-genie-eda.md) | [Table of contents](index.md) | [4. Declarative Pipeline](40-pipeline.md) |
+| [2. Genie Agents — EDA](20-genie-eda.md) | [Table of contents](index.md) | [4. AI/BI Dashboard](35-dashboard.md) |
 
 ---
 
-_Author: Frank Munz · Updated 2026-09-18_
+_Author: [Frank Munz](https://www.linkedin.com/in/frankmunz/) · Updated 2026-11-15_

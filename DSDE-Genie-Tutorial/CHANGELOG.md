@@ -85,6 +85,29 @@ Canonical row count set to **696 million** across all pages.
 
 ---
 
+## 2026-11-15 — Live run on Free Edition: screenshots, measured results, reference bundle
+
+Every new or changed step was run end to end in a Free Edition workspace (`dbc-eb2d7b79`), with the real UI and numbers captured:
+
+- **EDA (2):** new screenshots `20-genie-eda-profile.png` (stage 1, missing values + key columns + pause) and `20-genie-eda-anomalies.png` (stage 2, ten physics rules with counts + cleanup rules). Step 5 and Results rewritten to the actual output; the old single-prompt image `20-genie-eda.png` is no longer referenced.
+- **Explore (3):** the Genie Agent is created from **New → "What should your Genie agent do?"**, which runs a four-step guided setup and benchmarks itself (3/3 after one self-fix). New screenshot `30-genie-agent-created.png`. Metric views need a manual **Export to Metric View**.
+- **Dashboard (4):** the empty dashboard opens on "Create a dashboard with Genie"; menu is **⋮ → Settings and themes → General**; publish dialog wording is **Individual data permission**. Dashboard name moved into prompt 1. New screenshot `35-dashboard.png` with Ask Genie answering a top-operators question.
+- **DABs (7):** shipped tested reference bundle `code/dabs/opensky_bundle` (pipeline source = the Genie-generated code from step 5). Verified: CLI deploy + job run (≈2.5 min, row counts match `40-pipeline-graph.png`), public tmm clone as a sparse Git folder without credentials, and **Open in editor → Deploy bundle (dev)** from the workspace (source-linked). New screenshot `52-dabs.png`.
+- **ML (8):** measured results table and screenshot `54-ml-results.png` (RF macro-F1 0.774 on an aircraft-level split). Corrected the earlier assumption that Ground is nearly absent; added Genie's group-split question to step 3.
+- **Diagram:** `80-wrapup-flow.png` regenerated (v1 kept as `80-wrapup-flow-v1.png`); "67 checks" replaced by measured EDA figures.
+
+## 2026-11-15 — New modules from Te Chen: AI/BI Dashboard (4), Declarative Automation Bundle (7), ML model (8)
+
+Adapted from Te Chen's fork (`chen-data-ai/GenieCode_Workshop`) to this repo's voice, layout, and Free Edition path. Her pages carry the footer `_Author: Te Chen & Frank Munz_`; README and index list her as contributor.
+
+- **New pages (gap-numbered, no renames):** `35-dashboard.md`, `52-dabs.md`, `54-ml.md`. Nav, agenda, TOC, TL;DR, wrap-up recap ("eleven steps"), prev/next links, and code-README titles renumbered to 12 steps: Pipeline 4 → 5, Job 5 → 6, Mobile 6 → 9, App 7 → 10, OpenSharing 8 → 11, Wrap-up 9 → 12.
+- **Dashboard (4):** prompt-built dashboard on `marketplace.opensky.state_vectors`; reuses the OpenSky Genie agent from step 3 (linked via **Settings → General → Link existing Genie Agent**) instead of creating a second agent; added the OpenSharing + embedded-credentials caveat from the docs.
+- **DABs (7):** bundles both `opensky_pipeline` and `opensky_job` (hers covered only the pipeline) via Bundles in the workspace. **Corrected** her tip: `schema:` is the current pipeline field; `target:` is deprecated. Added the Git-folder prerequisite and the `[dev]` duplicate-copy / paused-schedule gotcha.
+- **ML (8):** trains on the pipeline's `silver_state_vectors_clean` (Americas) instead of a workspace-specific raw copy; single plan-then-approve prompt instead of five notebooks; leakage rationale kept. Dropped her measured metrics (different source and window) and unsourced latency claims ("sub-millisecond", "~200 ms p99"); Feature Views (GA 2026-10-12), Model Serving, and Lakebase moved to Beyond the Basics. Not adopted: the Lakebase + Model Serving capstone app and its warm-up page (beyond Free Edition limits), `mkdocs-macros` / `config.yml` personalization (renders raw `{{ }}` on GitHub).
+- **Existing pages, adopted from her fork:** two-prompt EDA in a notebook with a human checkpoint (prompt 2 keeps the issues-with-explanations + cleanup recommendations the pipeline needs; altitude histogram dropped to avoid duplicating the Genie Agent section); Genie Agent created from a prompt (named OpenSky Genie, metric views in `workspace.default`); named resources `opensky_pipeline`, `opensky_job`, `opensky-flights`; ready-to-use Flight DNA prompt on the App page, pointed at the Marketplace table (needs the full day, not the 15-minute gold window).
+- **Code:** placeholder READMEs for `code/dashboard`, `code/dabs`, `code/ml`.
+- **Still open:** the Genie-Code-generates-a-bundle path (main DABs flow) and the dashboard step 4 (flight-phase instruction) were not exercised in the live run; the cloned-bundle path was.
+
 ## 2026-09-28 — New module: Databricks Genie One on mobile (6)
 
 - Added `docs/55-mobile.md` ("6. Databricks Genie One on mobile"): install the Genie mobile app, sign in, and run the cruise-altitude prompt from a phone (sawtooth histogram at standardized flight levels). Screenshots `55-mobile-qr.png`, `55-mobile-prompt.png`, `55-mobile-result.png`.
