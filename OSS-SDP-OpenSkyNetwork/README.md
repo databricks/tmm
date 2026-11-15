@@ -1,11 +1,11 @@
 
 # Getting Started with Open Source Apache Spark™ Declarative Pipelines Tutorial (SDP)  
 
-This project is part of the [How to get started with Spark Declarative Pipelines (SDP) tutorial](https://stage.databricks.com/discover/how-to-get-started-with-spark-declarative-pipelines). Learn how to build a simple and fun declarative ETL data pipeline consisting of just two powerful components: a streaming table and a materialized view. First, the streaming table uses a Custom PySpark Datasource to continuously fetch live flight data from the OpenSky API, building a permanent history of every aircraft position, altitude and velocity. Then, the materialized view reads that stream to create a "current state" board of the global airspace.
+This project is part of the [How to get started with Spark Declarative Pipelines (SDP) tutorial](https://www.databricks.com/discover/how-to-get-started-with-spark-declarative-pipelines). Learn how to build a simple and fun declarative ETL data pipeline consisting of just two powerful components: a streaming table and a materialized view. First, the streaming table uses a Custom PySpark Datasource to continuously fetch live flight data from the OpenSky API, building a permanent history of every aircraft position, altitude and velocity. Then, the materialized view reads that stream to create a "current state" board of the global airspace.
 
 This guide outlines the steps to set up and run SDP with PySpark on a local machine. We will build a functional pipeline using Spark 4.1, Java 17, and uv for high-performance Python package management, **relying entirely on open-source tools**.
 
-> **Note:** We currently suggest staying on **PySpark 4.1.x** because of a glitch with the `spark-pipelines` CLI in PySpark 4.2.
+> **Note:** This tutorial uses **PySpark 4.1.x**. On PySpark 4.2 and 4.3, the pipeline runs fine, but the `spark-pipelines` CLI can print an error message after `Run is COMPLETED`. Your data is not affected. This is fixed in the upcoming Spark 4.4 ([SPARK-59135](https://issues.apache.org/jira/browse/SPARK-59135)), and the guide will move to 4.4 once it's released.
 
 
 
@@ -20,7 +20,7 @@ I'm describing the steps here for my MacBook Pro with MacOS with homebrew. Depen
 
 Before setting up the Python environment, ensure you have the necessary system-level dependencies:
 
-**Important Note on Java:** Spark 4.1 requires **Java 17**. 
+**Important Note on Java:** Spark 4.1 runs on **Java 17** or **Java 21** (both tested with this demo). The steps below use Java 17.
 
 ```bash
 # 1. Install Java 17
@@ -53,10 +53,10 @@ source .venv/bin/activate
 
 ## 3. Install PySpark 4.1
 
-Declarative Pipelines require specific development builds of Spark 4.1. 
+Spark Declarative Pipelines ship with PySpark 4.1 and later through the `pipelines` extra.
 
 ```bash
-# Install Spark 4.1 
+# Install Spark 4.1
 uv pip install "pyspark[pipelines]~=4.1.0"
 ```
 
@@ -74,7 +74,7 @@ python -c "import pyspark; print(f'Spark Version: {pyspark.__version__}')"
 The SDP example uses the OpenSky Network custom PySpark datasource 
 
 ```bash
-# Install Spark 4.1 
+# Install the OpenSky custom datasource
 uv pip install pyspark-data-sources
 ```
 
@@ -94,7 +94,7 @@ Create a new directory for your project and organize your files according to the
 .
 ├── spark-pipeline.yml
 └── transformations
-    ├── flights_stats.sql
+    ├── flights_analytics.sql
     └── ingest_flights.py
 ```
 
@@ -135,7 +135,7 @@ def ingest_flights():
     return spark.readStream.format("opensky").load()
 ```
 
-### 4. SDP Materialized View: Analytics Logic (`transformations/flights_stats.sql`)
+### 4. SDP Materialized View: Analytics Logic (`transformations/flights_analytics.sql`)
 
 This SQL file defines a **Materialized View**. It aggregates the raw streaming data from `ingest_flights` to calculate statistics such as unique aircraft counts, vertical rates, and observation duration.
 
@@ -214,5 +214,6 @@ spark.read.table("flights_stats").limit(3).show(truncate=False)
 
 ## Changelog
 
-- **Latest Update:** Documentation and examples updated for PySpark 4.1.x (2024-12-15)
+- **2026-11-15:** Re-tested with PySpark 4.1.4 on Java 17 and 21. Clarified the PySpark version note, and fixed the SQL file name and tutorial link.
+- **2025-12-15:** Documentation and examples updated for PySpark 4.1.x.
 
