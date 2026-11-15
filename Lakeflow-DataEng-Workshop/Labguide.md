@@ -286,7 +286,10 @@ Lab 3 flips the script: until now you ingested data that was available to you (s
 - **Producer identity** — a service principal `workshop-zerobus-sp` with `USE CATALOG` on `ops_data`, `USE SCHEMA` on `ops_data.zerobus`, and `MODIFY + SELECT` on that one table. The SDK authenticates as this SP from your notebook (the full UC chain is required for the OAuth `authorization_details` payload).
 - **Config table** — this is only required to execute the lab. Typically these values are available in your IoT producer. We use the table `ops_data.zerobus.config`, a single row holding `client_id`, `client_secret`, `workspace_url`, `workspace_id`, and `zerobus_endpoint`. The notebook (IoT producer) reads its config data from here.
 
+Service Principal: 
+
 ![Zerobus Ingest service principal](https://raw.githubusercontent.com/databricks/tmm/main/Lakeflow-DataEng-Workshop/misc/images/lab3-service-principal.png)
+
 
 **Overview of what you do:** Open the notebook, set three parameters (city, temperature, and comment), and submit an event using the official **Databricks Zerobus Ingest SDK**. The SDK opens a gRPC stream, ingests the event with a fresh UUID, flushes the stream for durability, and closes it.
 
